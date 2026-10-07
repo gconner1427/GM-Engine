@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "{{ENGINE}}"
+    ],
+    "allow": [
+      "PowerShell(python \"{{ENGINE}}/engine/gm.py\" *)",
+      "Bash(python \"{{ENGINE}}/engine/gm.py\" *)"
+    ]
+  }
+}
