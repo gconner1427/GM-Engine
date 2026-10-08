@@ -482,6 +482,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
     <aside>
       <div class="tabs" id="tabs">
         <button data-tab="sheet" class="on">Character</button>
+        <button data-tab="inventory">Inventory</button>
         <button data-tab="journal">Journal</button>
         <button data-tab="gallery">Gallery</button>
         <button data-tab="gm">GM<span class="badge" id="gmbadge" hidden></span></button>
@@ -993,7 +994,7 @@ function apply(s) {
     if (finished) { if (prefs.wide) { prefs.wide = false; applyPrefs(true); } setTab("gm"); }
   }
   if (play) renderStory(); else renderTalk($("story"), true);
-  if ("sheet" in s.texts && game.tab === "sheet" || "journal" in s.texts && game.tab === "journal"
+  if ("sheet" in s.texts && (game.tab === "sheet" || game.tab === "inventory") || "journal" in s.texts && game.tab === "journal"
       || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before) renderPane();
 }
 
@@ -1193,15 +1194,6 @@ function sheetHtml(sheet) {
     `<div class="talent"><div class="name">${esc(e.name)}</div><div class="text">${inline(e.text)}</div></div>`).join("");
   html += block("Talents and powers", talents);
 
-  const gear = entries(part(sheet, "Gear"));
-  let pack = "", purse = "";
-  for (const g of gear) {
-    if (/^money$/i.test(g.name)) { if (!blank(g.text)) purse = `<div class="purse"><svg><use href="#i-coin"/></svg><span>${inline(g.text.replace(/\.$/, ""))}</span></div>`; continue; }
-    if (blank(g.text)) continue;
-    pack += `<div class="where caps">${esc(g.name)}</div>` + pieces(g.text).map(p => `<div class="item">${inline(p)}</div>`).join("");
-  }
-  html += block("Gear", pack || purse ? `<div class="gear">${pack}</div>${purse}` : "");
-
   const looks = grab(sheet, "Looks"), age = grab(sheet, "Age");
   let about = "";
   if (!blank(looks)) about += aboutSection("Looks", (blank(age) ? "" : `Age ${age}. `) + looks);
@@ -1210,6 +1202,16 @@ function sheetHtml(sheet) {
     if (text && !/^\(none yet\)$/i.test(text)) about += aboutSection(title, text);
   }
   return html + block("Who they are", about);
+}
+
+function inventoryHtml(sheet) {
+  let pack = "", purse = "";
+  for (const g of entries(part(sheet, "Gear"))) {
+    if (/^money$/i.test(g.name)) { if (!blank(g.text)) purse = `<div class="purse"><svg><use href="#i-coin"/></svg><span>${inline(g.text.replace(/\.$/, ""))}</span></div>`; continue; }
+    if (blank(g.text)) continue;
+    pack += `<div class="where caps">${esc(g.name)}</div>` + pieces(g.text).map(p => `<div class="item">${inline(p)}</div>`).join("");
+  }
+  return pack || purse ? `<div class="gear">${pack}</div>${purse}` : '<div class="empty">Nothing carried yet.</div>';
 }
 
 function aboutSection(title, text) {
@@ -1255,6 +1257,8 @@ function renderPane() {
     if (game.vitals) celebrate(game.vitals, now);
     game.vitals = now;
     if ($("myface")) $("myface").onclick = () => enlarge(faceOf(grab(sheet, "Name")) || faceOf(grab(sheet, "Also called")));
+  } else if (game.tab === "inventory") {
+    pane.innerHTML = inventoryHtml(game.texts.sheet || "");
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     let html = stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "";
