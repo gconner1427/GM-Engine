@@ -34,7 +34,7 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 
 - **The narrative** fills the main column and grows as you play. Earlier sessions are in the picker at the top.
 - **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you.
-- **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (what they carry, by where it's kept, and their money), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
+- **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
 - **The top bar** has text size (A− and A+), a button to hide the side panel for reading, and the ⋯ menu.
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it.
 - **During setup** the main column is your conversation with the GM: it tells you what your character would know about the world and helps you make them, and the Character tab fills in as you go.

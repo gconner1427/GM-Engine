@@ -279,12 +279,35 @@ aside { border-left: 1px solid var(--line); background: var(--panel); display: g
 .pips i.on { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 5px #c9a25b66; }
 .talent { background: var(--well); border: 1px solid var(--line-soft); border-left: 2px solid var(--accent); border-radius: 6px; padding: 9px 12px; margin-bottom: 8px; }
 .talent .name { font: 600 15px var(--serif); } .talent .text { color: var(--dim); font-size: 13px; }
-.gear .where { color: var(--faint); font-size: 10px; margin: 12px 0 5px; }
-.gear .where:first-child { margin-top: 0; }
-.gear .item { padding: 4px 0 4px 14px; position: relative; font-size: 13.5px; }
-.gear .item::before { content: ""; position: absolute; left: 2px; top: 12px; width: 4px; height: 4px; transform: rotate(45deg); background: #5a4c33; }
-.purse { display: flex; align-items: center; gap: 10px; background: var(--well); border: 1px solid var(--line-soft); border-radius: 8px; padding: 9px 12px; margin-top: 12px; }
+.block > .caps .sub { color: var(--faint); font-weight: 400; letter-spacing: .4px; text-transform: none; }
+.block > .caps .count { order: 2; color: var(--faint); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.block > .caps:has(.count)::after { order: 1; }
+.purse { display: flex; align-items: center; gap: 10px; background: var(--well); border: 1px solid var(--line-soft); border-radius: 8px; padding: 9px 12px; }
 .purse svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+.purse.none { color: var(--faint); font-style: italic; } .purse.none svg { color: var(--faint); }
+.coins { grid-auto-flow: column; grid-auto-columns: 1fr; }
+.coins .tile b { color: var(--accent); }
+.bag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; gap: 8px; }
+.thing { display: flex; gap: 10px; align-items: flex-start; background: var(--well); border: 1px solid var(--line-soft); border-radius: 8px; padding: 8px;
+  min-width: 0; transition: border-color .15s; }
+.thing:only-child, .thing.open { grid-column: 1 / -1; }
+.thing.more { cursor: pointer; } .thing.more:hover { border-color: #5a4c33; }
+.thing .glyph { width: 40px; height: 40px; flex: none; position: relative; display: grid; place-items: center; border-radius: 6px; color: var(--dim);
+  background: linear-gradient(150deg, var(--raised), #17130d); border: 1px solid var(--line); box-shadow: inset 0 0 8px #0008; }
+.thing .glyph svg { width: 22px; height: 22px; stroke-width: 1.3; }
+.thing .glyph b { position: absolute; right: -4px; bottom: -4px; min-width: 17px; padding: 0 4px; border-radius: 9px; background: var(--accent); color: var(--accent-ink);
+  font: 700 10.5px/17px var(--sans); text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px var(--well); }
+.thing .what { min-width: 0; flex: 1; align-self: center; }
+.thing .name { font-weight: 600; font-size: 13.5px; line-height: 1.3; overflow-wrap: anywhere; }
+.thing .chip { display: inline-block; margin-top: 3px; padding: 0 6px; border-radius: 4px; border: 1px solid #5a4c33; color: var(--accent); font: 600 10px/16px var(--sans);
+  letter-spacing: .6px; text-transform: uppercase; white-space: nowrap; }
+.thing .note { color: var(--faint); font-size: 11.5px; line-height: 1.4; margin-top: 2px; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.thing.open .note { display: block; color: var(--dim); }
+.bag.ready .thing .glyph { color: var(--accent); border-color: #5a4c33; }
+.thing.none { border-style: dashed; background: none; color: var(--faint); font-style: italic; }
+.thing.none .glyph { background: none; border-style: dashed; box-shadow: none; }
+.thing.none .name { font-weight: 400; }
 details.about { border-bottom: 1px solid var(--line-soft); }
 details.about summary { cursor: pointer; padding: 9px 0; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 600; }
 details.about summary::-webkit-details-marker { display: none; }
@@ -345,6 +368,21 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
   <symbol id="i-flag" viewBox="0 0 16 16"><path d="M3.500 14V2.500h8l-1.500 3 1.500 3h-8"/></symbol>
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3v10M4 9l4 4 4-4"/></symbol>
   <symbol id="i-coin" viewBox="0 0 20 20"><ellipse cx="10" cy="6" rx="6.500" ry="3"/><path d="M3.500 6v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3V6M3.500 10v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3v-4"/></symbol>
+  <symbol id="g-blade" viewBox="0 0 20 20"><path d="M17 3l-3.5.5-7 7 3 3 7-7zM4.5 8.5l7 7M7 13l-3.5 3.5"/></symbol>
+  <symbol id="g-bow" viewBox="0 0 20 20"><path d="M6 2.5c7 2.5 7 12.5 0 15M6 2.5v15M2.5 10H17M14.5 7.500 17 10l-2.5 2.5"/></symbol>
+  <symbol id="g-gun" viewBox="0 0 20 20"><path d="M2.5 6h15v3.5H10c0 1.500-1 2.300-2.5 2.300L7 16H3.500l1-6.500h-2zM14.5 6V4.500"/></symbol>
+  <symbol id="g-armor" viewBox="0 0 20 20"><path d="M10 2.5 16 5v5c0 3.700-2.600 6.200-6 7.500-3.400-1.300-6-3.800-6-7.500V5zM10 6v8"/></symbol>
+  <symbol id="g-cloth" viewBox="0 0 20 20"><path d="M7 3 2.5 5.500 4 9l2-.7V17h8V8.300l2 .7 1.500-3.500L13 3c-.5 1.400-1.700 2-3 2s-2.500-.6-3-2z"/></symbol>
+  <symbol id="g-pack" viewBox="0 0 20 20"><path d="M4.5 9c0-3 2.200-4.500 5.500-4.500s5.500 1.500 5.500 4.500v8h-11zM8 4.500c0-2.300 4-2.300 4 0M7.500 11.500h5v3h-5z"/></symbol>
+  <symbol id="g-flask" viewBox="0 0 20 20"><path d="M8 2.5h4M8.500 2.500V7L5 14.200c-.7 1.500.3 3.300 2 3.300h6c1.700 0 2.700-1.800 2-3.300L11.500 7V2.500M6.500 12.500h7"/></symbol>
+  <symbol id="g-food" viewBox="0 0 20 20"><path d="M2.5 9.500h15c0 4-3.200 7-7.500 7s-7.500-3-7.500-7zM7.500 3c-1 1.200 1 2.300 0 3.500M12 3c-1 1.200 1 2.300 0 3.500"/></symbol>
+  <symbol id="g-light" viewBox="0 0 20 20"><path d="M10 2.5c.5 3 4.500 4.700 4.500 9a4.500 4.500 0 0 1-9 0c0-1.800.8-3 1.800-4 .3 1.500.9 2.200 1.600 2.300C9.500 7.500 8.700 5 10 2.500z"/></symbol>
+  <symbol id="g-tool" viewBox="0 0 20 20"><path d="M4 3.500h8.500l3 2.800h-3v2.200H4zM8.300 8.500v9"/></symbol>
+  <symbol id="g-paper" viewBox="0 0 20 20"><path d="M5 2.500h7l3 3v12H5zM12 2.500v3h3M7.500 9.500h5M7.500 12h5M7.500 14.500h3"/></symbol>
+  <symbol id="g-key" viewBox="0 0 20 20"><circle cx="6.500" cy="13.500" r="3.500"/><path d="M9 11l7.500-7.500M13.500 6.500l2 2M15.500 4.500 17 6"/></symbol>
+  <symbol id="g-device" viewBox="0 0 20 20"><rect x="5.500" y="2.500" width="9" height="15" rx="1.500"/><path d="M9 15h2"/></symbol>
+  <symbol id="g-jewel" viewBox="0 0 20 20"><path d="M6 3.500h8L17.500 8 10 17 2.500 8zM2.500 8h15M6 3.500 8 8l2 9 2-9 2-4.500"/></symbol>
+  <symbol id="g-thing" viewBox="0 0 20 20"><path d="M10 2.500 16.500 6v8L10 17.500 3.500 14V6zM3.500 6 10 9.500 16.500 6M10 9.500v8"/></symbol>
 </svg>
 
 <div id="intro" title="Click or press a key to skip">
@@ -654,9 +692,95 @@ function entries(sec) {    // "- **Name:** text" lines
     .map(m => ({name: m[1].replace(/:$/, "").trim(), text: untag(m[2]).trim()}));
 }
 
-function pieces(text) {    // a gear line into its things
-  const cut = text.includes(";") ? text.split(";") : text.split(/,(?![^()]*\))/);
-  return cut.map(s => s.trim().replace(/^and\s+/i, "").replace(/\.$/, "")).filter(Boolean);
+function cutTop(text, at) {   // split where `at` matches outside parentheses
+  const re = new RegExp(at.source, at.flags.replace(/[gy]/g, "") + "y"), out = [];
+  let depth = 0, from = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "(") depth++;
+    else if (text[i] === ")") depth = Math.max(0, depth - 1);
+    else if (!depth) {
+      re.lastIndex = i;
+      const m = re.exec(text);
+      if (m && m[0]) { out.push(text.slice(from, i)); from = i + m[0].length; i = from - 1; }
+    }
+  }
+  out.push(text.slice(from));
+  return out.map(s => s.trim()).filter(Boolean);
+}
+
+const COUNTS = {one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, dozen: 12};
+const WHERE = /^(.+?)\s+((?:with|without|in|on|at|over|under|through|beside|inside|around|across|cut|drying|hung|hanging|slung|tucked|tied|strung|bloused|wrapped)\s.+)$/i;
+const TRAILS = /^(not|still|now|with|without|in|on|at|by|over|under|through|beside|inside|around|across|tied|strung|hung|hanging|slung|tucked|which|that)\b/i;
+const KINDS = [   // which picture a thing gets, by the last word in its name that has one
+  ["blade", "sword|knife|knive|dagger|axe|ax|blade|spear|sabre|saber|machete|hatchet|rapier|halberd|mace|club|staff|lance|cutlass"],
+  ["bow", "bow|longbow|shortbow|crossbow|arrow|quiver|bolt|sling|dart"],
+  ["gun", "gun|pistol|rifle|revolver|shotgun|carbine|blaster|musket|ammo|ammunition|cartridge|bullet|magazine|sidearm"],
+  ["armor", "armor|armour|jerkin|mail|hauberk|shield|helm|helmet|breastplate|cuirass|vest|gauntlet|greave|buckler"],
+  ["cloth", "shirt|gown|cloak|shift|breech|boot|shoe|sneaker|sandal|dress|coat|jacket|jean|trouser|pant|tunic|robe|hat|hood|glove|belt|scarf|sock|clothe|clothing|uniform|suit|skirt|blanket|bedroll|cape|apron|sash|hose"],
+  ["pack", "pack|backpack|bag|satchel|pouch|sack|case|chest|box|purse|wallet|basket|crate|trunk|saddlebag|bundle"],
+  ["flask", "waterskin|wineskin|bottle|flask|potion|vial|canteen|jug|cup|mug|tonic|salve|ointment"],
+  ["food", "ration|bread|food|rabbit|meat|cheese|fruit|apple|jerky|fish|egg|grain|meal|biscuit|provision"],
+  ["light", "torch|lantern|lamp|candle|flint|lighter|match|tinderbox|flashlight|tinder"],
+  ["tool", "rope|snare|whetstone|kit|tool|hammer|pick|pot|pan|shovel|needle|chain|wire|hook|trap|crowbar|lockpick|saw|plier|wrench|spade|chisel|bowstring"],
+  ["paper", "book|letter|map|scroll|note|paper|journal|document|deed|card|pass|ledger|parchment|photo|photograph|ticket|writ|chart"],
+  ["key", "key|keycard|keyring"],
+  ["device", "phone|radio|tablet|comm|scanner|terminal|laptop|computer|watch|camera|datapad|device|compass|drone|earpiece|headset|spyglass"],
+  ["jewel", "ring|amulet|gem|jewel|pin|necklace|brooch|pendant|locket|bracelet|charm|talisman|earring|crown|medal|token|seal|signet"],
+].map(([kind, words]) => [kind, new RegExp("^(?:" + words + ")(?:s|es)?$")]);
+
+function kindOf(name) {
+  for (const word of name.toLowerCase().split(/[^a-z]+/).filter(Boolean).reverse())
+    for (const [kind, re] of KINDS) if (re.test(word)) return kind;
+  return "thing";
+}
+
+function thing(text, after) {   // one thing a gear line names: what it is, how many, and what's said about it
+  const asides = [], notes = [];
+  let name = text.replace(/\s*\(((?:[^()]|\([^()]*\))*)\)/g, (_, a) => { asides.push(a.trim()); return ""; })
+    .replace(/\.$/, "").trim().replace(/^(and|plus)\s+/i, "").replace(/^(an?|the|some)\s+/i, "");
+  let m = name.match(WHERE), count = 0, chip = "";
+  if (m) { name = m[1]; notes.push(m[2]); }
+  if ((m = name.match(/^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|a dozen)\s+(.+)$/i))) {
+    const measure = m[2].match(/^(\w+)\s+of\s+(.+)$/);
+    if (measure) { chip = m[1] + " " + measure[1]; name = measure[2]; }
+    else { count = /^\d/.test(m[1]) ? +m[1] : COUNTS[m[1].toLowerCase().replace(/^a /, "")]; name = m[2]; }
+  }
+  for (const a of asides) {
+    const armor = a.match(/^(?:(?:light|medium|heavy)\s+)?armou?r,?\s*(\d)$/i);
+    if (armor && !chip) chip = "Armor " + armor[1]; else notes.push(a);
+  }
+  if (after) notes.push(after);
+  return {name: name.charAt(0).toUpperCase() + name.slice(1), count: count > 1 ? count : 0, chip, notes, kind: kindOf(name)};
+}
+
+function things(text) {    // a gear line into its things
+  const out = [], AND = /\s+and\s+(?=(?:an?|the|her|his|their|my|your|some)\s)/i;
+  for (const sentence of cutTop(text, /\.\s+(?=[A-Z])/)) {
+    const listed = cutTop(sentence, /;/), start = out.length;
+    if (listed.length > 1) {      // a semicolon list: each part is a thing, and what follows its comma is about it
+      for (const one of listed) {
+        const [head, ...rest] = cutTop(one, /,/), named = cutTop(head, AND);
+        named.forEach((n, i) => out.push(thing(n, i === named.length - 1 ? rest.join(", ").replace(/\.$/, "") : "")));
+      }
+      continue;
+    }
+    let lead = "";
+    for (const one of cutTop(sentence, /,/)) {
+      const bit = one.replace(/^and\s+/i, "").replace(/\.$/, "");
+      if (TRAILS.test(bit)) {     // not a thing: it's about the one before it (or the one after, when it comes first)
+        if (out.length > start) out[out.length - 1].notes.push(bit); else lead = lead ? lead + ", " + bit : bit;
+        continue;
+      }
+      cutTop(bit, AND).forEach((n, i) => { out.push(thing(n, i ? "" : lead)); lead = ""; });
+    }
+    if (lead) out.push(thing(lead, ""));
+  }
+  return out.filter(t => t.name);
+}
+
+function coins(text) {     // "14 crowns, 6 shillings" into counted coins; anything else stays a sentence
+  const out = cutTop(text.replace(/\.$/, ""), /,\s*(?:and\s+)?|\s+and\s+/i).map(c => c.match(/^(\d[\d,]*)\s+([^\d(][^(]{0,15})$/));
+  return out.length && out.length <= 5 && out.every(Boolean) ? out.map(m => ({name: m[2].trim(), value: m[1]})) : null;
 }
 
 const prose = sec => untag(sec).split(/\r?\n/).filter(l => !/^\(.*\)$/.test(l.trim())).join("\n").trim();
@@ -1205,13 +1329,27 @@ function sheetHtml(sheet) {
 }
 
 function inventoryHtml(sheet) {
-  let pack = "", purse = "";
-  for (const g of entries(part(sheet, "Gear"))) {
-    if (/^money$/i.test(g.name)) { if (!blank(g.text)) purse = `<div class="purse"><svg><use href="#i-coin"/></svg><span>${inline(g.text.replace(/\.$/, ""))}</span></div>`; continue; }
-    if (blank(g.text)) continue;
-    pack += `<div class="where caps">${esc(g.name)}</div>` + pieces(g.text).map(p => `<div class="item">${inline(p)}</div>`).join("");
+  const gear = entries(part(sheet, "Gear"));
+  if (!gear.length) return '<div class="empty">Nothing carried yet.</div>';
+  let purse = "", html = "";
+  for (const g of gear) {
+    if (/^money$/i.test(g.name)) {
+      const counted = blank(g.text) ? null : coins(g.text);
+      purse = counted ? `<div class="coins tiles">${counted.map(c => `<div class="tile"><b>${esc(c.value)}</b><span>${esc(c.name)}</span></div>`).join("")}</div>`
+        : `<div class="purse${blank(g.text) ? " none" : ""}"><svg><use href="#i-coin"/></svg><span>${blank(g.text) ? "No money" : inline(g.text.replace(/\.$/, ""))}</span></div>`;
+      continue;
+    }
+    const where = g.name.match(/^(.*?)\s*\((.*)\)$/), list = blank(g.text) ? [] : things(g.text);
+    const title = esc(where ? where[1] : g.name) + (where ? `<span class="sub">${esc(where[2])}</span>` : "") + (list.length ? `<span class="count">${list.length}</span>` : "");
+    const none = !g.text || /^\(/.test(g.text) ? "Empty" : g.text.replace(/\.$/, "");
+    const slots = list.length ? list.map(t => `<div class="thing${t.notes.length ? " more" : ""}">
+        <div class="glyph"><svg><use href="#g-${t.kind}"/></svg>${t.count ? `<b>${t.count}</b>` : ""}</div>
+        <div class="what"><div class="name">${inline(t.name)}</div>${t.chip ? `<span class="chip">${esc(t.chip)}</span>` : ""}
+        ${t.notes.length ? `<div class="note">${t.notes.map(inline).join(" · ")}</div>` : ""}</div></div>`).join("")
+      : `<div class="thing none"><div class="glyph"></div><div class="what"><div class="name">${inline(none.charAt(0).toUpperCase() + none.slice(1))}</div></div></div>`;
+    html += block(title, `<div class="bag${/^(ready|in hand)/i.test(g.name) ? " ready" : ""}">${slots}</div>`);
   }
-  return pack || purse ? `<div class="gear">${pack}</div>${purse}` : '<div class="empty">Nothing carried yet.</div>';
+  return purse + html;
 }
 
 function aboutSection(title, text) {
@@ -1259,6 +1397,7 @@ function renderPane() {
     if ($("myface")) $("myface").onclick = () => enlarge(faceOf(grab(sheet, "Name")) || faceOf(grab(sheet, "Also called")));
   } else if (game.tab === "inventory") {
     pane.innerHTML = inventoryHtml(game.texts.sheet || "");
+    for (const t of pane.querySelectorAll(".thing.more")) t.onclick = () => t.classList.toggle("open");
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     let html = stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "";
