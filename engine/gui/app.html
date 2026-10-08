@@ -35,17 +35,72 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 [hidden] { display: none !important; }
 .caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
 
+/* ---- intro: plays once when the window opens ---- */
+#intro { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden; cursor: pointer; user-select: none;
+  background: radial-gradient(760px 520px at 50% 44%, #2a2216 0%, transparent 70%), var(--bg); transition: opacity .7s ease; }
+#intro.leaving { opacity: 0; pointer-events: none; }
+#intro .stage { text-align: center; position: relative; transition: transform .7s ease; }
+#intro.leaving .stage { transform: scale(1.06); }
+#intro .die { width: 132px; height: 132px; color: var(--accent); stroke-width: .9; display: block; margin: 0 auto; overflow: visible;
+  animation: flare 1.8s ease-out 1.5s both; }
+#intro .die path { stroke-dasharray: 1 1.1; stroke-dashoffset: 1.05; animation: draw 1.3s cubic-bezier(.6, 0, .3, 1) forwards; }
+#intro .die path:nth-child(2) { animation-delay: .45s; }
+#intro .die path:nth-child(3) { animation-delay: .8s; }
+#intro .die .face { fill: var(--accent); stroke: none; opacity: 0; animation: face 1.6s ease-out 1.5s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes face { 0% { opacity: 0; } 25% { opacity: .5; } 100% { opacity: .1; } }
+@keyframes flare { 0% { filter: drop-shadow(0 0 0 #c9a25b00); transform: scale(1); }
+  25% { filter: drop-shadow(0 0 26px #e6c27ecc); transform: scale(1.07); }
+  100% { filter: drop-shadow(0 0 10px #c9a25b55); transform: scale(1); } }
+#intro .ring { position: absolute; left: 50%; top: 66px; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+  border: 1px solid var(--accent); opacity: 0; animation: ring 1.5s ease-out 1.55s; }
+@keyframes ring { 0% { opacity: .7; transform: scale(.7); } 100% { opacity: 0; transform: scale(3.4); } }
+#intro h1 { font: 400 46px var(--serif); letter-spacing: 14px; text-transform: uppercase; margin: 26px 0 0; padding-left: 14px; white-space: nowrap; }
+#intro h1 span { display: inline-block; opacity: 0; animation: letter .9s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(1.75s + var(--i) * 70ms); }
+#intro h1 .gap { width: .45em; }
+@keyframes letter { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+#intro .line { height: 1px; width: 260px; margin: 16px auto 14px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform: scaleX(0); animation: line 1s ease-out 2.5s forwards; }
+@keyframes line { to { transform: scaleX(1); } }
+#intro p { color: var(--dim); margin: 0; font: italic 16px var(--serif); opacity: 0; animation: fadein 1s ease 2.9s forwards; }
+#intro .ember { position: absolute; bottom: -8px; border-radius: 50%; background: #e6c27e; box-shadow: 0 0 8px 1px #c9a25b99; opacity: 0;
+  animation: ember linear infinite; }
+@keyframes ember { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: var(--o); } 100% { opacity: 0; transform: translate(var(--x), -105vh); } }
+@media (prefers-reduced-motion: reduce) { #intro { display: none; } }
+
 /* ---- home: the title screen ---- */
-#home { overflow: auto; padding: 56px 24px 64px;
-  background: radial-gradient(900px 520px at 50% -80px, #2a2216 0%, transparent 70%), var(--bg); }
-.home-inner { max-width: 720px; margin: 0 auto; }
-.masthead { text-align: center; margin-bottom: 44px; }
-.masthead svg { width: 68px; height: 68px; color: var(--accent); stroke-width: 1.1; }
-.masthead h1 { font: 400 34px var(--serif); letter-spacing: 9px; text-transform: uppercase; margin: 10px 0 6px; padding-left: 9px; }
+#home { position: relative; overflow: hidden; background: var(--bg); }
+#homebg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#home::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, #12100ce6 0%, #12100c88 34%, transparent 62%), radial-gradient(120% 90% at 50% 50%, transparent 55%, #000a 100%); }
+.home-menu { position: relative; z-index: 1; height: 100%; width: min(520px, 92vw); display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 24px 56px clamp(36px, 8vw, 130px); }
+.masthead { margin-bottom: 40px; }
+.masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin-left: -4px; }
+.masthead h1 { font: 400 46px/1.1 var(--serif); letter-spacing: 10px; text-transform: uppercase; margin: 14px 0 10px; white-space: nowrap;
+  text-shadow: 0 0 34px #c9a25b55; }
 .masthead p { color: var(--dim); margin: 0; font: italic 15px var(--serif); }
-.rule { display: flex; align-items: center; gap: 14px; color: var(--dim); margin: 36px 0 14px; }
-.rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--line)); }
-.rule::after { background: linear-gradient(270deg, transparent, var(--line)); }
+.masthead::after { content: ""; display: block; width: 220px; height: 1px; margin-top: 22px; background: linear-gradient(90deg, var(--accent), transparent); }
+#mainmenu { display: grid; gap: 4px; justify-items: start; }
+#mainmenu button { position: relative; background: none; border: none; border-radius: 0; text-align: left; width: 100%; padding: 11px 18px;
+  font: 400 23px var(--serif); letter-spacing: 4px; text-transform: uppercase; color: var(--ink);
+  transition: color .2s, padding-left .25s cubic-bezier(.2, .8, .2, 1), background .25s;
+  animation: menuin .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--n) * 80ms + .1s); }
+#mainmenu button::before { content: ""; position: absolute; left: 0; top: 50%; width: 7px; height: 7px; margin-top: -4px; background: var(--accent);
+  transform: rotate(45deg) scale(0); transition: transform .25s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 0 10px var(--accent); }
+#mainmenu button:hover, #mainmenu button:focus-visible { color: var(--accent); padding-left: 32px; outline: none;
+  background: linear-gradient(90deg, var(--accent-soft), transparent 80%); }
+#mainmenu button:hover::before, #mainmenu button:focus-visible::before { transform: rotate(45deg) scale(1); left: 10px; }
+#mainmenu button.last { color: var(--dim); margin-top: 14px; }
+#mainmenu button.last:hover { color: var(--accent); }
+@keyframes menuin { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+#list { max-height: 56vh; overflow: auto; padding-right: 4px; }
+.dialog .form { background: none; border: none; border-radius: 0; padding: 0; }
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+.setting .seg button { padding: 6px 18px; font-size: 13px; }
+#farewell { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; text-align: center; background: var(--bg);
+  color: var(--dim); font: italic 18px/1.7 var(--serif); animation: fadein .5s; }
+#farewell svg { width: 48px; height: 48px; color: var(--accent); stroke-width: 1.1; display: block; margin: 0 auto 14px; }
 .slot { display: flex; align-items: center; gap: 16px; background: linear-gradient(var(--panel), #17140f); border: 1px solid var(--line);
   border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; transition: border-color .2s, transform .2s; }
 .slot:hover { border-color: #5a4c33; transform: translateY(-1px); }
@@ -242,7 +297,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
 .journal li { list-style: none; margin: 0 0 9px -20px; padding-left: 12px; border-left: 2px solid var(--line); }
 .journal li strong:first-child { color: var(--ink); font-family: var(--serif); font-size: 15px; }
 .journal li { color: var(--dim); }
-.choice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .choice button { text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--well); }
 .choice button b { display: block; font: 600 15px var(--serif); }
 .choice button span { color: var(--faint); font-size: 12px; }
@@ -260,6 +315,16 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
   max-height: 180px; overflow: auto; }
 .dialog textarea { min-height: 84px; resize: vertical; }
 .dialog .row { display: flex; justify-content: flex-end; gap: 8px; }
+.dialog.wide { width: min(680px, 94vw); }
+.savewhere { color: var(--accent); font-size: 13px; }
+#savelist { max-height: 56vh; overflow: auto; padding-right: 4px; }
+#savelist .slot { padding: 12px 14px; margin-bottom: 8px; }
+#savelist .slot .name { font-size: 17px; }
+#savelist .slot.auto .name { color: var(--dim); font-style: italic; font-weight: 400; }
+#savelist .session { text-align: center; flex: none; width: 58px; }
+#savelist .session b { display: block; font: 400 24px/1 var(--serif); color: var(--accent); }
+#savelist .session span { font-size: 9px; color: var(--faint); }
+#toast.good { border-color: var(--good); }
 #toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); background: var(--raised); border: 1px solid var(--warn);
   color: var(--ink); padding: 10px 18px; border-radius: 8px; z-index: 50; max-width: 80vw; box-shadow: 0 10px 30px #000a; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -281,17 +346,63 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
   <symbol id="i-coin" viewBox="0 0 20 20"><ellipse cx="10" cy="6" rx="6.500" ry="3"/><path d="M3.500 6v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3V6M3.500 10v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3v-4"/></symbol>
 </svg>
 
+<div id="intro" title="Click or press a key to skip">
+  <div class="stage">
+    <div class="ring"></div>
+    <svg class="die" viewBox="0 0 48 48">
+      <path pathLength="1" d="M24 3 42.2 13.5v21L24 45 5.8 34.500v-21Z"/>
+      <path pathLength="1" d="M24 12.500 35 31.500H13Z"/>
+      <path pathLength="1" d="M24 3v9.500M5.800 13.500 24 12.500l18.200 1M13 31.500 5.800 13.500M35 31.500l7.200-18M13 31.500 5.800 34.500M35 31.500l7.200 3M13 31.500 24 45l11-13.500"/>
+      <polygon class="face" points="24,12.5 35,31.5 13,31.5"/>
+    </svg>
+    <h1><span style="--i:0">G</span><span style="--i:1">M</span><span class="gap"></span><span style="--i:2">E</span><span style="--i:3">n</span><span style="--i:4">g</span><span style="--i:5">i</span><span style="--i:6">n</span><span style="--i:7">e</span></h1>
+    <div class="line"></div>
+    <p>Solo narratives, run by a game master behind the page.</p>
+  </div>
+</div>
+
 <div id="home" class="view">
-  <div class="home-inner">
+  <canvas id="homebg"></canvas>
+  <div class="home-menu">
     <div class="masthead">
       <svg><use href="#d20"/></svg>
       <h1>GM Engine</h1>
       <p>Solo narratives, run by a game master behind the page.</p>
     </div>
     <div id="noclaude" class="warnbox" hidden>Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.</div>
-    <div class="rule caps">Continue</div>
+    <nav id="mainmenu">
+      <button id="menunarratives" style="--n:0">Narratives</button>
+      <button id="menunew" style="--n:1">New Narrative</button>
+      <button id="menusettings" style="--n:2">Settings</button>
+      <button id="menuexit" class="last" style="--n:3">Exit Game</button>
+    </nav>
+  </div>
+</div>
+
+<div class="shade" id="narrativesdialog" hidden>
+  <div class="dialog wide">
+    <div class="head">Narratives</div>
     <div id="list"></div>
-    <div class="rule caps">A new narrative</div>
+    <div class="row" style="justify-content:space-between">
+      <button id="addexisting" class="quiet" title="A narrative folder made earlier, or on another computer">Add an existing folder…</button>
+      <button data-close>Close</button>
+    </div>
+  </div>
+</div>
+<div class="shade" id="settingsdialog" hidden>
+  <div class="dialog">
+    <div class="head">Settings</div>
+    <div class="setting">
+      <span>Choose Menu BGM</span>
+      <div class="seg" id="bgmchoice"><button data-bgm="1">Track 1</button><button data-bgm="2">Track 2</button><button data-bgm="0">Off</button></div>
+    </div>
+    <div class="row"><button data-close>Close</button></div>
+  </div>
+</div>
+<div id="farewell" hidden><div><svg><use href="#d20"/></svg>The game has closed.<br>You can close this tab.</div></div>
+<div class="shade" id="newdialog" hidden>
+  <div class="dialog wide">
+    <div class="head">New Narrative</div>
     <div class="form">
       <label for="newgenre">Genre and tone</label>
       <input id="newgenre" placeholder="Grim low fantasy. Space opera with some humor. A slow-burn western.">
@@ -300,18 +411,16 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
         <button data-world="original" class="on"><b>Original</b><span>The GM invents it</span></button>
         <button data-world="dnd"><b>D&amp;D</b><span>A world in that tradition</span></button>
         <button data-world="other"><b>Another setting</b><span>Star Wars, Mass Effect, a book…</span></button>
+        <button data-world="isekai"><b>Isekai</b><span>From our world into another</span></button>
       </div>
       <input id="newsetting" hidden>
       <label for="newname">A title, if you have one</label>
       <input id="newname" placeholder="Leave blank and the GM will name it">
       <label for="newparent">The folder it's created in</label>
       <div class="row"><input id="newparent"><button id="browse">Browse…</button></div>
-      <div class="row" style="justify-content:space-between">
-        <button id="addexisting" class="quiet" title="A narrative folder made earlier, or on another computer">Add an existing folder…</button>
-        <button id="create" class="primary">Create the world</button>
-      </div>
       <div class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</div>
     </div>
+    <div class="row"><button data-close>Cancel</button><button id="create" class="primary">Create the world</button></div>
   </div>
 </div>
 
@@ -323,6 +432,8 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
     </div>
     <div class="title" id="title"></div>
     <div class="right">
+      <button id="savebtn" hidden title="Save the game as it stands">Save</button>
+      <button id="loadbtn" hidden title="Go back to a save">Load</button>
       <button id="newsession" hidden>New session</button>
       <button id="endsession" hidden>End session</button>
       <button id="smaller" class="quiet" title="Smaller text">A−</button>
@@ -383,6 +494,24 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
     <div class="row"><button id="flagcancel">Cancel</button><button id="flagsend" class="primary">Send to the GM</button></div>
   </div>
 </div>
+<div class="shade" id="savedialog" hidden>
+  <div class="dialog">
+    <div class="head">Save game</div>
+    <div class="savewhere" id="savewhere"></div>
+    <input id="savename" placeholder="A name for this save (optional)" maxlength="80">
+    <div class="row"><button id="savecancel">Cancel</button><button id="savego" class="primary">Save</button></div>
+  </div>
+</div>
+<div class="shade" id="loaddialog" hidden>
+  <div class="dialog wide">
+    <div class="head">Load game</div>
+    <div id="savelist"></div>
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <span style="color:var(--faint);font-size:12px;font-style:italic">The game as it stands is saved before a load, so nothing is lost.</span>
+      <button id="loadclose">Close</button>
+    </div>
+  </div>
+</div>
 <div id="lightbox" hidden><img alt=""><div></div></div>
 <div id="toast" hidden></div>
 
@@ -392,7 +521,8 @@ const START = __GM_START__;
 const $ = id => document.getElementById(id);
 const WORKING = ["The GM considers", "Dice roll behind the screen", "The world answers", "The page is being written"];
 const ABOUT = ["Who they are", "What they want", "Voice", "Emotional rules", "Background and know-how", "People", "Changed by"];
-let prefs = {size: 18, wide: false};
+let prefs = {size: 18, wide: false, bgm: 2};
+const bgmChoice = () => [0, 1, 2].includes(prefs.bgm) ? prefs.bgm : 2;   // 0 is off
 
 async function api(route, data) {
   const res = await fetch("/api/" + route, {method: "POST", headers: {"Content-Type": "application/json", "X-GM-Token": TOKEN},
@@ -403,7 +533,8 @@ async function api(route, data) {
 }
 
 let toastTimer;
-function toast(text) {
+function toast(text, good) {
+  $("toast").classList.toggle("good", !!good);
   $("toast").textContent = text;
   $("toast").hidden = false;
   clearTimeout(toastTimer);
@@ -414,6 +545,7 @@ const guard = fn => async (...args) => { try { await fn(...args); } catch (e) { 
 function applyPrefs(save) {
   document.documentElement.style.setProperty("--story-size", prefs.size + "px");
   $("body").classList.toggle("wide", !!prefs.wide);
+  for (const b of $("bgmchoice").children) b.classList.toggle("on", +b.dataset.bgm === bgmChoice());
   if (save) api("prefs", {prefs}).catch(() => {});
 }
 
@@ -538,12 +670,14 @@ async function showHome() {
   document.body.classList.remove("gmmode");
   $("game").hidden = true;
   $("home").hidden = false;
+  startBackdrop();
   const h = await api("home");
   if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
+  if (!game) playMenuMusic();
   $("noclaude").hidden = !!h.claude;
   if (!$("newparent").value) $("newparent").value = h.default_parent;
   const list = $("list");
-  list.innerHTML = h.narratives.length ? "" : '<div class="empty">Nothing yet. Start one below.</div>';
+  list.innerHTML = h.narratives.length ? "" : '<div class="empty">Nothing yet. Start one with New Narrative.</div>';
   for (const n of h.narratives) {
     const slot = document.createElement("div");
     slot.className = "slot";
@@ -567,6 +701,160 @@ async function showHome() {
   }
 }
 
+const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog"];
+const closeHomeDialogs = () => HOME_DIALOGS.forEach(id => $(id).hidden = true);
+for (const id of HOME_DIALOGS) $(id).addEventListener("click", e => { if (e.target.closest("[data-close]")) $(id).hidden = true; });
+$("menunarratives").onclick = () => $("narrativesdialog").hidden = false;
+$("menunew").onclick = () => { $("newdialog").hidden = false; $("newgenre").focus(); };
+$("menusettings").onclick = () => $("settingsdialog").hidden = false;
+$("menuexit").onclick = guard(async () => {
+  await api("exit");
+  $("farewell").hidden = false;   // only seen in a browser tab, which a page can't always close itself
+  window.close();
+});
+
+// The main menu's music: one track at a time, looping, only while the home screen is up.
+// A track is decoded whole and looped sample to sample, because an <audio> element leaves a gap each time around.
+const audio = new AudioContext(), musicGain = audio.createGain(), MUSIC_VOLUME = .6;
+musicGain.gain.value = 0;
+musicGain.connect(audio.destination);
+const tracks = {};
+let musicSource = null, musicTrack = 0, musicWanted = false;
+
+function loadTrack(n) {
+  return tracks[n] = tracks[n] || fetch(`/bgm?n=${n}&t=${TOKEN}`).then(r => {
+    if (!r.ok) throw new Error("The menu music couldn't be loaded.");
+    return r.arrayBuffer();
+  }).then(bytes => audio.decodeAudioData(bytes));
+}
+
+function loopPoints(buf) {   // an MP3 comes padded with a moment of silence at each end; loop inside it
+  const most = Math.floor(buf.sampleRate * .15), n = buf.length;
+  const quiet = i => { for (let c = 0; c < buf.numberOfChannels; c++) if (Math.abs(buf.getChannelData(c)[i]) > .002) return false; return true; };
+  let a = 0, b = n - 1;
+  while (a < most && quiet(a)) a++;
+  while (n - 1 - b < most && quiet(b)) b--;
+  return [a / buf.sampleRate, (b + 1) / buf.sampleRate];
+}
+
+function fadeMusic(to, secs, from) {
+  const g = musicGain.gain, now = audio.currentTime;
+  g.cancelScheduledValues(now);
+  g.setValueAtTime(from === undefined ? g.value : from, now);
+  g.linearRampToValueAtTime(to, now + secs);
+}
+
+async function playMenuMusic() {
+  musicWanted = true;
+  audio.resume().catch(() => {});   // a browser tab may hold it until the first click or key
+  const track = bgmChoice();
+  if (track !== musicTrack) {
+    if (musicSource) musicSource.stop();
+    musicSource = null;
+    musicTrack = track;
+    if (!track) return;
+    const buf = await loadTrack(track).catch(e => { toast(e.message); return null; });
+    if (!buf || musicTrack !== track || musicSource) return;   // another choice was made while this one loaded
+    musicSource = audio.createBufferSource();
+    musicSource.buffer = buf;
+    musicSource.loop = true;
+    [musicSource.loopStart, musicSource.loopEnd] = loopPoints(buf);
+    musicSource.connect(musicGain);
+    musicSource.start(0, musicSource.loopStart);
+    if (musicWanted) fadeMusic(MUSIC_VOLUME, .8, 0);
+  } else if (track) fadeMusic(MUSIC_VOLUME, .8);
+}
+
+function stopMenuMusic() {
+  musicWanted = false;
+  fadeMusic(0, .6);
+  setTimeout(() => { if (!musicWanted) audio.suspend(); }, 700);
+}
+for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => { if (musicWanted && audio.state === "suspended") audio.resume(); });
+
+$("bgmchoice").onclick = e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  prefs.bgm = +b.dataset.bgm;
+  applyPrefs(true);
+  if (musicWanted) playMenuMusic();
+};
+
+// The home screen's backdrop: a d20 turning slowly in the dark, and embers rising past it.
+const PHI = (1 + Math.sqrt(5)) / 2;
+const DIE = [];
+for (const a of [-1, 1]) for (const b of [-PHI, PHI]) DIE.push([0, a, b], [a, b, 0], [b, 0, a]);
+const EDGES = [];
+DIE.forEach((p, i) => DIE.forEach((q, j) => { if (i < j && Math.abs(Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) - 2) < .01) EDGES.push([i, j]); }));
+const EMBERS = Array.from({length: 46}, () => ({x: Math.random(), y: Math.random(), size: .8 + Math.random() * 1.8, speed: .012 + Math.random() * .03,
+                                                sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));
+const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let backdropOn = false;
+
+function drawBackdrop(ms) {
+  const cv = $("homebg"), ratio = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  if (cv.width !== Math.round(w * ratio) || cv.height !== Math.round(h * ratio)) { cv.width = Math.round(w * ratio); cv.height = Math.round(h * ratio); }
+  const c = cv.getContext("2d"), t = ms / 1000;
+  c.setTransform(ratio, 0, 0, ratio, 0, 0);
+  c.clearRect(0, 0, w, h);
+  const cx = w * .68, cy = h * .5, r = Math.min(w, h) * .13;
+
+  const pulse = .5 + .5 * Math.sin(t * .5);
+  const glow = c.createRadialGradient(cx, cy, 0, cx, cy, r * 4.6);
+  glow.addColorStop(0, `rgba(201,162,91,${.13 + .06 * pulse})`);
+  glow.addColorStop(.45, "rgba(120,90,45,.07)");
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  c.fillStyle = glow;
+  c.fillRect(0, 0, w, h);
+
+  const ay = t * .16, ax = .42 + .16 * Math.sin(t * .11);
+  const pts = DIE.map(([x, y, z]) => {
+    const x1 = x * Math.cos(ay) + z * Math.sin(ay), z1 = z * Math.cos(ay) - x * Math.sin(ay);
+    const y2 = y * Math.cos(ax) - z1 * Math.sin(ax), z2 = z1 * Math.cos(ax) + y * Math.sin(ax);
+    const k = 5 / (5 - z2);
+    return [cx + x1 * k * r, cy + y2 * k * r + Math.sin(t * .4) * 6, z2];
+  });
+  c.lineCap = "round";
+  for (const [i, j] of EDGES) {
+    const near = ((pts[i][2] + pts[j][2]) / 2 + 1.9) / 3.8;   // 0 at the back, 1 at the front
+    c.strokeStyle = `rgba(201,162,91,${.08 + .5 * near})`;
+    c.lineWidth = .6 + near;
+    c.beginPath();
+    c.moveTo(pts[i][0], pts[i][1]);
+    c.lineTo(pts[j][0], pts[j][1]);
+    c.stroke();
+  }
+  for (const p of pts) {
+    c.fillStyle = `rgba(230,194,126,${.15 + .6 * (p[2] + 1.9) / 3.8})`;
+    c.beginPath();
+    c.arc(p[0], p[1], 1.6, 0, 6.29);
+    c.fill();
+  }
+
+  for (const e of EMBERS) {
+    const y = h - (((1 - e.y) + t * e.speed) % 1) * (h + 20) + 10, x = e.x * w + Math.sin(t * .5 + e.sway) * 22;
+    const fade = Math.min(1, (h - y) / 120, y / 200) * e.glow * (.7 + .3 * Math.sin(t * 2 + e.sway));
+    if (fade <= 0) continue;
+    c.fillStyle = `rgba(201,162,91,${fade * .18})`;
+    c.beginPath(); c.arc(x, y, e.size * 3.2, 0, 6.29); c.fill();
+    c.fillStyle = `rgba(236,204,140,${fade})`;
+    c.beginPath(); c.arc(x, y, e.size, 0, 6.29); c.fill();
+  }
+}
+
+function startBackdrop() {
+  if (STILL) return drawBackdrop(0);
+  if (backdropOn) return;
+  backdropOn = true;
+  const frame = ms => {
+    if ($("home").hidden) { backdropOn = false; return; }
+    drawBackdrop(ms);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+addEventListener("resize", () => { if (STILL && !$("home").hidden) drawBackdrop(0); });
+
 $("browse").onclick = guard(async () => {
   const r = await api("pick-folder", {start: $("newparent").value});
   if (r.path) $("newparent").value = r.path;
@@ -578,7 +866,9 @@ $("newworld").onclick = e => {
   newWorld = b.dataset.world;
   for (const o of $("newworld").children) o.classList.toggle("on", o === b);
   $("newsetting").hidden = newWorld === "original";
-  $("newsetting").placeholder = newWorld === "dnd" ? "A published setting, if you have one in mind (optional)" : "Which setting? And an era, if it matters";
+  $("newsetting").placeholder = newWorld === "dnd" ? "A published setting, if you have one in mind (optional)"
+    : newWorld === "isekai" ? "How they cross over, or which world, if you have one in mind (optional)"
+    : "Which setting? And an era, if it matters";
   if (newWorld !== "original") $("newsetting").focus();
 };
 $("create").onclick = guard(async () => {
@@ -587,6 +877,7 @@ $("create").onclick = guard(async () => {
   if (newWorld === "other" && !setting) return toast("Say which setting to build it on.");
   const world = newWorld === "original" ? "Original: invent it."
     : newWorld === "dnd" ? "Built on D&D." + (setting ? " Setting: " + setting : " No particular published setting.")
+    : newWorld === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
     : "Built on an existing setting: " + setting;
   const r = await api("create", {name: title, parent: $("newparent").value});
   $("newgenre").value = $("newsetting").value = $("newname").value = "";
@@ -609,6 +900,8 @@ function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
           open: new Set(), vitals: null, sent: ""};
+  closeHomeDialogs();
+  stopMenuMusic();
   $("home").hidden = true;
   $("game").hidden = false;
   $("story").innerHTML = "";
@@ -651,6 +944,8 @@ function apply(s) {
   $("newsession").hidden = !play || !!s.open_session || !s.sessions;
   $("endsession").hidden = !play || !s.open_session;
   $("newsession").disabled = $("endsession").disabled = s.busy;
+  $("savebtn").hidden = $("loadbtn").hidden = !play;
+  $("savebtn").disabled = $("loadbtn").disabled = s.busy;
   $("smaller").hidden = $("larger").hidden = !play;
   $("sessions").hidden = s.sessions < 2;
   if ($("sessions").options.length !== s.sessions) {
@@ -1047,6 +1342,61 @@ $("moreitems").onclick = guard(async e => {
   if (act === "folder") await api("open-folder", {path: game.path});
 });
 
+// ---- saving and loading ---------------------------------------------------------
+
+const who = s => s.character ? `${esc(s.character)}${s.level ? " · Level " + esc(s.level) : ""}` : "No character yet";
+
+$("savebtn").onclick = () => {
+  const sheet = game.texts.sheet || "", s = game.state;
+  $("savewhere").innerHTML = who({character: blank(grab(sheet, "Name")) ? "" : grab(sheet, "Name"), level: grab(sheet, "Level")})
+    + (s.sessions ? ` · Session ${s.sessions}` : "");
+  $("savename").value = "";
+  $("savedialog").hidden = false;
+  $("savename").focus();
+};
+$("savecancel").onclick = () => $("savedialog").hidden = true;
+const saveNow = guard(async () => {
+  $("savedialog").hidden = true;
+  await api("save", {path: game.path, label: $("savename").value});
+  toast("Game saved.", true);
+});
+$("savego").onclick = saveNow;
+$("savename").addEventListener("keydown", e => { if (e.key === "Enter") saveNow(); });
+
+$("loadbtn").onclick = guard(async () => {
+  const mine = game, r = await api("saves", {path: game.path});
+  if (game !== mine) return;
+  const list = $("savelist");
+  list.innerHTML = r.saves.length ? "" : '<div class="empty">No saves yet. Press Save to make one. The game also saves itself at the end of every session.</div>';
+  for (const s of r.saves) {
+    const slot = document.createElement("div"), d = new Date(s.when);
+    slot.className = "slot" + (s.auto ? " auto" : "");
+    const title = s.label || (s.auto ? "Autosave" : "Saved game");
+    const state = !s.session ? "Before the first session" : s.open ? "In progress" : "Between sessions";
+    slot.innerHTML = `<div class="session"><b>${s.session || "–"}</b><span class="caps">Session</span></div>
+      <div class="what"><div class="name">${esc(title)}</div><div class="lead">${who(s)}</div>
+      <div class="meta">${state} · ${d.toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"})}, ${d.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"})}${s.auto && s.label ? " · autosave" : ""}</div></div>`;
+    const go = document.createElement("button");
+    go.className = "primary";
+    go.textContent = "Load";
+    go.onclick = guard(async () => {
+      if (go.textContent === "Load") { go.textContent = "Load this save?"; setTimeout(() => go.textContent = "Load", 4000); return; }
+      $("loaddialog").hidden = true;
+      await api("load", {path: mine.path, id: s.id});
+      if (game !== mine) return;
+      Object.assign(mine, {have: {}, shownLog: "", shownParas: 0, vitals: null, pinned: null, art: null, sent: ""});
+      toast("Save loaded.", true);
+      clearTimeout(timer);
+      tick();
+    });
+    slot.append(go);
+    list.append(slot);
+  }
+  $("loaddialog").hidden = false;
+});
+$("loadclose").onclick = () => $("loaddialog").hidden = true;
+for (const id of ["savedialog", "loaddialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
+
 // ---- flagging a passage ---------------------------------------------------------
 
 let flagged = "";
@@ -1073,7 +1423,7 @@ $("flag").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");
@@ -1081,6 +1431,31 @@ $("flagsend").onclick = guard(async () => {
   await send(`{About this passage in the session log:\n\n"${flagged}"\n\n${note}}`, true);
   window.getSelection().removeAllRanges();
 });
+
+// ---- the intro ------------------------------------------------------------------
+
+(() => {
+  const el = $("intro");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return el.remove();
+  for (let n = 0; n < 26; n++) {
+    const e = document.createElement("i"), size = 1.5 + Math.random() * 2.5;
+    e.className = "ember";
+    e.style.cssText = `left:${Math.random() * 100}%;width:${size}px;height:${size}px;--x:${Math.round(Math.random() * 160 - 80)}px;`
+      + `--o:${(.25 + Math.random() * .55).toFixed(2)};animation-duration:${(5 + Math.random() * 6).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s`;
+    el.append(e);
+  }
+  let gone = false;
+  const leave = () => {
+    if (gone) return;
+    gone = true;
+    removeEventListener("keydown", leave);
+    el.classList.add("leaving");
+    setTimeout(() => el.remove(), 750);
+  };
+  el.addEventListener("pointerdown", leave);
+  addEventListener("keydown", leave);
+  setTimeout(leave, 4600);
+})();
 
 setInterval(() => api("ping").catch(() => {}), 5000);
 guard(async () => {

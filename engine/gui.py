@@ -31,6 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import art
+import saves
 import scaffold
 from narrative import CONFIG, ENGINE, Narrative, field
 
@@ -38,7 +39,9 @@ PAGE = Path(__file__).resolve().parent / "gui" / "app.html"
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
-PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden
+PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music
+MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
+MENU_TRACKS = ("1", "2")
 ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
 MAX_BODY = 2_000_000
@@ -206,6 +209,10 @@ class Game:
                 with self.lock:
                     self.data["conversation"] = None
                     self.save()
+                try:
+                    saves.save(self.narrative, "End of session", auto=True)
+                except ValueError:
+                    pass  # no Git here: the session still ended
         except Exception:
             log_error()
             self.error = f"The window hit an error talking to Claude Code. Details are in {ERRORS}."
@@ -282,6 +289,23 @@ class Game:
             out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
                           "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error")} for i in index["items"]]}
         return out
+
+    def save_game(self, label):
+        if self.busy():
+            raise ValueError("Wait for the GM to finish, then save.")
+        return saves.save(self.narrative, label)
+
+    def load_game(self, save_id):
+        if self.busy():
+            raise ValueError("Wait for the GM to finish, then load.")
+        chosen = saves.load(self.narrative, save_id)
+        with self.lock:
+            self.data["conversation"] = None  # the GM's memory of what came after has to go too
+            self.save()
+        where = f"Session {chosen['session']}" if chosen.get("session") else "before the first session"
+        self.say("note", f"Loaded a save from {where}" + (f": {chosen['label']}" if chosen.get("label") else "") +
+                 ". The game as it stood was saved first, so you can load it back.")
+        return chosen
 
     def picture(self, file):
         """The bytes of one finished picture, and nothing from outside Art/."""
@@ -385,11 +409,47 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def send_audio(self, data):
+        """An <audio> seeks and loops by asking for byte ranges, so answer them."""
+        start, end = 0, len(data) - 1
+        m = re.fullmatch(r"bytes=(\d*)-(\d*)", self.headers.get("Range") or "")
+        if m and (m[1] or m[2]):
+            if m[1]:
+                start, end = int(m[1]), min(int(m[2]), end) if m[2] else end
+            else:
+                start = max(0, len(data) - int(m[2]))
+            if start > end:
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{len(data)}")
+                return self.end_headers()
+            self.send_response(206)
+            self.send_header("Content-Range", f"bytes {start}-{end}/{len(data)}")
+        else:
+            self.send_response(200)
+        self.send_header("Content-Type", "audio/mpeg")
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Content-Length", str(end - start + 1))
+        self.send_header("Cache-Control", "private, max-age=3600")
+        self.end_headers()
+        try:
+            self.wfile.write(data[start:end + 1])
+        except OSError:  # the player stopped listening partway
+            pass
+
     def do_GET(self):
         route, _, query = self.path.partition("?")
+        asked = urllib.parse.parse_qs(query)
+        one = lambda key: (asked.get(key) or [""])[0]
+        if route == "/bgm":  # the main menu's music; like a picture, the token rides in the address
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            if one("n") not in MENU_TRACKS:
+                return self.send(404, {"error": "No such track."})
+            try:
+                return self.send_audio((MENU_BGM / f"Menu BGM {one('n')}.mp3").read_bytes())
+            except OSError:
+                return self.send(404, {"error": "No such track."})
         if route == "/art":  # an <img> can't send a header, so the token rides in the address
-            asked = urllib.parse.parse_qs(query)
-            one = lambda key: (asked.get(key) or [""])[0]
             if one("t") != TOKEN:
                 return self.send(403, {"error": "Not allowed."})
             try:
@@ -433,8 +493,13 @@ class Handler(BaseHTTPRequestHandler):
             return {"ok": True}
         if route == "/api/home":
             return home()
+        if route == "/api/exit":
+            threading.Timer(0.3, close_window, [self.server]).start()   # after the answer has gone back
+            return {"ok": True}
         if route == "/api/prefs":
-            write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide"))})
+            bgm = str(data["prefs"].get("bgm", 2))
+            write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
+                               "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2})   # 0 is off
             return {"ok": True}
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}
@@ -451,6 +516,12 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/send":
             game(path).send(data.get("text") or "")
             return {"ok": True}
+        if route == "/api/save":
+            return {"save": game(path).save_game(data.get("label") or "")}
+        if route == "/api/saves":
+            return {"saves": saves.listing(game(path).narrative)}
+        if route == "/api/load":
+            return {"save": game(path).load_game(data.get("id") or "")}
         if route == "/api/stop":
             game(path).stop()
             return {"ok": True}
@@ -469,6 +540,13 @@ class Handler(BaseHTTPRequestHandler):
         raise ValueError("Not found")
 
 
+def close_window(server):
+    """Exit Game: close the desktop window, or stop waiting on the browser tab."""
+    server.quit = True
+    for window in list(getattr(sys.modules.get("webview"), "windows", [])):
+        window.destroy()
+
+
 def finish():
     """Let a beat in progress finish writing before the program exits."""
     for g in list(GAMES.values()):
@@ -480,6 +558,7 @@ def serve(start):
     server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     server.start = remember(start) if start and (Path(start) / CONFIG).exists() else None
     server.seen = None
+    server.quit = False
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server, f"http://127.0.0.1:{server.server_address[1]}/"
 
@@ -494,13 +573,15 @@ def run(start=None, browser=False):
             except ImportError:
                 print("The desktop window needs pywebview (pip install pywebview). Opening in the browser instead.")
         if webview:
+            # Lets the menu's music start without waiting for a click (the window is WebView2 on Windows).
+            os.environ.setdefault("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--autoplay-policy=no-user-gesture-required")
             webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600))
             webview.start()
         else:
             print(f"GM Engine: {url}\nRunning on this computer only. Close the tab, or press Ctrl+C here, to stop.")
             webbrowser.open(url)
             try:
-                while server.seen is None or time.time() - server.seen < IDLE_QUIT:
+                while not server.quit and (server.seen is None or time.time() - server.seen < IDLE_QUIT):
                     time.sleep(1)
             except KeyboardInterrupt:
                 pass

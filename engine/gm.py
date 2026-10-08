@@ -23,6 +23,10 @@ Run from anywhere inside a narrative (a folder with narrative.json), or pass --n
     gm art portrait|place|scene|item "<name>" ["<what it looks like>"] [--was "<old name>"] [--redo]
     gm art list | run                          what's been asked for; paint what's waiting
 
+    gm save ["<a name for it>"]                save the game as it stands (kept on this computer only)
+    gm saves                                   every save, newest first
+    gm load <number>                           put the narrative back the way a save had it
+
 Every roll made while a session is open is written to that session's GM log.
 "gm" is shorthand for: python "<engine folder>/engine/gm.py"
 """
@@ -127,6 +131,9 @@ def main(argv):
     if cmd == "name":
         who = take(args, "for")
         return session.name(narrative, args[0] if args else None, who)
+    if cmd in ("save", "saves", "load"):
+        import saves
+        return saves.run(narrative, cmd, args)
     if cmd == "art":
         import art
         was, redo = take(args, "was"), take(args, "redo", False)

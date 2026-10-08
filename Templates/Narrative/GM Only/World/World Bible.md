@@ -8,9 +8,15 @@ Every fact here is one of two kinds, and the difference matters every time someo
 
 ## The premise
 
-What the player asked for, in their words, tagged **[Setup]**: the genre and tone, and the kind of world (original, or built on a setting they named). Everything below has to be a world they'd recognize as what they asked for.
+What the player asked for, in their words, tagged **[Setup]**: the genre and tone, and the kind of world (original, built on a setting they named, or an isekai). Everything below has to be a world they'd recognize as what they asked for.
 
 Unknown.
+
+## If it's an isekai
+
+The crossing: how a person from our world gets here, in their own body or born into a new one, whether it has happened before and what people here make of such arrivals, whether there's a way back, and what it gives them, if anything. Who or what is behind it and why, and who here knows. Everything else in this document describes the other world.
+
+Not applicable.
 
 ## If it's built on an existing setting
 

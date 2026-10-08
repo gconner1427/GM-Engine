@@ -73,5 +73,6 @@ Answer from what the character knows and can perceive: the Journal, the sheet, w
 | `{recap}` | A few lines on where things stand, from what the character knows. |
 | `{undo}` | `gm undo`, restore the state the beat changed, and say so. |
 | `{redo that portrait...}`, `{paint that}`, `{no more pictures}` | Procedures/Art.md, "When the player asks." |
+| `{save}` or `{save as ...}` | `gm save "<name>"` and say it's saved. To load, point them to the window's Load button or `gm load`: never load a save yourself. |
 | `{echo off}` / `{echo on}` | Set `chat_echo` in `narrative.json`. Off means beats go only to the session log. |
 | a change to the sheet, the Style Guide, or the world | Make it. Their word is canon. If it contradicts the page, ask which gives. |

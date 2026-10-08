@@ -53,6 +53,8 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
       gui.json               the play window's own file: its conversation with you. Leave it alone.
 ```
 
+**Saved games.** The user can save the narrative and load an earlier save (the folder is a local Git repository for this; ignore `.git` and `.gitignore`). After a load, every file is as it was at that save and the conversation starts fresh, so nothing special is needed: read the state as you would at the start of any conversation, and trust the files over anything you think you remember.
+
 **The play window.** The user may be playing through the engine's desktop window instead of VS Code. It runs you headless in the narrative's folder and tells you so at the start of the conversation. Everything here still holds; the differences are in that note (the user sees only your final message, chat echo is off, nothing can prompt for permission).
 
 **Player and hidden.** The Character Sheet, Journal, Style Guide, Sessions, and Art are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`, the world itself included: the user learns the world only through the page and the Journal.
@@ -163,6 +165,7 @@ gm name ["<pool>"] [--for "<who>"]
 gm add cast|place|group "<Name>"
 gm art portrait|place|scene|item "<name>" ["<what it looks like>"] [--was "<old name>"] [--redo]
 gm art list | run                         what's been asked for; paint what's waiting (the play window does this itself)
+gm save ["<name>"] | saves | load <number>   saved games (for the user: never load one yourself)
 gm new-narrative "<Name>" [--at <parent folder>]
 gm play ["<narrative folder>"] [--browser]   the play window (for the user, never run by the GM)
 ```

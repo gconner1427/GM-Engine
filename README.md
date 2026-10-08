@@ -1,6 +1,6 @@
 # GM Engine
 
-A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, and whether the world is original or built on D&D or another setting) and make one character. The GM builds the world and keeps it to itself, the way a GM prepares a campaign, so you discover it by playing. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as third person limited prose. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
+A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, and whether the world is original, built on D&D or another setting, or an isekai) and make one character. The GM builds the world and keeps it to itself, the way a GM prepares a campaign, so you discover it by playing. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as third person limited prose. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
 
 It grew out of the Living World Engine and keeps its idea of a persistent world. The difference is who's in charge. There, the engine proposes and the author decides everything. Here, you control one person and the GM decides the rest.
 
@@ -53,6 +53,19 @@ The GM has pictures painted for the major moments: your character's portrait at 
 
 The files are in the narrative's `Art/` folder.
 
+### Saving and loading
+
+A narrative has saved games, kept in its own folder on your computer. Nothing is uploaded.
+
+- **Save** (top bar) saves the game exactly as it stands. Give the save a name if you like.
+- **Load** lists your saves like save slots: the session each was made in, your character's name and level, and when. Pick one and the whole narrative goes back to that point: the story, your sheet, the Journal, the pictures, and everything the GM tracks behind the scenes.
+- The game also saves itself at the end of every session, and again just before any load, so loading never loses anything. You can always load your way back.
+- After a load, the GM starts from its notes as they were at that save and remembers nothing that came after.
+
+Writing rules you've taught the engine are not rolled back by a load: they belong to the engine, not to one narrative.
+
+Without the window: `gm save "a name"`, `gm saves`, and `gm load <number>` from the narrative's folder.
+
 ### Playing
 
 Use the play window, or open the narrative's folder in VS Code and start a Claude Code conversation there. Either way:
@@ -82,7 +95,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 
 ## Starting a narrative
 
-1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, or another setting you name), add a title if you have one, and press **Create the world**.
+1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), add a title if you have one, and press **Create the world**.
 2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). It then tells you what your character would know and asks who they are.
 3. Make your character with the GM, and say where they are when it opens (or leave that to the GM).
 4. Write your character's first action.

@@ -17,6 +17,7 @@ These are all you ask about the world. Ask only for the ones the first message d
    - **Original:** you invent it.
    - **Built on D&D:** a world in that tradition. Ask which published setting, if they have one in mind; otherwise it's a world of your own with that game's peoples, magic, and monsters.
    - **Built on another setting:** Star Wars, Mass Effect, a book series, anything. Ask only which one. If the setting covers very different eras, ask which era, or whether to leave it to you.
+   - **Isekai:** the character is a person from our world who ends up in another one. The other world is yours to invent, unless the player names one. Don't ask how they cross over; if the player said (summoned, reborn, pulled into a game), use it, and otherwise it's yours to decide.
 3. **A title,** if they have one. If not, you'll give it one.
 
 In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
@@ -61,6 +62,13 @@ Now prepare it, in `GM Only/`, without a word to the player about what's in it. 
 - The setting's own game rules don't come with it. Its classes, powers, and gear are mapped onto the Core Rules in the Rules Kit.
 - A player who knows the setting knows its common knowledge. Their character still knows only what a person living there would.
 
+**If it's an isekai:**
+- Build the other world exactly as you would any world. It was there before the character and has its own troubles; it isn't waiting for them.
+- Decide the crossing and write it in the World Bible's section for it: how a person from our world gets here, whether they arrive in their own body or are born into a new one, whether it has happened before and what people here make of such arrivals, whether there's a way back, and what the crossing gives them, if anything (the language, a power, nothing at all). Whatever it gives is a law like any other, with a cost and limits, and goes in the Rules Kit.
+- If someone or something brought them, that's a group or a person in the docs with a reason of their own, and usually one of the pressures. If nothing did, it's a secret of the world. Either way the player learns the truth of it only by playing.
+- The genre's familiar pieces are welcome here as anywhere (the summoning circle, the guild hall, the gift nobody else has). If the world shows people their abilities as numbers or status screens, that's a law of the world and the character can see it; the engine's own rolls and numbers still never reach the page.
+- Use the tone the player asked for. Isekai can be light, grim, or anything between, and the word alone doesn't say which.
+
 **The title.** If the player didn't give one, choose it now (nothing that gives away what's hidden) and set `"name"` in `narrative.json`. The folder keeps the name it was made with.
 
 ## 4. What their character would know
@@ -71,6 +79,8 @@ Then give the player the same thing in your reply, followed by what they need to
 - the peoples and walks of life someone here could come from;
 - the kinds of things a starting character could be good at (the Rules Kit's skills, in words);
 - any powers a person could plausibly have at the start, as the world understands them.
+
+**In an isekai** the character was raised in our world and knows nothing of the other one, so neither does the player. The Journal's "The world as they know it" says only that they come from our world (where and when, once the player has said), and it grows as they learn. Tell the player nothing about the other world: no peoples, no powers, no names. If they're to be born into a new body there, say only that much, since it changes who they'll describe. What they need to make a character is just this: an ordinary person of our world, and the kinds of things such a person could be good at (the Rules Kit's skills that someone from our world could have, in words).
 
 Ask who their character is.
 
@@ -83,6 +93,8 @@ The character is the player's, in every part.
 3. **The numbers** (Core Rules §15). Propose attributes, skills, and two talents that fit the person described, and let the player change anything. Then fill in the defenses, HP, and Strain.
 4. **Gear and money.** What this person would own and carry, priced by the Economy.
 
+**In an isekai,** step 2 places them in our world: their home, work, and people are there, and get no cast docs unless they could matter again. The numbers are those of the person they were. Anything the crossing gives them isn't on the sheet yet: it's added when it happens on the page, as the character comes to understand it. Their gear is what they have on them when they cross, if they cross in their own body, and nothing if they don't. Our world's money buys nothing there.
+
 5. **Their portrait.** Once the player has settled how the character looks, ask for it: `gm art portrait "<name>" "<their looks, as a painter would need them>"` (Procedures/Art.md).
 
 Then go back to the Journal: add what this particular person would know beyond the ordinary (their trade, their people, their home ground), and fill in People and Places for who and what they'd know going in.
@@ -91,10 +103,12 @@ Then go back to the Journal: add what this particular person would know beyond t
 
 Ask the player where their character is and what they're doing when the narrative opens, and offer to choose for them. If they leave it to you, pick an ordinary moment in the life they described, somewhere the world's motion could reach, without putting them in the middle of anything they didn't choose.
 
+**In an isekai,** ask instead where their character is in our world and what they're doing on the last ordinary day, and whether they want the narrative to open there, just before the crossing, or at the moment they arrive. Where they arrive is yours, and you don't say.
+
 Then write `GM Only/State/World State.md` for that moment: the clock, the character, the scene, anyone in motion, what's known and not known, the pressures near the page. Fill in the Journal's "Where things stand."
 
 Set `"set_up": true` in `narrative.json`. Tell the player the world is ready, and that the next thing they write starts the narrative.
 
 ## 7. The opening
 
-Follow Procedures/Play.md. The first beat sets the character down in that place and moment, doing what was said they're doing, and stops.
+Follow Procedures/Play.md. The first beat sets the character down in that place and moment, doing what was said they're doing, and stops. In an isekai that opens in our world, the crossing comes when the character's own actions have carried the day far enough for it, and it's the world's doing, not theirs: it needs no action from the player.
