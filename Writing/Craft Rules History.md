@@ -20,6 +20,24 @@ One entry per rule added or changed because of a correction in play (Procedures/
 **Why:** the pattern behind it, in a line
 ```
 
+### Never "a beat" for a pause (new), 2026-10-08, The Traveler from the Other Shore, Session 3
+**Flagged:** "A beat should never be used to show a pause"
+**Was:** "'...the way you did in the crypt?' A beat, and then lower still, and quicker."
+**Became:** "'...the way you did in the crypt?' She swallowed. The next part came lower still, and quicker."
+**Why:** "a beat" is a stage direction that names a pause instead of showing what fills it. No other use in the session.
+
+### Repeats in a short span: a reaction formula is spent after one use, across sessions (changed, sharpened), 2026-10-08, The Traveler from the Other Shore, Session 3
+**Flagged:** "This exact line was used already Azalais blinked. Whatever she'd braced for, it hadn't been that one"
+**Was:** "Azalais blinked. Whatever she'd braced for, it hadn't been that one, and some of the stiffness went out of her shoulders."
+**Became:** "Azalais's shoulders came down an inch. Her hands stopped gripping each other in her lap."
+**Why:** the same stock surprise beat had been used on the same person in Session 2. The rule only looked back "a few pages," so a repeat from the session before got through. It was also a guess at what was in her head.
+
+### The POV only knows what they've learned: a look or a sniff doesn't itemize (changed, sharpened), 2026-10-08, The Traveler from the Other Shore, Session 3
+**Flagged:** "When she sees the food after opening the lid she can't know what everything is inside like every ingredient that is not possible"
+**Was:** "a brown bowl of something thin and steaming with barley swollen fat at the bottom of it. She bent over it and sniffed. Onion. Some kind of meat. Something green."
+**Became:** "a brown bowl of something thin and steaming, with pale grains swollen fat at the bottom and soft bits floating in it that could have been anything. She bent over it and sniffed."
+**Why:** the GM knows the recipe and handed it to the POV through one glance and one sniff. The existing rule covered facts from the docs but not a contents list read off a thing by the senses. Fixed alongside it: "the meat was a kind she couldn't name" became "chewy shreds in it she decided not to think too hard about."
+
 ### Physical plausibility: things happen in the order a body has to do them (changed, sharpened), 2026-10-07, The Traveler from the Other Shore, Session 2
 **Flagged:** "when she takes her jeans off she would have to take off her shoes first before she could do her pants"
 **Was:** "The jeans were the worst of it. Wet denim didn't come off, it had to be peeled... and she had to stand on one cuff to get the other foot free. Sneakers, socks, everything else."

@@ -84,6 +84,8 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
     - The reverse too: the POV doesn't go blank on what their background would have taught them. If the sheet doesn't say, write around it or ask after the beat; don't write them vague to get around it, and don't invent it.
     - Their "never" and "nobody ever" claims have to hold up against the lines around them and the sessions behind them.
     - **Know-how gets a source.** When the POV does something cold that takes knowing (a knot, a hand sign, a way of reading tracks), one clause on where they got it makes it theirs. The source comes from the sheet's "Background and know-how." If it isn't there, leave the clause out and ask the user in braces after the beat.
+    - **A look or a sniff doesn't itemize.** The POV can't list what's in a dish, a drink, a bundle, or a mix from seeing or smelling it. You know the recipe; they get what the senses give: color, steam, shapes, whether it smells good. They name only what's unmistakable to them, or what their background would let them pick out.
+        - ✗ "a brown bowl of something thin and steaming with barley swollen fat at the bottom of it. She bent over it and sniffed. Onion. Some kind of meat. Something green." → ✓ "a brown bowl of something thin and steaming, with pale grains swollen fat at the bottom and soft bits floating in it that could have been anything. She bent over it and sniffed."
     - **The living world doesn't leak.** Pressures, the World Log, the World Bible, and everything in a cast doc above "On the page" are GM knowledge. The POV knows only what the page showed them learning. Nothing in the prose points at what's hidden: no ominous aside, no detail lingered on because you know it matters, no "little did he know."
 
 - **No asking what they already know:** No question the POV would know the answer to from their history; a question that only hands the reader a fact is the author talking.
@@ -120,6 +122,9 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 - **Don't narrate the impulse:** Cut "on its own," "before he could stop it," "he didn't decide to," and the like. The action already shows it was involuntary. This matters twice here: an involuntary action written as a choice the POV didn't make is still the GM playing the character. Reflexes only (GM Rules).
 
 - **Don't narrate hearing their own words:** Cut "he heard how it sounded after it was out." The next line already shows it.
+
+- **Never "a beat" for a pause:** "A beat." "After a beat." "A beat too long." It's a script direction, and it tells the reader a pause happened instead of showing one. Fill the pause with what happens in it (a swallow, the fire, a hand moving), or let the next line come without it.
+    - ✗ "'...the way you did in the crypt?' A beat, and then lower still, and quicker." → ✓ "'...the way you did in the crypt?' She swallowed. The next part came lower still, and quicker."
 
 - **"Says it to the [object]":** Don't use "said it to the floor / wall / window" or "shook his head at the road" as the default way to show someone not meeting eyes. When the line before already says where they're looking, cut the tag.
 
@@ -266,6 +271,8 @@ Keep a running map of the scene (World State, "The scene"). At any sentence you 
 
 - **Repeats in a short span:** A gesture or phrase that works once turns into a default when it keeps coming back across beats, and beats are short, so this happens fast. Three or more uses in a few pages is the problem. Before using a gesture, a tell, or a turn of phrase with any flavor to it, check the last stretch of the log for it.
     - **A joke lands once.**
+    - **A reaction formula is spent after one use, across sessions.** A ready-made way of showing surprise or relief ("She blinked. Whatever she'd braced for, it wasn't that") reads as a stamp the second time, however far back the first was, and worse on the same person. Before writing how someone takes a line, search every session log for the phrase's key words. Then write what this person's body does this time.
+        - ✗ "Azalais blinked. Whatever she'd braced for, it hadn't been that one, and some of the stiffness went out of her shoulders." (Session 2 already had "Azalais blinked at her. Of everything she might have been braced for, it clearly hadn't been that.") → ✓ "Azalais's shoulders came down an inch. Her hands stopped gripping each other in her lap."
 
 - **Every paragraph of interiority moves:** Two nearby paragraphs of thinking can't circle the same ground. A second one has to turn: a new question, a concession, the other side of it.
 

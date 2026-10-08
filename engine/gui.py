@@ -505,7 +505,8 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/prefs":
             bgm = str(data["prefs"].get("bgm", 2))
             write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
-                               "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2})   # 0 is off
+                               "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
+                               "volume": min(100, max(0, int(data["prefs"].get("volume", 60))))})
             return {"ok": True}
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}
