@@ -316,6 +316,13 @@ details.about[open] summary::before { transform: rotate(90deg); }
 details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px; }
 
 /* ---- journal and world ---- */
+.subtabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 4px; margin: -16px -18px 14px; padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--line-soft); }
+.subtabs button { flex: 1 1 auto; padding: 5px 4px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--faint); font: 600 11.5px var(--sans); white-space: nowrap; }
+.subtabs button:hover { color: var(--dim); }
+.subtabs button.on { color: var(--accent); background: var(--accent-soft); border-color: #5a4c33; }
+.subtabs button span { margin-left: 5px; color: var(--faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+.subtabs + .block { margin-top: 0; }
+.hero + .subtabs { margin-top: 14px; border-top: 1px solid var(--line-soft); }
 .stands { background: linear-gradient(160deg, #2a241a, var(--raised) 60%); border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; font: italic 15px/1.6 var(--serif); }
 .stands .caps { display: block; color: var(--accent); font-style: normal; margin-bottom: 6px; font-size: 10px; }
 .journal li { list-style: none; margin: 0 0 9px -20px; padding-left: 12px; border-left: 2px solid var(--line); }
@@ -1038,7 +1045,7 @@ let timer;
 function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
-          open: new Set(), vitals: null, sent: ""};
+          open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null};
   closeHomeDialogs();
   stopMenuMusic();
   $("home").hidden = true;
@@ -1164,19 +1171,23 @@ $("lightbox").onclick = () => $("lightbox").hidden = true;
 function galleryHtml() {
   const art = game.art || {items: []};
   const order = [...art.items].sort((a, b) => (b.painted || "9").localeCompare(a.painted || "9"));
-  let html = art.trouble ? `<div class="warnbox">${esc(art.trouble)}</div>` : "";
-  html += '<div class="gallery">';
-  order.forEach((item, n) => {
-    const wide = item.kind === "place" || item.kind === "scene" ? " wide" : "";
-    if (item.status === "ready" && item.file)
-      html += `<div class="shot${wide}" data-shot="${n}"><img src="${src(item)}" alt="" loading="lazy"><div class="cap">${esc(item.name)}</div></div>`;
-    else if (item.status === "waiting")
-      html += `<div class="shot pending${wide}"><div><svg><use href="#d20"/></svg><b>${esc(item.name)}</b>being painted…</div></div>`;
-    else
-      html += `<div class="shot pending${wide}" title="${esc(item.error || "")}"><div><b>${esc(item.name)}</b>couldn't be painted</div></div>`;
-  });
-  html += "</div>";
-  return order.length ? [html, order] : ['<div class="empty">No pictures yet. Portraits and places appear here as your character meets people and goes places.</div>', []];
+  const trouble = art.trouble ? `<div class="warnbox">${esc(art.trouble)}</div>` : "", pages = [];
+  for (const [kind, tab] of [["portrait", "People"], ["place", "Places"], ["scene", "Scenes"], ["item", "Items"]]) {   // one inner tab per kind of picture
+    let html = "", count = 0;
+    order.forEach((item, n) => {
+      if (item.kind !== kind) return;
+      const wide = kind === "place" || kind === "scene" ? " wide" : "";
+      count++;
+      if (item.status === "ready" && item.file)
+        html += `<div class="shot${wide}" data-shot="${n}"><img src="${src(item)}" alt="" loading="lazy"><div class="cap">${esc(item.name)}</div></div>`;
+      else if (item.status === "waiting")
+        html += `<div class="shot pending${wide}"><div><svg><use href="#d20"/></svg><b>${esc(item.name)}</b>being painted…</div></div>`;
+      else
+        html += `<div class="shot pending${wide}" title="${esc(item.error || "")}"><div><b>${esc(item.name)}</b>couldn't be painted</div></div>`;
+    });
+    if (count) pages.push({tab, count, html: `${trouble}<div class="gallery">${html}</div>`});
+  }
+  return pages.length ? [subtabs(pages, "gtab"), order] : [trouble + '<div class="empty">No pictures yet. Portraits and places appear here as your character meets people and goes places.</div>', []];
 }
 
 function renderStory() {
@@ -1301,8 +1312,8 @@ function sheetHtml(sheet) {
     const n = parseInt(p.value, 10), tone = !signed || !n ? "" : n > 0 ? "up" : "down";
     return `<div class="tile"><b class="${tone}">${esc(signed && n > 0 ? "+" + n : p.value)}</b><span>${esc(p.name)}</span></div>`;
   }).join("") + "</div>" : "";
-  html += block("Attributes", tiles(pairs(part(sheet, "Attributes")), "six", true));
-  html += block("Defenses", tiles(pairs(part(sheet, "Defenses")), "four", false));
+  const pages = [], page = (tab, inner, count) => inner && pages.push({tab, html: inner, count});
+  page("Stats", block("Attributes", tiles(pairs(part(sheet, "Attributes")), "six", true)) + block("Defenses", tiles(pairs(part(sheet, "Defenses")), "four", false)));
 
   const skills = entries(part(sheet, "Skills")).map(e => {
     let m = e.name.match(/^(.*?)\s+(\d)$/), name = e.name, rank = 0, note = e.text;
@@ -1311,12 +1322,12 @@ function sheetHtml(sheet) {
     const pips = [1, 2, 3, 4, 5].map(n => `<i class="${n <= rank ? "on" : ""}"></i>`).join("");
     return `<div class="skill"><span class="name">${esc(name)}</span><span class="pips" title="Rank ${rank} of 5">${pips}</span>
       ${note ? `<span class="note">${inline(note)}</span>` : ""}</div>`;
-  }).join("");
-  html += block("Skills", skills);
+  });
+  page("Skills", block("Skills", skills.join("")), skills.length);
 
   const talents = entries(part(sheet, "Talents and powers")).map(e =>
-    `<div class="talent"><div class="name">${esc(e.name)}</div><div class="text">${inline(e.text)}</div></div>`).join("");
-  html += block("Talents and powers", talents);
+    `<div class="talent"><div class="name">${esc(e.name)}</div><div class="text">${inline(e.text)}</div></div>`);
+  page("Talents", block("Talents and powers", talents.join("")), talents.length);
 
   const looks = grab(sheet, "Looks"), age = grab(sheet, "Age");
   let about = "";
@@ -1325,7 +1336,13 @@ function sheetHtml(sheet) {
     const text = prose(part(sheet, title));
     if (text && !/^\(none yet\)$/i.test(text)) about += aboutSection(title, text);
   }
-  return html + block("Who they are", about);
+  page("About", block("Who they are", about));
+  return html + subtabs(pages, "stab");
+}
+
+function subtabs(pages, key) {   // a row of inner tabs and the page the player last picked; game[key] remembers which
+  const page = pages.find(p => p.tab === game[key]) || pages[0];
+  return page ? `<div class="subtabs">${pages.map(p => `<button data-sub="${key}" data-to="${p.tab}"${p === page ? ' class="on"' : ""}>${p.tab}${p.count ? `<span>${p.count}</span>` : ""}</button>`).join("")}</div>${page.html}` : "";
 }
 
 function inventoryHtml(sheet) {
@@ -1400,12 +1417,14 @@ function renderPane() {
     for (const t of pane.querySelectorAll(".thing.more")) t.onclick = () => t.classList.toggle("open");
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
-    let html = stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "";
-    for (const title of ["The world as they know it", "People", "Places", "Unfinished business", "Sessions"]) {
+    const pages = [];   // one inner tab per section that has something in it
+    if (stands) pages.push({tab: "Now", html: `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>`});
+    for (const [tab, title] of [["World", "The world as they know it"], ["People", "People"], ["Places", "Places"], ["Unfinished", "Unfinished business"], ["Sessions", "Sessions"]]) {
       const text = prose(part(journal, title)).split(/\r?\n/).filter(l => !/^one (line|short paragraph)|^promises made|^what someone with/i.test(l.trim())).join("\n").trim();
-      if (text && !/^\(none yet\)$/i.test(text)) html += `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`;
+      if (text && !/^\(none yet\)$/i.test(text))
+        pages.push({tab, count: (text.match(/^[-*] /gm) || []).length, html: `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`});
     }
-    pane.innerHTML = html || '<div class="empty">Nothing in the journal yet. The GM fills it in at the end of each session.</div>';
+    pane.innerHTML = subtabs(pages, "jtab") || '<div class="empty">Nothing in the journal yet. The GM fills it in at the end of each session.</div>';
     for (const li of pane.querySelectorAll(".journal li")) {   // a face beside anyone who has a portrait
       const lead = li.querySelector("strong:first-child"), face = lead && faceOf(lead.textContent.replace(/:$/, ""));
       if (!face) continue;
@@ -1426,6 +1445,12 @@ function renderPane() {
     return;
   }
   pane.scrollTop = keep;
+  for (const b of pane.querySelectorAll("[data-sub]")) b.onclick = () => {
+    game[b.dataset.sub] = b.dataset.to;
+    renderPane();
+    const above = $("pane").querySelector(".subtabs").previousElementSibling;   // the new page starts at its top, under the row
+    pane.scrollTop = Math.min(pane.scrollTop, above ? above.getBoundingClientRect().bottom - pane.getBoundingClientRect().top + pane.scrollTop : 0);
+  };
 }
 
 function setTab(tab) {
