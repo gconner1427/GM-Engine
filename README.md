@@ -41,6 +41,18 @@ The window hands what you type to Claude Code, the same GM that runs in VS Code,
 
 "Start a fresh GM conversation" in the ⋯ menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
 
+### Pictures
+
+The GM has pictures painted for the major moments: your character's portrait at the end of setup, the first sight of a town, a castle, or another place that matters, a new person with a part to play, and an object or a mystery found. Ordinary rooms, roads, and passers-by get nothing. They're painted by Codex's image generation, using the Codex program its VS Code extension installed and your Codex sign-in, so Codex needs to be installed and signed in.
+
+- Each picture takes a minute or two and arrives while you keep playing. A new face slides in at the corner of the narrative when it's ready.
+- Your portrait sits on your character sheet, the current place runs across the top of the narrative, faces appear beside names in the Journal, and everything is in the **Gallery** tab. Click any picture to see it large.
+- A picture only ever shows what your character has seen, under the name they know it by.
+- Pictures are painted while the play window is open. Playing in VS Code instead, run `gm art run` to paint what's waiting.
+- In braces: `{redo her portrait, she should look older}`, `{paint that}`, `{no more pictures}`. The art style for a narrative is a line in its Style Guide.
+
+The files are in the narrative's `Art/` folder.
+
 ### Playing
 
 Use the play window, or open the narrative's folder in VS Code and start a Claude Code conversation there. Either way:
@@ -71,11 +83,30 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 ## Starting a narrative
 
 1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, or another setting you name), add a title if you have one, and press **Create the world**.
-2. The GM builds the world. This is the longest wait in the engine, several minutes. It then tells you what your character would know and asks who they are.
+2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). It then tells you what your character would know and asks who they are.
 3. Make your character with the GM, and say where they are when it opens (or leave that to the GM).
 4. Write your character's first action.
 
 The GM asks you nothing else about the world, and never shows you what it built.
+
+### Installing a new narrative
+
+Think of creating a narrative as installing a new game. Pressing **Create the world** starts the install, and it takes **10 to 20 minutes**.
+
+A game install copies a world that someone already made onto your machine. This one makes the world while you wait. During the install the GM is building everything the game will run on:
+
+- the world itself: its lands, peoples, history, laws, and secrets;
+- the starting region, with its towns, roads, and the places worth finding;
+- the factions, and the people who run them and what each one wants;
+- the trouble already in motion before you arrive;
+- the rules for this world: its skills, gear, powers, and dangers;
+- the pools of names every character will be drawn from.
+
+The window shows the GM at work with a running timer. There's no progress bar, since the GM is writing, not copying, so the time varies with the world you asked for: a small original setting is quicker, a sprawling one or one built on a big existing setting takes longer. Leave the window open and come back to it.
+
+When the install finishes, the GM tells you what your character would know and asks who they are. Making your character takes a few more short exchanges, and their portrait is painted while you finish.
+
+Like any install, it happens once. After that the narrative opens straight from the title screen, and a beat of play takes about a minute.
 
 Without the window: double-click `New Narrative.cmd`, open the new folder in VS Code, and tell Claude "Set up this narrative."
 
@@ -90,7 +121,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | `Writing/House Style.md` | The prose defaults |
 | `Writing/GM Philosophy.md` | Character first, no plot, an honest world |
 | `Writing/Banned Names.md` | Names that are never used |
-| `Procedures/` | New Narrative, Play, World Turn, Corrections |
+| `Procedures/` | New Narrative, Play, World Turn, Corrections, Art |
 | `Templates/` | What a new narrative, cast member, place, or group starts as |
 | `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`) |
 | `Play.cmd`, `gm.cmd`, `New Narrative.cmd` | Windows launchers |
@@ -99,6 +130,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 
 - Python 3.10 or later. The scripts use only the standard library.
 - The Claude Code extension in VS Code, signed in.
+- For pictures: the Codex extension in VS Code, signed in.
 - For the play window in its own desktop window: `pip install pywebview`. Without it, the window opens as a browser tab.
 
 The play window keeps its list of narratives in `.gm-engine/narratives.json` in your home folder. An optional `.gm-engine/config.json` can set `"claude"` (the path to Claude Code, if it isn't found) and `"model"`.

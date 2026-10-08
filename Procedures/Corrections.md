@@ -4,6 +4,8 @@ Anything the user writes in `{braces}` is the user talking to you, not their cha
 
 A message can hold both: an action, and a note in braces. Handle the braces first.
 
+Braces work whether or not a session is open, and never open one (only an action or `{new session}` does). Between sessions, anything that would go in a session's GM log (`gm note`) waits for the next session or goes in the doc it belongs to.
+
 ## Corrections to the writing
 
 The user will flag anything that reads wrong to them: a line of dialogue that sounds stiff or written, prose that's too flowery, a name that sounds generated, a tic. This is how the engine gets better. Every correction does two things: it fixes the passage, and it leaves a rule behind so the same thing isn't written again.
@@ -70,5 +72,6 @@ Answer from what the character knows and can perceive: the Journal, the sheet, w
 | `{journal}` | Bring `Journal.md` up to date now and say it's done. |
 | `{recap}` | A few lines on where things stand, from what the character knows. |
 | `{undo}` | `gm undo`, restore the state the beat changed, and say so. |
+| `{redo that portrait...}`, `{paint that}`, `{no more pictures}` | Procedures/Art.md, "When the player asks." |
 | `{echo off}` / `{echo on}` | Set `chat_echo` in `narrative.json`. Off means beats go only to the session log. |
 | a change to the sheet, the Style Guide, or the world | Make it. Their word is canon. If it contradicts the page, ask which gives. |

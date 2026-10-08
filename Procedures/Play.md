@@ -11,7 +11,9 @@ A **session** is one sitting of play. It has one narrative log (`Sessions/Sessio
 3. Read the end of the latest session log (the last thousand words or so) for where things stopped and how the prose has been sounding, and the end of its GM log.
 4. **Check that the state is current.** If the GM log has beats after World State's "State as of" line, the last conversation ended before the bookkeeping did: bring World State and the docs up to date from those beats' notes before anything else.
 5. Load the docs for whoever and wherever the scene is (ENGINE.md, "What to load, and when").
-6. If no session is open, don't open one yet: wait for the user's first action or `{new session}`. Then answer in one line in braces with where things stand as the character knows it: `{Session 4. Kendrick is at the mill, an hour before dark.}` No recap in prose.
+6. **If no session is open, what the user sends decides.**
+   - **An action** (anything outside braces) starts the next session by itself: open it and play the action as a beat, straight away. The user never has to ask for a session first, and you don't answer with a line about where things stand in place of the beat.
+   - **A message in braces** never opens a session. Answer it (Procedures/Corrections.md) and leave things as they are: the user can talk with you between sessions for as long as they like. The one exception is `{new session}` itself, which opens one; answer that in one line in braces with where things stand as the character knows it: `{Session 4. Kendrick is at the mill, an hour before dark.}` No recap in prose.
 7. **If the narrative's `CLAUDE.md` notes say the GM opens every session in the world,** don't wait: open the session and commit an opening beat that sets the character down where things stand, through their senses, with the world in motion, up to the first thing they'd answer. It never plays the character and never recaps.
 
 ## The beat
@@ -20,7 +22,7 @@ Every message from the user that isn't in braces is their character acting.
 
 **1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop.
 
-**2. Open a session if none is open:** `gm session start`.
+**2. Open a session if none is open:** `gm session start`. An action is all it takes to begin one.
 
 **3. Load what the beat needs** that isn't already in the conversation: the cast doc for anyone it touches (read Changed by and Knows), the place, the item, Economy if money moves, Map & Travel if anyone travels, the Rules Kit entry for a power.
 
@@ -47,6 +49,8 @@ Every message from the user that isn't in braces is their character acting.
 ```
 
 Then `gm beat`. It appends the prose to the session log and files the rest, with the beat's rolls, in the GM log.
+
+**6a. Ask for a picture, only if the beat was a major moment** (Procedures/Art.md): the first sight of a town, a castle, or somewhere else that matters; a new person with a part to play; an object or a mystery found. `gm art ...` in the same call as `gm beat`. Most beats ask for nothing.
 
 **7. Update the Character Sheet** in the same turn if anything on it changed: HP, Strain, shape, wounds, conditions, gear, money. The **Shape** line is words the user can read at a glance.
 

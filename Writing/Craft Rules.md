@@ -63,6 +63,8 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 - **No stock phrases:** No cliché similes or stock expressions. Replace with the concrete action, or cut the comparison.
     - A comparison explaining *how* someone said something ("the same way," "like it was the weather") becomes the action instead. That fix is rationed too; see "Says it to the [object]."
     - Tagging something "actual" or "real" to set it apart from an earlier version is the same move. Just describe it.
+    - **"A real one" explains instead of showing.** Calling a laugh, a smile, or any reaction "a real one," "real," "genuine," or "and meant it" tells the reader what kind it was. Show the thing: its sound, its size, what it did to the person's face or body.
+        - ✗ "the big man in armor barked a laugh into his cloth, a real one, and had to turn it into a cough." → ✓ "the big man in armor barked a laugh into his cloth, loud enough to ring off the stone, and bent it into a cough."
     - "Leveled a stare / look / glare" is a stock move. Use "looked at," "glared at," "stared them down."
     - Two facts side by side don't need "both of those were true at the same time." Trust the reader.
     - "In some order that only made sense to her" claims to know what's in someone else's head. Give the POV the plain thought on their own side: it made no sense to him.
@@ -229,6 +231,8 @@ Keep a running map of the scene (World State, "The scene"). At any sentence you 
 - **Reach & contact:** Check distance before any touch, shove, grab, blow, or handoff. A fight is where this breaks first: who is in reach of whom, every exchange.
 
 - **Line of sight (never break it):** The POV sees only what's in front of them and unblocked. **Gaze locks what they can see:** once their eyes are on something, the next sentences can report only that, plus sound, smell, and touch. Anything visual about anyone else needs a shown look first; otherwise convert it to sound. In a fight, what happens behind them is heard or felt, or missed.
+    - **A voice they can't see is a guess.** When someone speaks from behind the POV, in the dark, or through a wall, the narration can't state who it was. The POV judges by the sound: "it sounded like," "a man's voice," or just the words. OK: a voice they know well, with nobody else it could be.
+        - ✗ "'Above!' The woman in grey, close under her, not even winded." → ✓ "'Above!' It sounded like the woman in grey, close under her, not even winded."
 
 - **Objects persist:** Bags, cups, weapons, and clothes stay where they were last put until someone moves them.
     - **What a person carries goes with them.** Things people keep on them leave with them when they leave. They stay behind only when the page says so, or when the scene makes leaving them the obvious read (running out mid-attack).

@@ -17,6 +17,11 @@ What's particular to this narrative's prose. It can override anything in the eng
 - **Language:** Unknown
 - **Anything off the table:** (subjects the narrative never goes to)
 
+## Art
+
+- **Illustrations:** on (portraits, places, and scenes painted as you play; say `{no more pictures}` to turn them off)
+- **Art style:** Unknown (how every picture should look, in a line: the medium, the palette, the light)
+
 ## Stakes
 
 **Deadly** or **Heroic** (Core Rules, "Down and dying"): Unknown

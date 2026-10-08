@@ -77,9 +77,32 @@ header select { padding: 4px 8px; background: var(--raised); }
 .body { display: grid; grid-template-columns: minmax(0, 1fr) 440px; min-height: 0; }
 .body.wide { grid-template-columns: minmax(0, 1fr); }
 .body.wide aside { display: none; }
-.main { display: grid; grid-template-rows: 1fr auto; min-height: 0; min-width: 0; position: relative;
+.main { display: grid; grid-template-rows: auto 1fr auto; min-height: 0; min-width: 0; position: relative;
   background: radial-gradient(1100px 600px at 50% 0, #1b1711 0%, transparent 75%), var(--bg); }
 #story { overflow: auto; padding: 44px 36px 28px; }
+#backdrop { height: 190px; position: relative; cursor: zoom-in; background: #000 center 40% / cover no-repeat; animation: fadein 1.2s ease; }
+#backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, var(--bg) 100%); }
+#backdrop span { position: absolute; left: 22px; bottom: 12px; z-index: 1; color: var(--ink); text-shadow: 0 1px 6px #000; font-size: 11px; letter-spacing: 3px; }
+#arrival { position: absolute; left: 22px; bottom: 100%; margin-bottom: 16px; z-index: 6; display: flex; align-items: center; gap: 12px; cursor: zoom-in;
+  background: var(--raised); border: 1px solid var(--accent); border-radius: 10px; padding: 8px 16px 8px 8px; box-shadow: 0 10px 30px #000b;
+  animation: slidein .6s cubic-bezier(.2, .8, .2, 1); }
+@keyframes slidein { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+#arrival img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; display: block; }
+#arrival b { display: block; font: 600 16px var(--serif); } #arrival .caps { color: var(--accent); font-size: 9px; }
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.shot { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--well); cursor: zoom-in; aspect-ratio: 1; }
+.shot.wide { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+.shot:hover img { transform: scale(1.04); }
+.shot .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 7px; background: linear-gradient(transparent, #000d); font: 600 14px var(--serif); }
+.shot.pending { cursor: default; display: grid; place-items: center; text-align: center; color: var(--faint); font: italic 13px var(--serif); padding: 10px; }
+.shot.pending svg { width: 26px; height: 26px; color: var(--accent); animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); margin: 0 auto 8px; display: block; }
+.shot.pending b { display: block; color: var(--dim); font-style: normal; }
+.journal li.faced { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: start; }
+.journal li.faced img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); cursor: zoom-in; margin-top: 2px; }
+#lightbox { position: fixed; inset: 0; background: #000e; z-index: 60; display: grid; place-items: center; cursor: zoom-out; animation: fadein .2s; }
+#lightbox img { max-width: 92vw; max-height: 84vh; border-radius: 6px; box-shadow: 0 20px 80px #000; }
+#lightbox div { position: absolute; bottom: 26px; left: 0; right: 0; text-align: center; font: 600 18px var(--serif); }
 .page { max-width: 66ch; margin: 0 auto; font: var(--story-size)/1.72 var(--serif); }
 .page p { margin: 0 0 1em; }
 .page p.fresh { animation: arrive 1.4s ease-out, mark 9s ease-out; margin-left: -18px; padding-left: 16px; border-left: 2px solid transparent; }
@@ -156,6 +179,7 @@ aside { border-left: 1px solid var(--line); background: var(--panel); display: g
 .hero.glow { animation: glow 2.4s ease-out; }
 @keyframes glow { 0% { box-shadow: 0 0 0 1px var(--accent), 0 0 26px #c9a25b88; } 100% { box-shadow: none; } }
 .hero .top { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.portrait.painted { width: 84px; height: 84px; background-size: cover; background-position: center 20%; cursor: zoom-in; color: transparent; }
 .portrait { width: 60px; height: 60px; border-radius: 50%; flex: none; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #3a3122, #17130d);
   border: 1px solid var(--accent); box-shadow: 0 0 0 3px #17130d, 0 0 0 4px #4b3f2a; font: 400 22px var(--serif); color: var(--accent); letter-spacing: 1px; }
 .hero .who { font: 600 21px/1.2 var(--serif); }
@@ -317,8 +341,10 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
   </header>
   <div class="body" id="body">
     <div class="main">
+      <div id="backdrop" hidden><span class="caps"></span></div>
       <div id="story"></div>
       <div class="composer">
+        <div id="arrival" hidden></div>
         <button id="latest" hidden><svg style="width:13px;height:13px;vertical-align:-2px"><use href="#i-down"/></svg> Latest</button>
         <div class="working" id="working" hidden>
           <svg><use href="#d20"/></svg>
@@ -340,6 +366,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
       <div class="tabs" id="tabs">
         <button data-tab="sheet" class="on">Character</button>
         <button data-tab="journal">Journal</button>
+        <button data-tab="gallery">Gallery</button>
         <button data-tab="gm">GM<span class="badge" id="gmbadge" hidden></span></button>
       </div>
       <div class="pane" id="pane"></div>
@@ -356,6 +383,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
     <div class="row"><button id="flagcancel">Cancel</button><button id="flagsend" class="primary">Send to the GM</button></div>
   </div>
 </div>
+<div id="lightbox" hidden><img alt=""><div></div></div>
 <div id="toast" hidden></div>
 
 <script>
@@ -579,14 +607,14 @@ let timer;
 
 function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
-          shownParas: 0, shownLog: "", seenChannel: null, wasBusy: false, jump: false,
+          shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
           open: new Set(), vitals: null, sent: ""};
   $("home").hidden = true;
   $("game").hidden = false;
   $("story").innerHTML = "";
   $("pane").innerHTML = "";
   $("input").value = "";
-  $("latest").hidden = true;
+  $("latest").hidden = $("backdrop").hidden = $("arrival").hidden = true;
   document.body.classList.remove("gmmode");
   $("modeact").classList.add("on");
   $("modegm").classList.remove("on");
@@ -615,6 +643,7 @@ function apply(s) {
   game.have = Object.assign({}, s.stamps, {channel: s.channel_count});
   if (s.channel) game.channel = s.channel;
   if (game.seenChannel === null) game.seenChannel = game.channel.length;
+  if (s.art) newArt(s.art);
 
   $("title").textContent = s.name;
   const play = s.set_up;
@@ -642,8 +671,10 @@ function apply(s) {
   $("send").disabled = s.busy;
   $("input").placeholder = !play ? "Answer the GM…"
     : game.mode === "act" ? "What does your character do?" : "A correction, a question, a command…";
-  $("modetip").textContent = game.mode === "act" ? "First or third person. Only what you state happens."
-    : "Sent in braces. It never goes in the narrative.";
+  const between = play && !s.open_session && s.sessions > 0;
+  $("modetip").textContent = game.mode === "act"
+    ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "First or third person. Only what you state happens.")
+    : (between ? "Sent in braces. It won't start a session." : "Sent in braces. It never goes in the narrative.");
 
   const finished = game.wasBusy && !s.busy;
   game.wasBusy = s.busy;
@@ -654,7 +685,64 @@ function apply(s) {
   }
   if (play) renderStory(); else renderTalk($("story"), true);
   if ("sheet" in s.texts && game.tab === "sheet" || "journal" in s.texts && game.tab === "journal"
-      || s.channel && game.tab === "gm" || !before) renderPane();
+      || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before) renderPane();
+}
+
+// ---- pictures ---------------------------------------------------------------------
+
+const ready = kind => game && game.art ? game.art.items.filter(i => i.status === "ready" && i.file && (!kind || i.kind === kind)) : [];
+const src = item => `/art?p=${encodeURIComponent(game.path)}&f=${encodeURIComponent(item.file)}&v=${encodeURIComponent(item.painted || "")}&t=${TOKEN}`;
+const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+const faceOf = name => ready("portrait").find(i => same(i.name, name));
+
+function newArt(art) {
+  const had = game.art ? new Set(ready().map(i => i.kind + "|" + i.name + "|" + i.painted)) : null;
+  game.art = art;
+  const place = art.backdrop && ready("place").find(i => same(i.name, art.backdrop));
+  $("backdrop").hidden = !place;
+  if (place) {
+    $("backdrop").style.backgroundImage = `url("${src(place)}")`;
+    $("backdrop").firstElementChild.textContent = place.name;
+    $("backdrop").onclick = () => enlarge(place);
+  }
+  if (!had) return;   // just opened: nothing here is news
+  const fresh = ready().filter(i => !had.has(i.kind + "|" + i.name + "|" + i.painted) && i.kind !== "place");
+  if (fresh.length) announce(fresh[fresh.length - 1]);
+}
+
+let arrivalTimer;
+function announce(item) {
+  const el = $("arrival");
+  el.innerHTML = `<img src="${src(item)}" alt=""><div><span class="caps">${item.kind === "portrait" ? "A new face" : "New in the gallery"}</span><b>${esc(item.name)}</b></div>`;
+  el.onclick = () => enlarge(item);
+  el.hidden = false;
+  clearTimeout(arrivalTimer);
+  arrivalTimer = setTimeout(() => el.hidden = true, 9000);
+}
+
+function enlarge(item) {
+  $("lightbox").firstElementChild.src = src(item);
+  $("lightbox").lastElementChild.textContent = item.name;
+  $("lightbox").hidden = false;
+}
+$("lightbox").onclick = () => $("lightbox").hidden = true;
+
+function galleryHtml() {
+  const art = game.art || {items: []};
+  const order = [...art.items].sort((a, b) => (b.painted || "9").localeCompare(a.painted || "9"));
+  let html = art.trouble ? `<div class="warnbox">${esc(art.trouble)}</div>` : "";
+  html += '<div class="gallery">';
+  order.forEach((item, n) => {
+    const wide = item.kind === "place" || item.kind === "scene" ? " wide" : "";
+    if (item.status === "ready" && item.file)
+      html += `<div class="shot${wide}" data-shot="${n}"><img src="${src(item)}" alt="" loading="lazy"><div class="cap">${esc(item.name)}</div></div>`;
+    else if (item.status === "waiting")
+      html += `<div class="shot pending${wide}"><div><svg><use href="#d20"/></svg><b>${esc(item.name)}</b>being painted…</div></div>`;
+    else
+      html += `<div class="shot pending${wide}" title="${esc(item.error || "")}"><div><b>${esc(item.name)}</b>couldn't be painted</div></div>`;
+  });
+  html += "</div>";
+  return order.length ? [html, order] : ['<div class="empty">No pictures yet. Portraits and places appear here as your character meets people and goes places.</div>', []];
 }
 
 function renderStory() {
@@ -748,7 +836,9 @@ function heroCard(sheet) {
   const initials = blank(name) ? "?" : name.split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
   const [band, color] = health(grab(sheet, "HP"));
   const marks = grab(sheet, "Marks").match(/(\d+)\s*of\s*(\d+)/);
-  let html = `<div class="hero" id="hero"><div class="top"><div class="portrait">${esc(initials)}</div><div><div class="who">${esc(shown)}</div>`;
+  const face = faceOf(name) || (!blank(aka) && faceOf(aka));
+  const medal = face ? `<div class="portrait painted" id="myface" style="background-image:url('${src(face)}')"></div>` : `<div class="portrait">${esc(initials)}</div>`;
+  let html = `<div class="hero" id="hero"><div class="top">${medal}<div><div class="who">${esc(shown)}</div>`;
   if (!blank(aka)) html += `<div class="aka">called ${esc(aka)}</div>`;
   html += "</div>";
   if (level) html += `<div class="level"><b>${esc(level)}</b><span class="caps">Level</span></div>`;
@@ -855,6 +945,7 @@ function renderPane() {
       d.addEventListener("toggle", () => d.open ? game.open.add(d.dataset.about) : game.open.delete(d.dataset.about));
     if (game.vitals) celebrate(game.vitals, now);
     game.vitals = now;
+    if ($("myface")) $("myface").onclick = () => enlarge(faceOf(grab(sheet, "Name")) || faceOf(grab(sheet, "Also called")));
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     let html = stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "";
@@ -863,6 +954,20 @@ function renderPane() {
       if (text && !/^\(none yet\)$/i.test(text)) html += `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`;
     }
     pane.innerHTML = html || '<div class="empty">Nothing in the journal yet. The GM fills it in at the end of each session.</div>';
+    for (const li of pane.querySelectorAll(".journal li")) {   // a face beside anyone who has a portrait
+      const lead = li.querySelector("strong:first-child"), face = lead && faceOf(lead.textContent.replace(/:$/, ""));
+      if (!face) continue;
+      const text = document.createElement("div"), img = new Image();
+      text.append(...li.childNodes);
+      img.src = src(face);
+      img.onclick = () => enlarge(face);
+      li.classList.add("faced");
+      li.append(img, text);
+    }
+  } else if (game.tab === "gallery") {
+    const [html, order] = galleryHtml();
+    pane.innerHTML = html;
+    for (const shot of pane.querySelectorAll("[data-shot]")) shot.onclick = () => enlarge(order[+shot.dataset.shot]);
   } else {
     pane.innerHTML = "";
     renderTalk(pane, false);
@@ -968,7 +1073,7 @@ $("flag").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");

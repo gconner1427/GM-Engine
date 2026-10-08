@@ -28,6 +28,7 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
   Style Guide.md             tense, register, content, stakes, and this narrative's writing rules
   Sessions/
     Session N.md             the narrative itself: prose only, one file per session
+  Art/                       PLAYER: pictures of what the character has seen, and art.json, the list of them
   GM Only/                   HIDDEN from the user by an honor system
     World/                   the world you built, which the user has never read
       World Bible.md         the premise, era, peoples, the world's laws, dangers, how news travels, its secrets
@@ -54,7 +55,7 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
 
 **The play window.** The user may be playing through the engine's desktop window instead of VS Code. It runs you headless in the narrative's folder and tells you so at the start of the conversation. Everything here still holds; the differences are in that note (the user sees only your final message, chat echo is off, nothing can prompt for permission).
 
-**Player and hidden.** The Character Sheet, Journal, Style Guide, and Sessions are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`, the world itself included: the user learns the world only through the page and the Journal.
+**Player and hidden.** The Character Sheet, Journal, Style Guide, Sessions, and Art are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`, the world itself included: the user learns the world only through the page and the Journal.
 
 A narrative made before the world moved may still have its world docs in `World/` at the top of the folder (and a `GM Only/World Notes.md`). They're the same docs; use them where they are. `gm` finds either.
 
@@ -129,6 +130,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 | The clock jumps a day or more | The time pass | `Procedures/World Turn.md` |
 | The user ends the session | The full World Turn, marks, the Journal | `Procedures/Play.md` |
 | The user writes in braces | A correction, a question, or a command | `Procedures/Corrections.md` |
+| The character meets someone or arrives somewhere worth seeing | Ask for a picture | `Procedures/Art.md` |
 
 ## The principles
 
@@ -159,6 +161,8 @@ gm roll <dice> "<why>"
 gm fate <odds> "<question>"               certain, likely, even, unlikely, remote, or a percent
 gm name ["<pool>"] [--for "<who>"]
 gm add cast|place|group "<Name>"
+gm art portrait|place|scene|item "<name>" ["<what it looks like>"] [--was "<old name>"] [--redo]
+gm art list | run                         what's been asked for; paint what's waiting (the play window does this itself)
 gm new-narrative "<Name>" [--at <parent folder>]
 gm play ["<narrative folder>"] [--browser]   the play window (for the user, never run by the GM)
 ```

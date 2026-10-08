@@ -19,7 +19,7 @@ These are all you ask about the world. Ask only for the ones the first message d
    - **Built on another setting:** Star Wars, Mass Effect, a book series, anything. Ask only which one. If the setting covers very different eras, ask which era, or whether to leave it to you.
 3. **A title,** if they have one. If not, you'll give it one.
 
-In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). These go in `Style Guide.md`. Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
+In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
 
 Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**.
 
@@ -82,6 +82,8 @@ The character is the player's, in every part.
 2. **Fit them into the world.** Place their home, their family, and their history in the region you built, and tell the player the names of the places and people they'd know. People they name get cast docs, their design tagged **[Setup]**. If their idea doesn't fit the world as built, bend the world where it costs nothing (it isn't on the page yet); where it can't bend, say what doesn't fit, in terms of common knowledge, and offer the nearest thing that does.
 3. **The numbers** (Core Rules §15). Propose attributes, skills, and two talents that fit the person described, and let the player change anything. Then fill in the defenses, HP, and Strain.
 4. **Gear and money.** What this person would own and carry, priced by the Economy.
+
+5. **Their portrait.** Once the player has settled how the character looks, ask for it: `gm art portrait "<name>" "<their looks, as a painter would need them>"` (Procedures/Art.md).
 
 Then go back to the Journal: add what this particular person would know beyond the ordinary (their trade, their people, their home ground), and fill in People and Places for who and what they'd know going in.
 

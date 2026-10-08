@@ -25,10 +25,12 @@ import sys
 import threading
 import time
 import traceback
+import urllib.parse
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import art
 import scaffold
 from narrative import CONFIG, ENGINE, Narrative, field
 
@@ -136,6 +138,23 @@ class Game:
         self.steps = 0
         self.stopped = False
         self.error = None
+        self.art_trouble = None
+        threading.Thread(target=self.painter, daemon=True).start()
+
+    def painter(self):
+        """Paint whatever the GM has asked for, one picture at a time, for as long as the window is open."""
+        while True:
+            try:
+                if art.paint_next(self.narrative):
+                    self.art_trouble = None
+                    continue
+            except ValueError as e:      # no Codex on this machine
+                self.art_trouble = str(e)
+                time.sleep(60)
+            except Exception:
+                log_error()
+                time.sleep(60)
+            time.sleep(4)
 
     def busy(self):
         return self.thread is not None and self.thread.is_alive()
@@ -256,7 +275,21 @@ class Game:
                 out["texts"][key] = read(path)
         if have.get("channel") != len(self.data["channel"]):
             out["channel"] = self.data["channel"]
+        mark = stamp(art.art_dir(self.narrative) / "art.json") + str(self.art_trouble)
+        out["stamps"]["art"] = mark
+        if have.get("art") != mark:
+            index = art.load(self.narrative)
+            out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
+                          "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error")} for i in index["items"]]}
         return out
+
+    def picture(self, file):
+        """The bytes of one finished picture, and nothing from outside Art/."""
+        folder = art.art_dir(self.narrative).resolve()
+        path = (folder / file).resolve()
+        if folder not in path.parents or path.suffix.lower() != ".png" or not path.is_file():
+            raise ValueError("No such picture.")
+        return path.read_bytes()
 
 
 GAMES = {}
@@ -353,7 +386,23 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        if self.path.split("?")[0] not in ("/", "/index.html"):
+        route, _, query = self.path.partition("?")
+        if route == "/art":  # an <img> can't send a header, so the token rides in the address
+            asked = urllib.parse.parse_qs(query)
+            one = lambda key: (asked.get(key) or [""])[0]
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            try:
+                data = game(one("p")).picture(one("f"))
+            except (ValueError, OSError):
+                return self.send(404, {"error": "No such picture."})
+            self.send_response(200)
+            self.send_header("Content-Type", "image/png")
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "private, max-age=31536000")  # the address changes when the picture does
+            self.end_headers()
+            return self.wfile.write(data)
+        if route not in ("/", "/index.html"):
             return self.send(404, {"error": "Not found"})
         html = read(PAGE).replace("__GM_TOKEN__", TOKEN)
         html = html.replace("__GM_START__", json.dumps(getattr(self.server, "start", None)).replace("<", "\\u003c"))

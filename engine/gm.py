@@ -20,6 +20,9 @@ Run from anywhere inside a narrative (a folder with narrative.json), or pass --n
     gm name "<pool>" [--for "<who>"]           draw an unused name and mark it used
     gm add cast|place|group "<Name>"
 
+    gm art portrait|place|scene|item "<name>" ["<what it looks like>"] [--was "<old name>"] [--redo]
+    gm art list | run                          what's been asked for; paint what's waiting
+
 Every roll made while a session is open is written to that session's GM log.
 "gm" is shorthand for: python "<engine folder>/engine/gm.py"
 """
@@ -124,6 +127,16 @@ def main(argv):
     if cmd == "name":
         who = take(args, "for")
         return session.name(narrative, args[0] if args else None, who)
+    if cmd == "art":
+        import art
+        was, redo = take(args, "was"), take(args, "redo", False)
+        if args[:1] == ["list"]:
+            return art.listing(narrative)
+        if args[:1] == ["run"]:
+            return art.run(narrative)
+        if len(args) < 2:
+            sys.exit('Usage: gm art portrait|place|scene|item "<name>" ["<what it looks like>"] [--was "<old name>"] [--redo]')
+        return art.request(narrative, args[0].lower(), args[1], " ".join(args[2:]) or None, was, redo)
     if cmd == "add":
         return scaffold.add(narrative, args[0], " ".join(args[1:])) if len(args) >= 2 else sys.exit('Usage: gm add cast|place|group "<Name>"')
     sys.exit(f"Unknown command: {cmd}. Run gm --help.")
