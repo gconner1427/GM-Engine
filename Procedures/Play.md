@@ -77,6 +77,16 @@ When the user says `{end session}`:
 2. **The World Turn**, in full, for the session as a whole.
 3. **Marks** (Core Rules §16). Decide which of the four were true, add them to the sheet, and note why in the GM log (`gm note`). If the character reached a new level, see "A new level" below.
 4. **The Journal.** Bring `Journal.md` up to date with what the character now knows: where things stand, what they've learned about the world, people, places, unfinished business, and a paragraph for the session as the character would tell it. Nothing they don't know.
+
+    The session's paragraph goes under "Sessions," headed `**Session N.**`, with the marks listed straight under it, one line for each mark earned. The play window builds its end-of-session card from these lines:
+
+    ```
+    **Session 3.** The paragraph, as the character would tell it.
+    - **Mark: danger.** The fight at the ford.
+    - **Mark: learned.** Who the ferryman answers to.
+    ```
+
+    The four are `danger` (came through real danger), `goal` (got something they were after, or lost it for good), `learned` (learned something that changes how things look), and `cost` (a choice or a failure cost them something real). After each, a few words on why, as the character would know it; leave the why off if they wouldn't know. A session that earned none gets the one line `- **Marks:** none.`
 5. **Prune World State** back under its cap: move what the next scenes won't need into the docs' Now sections and the Archive.
 6. `gm session end`.
 7. Tell the user, in braces and briefly: the session is closed, the marks earned (the count, and the reasons only where the character would know them), and that there's a new level to choose for, if there is.
@@ -111,7 +121,7 @@ Without the window, put the same choices to the user in braces.
 
 ## When things go wrong
 
-- **The user says you misread them** (`{I meant the other door}`): `gm undo`, put back any state the beat changed, and run the beat again from the corrected action. The old rolls are void, since they were for something that didn't happen; anything the corrected action still calls for is rolled fresh.
+- **The user says you misread them** (`{I meant the other door}`): `gm undo`, put back any state the beat changed, and run the beat again from the corrected action. The old rolls are void, since they were for something that didn't happen; anything the corrected action still calls for is rolled fresh. If the misread action was pushed, the corrected one is too, unless the user says otherwise.
 - **The user dislikes how a beat reads:** that's a correction (Procedures/Corrections.md). The events and the rolls stand; only the writing changes.
 - **You broke a rule of the game** (wrong bonus, a forgotten wound, someone acting on what they couldn't know): say so in braces, plainly, fix the page and the state, and note it in the GM log. Reroll only what the mistake made invalid.
 - **You wrote the character doing something unstated:** `gm undo`, and write the beat again without it. If it's a pattern, it becomes a rule.

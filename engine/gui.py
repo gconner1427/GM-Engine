@@ -59,7 +59,9 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the three questions: ask only for what's missing. The player can't see any file but the Character Sheet and the Journal, so what they need to know to make a character has to be in your message.
 - When the user flags a passage, the window quotes it to you in braces.
 - An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
-- When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for."""
+- When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for.
+- When a session ends, the window shows a summary card built from the Journal's entry for that session and the mark lines under it (Procedures/Play.md, "The end of a session"). So your closing message stays short: the card already shows the marks.
+- The window's Undo button sends `{undo}`, and its "I meant" button sends `{I meant: ...}` with the action as the player meant it."""
 
 
 def log_error():
@@ -277,7 +279,8 @@ class Game:
         out = {"name": cfg.get("name", self.narrative.name), "path": str(self.root), "set_up": bool(cfg.get("set_up")),
                "sessions": sessions, "open_session": cfg.get("open_session"), "viewing": viewing,
                "busy": self.busy(), "elapsed": int(time.time() - self.started) if self.busy() else 0,
-               "steps": self.steps, "channel_count": len(self.data["channel"]), "stamps": {}, "texts": {}}
+               "steps": self.steps, "can_undo": bool(cfg.get("open_session") and read(self.narrative.last_beat).strip()),
+               "channel_count": len(self.data["channel"]), "stamps": {}, "texts": {}}
         for key, path in files.items():
             mark = f"{viewing if key == 'log' else ''}:{stamp(path)}"
             out["stamps"][key] = mark

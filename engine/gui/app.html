@@ -37,36 +37,28 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
 
 /* ---- intro: plays once when the window opens ---- */
-#intro { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden; cursor: pointer; user-select: none;
-  background: radial-gradient(760px 520px at 50% 44%, #2a2216 0%, transparent 70%), var(--bg); transition: opacity .7s ease; }
-#intro.leaving { opacity: 0; pointer-events: none; }
-#intro .stage { text-align: center; position: relative; transition: transform .7s ease; }
-#intro.leaving .stage { transform: scale(1.06); }
-#intro .die { width: 132px; height: 132px; color: var(--accent); stroke-width: .9; display: block; margin: 0 auto; overflow: visible;
-  animation: flare 1.8s ease-out 1.5s both; }
-#intro .die path { stroke-dasharray: 1 1.1; stroke-dashoffset: 1.05; animation: draw 1.3s cubic-bezier(.6, 0, .3, 1) forwards; }
-#intro .die path:nth-child(2) { animation-delay: .45s; }
-#intro .die path:nth-child(3) { animation-delay: .8s; }
-#intro .die .face { fill: var(--accent); stroke: none; opacity: 0; animation: face 1.6s ease-out 1.5s forwards; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-@keyframes face { 0% { opacity: 0; } 25% { opacity: .5; } 100% { opacity: .1; } }
-@keyframes flare { 0% { filter: drop-shadow(0 0 0 #c9a25b00); transform: scale(1); }
-  25% { filter: drop-shadow(0 0 26px #e6c27ecc); transform: scale(1.07); }
-  100% { filter: drop-shadow(0 0 10px #c9a25b55); transform: scale(1); } }
-#intro .ring { position: absolute; left: 50%; top: 66px; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
-  border: 1px solid var(--accent); opacity: 0; animation: ring 1.5s ease-out 1.55s; }
-@keyframes ring { 0% { opacity: .7; transform: scale(.7); } 100% { opacity: 0; transform: scale(3.4); } }
-#intro h1 { font: 400 46px var(--serif); letter-spacing: 14px; text-transform: uppercase; margin: 26px 0 0; padding-left: 14px; white-space: nowrap; }
-#intro h1 span { display: inline-block; opacity: 0; animation: letter .9s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(1.75s + var(--i) * 70ms); }
+#intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; user-select: none; background: #0b0906; transition: opacity .75s ease; }
+#intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
+#intro.fading { opacity: 0; pointer-events: none; }
+#introcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .4s ease, transform .5s ease; }
+#intro.leaving .stage { opacity: 0; transform: translateY(-10px); }
+#intro h1 { font: 400 clamp(34px, 5.4vmin, 58px) var(--serif); text-transform: uppercase; margin: 0; white-space: nowrap;
+  letter-spacing: .3em; padding-left: .3em; animation: tracking 3.6s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
+@keyframes tracking { from { letter-spacing: .52em; padding-left: .52em; } to { letter-spacing: .3em; padding-left: .3em; } }
+#intro h1 span { display: inline-block; opacity: 0; animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(2.25s + var(--i) * 75ms); }
 #intro h1 .gap { width: .45em; }
-@keyframes letter { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
-#intro .line { height: 1px; width: 260px; margin: 16px auto 14px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  transform: scaleX(0); animation: line 1s ease-out 2.5s forwards; }
+@keyframes letter {
+  0% { opacity: 0; transform: translateY(.42em) scale(1.08); filter: blur(10px); color: #fff3d6; text-shadow: 0 0 30px #ffdf9c; }
+  45% { opacity: 1; transform: none; filter: none; color: #fff3d6; text-shadow: 0 0 26px #e6c27ecc; }
+  100% { opacity: 1; transform: none; filter: none; color: var(--ink); text-shadow: 0 0 34px #c9a25b44; } }
+#intro .line { position: relative; height: 1px; width: min(340px, 60vw); margin: 2.4vmin auto 2vmin;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent); transform: scaleX(0); animation: line 1.3s cubic-bezier(.2, .8, .2, 1) 3.05s forwards; }
+#intro .line i { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -4px 0 0 -4px; background: #f0d49a; transform: rotate(45deg);
+  box-shadow: 0 0 12px 2px #e6c27eaa; }
 @keyframes line { to { transform: scaleX(1); } }
-#intro p { color: var(--dim); margin: 0; font: italic 16px var(--serif); opacity: 0; animation: fadein 1s ease 2.9s forwards; }
-#intro .ember { position: absolute; bottom: -8px; border-radius: 50%; background: #e6c27e; box-shadow: 0 0 8px 1px #c9a25b99; opacity: 0;
-  animation: ember linear infinite; }
-@keyframes ember { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: var(--o); } 100% { opacity: 0; transform: translate(var(--x), -105vh); } }
+#intro p { color: var(--dim); margin: 0; font: italic clamp(14px, 2vmin, 18px) var(--serif); letter-spacing: .04em; opacity: 0; animation: rise 1.4s ease 3.5s forwards; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
 /* ---- home: the title screen ---- */
@@ -76,7 +68,8 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
   background: linear-gradient(90deg, #12100ce6 0%, #12100c88 34%, transparent 62%), radial-gradient(120% 90% at 50% 50%, transparent 55%, #000a 100%); }
 .home-menu { position: relative; z-index: 1; height: 100%; width: min(520px, 92vw); display: flex; flex-direction: column; justify-content: center;
   padding: 40px 24px 56px clamp(36px, 8vw, 130px); }
-.masthead { margin-bottom: 40px; }
+.masthead { margin-bottom: 40px; animation: menuin .8s cubic-bezier(.2, .8, .2, 1) both; }
+#home.waiting .masthead, #home.waiting #mainmenu button { animation: none; opacity: 0; }
 .masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin-left: -4px; }
 .masthead h1 { font: 400 46px/1.1 var(--serif); letter-spacing: 10px; text-transform: uppercase; margin: 14px 0 10px; white-space: nowrap;
   text-shadow: 0 0 34px #c9a25b55; }
@@ -201,8 +194,10 @@ header select { padding: 4px 8px; background: var(--raised); }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--well); }
 .seg button { border: none; background: none; border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); }
 .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-.modes .tip { color: var(--faint); font-size: 12px; }
-.modes .push { margin-left: auto; border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); background: var(--well); }
+.modes .tip { color: var(--faint); font-size: 12px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.modes .acts { display: flex; gap: 6px; flex: none; }
+.modes .acts button { border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); background: var(--well); }
+.modes .push { border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); background: var(--well); }
 .modes .push.on { background: var(--strain); border-color: var(--strain); color: #0b1118; font-weight: 600; }
 .compose-row { display: flex; gap: 8px; align-items: flex-end; max-width: 900px; margin: 0 auto; }
 .compose-row textarea { flex: 1; resize: none; min-height: 46px; max-height: 220px; font: 15px/1.5 var(--sans); padding: 11px 13px; border-radius: 8px; }
@@ -344,6 +339,19 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
 .choice button.on b { color: var(--accent); }
 .form .note { color: var(--faint); font-size: 12px; font-style: italic; }
 
+/* ---- the end of a session ---- */
+#summarybody { max-height: 62vh; overflow: auto; padding-right: 4px; }
+#summarybody .chapter { margin: 4px 0 18px; }
+#summarybody .stands p { margin: 0 0 .6em; } #summarybody .stands p:last-child { margin: 0; }
+.mark { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--line-soft); color: var(--faint); }
+.mark:last-child { border-bottom: none; }
+.mark i { width: 10px; height: 10px; margin: 5px 2px 0; flex: none; transform: rotate(45deg); border: 1px solid #5a4c33; }
+.mark.on { color: var(--ink); }
+.mark.on i { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px #c9a25b99; }
+.mark .name { font-weight: 600; } .mark .text { color: var(--dim); font-size: 13px; }
+.reached { text-align: center; font: 400 19px var(--serif); color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-top: 18px;
+  text-shadow: 0 0 24px #c9a25b77; }
+
 /* ---- a new level ---- */
 .levelbtn { width: 100%; margin-top: 14px; }
 #levelbody { max-height: 56vh; overflow: auto; padding-right: 4px; }
@@ -415,17 +423,11 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
   <symbol id="g-thing" viewBox="0 0 20 20"><path d="M10 2.500 16.500 6v8L10 17.500 3.500 14V6zM3.500 6 10 9.500 16.500 6M10 9.500v8"/></symbol>
 </svg>
 
-<div id="intro" title="Click or press a key to skip">
+<div id="intro">
+  <canvas id="introcv"></canvas>
   <div class="stage">
-    <div class="ring"></div>
-    <svg class="die" viewBox="0 0 48 48">
-      <path pathLength="1" d="M24 3 42.2 13.5v21L24 45 5.8 34.500v-21Z"/>
-      <path pathLength="1" d="M24 12.500 35 31.500H13Z"/>
-      <path pathLength="1" d="M24 3v9.500M5.800 13.500 24 12.500l18.200 1M13 31.500 5.800 13.500M35 31.500l7.200-18M13 31.500 5.800 34.500M35 31.500l7.200 3M13 31.500 24 45l11-13.500"/>
-      <polygon class="face" points="24,12.5 35,31.5 13,31.5"/>
-    </svg>
     <h1><span style="--i:0">G</span><span style="--i:1">M</span><span class="gap"></span><span style="--i:2">E</span><span style="--i:3">n</span><span style="--i:4">g</span><span style="--i:5">i</span><span style="--i:6">n</span><span style="--i:7">e</span></h1>
-    <div class="line"></div>
+    <div class="line"><i></i></div>
     <p>Solo narratives, run by a game master behind the page.</p>
   </div>
 </div>
@@ -520,7 +522,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
       <div class="menu">
         <button id="more" class="quiet icon" title="More"><svg><use href="#i-more"/></svg></button>
         <div class="menu-items" id="moreitems" hidden>
-          <button data-act="undo">Take back the last beat</button>
+          <button data-act="summary">How the last session ended</button>
           <button data-act="recap">Where do things stand?</button>
           <button data-act="fresh">Start a fresh GM conversation</button>
           <button data-act="folder">Open the narrative's folder</button>
@@ -544,7 +546,11 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
         <div class="modes" id="modes">
           <div class="seg"><button id="modeact" class="on">As my character</button><button id="modegm">To the GM</button></div>
           <span class="tip" id="modetip"></span>
-          <button id="push" class="push" hidden>Push · 2 Strain</button>
+          <div class="acts">
+            <button id="undo" hidden title="Take the last beat back out of the narrative, with everything it changed">Undo</button>
+            <button id="meant" hidden title="The GM misread what you wrote: the last beat is taken back and played again from what you meant">I meant…</button>
+            <button id="push" class="push" hidden>Push · 2 Strain</button>
+          </div>
         </div>
         <div class="compose-row">
           <textarea id="input" rows="1"></textarea>
@@ -590,6 +596,21 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
       <span style="color:var(--faint);font-size:12px;font-style:italic">The game as it stands is saved before a load, so nothing is lost.</span>
       <button id="loadclose">Close</button>
     </div>
+  </div>
+</div>
+<div class="shade" id="meantdialog" hidden>
+  <div class="dialog">
+    <div class="head">What did you mean?</div>
+    <blockquote id="meantquote"></blockquote>
+    <textarea id="meanttext" placeholder="What your character actually does."></textarea>
+    <span style="color:var(--faint);font-size:12px;font-style:italic">The last beat is taken back and played again from this. Anything it needs rolled is rolled fresh.</span>
+    <div class="row"><button id="meantcancel">Cancel</button><button id="meantsend" class="primary">Play it again</button></div>
+  </div>
+</div>
+<div class="shade" id="summarydialog" hidden>
+  <div class="dialog">
+    <div id="summarybody"></div>
+    <div class="row"><button id="summarygo" class="primary"></button></div>
   </div>
 </div>
 <div class="shade" id="leveldialog" hidden>
@@ -980,61 +1001,99 @@ $("home").addEventListener("pointerdown", e => {
   die.spin = Math.min(40, die.spin * 1.25 + 2.5);
 });
 
-function drawBackdrop(ms) {
-  const cv = $("homebg"), ratio = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+EDGES.forEach(e => { if (DIE[e[0]][1] > DIE[e[1]][1]) e.reverse(); });   // every edge runs top to bottom, and so does the list: the intro draws the die downward
+EDGES.sort((a, b) => DIE[a[0]][1] + DIE[a[1]][1] - DIE[b[0]][1] - DIE[b[1]][1]);
+
+function fit(cv) {   // a canvas sized to its box and wiped, with its context in CSS pixels
+  const ratio = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
   if (cv.width !== Math.round(w * ratio) || cv.height !== Math.round(h * ratio)) { cv.width = Math.round(w * ratio); cv.height = Math.round(h * ratio); }
-  const c = cv.getContext("2d"), t = ms / 1000;
+  const c = cv.getContext("2d");
   c.setTransform(ratio, 0, 0, ratio, 0, 0);
   c.clearRect(0, 0, w, h);
-  const cx = w * .68, cy = h * .5, r = Math.min(w, h) * .13;
-  const dt = Math.min(.1, Math.max(0, t - die.last));
-  die.last = t;
-  die.angle += (.16 + die.spin) * dt;
-  die.spin *= Math.exp(-dt * .7);   // a click's push dies away
-  Object.assign(die, {x: cx, y: cy, r: r * 2.1});
-  const heat = Math.min(1, die.spin / 14);
+  return [c, w, h];
+}
 
-  const pulse = Math.min(1, .5 + .5 * Math.sin(t * .5) + heat * 2);
-  const glow = c.createRadialGradient(cx, cy, 0, cx, cy, r * 4.6);
-  glow.addColorStop(0, `rgba(201,162,91,${.13 + .06 * pulse})`);
-  glow.addColorStop(.45, "rgba(120,90,45,.07)");
-  glow.addColorStop(1, "rgba(0,0,0,0)");
-  c.fillStyle = glow;
-  c.fillRect(0, 0, w, h);
+const dieSpot = (w, h) => [w * .68, h * .5, Math.min(w, h) * .13];   // where the die lives on the home screen
 
-  const ay = die.angle, ax =.42 + .16 * Math.sin(t * .11);
-  const pts = DIE.map(([x, y, z]) => {
+function diePoints(cx, cy, r, t, ay, tilt) {
+  const ax = .42 + .16 * Math.sin(t * .11) + (tilt || 0);
+  return DIE.map(([x, y, z]) => {
     const x1 = x * Math.cos(ay) + z * Math.sin(ay), z1 = z * Math.cos(ay) - x * Math.sin(ay);
     const y2 = y * Math.cos(ax) - z1 * Math.sin(ax), z2 = z1 * Math.cos(ax) + y * Math.sin(ax);
     const k = 5 / (5 - z2);
     return [cx + x1 * k * r, cy + y2 * k * r + Math.sin(t * .4) * 6, z2];
   });
+}
+
+function drawGlow(c, w, h, cx, cy, r, t, heat, strength) {
+  const pulse = Math.min(1, .5 + .5 * Math.sin(t * .5) + heat * 2);
+  const glow = c.createRadialGradient(cx, cy, 0, cx, cy, r * 4.6);
+  glow.addColorStop(0, `rgba(201,162,91,${(.13 + .06 * pulse) * strength})`);
+  glow.addColorStop(.45, `rgba(120,90,45,${.07 * strength})`);
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  c.fillStyle = glow;
+  c.fillRect(0, 0, w, h);
+}
+
+// grow, when given, is how far along each edge has been drawn (0 to 1); bloom puts a soft halo on the lines.
+function drawDie(c, pts, heat, grow, bloom) {
+  const dots = pts.map(() => grow ? 0 : 1);
   c.lineCap = "round";
-  for (const [i, j] of EDGES) {
+  EDGES.forEach(([i, j], n) => {
+    const p = grow ? grow[n] : 1;
+    if (p <= 0) return;
+    dots[i] = Math.max(dots[i], Math.min(1, p * 4));
+    if (p >= 1) dots[j] = 1;
     const near = ((pts[i][2] + pts[j][2]) / 2 + 1.9) / 3.8;   // 0 at the back, 1 at the front
-    c.strokeStyle = `rgba(${201 + 35 * heat},${162 + 40 * heat},${91 + 50 * heat},${Math.min(1, .08 + .5 * near + .35 * heat)})`;
-    c.lineWidth = .6 + near + heat * .6;
-    c.beginPath();
-    c.moveTo(pts[i][0], pts[i][1]);
-    c.lineTo(pts[j][0], pts[j][1]);
-    c.stroke();
-  }
-  for (const p of pts) {
-    c.fillStyle = `rgba(230,194,126,${.15 + .6 * (p[2] + 1.9) / 3.8})`;
+    const x = pts[i][0] + (pts[j][0] - pts[i][0]) * p, y = pts[i][1] + (pts[j][1] - pts[i][1]) * p;
+    const color = `${201 + 35 * heat},${162 + 40 * heat},${91 + 50 * heat}`, alpha = Math.min(1, .08 + .5 * near + .35 * heat);
+    for (const halo of bloom ? [1, 0] : [0]) {
+      c.strokeStyle = `rgba(${color},${halo ? alpha * .16 * bloom : alpha})`;
+      c.lineWidth = (.6 + near + heat * .6) * (halo ? 5 : 1);
+      c.beginPath();
+      c.moveTo(pts[i][0], pts[i][1]);
+      c.lineTo(x, y);
+      c.stroke();
+    }
+    if (p < 1) {   // the bright point doing the drawing
+      c.fillStyle = "rgba(255,236,190,.95)";
+      c.beginPath(); c.arc(x, y, 1.8, 0, 6.29); c.fill();
+      c.fillStyle = "rgba(236,204,140,.22)";
+      c.beginPath(); c.arc(x, y, 7, 0, 6.29); c.fill();
+    }
+  });
+  pts.forEach((p, i) => {
+    if (!dots[i]) return;
+    c.fillStyle = `rgba(230,194,126,${(.15 + .6 * (p[2] + 1.9) / 3.8) * dots[i]})`;
     c.beginPath();
     c.arc(p[0], p[1], 1.6, 0, 6.29);
     c.fill();
-  }
+  });
+}
 
+function drawEmbers(c, w, h, t, strength) {
   for (const e of EMBERS) {
     const y = h - (((1 - e.y) + t * e.speed) % 1) * (h + 20) + 10, x = e.x * w + Math.sin(t * .5 + e.sway) * 22;
-    const fade = Math.min(1, (h - y) / 120, y / 200) * e.glow * (.7 + .3 * Math.sin(t * 2 + e.sway));
+    const fade = Math.min(1, (h - y) / 120, y / 200) * e.glow * (.7 + .3 * Math.sin(t * 2 + e.sway)) * strength;
     if (fade <= 0) continue;
     c.fillStyle = `rgba(201,162,91,${fade * .18})`;
     c.beginPath(); c.arc(x, y, e.size * 3.2, 0, 6.29); c.fill();
     c.fillStyle = `rgba(236,204,140,${fade})`;
     c.beginPath(); c.arc(x, y, e.size, 0, 6.29); c.fill();
   }
+}
+
+function drawBackdrop(ms) {
+  const [c, w, h] = fit($("homebg")), t = ms / 1000, [cx, cy, r] = dieSpot(w, h);
+  const dt = Math.min(.1, Math.max(0, t - die.last));
+  die.last = t;
+  die.angle += (.16 + die.spin) * dt;
+  die.spin *= Math.exp(-dt * .7);   // a click's push dies away
+  Object.assign(die, {x: cx, y: cy, r: r * 2.1});
+  const heat = Math.min(1, die.spin / 14);
+  drawGlow(c, w, h, cx, cy, r, t, heat, 1);
+  drawDie(c, diePoints(cx, cy, r, t, die.angle), heat);
+  drawEmbers(c, w, h, t, 1);
 }
 
 function startBackdrop() {
@@ -1102,7 +1161,7 @@ let timer;
 function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
-          open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null};
+          open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null, ended: null, loaded: false};
   closeHomeDialogs();
   stopMenuMusic();
   $("home").hidden = true;
@@ -1110,7 +1169,7 @@ function openGame(path) {
   $("story").innerHTML = "";
   $("pane").innerHTML = "";
   $("input").value = "";
-  $("latest").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = true;
+  $("latest").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = $("summarydialog").hidden = $("meantdialog").hidden = true;
   document.body.classList.remove("gmmode");
   $("modeact").classList.add("on");
   $("modegm").classList.remove("on");
@@ -1173,6 +1232,8 @@ function apply(s) {
   $("modetip").textContent = game.mode === "act"
     ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "First or third person. Only what you state happens.")
     : (between ? "Sent in braces. It won't start a session." : "Sent in braces. It never goes in the narrative.");
+  $("undo").hidden = $("meant").hidden = !play || !s.open_session;
+  $("undo").disabled = $("meant").disabled = s.busy || !s.can_undo;
   const strain = readVitals(game.texts.sheet || "").strain;
   $("push").hidden = !play || game.mode !== "act" || strain === null;
   $("push").disabled = strain < 2;
@@ -1189,7 +1250,10 @@ function apply(s) {
     if (finished) { if (prefs.wide) { prefs.wide = false; applyPrefs(true); } setTab("gm"); }
   }
   if (play) renderStory(); else renderTalk($("story"), true);
-  const up = play && !s.busy && levelUp(game.texts.sheet || "");
+  if (before && !game.loaded && before.open_session && s.open_session !== before.open_session) game.ended = before.open_session;
+  game.loaded = false;
+  if (game.ended && !s.busy) { const n = game.ended; game.ended = null; openSummary(n); }
+  const up = play && !s.busy && $("summarydialog").hidden && levelUp(game.texts.sheet || "");
   if (up && game.offered !== up.level) { game.offered = up.level; openLevel(); }   // offered once; the sheet's button brings it back
   if ("sheet" in s.texts && (game.tab === "sheet" || game.tab === "inventory") || "journal" in s.texts && game.tab === "journal"
       || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before) renderPane();
@@ -1498,7 +1562,7 @@ function renderPane() {
     for (const [tab, title] of [["World", "The world as they know it"], ["People", "People"], ["Places", "Places"], ["Unfinished", "Unfinished business"], ["Sessions", "Sessions"]]) {
       const text = prose(part(journal, title)).split(/\r?\n/).filter(l => !/^one (line|short paragraph)|^promises made|^what someone with/i.test(l.trim())).join("\n").trim();
       if (text && !/^\(none yet\)$/i.test(text))
-        pages.push({tab, count: (text.match(/^[-*] /gm) || []).length, html: `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`});
+        pages.push({tab, count: (text.match(tab === "Sessions" ? /^\*\*Session \d+/gm : /^[-*] /gm) || []).length, html: `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`});
     }
     pane.innerHTML = subtabs(pages, "jtab") || '<div class="empty">Nothing in the journal yet. The GM fills it in at the end of each session.</div>';
     for (const li of pane.querySelectorAll(".journal li")) {   // a face beside anyone who has a portrait
@@ -1528,6 +1592,88 @@ function renderPane() {
     pane.scrollTop = Math.min(pane.scrollTop, above ? above.getBoundingClientRect().bottom - pane.getBoundingClientRect().top + pane.scrollTop : 0);
   };
 }
+
+// ---- the end of a session ----------------------------------------------------------
+
+const MARKS = [["danger", "Came through real danger"], ["goal", "Got something they were after, or lost it for good"],
+               ["learned", "Learned something that changes how things look"], ["cost", "A choice or a failure cost them something real"]];
+
+function sessionEntry(journal, n) {   // the Journal's paragraph for one session, and the marks listed under it
+  const sec = untag(part(journal, "Sessions")), m = sec.match(new RegExp("^\\*\\*Session " + n + "[.:]?\\*\\*[.:]?[ \\t]*", "m"));
+  if (!m) return null;
+  const rest = sec.slice(m.index + m[0].length), end = rest.search(/^\*\*Session \d+/m), marks = {}, told = [];
+  let listed = false;
+  for (const line of (end < 0 ? rest : rest.slice(0, end)).split(/\r?\n/)) {
+    const mark = line.match(/^\s*[-*]\s+\*\*Marks?\b:?\s*([a-z]*)[.:]?\*\*[.:]?\s*(.*)$/i);
+    if (!mark) { told.push(line); continue; }
+    listed = true;
+    if (MARKS.some(([key]) => key === mark[1].toLowerCase())) marks[mark[1].toLowerCase()] = mark[2].trim();
+  }
+  return {told: told.join("\n").trim(), marks, listed};
+}
+
+function openSummary(n) {
+  const s = game.state, sheet = game.texts.sheet || "", entry = sessionEntry(game.texts.journal || "", n);
+  const latest = n === s.sessions && !s.open_session, up = latest && levelUp(sheet), total = latest && grab(sheet, "Marks").match(/(\d+)\s*of\s*(\d+)/);
+  let html = `<div class="chapter"><span class="caps">Session ${n} · closed</span></div>`;
+  if (entry && entry.told) html += `<div class="stands">${md(entry.told)}</div>`;
+  else html += `<div class="empty">The Journal has no entry for this session.</div>`;
+  if (entry && entry.listed) {
+    const earned = MARKS.filter(([key]) => key in entry.marks).length;
+    html += block(`Marks<span class="count">${earned ? "+" + earned : "none this session"}</span>`, MARKS.map(([key, label]) => {
+      const on = key in entry.marks;
+      return `<div class="mark${on ? " on" : ""}"><i></i><div><div class="name">${label}</div>${on && entry.marks[key] ? `<div class="text">${inline(entry.marks[key])}</div>` : ""}</div></div>`;
+    }).join(""));
+  }
+  if (up) html += `<div class="reached">Level ${up.level} reached</div>`;
+  if (total) html += `<div class="bar thin"><div class="label"><span class="caps">Marks toward level ${(parseInt(grab(sheet, "Level"), 10) || 0) + 1}</span>
+    <span class="num">${total[1]} of ${total[2]}</span></div><div class="track"><div class="fill" style="width:${Math.min(100, 100 * total[1] / total[2])}%;background-color:var(--accent)"></div></div></div>`;
+  $("summarybody").innerHTML = html;
+  $("summarygo").textContent = up ? `Choose what level ${up.level} gives` : "Continue";
+  $("summarydialog").hidden = false;
+}
+$("summarygo").onclick = () => {
+  $("summarydialog").hidden = true;
+  const up = game.state && !game.state.open_session && levelUp(game.texts.sheet || "");
+  if (up && /^Choose/.test($("summarygo").textContent)) { game.offered = up.level; openLevel(); }
+};
+
+// ---- taking a beat back ------------------------------------------------------------
+
+function lastAction() {   // what the player last sent as their character
+  for (let i = game.channel.length - 1; i >= 0; i--) {
+    const m = game.channel[i];
+    if (m.who === "you" && !/^\{[\s\S]*\}$/.test(m.text.trim())) return m.text.replace(/\s*\{push\}\s*$/i, "").trim();
+  }
+  return "";
+}
+
+let undoTimer;
+$("undo").onclick = guard(async () => {
+  if ($("undo").textContent === "Undo") {
+    $("undo").textContent = "Take the last beat back?";
+    undoTimer = setTimeout(() => $("undo").textContent = "Undo", 4000);
+    return;
+  }
+  clearTimeout(undoTimer);
+  $("undo").textContent = "Undo";
+  await send("{undo}", true);
+});
+$("meant").onclick = () => {
+  const was = lastAction();
+  $("meantquote").textContent = was;
+  $("meantquote").hidden = !was;
+  $("meanttext").value = was;
+  $("meantdialog").hidden = false;
+  $("meanttext").focus();
+};
+$("meantcancel").onclick = () => $("meantdialog").hidden = true;
+$("meantsend").onclick = guard(async () => {
+  const text = $("meanttext").value.trim();
+  if (!text) return toast("Say what your character actually does.");
+  await send(`{I meant: ${text}}`, true);
+  $("meantdialog").hidden = true;
+});
 
 // ---- a new level -----------------------------------------------------------------
 
@@ -1685,7 +1831,11 @@ $("more").onclick = e => { e.stopPropagation(); $("moreitems").hidden = !$("more
 document.addEventListener("click", () => $("moreitems").hidden = true);
 $("moreitems").onclick = guard(async e => {
   const act = e.target.dataset.act;
-  if (act === "undo") await send("{undo}", true);
+  if (act === "summary") {
+    const n = game.state.open_session ? game.state.sessions - 1 : game.state.sessions;
+    if (n < 1) return toast("No session has ended yet.");
+    openSummary(n);
+  }
   if (act === "recap") await send("{recap}", true);
   if (act === "fresh") { await api("fresh", {path: game.path}); clearTimeout(timer); tick(); }
   if (act === "folder") await api("open-folder", {path: game.path});
@@ -1733,7 +1883,7 @@ $("loadbtn").onclick = guard(async () => {
       $("loaddialog").hidden = true;
       await api("load", {path: mine.path, id: s.id});
       if (game !== mine) return;
-      Object.assign(mine, {have: {}, shownLog: "", shownParas: 0, vitals: null, pinned: null, art: null, sent: ""});
+      Object.assign(mine, {have: {}, shownLog: "", shownParas: 0, vitals: null, pinned: null, art: null, sent: "", ended: null, loaded: true});
       toast("Save loaded.", true);
       clearTimeout(timer);
       tick();
@@ -1744,7 +1894,7 @@ $("loadbtn").onclick = guard(async () => {
   $("loaddialog").hidden = false;
 });
 $("loadclose").onclick = () => $("loaddialog").hidden = true;
-for (const id of ["savedialog", "loaddialog", "leveldialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
+for (const id of ["savedialog", "loaddialog", "leveldialog", "meantdialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
 
 // ---- flagging a passage ---------------------------------------------------------
 
@@ -1772,7 +1922,7 @@ $("flag").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");
@@ -1783,27 +1933,84 @@ $("flagsend").onclick = guard(async () => {
 
 // ---- the intro ------------------------------------------------------------------
 
+// The die is rolled into being, lands with a flash, and the title comes up under it. On the way out it glides to its
+// place on the home screen, drawn the way the backdrop draws it, so the one fades into the other unnoticed.
 (() => {
   const el = $("intro");
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return el.remove();
-  for (let n = 0; n < 26; n++) {
-    const e = document.createElement("i"), size = 1.5 + Math.random() * 2.5;
-    e.className = "ember";
-    e.style.cssText = `left:${Math.random() * 100}%;width:${size}px;height:${size}px;--x:${Math.round(Math.random() * 160 - 80)}px;`
-      + `--o:${(.25 + Math.random() * .55).toFixed(2)};animation-duration:${(5 + Math.random() * 6).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s`;
-    el.append(e);
-  }
-  let gone = false;
+  if (STILL) return el.remove();
+  $("home").classList.add("waiting");   // the menu holds its entrance until the intro clears
+  const cv = $("introcv"), LAND = 2.1, HOLD = 6.2;
+  const clamp = u => Math.min(1, Math.max(0, u)), ease = u => 1 - (1 - u) ** 3, smooth = u => u * u * (3 - 2 * u);
+  const mix = (a, b, u) => a + (b - a) * u;
+  const sparks = Array.from({length: 70}, () => ({a: Math.random() * 6.283, v: 90 + Math.random() * 380, life: .7 + Math.random() * 1.3, size: .6 + Math.random() * 1.4}));
+  let began = null, leftAt = null, glide = false, over = false;
+
   const leave = () => {
-    if (gone) return;
-    gone = true;
+    if (leftAt !== null) return;
+    leftAt = performance.now();
+    glide = !$("home").hidden;
     removeEventListener("keydown", leave);
     el.classList.add("leaving");
-    setTimeout(() => el.remove(), 750);
+    setTimeout(() => {
+      el.classList.add("fading");
+      $("home").classList.remove("waiting");
+      setTimeout(() => { over = true; el.remove(); }, 800);
+    }, glide ? 950 : 0);
   };
   el.addEventListener("pointerdown", leave);
   addEventListener("keydown", leave);
-  setTimeout(leave, 4600);
+
+  const frame = ms => {
+    if (over) return;
+    if (began === null) began = ms;
+    const [c, w, h] = fit(cv), t = ms / 1000, lt = (ms - began) / 1000;
+    if (lt > HOLD) leave();
+    const out = leftAt === null ? 0 : Math.max(0, ms - leftAt) / 1000, g = glide ? smooth(clamp(out / .9)) : 0;
+    const [hx, hy, hr] = dieSpot(w, h), settle = ease(clamp(lt / LAND)), tumble = (1 - settle) * (1 - g);
+    const cx = mix(w / 2, hx, g), cy = mix(h * .4, hy, g), r = mix(Math.min(w, h) * .115 * (.55 + .45 * settle), hr, g);
+    const since = lt - LAND, flash = since > 0 ? Math.exp(-since * 2.4) * (1 - g) : 0;
+
+    drawGlow(c, w, h, cx, cy, r, t, flash, mix(clamp(lt / 1.2), 1, g));
+    drawEmbers(c, w, h, t, mix(clamp(lt / 1.8), 1, g));
+
+    if (since > 0 && since < 1.4) {   // the landing: a bloom, a streak of light, a ring going out
+      const bloom = c.createRadialGradient(cx, cy, 0, cx, cy, r * 4.5);
+      bloom.addColorStop(0, `rgba(255,232,176,${.5 * flash})`);
+      bloom.addColorStop(.35, `rgba(214,170,96,${.16 * flash})`);
+      bloom.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = bloom;
+      c.fillRect(0, 0, w, h);
+      c.save();
+      c.translate(cx, cy);
+      c.scale(1, .022);
+      const streak = c.createRadialGradient(0, 0, 0, 0, 0, r * (5 + 6 * flash));
+      streak.addColorStop(0, `rgba(255,240,205,${.9 * flash})`);
+      streak.addColorStop(1, "rgba(255,220,150,0)");
+      c.fillStyle = streak;
+      c.beginPath(); c.arc(0, 0, r * 11, 0, 6.29); c.fill();
+      c.restore();
+      const u = since / 1.4;
+      c.strokeStyle = `rgba(230,194,126,${.55 * (1 - u) ** 2 * (1 - g)})`;
+      c.lineWidth = 1.2;
+      c.beginPath(); c.arc(cx, cy, r * (1.9 + 6 * ease(u)), 0, 6.29); c.stroke();
+    }
+
+    const hurry = leftAt === null ? 0 : out / .35;   // skipped mid-drawing: finish the die on the way out
+    const grow = lt > LAND || hurry >= 1 ? null : EDGES.map((_, n) => Math.max(hurry, smooth(clamp((lt - .25 - n * .038) / .5))));
+    drawDie(c, diePoints(cx, cy, r, t, die.angle + 7.5 * tumble, 2.4 * tumble), flash, grow, 1 - g);
+
+    if (since > 0) for (const s of sparks) {
+      const age = since / s.life;
+      if (age >= 1) continue;
+      const at = d => { const far = s.v * (1 - Math.exp(-2.6 * d)) / 2.6; return [w / 2 + Math.cos(s.a) * far, h * .4 + Math.sin(s.a) * far - 16 * d * d]; };
+      const [x, y] = at(since), [px, py] = at(Math.max(0, since - .05));
+      c.strokeStyle = `rgba(246,214,150,${(1 - age) ** 2 * (1 - g)})`;
+      c.lineWidth = s.size;
+      c.beginPath(); c.moveTo(px, py); c.lineTo(x, y); c.stroke();
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
 })();
 
 setInterval(() => api("ping").catch(() => {}), 5000);
