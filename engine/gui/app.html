@@ -202,6 +202,8 @@ header select { padding: 4px 8px; background: var(--raised); }
 .seg button { border: none; background: none; border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); }
 .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .modes .tip { color: var(--faint); font-size: 12px; }
+.modes .push { margin-left: auto; border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); background: var(--well); }
+.modes .push.on { background: var(--strain); border-color: var(--strain); color: #0b1118; font-weight: 600; }
 .compose-row { display: flex; gap: 8px; align-items: flex-end; max-width: 900px; margin: 0 auto; }
 .compose-row textarea { flex: 1; resize: none; min-height: 46px; max-height: 220px; font: 15px/1.5 var(--sans); padding: 11px 13px; border-radius: 8px; }
 .compose-row button { height: 46px; padding: 0 20px; border-radius: 8px; }
@@ -341,6 +343,21 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
 .choice button.on { border-color: var(--accent); background: var(--accent-soft); }
 .choice button.on b { color: var(--accent); }
 .form .note { color: var(--faint); font-size: 12px; font-style: italic; }
+
+/* ---- a new level ---- */
+.levelbtn { width: 100%; margin-top: 14px; }
+#levelbody { max-height: 56vh; overflow: auto; padding-right: 4px; }
+#levelbody .block:first-child { margin-top: 0; }
+.skill.pick { grid-template-columns: 1fr auto auto; align-items: center; }
+.step { display: inline-flex; gap: 4px; }
+.step button { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-height: 1; }
+.pips i.add { background: var(--good); border-color: var(--good); }
+.skill.pick .chip { margin-left: 6px; padding: 0 6px; border-radius: 4px; border: 1px solid #5a4c33; color: var(--accent); font: 600 10px/16px var(--sans);
+  letter-spacing: .6px; text-transform: uppercase; }
+.talent.pick, .tile.pick { cursor: pointer; transition: border-color .15s, background .15s; }
+.talent.pick:hover, .tile.pick:hover { border-color: #5a4c33; }
+.talent.pick.on, .tile.pick.on { border-color: var(--accent); background: var(--accent-soft); }
+.tile.pick.full { opacity: .45; cursor: default; border-color: var(--line-soft); }
 
 #flag { position: fixed; z-index: 30; border-radius: 999px; box-shadow: 0 6px 18px #000a; display: inline-flex; align-items: center; gap: 6px; }
 #flag svg { width: 14px; height: 14px; }
@@ -527,6 +544,7 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
         <div class="modes" id="modes">
           <div class="seg"><button id="modeact" class="on">As my character</button><button id="modegm">To the GM</button></div>
           <span class="tip" id="modetip"></span>
+          <button id="push" class="push" hidden>Push · 2 Strain</button>
         </div>
         <div class="compose-row">
           <textarea id="input" rows="1"></textarea>
@@ -572,6 +590,14 @@ details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px
       <span style="color:var(--faint);font-size:12px;font-style:italic">The game as it stands is saved before a load, so nothing is lost.</span>
       <button id="loadclose">Close</button>
     </div>
+  </div>
+</div>
+<div class="shade" id="leveldialog" hidden>
+  <div class="dialog wide">
+    <div class="head" id="levelhead"></div>
+    <div id="levelbody"></div>
+    <textarea id="levelnote" placeholder="Anything else for the GM: a skill or a talent that isn't listed, or why a choice fits."></textarea>
+    <div class="row"><button id="levellater">Later</button><button id="levelgo" class="primary">Confirm</button></div>
   </div>
 </div>
 <div id="lightbox" hidden><img alt=""><div></div></div>
@@ -1076,7 +1102,7 @@ let timer;
 function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
-          open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null};
+          open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null};
   closeHomeDialogs();
   stopMenuMusic();
   $("home").hidden = true;
@@ -1084,7 +1110,7 @@ function openGame(path) {
   $("story").innerHTML = "";
   $("pane").innerHTML = "";
   $("input").value = "";
-  $("latest").hidden = $("backdrop").hidden = $("arrival").hidden = true;
+  $("latest").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = true;
   document.body.classList.remove("gmmode");
   $("modeact").classList.add("on");
   $("modegm").classList.remove("on");
@@ -1147,6 +1173,13 @@ function apply(s) {
   $("modetip").textContent = game.mode === "act"
     ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "First or third person. Only what you state happens.")
     : (between ? "Sent in braces. It won't start a session." : "Sent in braces. It never goes in the narrative.");
+  const strain = readVitals(game.texts.sheet || "").strain;
+  $("push").hidden = !play || game.mode !== "act" || strain === null;
+  $("push").disabled = strain < 2;
+  if (strain < 2) game.push = false;
+  $("push").classList.toggle("on", game.push);
+  $("push").title = strain < 2 ? "Your character has too little Strain left to push."
+    : "Your character gives this action everything: 2 Strain for a better chance on its first roll. Nothing is spent if nothing is rolled.";
 
   const finished = game.wasBusy && !s.busy;
   game.wasBusy = s.busy;
@@ -1156,6 +1189,8 @@ function apply(s) {
     if (finished) { if (prefs.wide) { prefs.wide = false; applyPrefs(true); } setTab("gm"); }
   }
   if (play) renderStory(); else renderTalk($("story"), true);
+  const up = play && !s.busy && levelUp(game.texts.sheet || "");
+  if (up && game.offered !== up.level) { game.offered = up.level; openLevel(); }   // offered once; the sheet's button brings it back
   if ("sheet" in s.texts && (game.tab === "sheet" || game.tab === "inventory") || "journal" in s.texts && game.tab === "journal"
       || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before) renderPane();
 }
@@ -1330,11 +1365,23 @@ function heroCard(sheet) {
     const fine = blank(v) || /^unhurt/i.test(v);
     html += `<div><span class="caps">${key}</span><span class="${fine ? "" : "hurt"}">${inline(v)}</span></div>`;
   }
-  return html + "</div></div>";
+  html += "</div>";
+  const up = levelUp(sheet);
+  if (up) html += `<button class="primary levelbtn" id="levelbtn">Level ${up.level}: choose what it gives</button>`;
+  return html + "</div>";
 }
 
 function block(title, inner) {
   return inner ? `<div class="block"><div class="caps">${title}</div>${inner}</div>` : "";
+}
+
+function skillList(sheet) {   // "- **Blades 2:** note" or "- **Blades:** 2. note"
+  return entries(part(sheet, "Skills")).map(e => {
+    let m = e.name.match(/^(.*?)\s+(\d)$/), name = e.name, rank = 0, note = e.text;
+    if (m) { name = m[1]; rank = +m[2]; }
+    else if ((m = e.text.match(/^(\d)\b[:.]?\s*(.*)$/))) { rank = +m[1]; note = m[2]; }
+    return {name, rank, note};
+  });
 }
 
 function sheetHtml(sheet) {
@@ -1346,10 +1393,7 @@ function sheetHtml(sheet) {
   const pages = [], page = (tab, inner, count) => inner && pages.push({tab, html: inner, count});
   page("Stats", block("Attributes", tiles(pairs(part(sheet, "Attributes")), "six", true)) + block("Defenses", tiles(pairs(part(sheet, "Defenses")), "four", false)));
 
-  const skills = entries(part(sheet, "Skills")).map(e => {
-    let m = e.name.match(/^(.*?)\s+(\d)$/), name = e.name, rank = 0, note = e.text;
-    if (m) { name = m[1]; rank = +m[2]; }
-    else if ((m = e.text.match(/^(\d)\b[:.]?\s*(.*)$/))) { rank = +m[1]; note = m[2]; }
+  const skills = skillList(sheet).map(({name, rank, note}) => {
     const pips = [1, 2, 3, 4, 5].map(n => `<i class="${n <= rank ? "on" : ""}"></i>`).join("");
     return `<div class="skill"><span class="name">${esc(name)}</span><span class="pips" title="Rank ${rank} of 5">${pips}</span>
       ${note ? `<span class="note">${inline(note)}</span>` : ""}</div>`;
@@ -1442,6 +1486,7 @@ function renderPane() {
       d.addEventListener("toggle", () => d.open ? game.open.add(d.dataset.about) : game.open.delete(d.dataset.about));
     if (game.vitals) celebrate(game.vitals, now);
     game.vitals = now;
+    if ($("levelbtn")) $("levelbtn").onclick = openLevel;
     if ($("myface")) $("myface").onclick = () => enlarge(faceOf(grab(sheet, "Name")) || faceOf(grab(sheet, "Also called")));
   } else if (game.tab === "inventory") {
     pane.innerHTML = inventoryHtml(game.texts.sheet || "");
@@ -1484,6 +1529,93 @@ function renderPane() {
   };
 }
 
+// ---- a new level -----------------------------------------------------------------
+
+const RANKS = 3;   // skill ranks a new level gives (Core Rules, "Growing")
+
+function levelUp(sheet) {   // what a new level still leaves the player to choose, from the sheet's "Level up" section
+  const sec = part(sheet, "Level up"), level = parseInt((grab(sec, "Reached").match(/\d+/) || [])[0], 10);
+  if (!level) return null;
+  const listed = title => {
+    const m = sec.match(new RegExp("^### " + title + "[ \\t]*$", "mi"));
+    if (!m) return [];
+    const rest = sec.slice(m.index + m[0].length), end = rest.search(/^### /m);
+    return entries(end < 0 ? rest : rest.slice(0, end));
+  };
+  const known = skillList(sheet);
+  const fresh = listed("New skills").filter(e => !known.some(k => same(k.name, e.name))).map(e => ({name: e.name, rank: 0, note: e.text, fresh: true}));
+  return {level, cap: level < 3 ? 2 : level < 5 ? 3 : level < 8 ? 4 : 5, skills: known.concat(fresh),
+          talent: level % 2 === 0, talents: listed("Talents"), attribute: level % 3 === 0,
+          attributes: pairs(part(sheet, "Attributes")).map(a => ({name: a.name, value: parseInt(a.value, 10) || 0}))};
+}
+
+function openLevel() {
+  const up = levelUp(game.texts.sheet || "");
+  if (!up) return;
+  if (!game.pick || game.pick.level !== up.level) { game.pick = {level: up.level, ranks: {}, talent: null, attribute: null}; $("levelnote").value = ""; }
+  $("levelhead").textContent = "Level " + up.level;
+  renderLevel(up);
+  $("leveldialog").hidden = false;
+}
+
+function renderLevel(up) {
+  const pick = game.pick, left = RANKS - Object.values(pick.ranks).reduce((a, b) => a + b, 0);
+  let html = block(`Skill ranks${up.cap < 5 ? `<span class="sub">none above ${up.cap} yet</span>` : ""}<span class="count">${left} left</span>`, up.skills.map((sk, n) => {
+    const added = pick.ranks[sk.name] || 0, rank = sk.rank + added;
+    const pips = [1, 2, 3, 4, 5].map(i => `<i class="${i <= sk.rank ? "on" : i <= rank ? "add" : ""}"></i>`).join("");
+    return `<div class="skill pick"><span class="name">${esc(sk.name)}${sk.fresh ? ' <span class="chip">new</span>' : ""}</span>
+      <span class="pips" title="Rank ${rank} of 5">${pips}</span>
+      <span class="step"><button data-rank="${n}" data-by="-1"${added ? "" : " disabled"}>−</button><button data-rank="${n}" data-by="1"${left && rank < up.cap ? "" : " disabled"}>+</button></span>
+      ${sk.note ? `<span class="note">${inline(sk.note)}</span>` : ""}</div>`;
+  }).join(""));
+  if (up.talent) html += block("A talent", up.talents.map((t, n) =>
+    `<div class="talent pick${pick.talent === t.name ? " on" : ""}" data-talent="${n}"><div class="name">${esc(t.name)}</div><div class="text">${inline(t.text)}</div></div>`).join("")
+    || '<div class="empty">Say below what you have in mind, and the GM will write it with you.</div>');
+  if (up.attribute) html += block("+1 to one attribute", `<div class="tiles six">` + up.attributes.map((a, n) => {
+    const on = pick.attribute === a.name, v = a.value + (on ? 1 : 0);
+    return `<div class="tile pick${on ? " on" : a.value >= 5 ? " full" : ""}" data-attr="${n}"><b class="${v > 0 ? "up" : v < 0 ? "down" : ""}">${v > 0 ? "+" + v : v}</b><span>${esc(a.name)}</span></div>`;
+  }).join("") + "</div>");
+  const keep = $("levelbody").scrollTop;
+  $("levelbody").innerHTML = html;
+  $("levelbody").scrollTop = keep;
+}
+
+$("levelbody").onclick = e => {
+  const up = levelUp(game.texts.sheet || ""), pick = game.pick, at = sel => e.target.closest(sel);
+  if (!up || !pick) return;
+  let el;
+  if ((el = at("[data-rank]")) && !el.disabled) {
+    const name = up.skills[+el.dataset.rank].name;
+    pick.ranks[name] = (pick.ranks[name] || 0) + +el.dataset.by;
+    if (!pick.ranks[name]) delete pick.ranks[name];
+  } else if ((el = at("[data-talent]"))) {
+    const name = up.talents[+el.dataset.talent].name;
+    pick.talent = pick.talent === name ? null : name;
+  } else if ((el = at("[data-attr]"))) {
+    const a = up.attributes[+el.dataset.attr];
+    if (a.value >= 5) return;
+    pick.attribute = pick.attribute === a.name ? null : a.name;
+  } else return;
+  renderLevel(up);
+};
+$("levellater").onclick = () => $("leveldialog").hidden = true;
+$("levelgo").onclick = guard(async () => {
+  const up = levelUp(game.texts.sheet || ""), pick = game.pick, note = $("levelnote").value.trim();
+  if (!up || !pick) return $("leveldialog").hidden = true;
+  const left = RANKS - Object.values(pick.ranks).reduce((a, b) => a + b, 0);
+  const owed = [left && `${left} skill rank${left > 1 ? "s" : ""}`, up.talent && !pick.talent && "a talent", up.attribute && !pick.attribute && "an attribute"].filter(Boolean);
+  if (owed.length && !note) return toast(`Still to choose: ${owed.join(", ")}. Or say below what you want instead.`);
+  const lines = [`Level ${up.level} choices, from the level-up screen.`];
+  const ranks = up.skills.filter(sk => pick.ranks[sk.name]).map(sk => `${sk.name}${sk.fresh ? " (new)" : ""} ${sk.rank} to ${sk.rank + pick.ranks[sk.name]}`);
+  if (ranks.length) lines.push("Skill ranks: " + ranks.join("; ") + ".");
+  if (pick.talent) lines.push("Talent: " + pick.talent + ".");
+  if (pick.attribute) lines.push("Attribute: +1 " + pick.attribute + ".");
+  if (owed.length) lines.push("Not chosen on the screen: " + owed.join(", ") + ".");
+  if (note) lines.push("Note: " + note);
+  await send("{" + lines.join("\n") + "}", true);
+  $("leveldialog").hidden = true;
+});
+
 function setTab(tab) {
   if (!game) return;
   const changed = game.tab !== tab;
@@ -1503,6 +1635,7 @@ function setMode(mode) {
   if (game.state) apply(Object.assign(game.state, {texts: {}, channel: null}));
   $("input").focus();
 }
+$("push").onclick = () => { game.push = !game.push; $("push").classList.toggle("on", game.push); $("input").focus(); };
 $("modeact").onclick = () => setMode("act");
 $("modegm").onclick = () => setMode("gm");
 
@@ -1511,7 +1644,10 @@ async function send(text, raw) {
   if (!text || !game) return;
   const play = game.state && game.state.set_up;
   if (!raw && play && game.mode === "gm" && !/^\{[\s\S]*\}$/.test(text)) text = "{" + text + "}";
+  const pushed = !raw && play && game.mode === "act" && game.push && !/^\{[\s\S]*\}$/.test(text);
+  if (pushed) text += " {push}";
   await api("send", {path: game.path, text});
+  if (pushed) { game.push = false; $("push").classList.remove("on"); }
   game.sent = text;
   game.pinned = null;  // back to the session being played
   game.jump = true;
@@ -1608,7 +1744,7 @@ $("loadbtn").onclick = guard(async () => {
   $("loaddialog").hidden = false;
 });
 $("loadclose").onclick = () => $("loaddialog").hidden = true;
-for (const id of ["savedialog", "loaddialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
+for (const id of ["savedialog", "loaddialog", "leveldialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
 
 // ---- flagging a passage ---------------------------------------------------------
 
@@ -1636,7 +1772,7 @@ $("flag").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");

@@ -34,6 +34,8 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 
 - **The narrative** fills the main column and grows as you play. Earlier sessions are in the picker at the top.
 - **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you.
+- **Push** (beside those two) is for when your character gives an action everything they have. Switch it on before you send: it costs 2 Strain and gives them a better chance on that action's first roll. If nothing needed rolling, nothing is spent. It switches itself off after each action.
+- **A new level** opens its own screen at the end of the session that earned it: place your three skill ranks, pick a talent or an attribute when the level gives one, and confirm. "Later" puts it off, and a button on the Character tab brings it back.
 - **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
 - **The top bar** has text size (A− and A+), a button to hide the side panel for reading, and the ⋯ menu.
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it.
@@ -89,6 +91,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 | `{sheet}` | Show the character sheet. |
 | `{recap}` | Where things stand, as your character knows it. |
 | `{undo}` | Take back the last beat. |
+| `{push}` after an action | Your character gives it everything: 2 Strain for a better chance on its first roll. |
 | `{I meant ...}` | The GM misread your action: it's replayed. |
 | `{echo off}` | Beats go only to the session log, not the chat (faster, if you read from the file). |
 | a question | Answered from what your character knows. |

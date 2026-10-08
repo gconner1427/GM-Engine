@@ -77,7 +77,7 @@ When two people are trying to do the same thing at once (a race, a grab for the 
 
 **HP** is how much punishment a person can take before they go down: 8 + twice Vigor + 4 per level.
 
-**Strain** is what they have left to give: 4 + twice Will + their level. It pays for powers (Rules Kit), it's what fear and horror take away, and it can be spent to push: 2 Strain for Edge on one roll, said before the roll, when the character would truly be giving it everything. The player says when their character pushes; you never push for them. At 0 Strain a person is spent, and has Setback on everything until they rest.
+**Strain** is what they have left to give: 4 + twice Will + their level. It pays for powers (Rules Kit), it's what fear and horror take away, and it can be spent to push: 2 Strain for Edge on one roll, said before the roll, when the character would truly be giving it everything. The player says when their character pushes, with `{push}` after the action (the play window's Push switch adds it); you never push for them. The Edge goes on the first roll the character makes for that action. If the action needs no roll, or they have less than 2 Strain, nothing is spent. At 0 Strain a person is spent, and has Setback on everything until they rest.
 
 **Wounds.** A single blow that takes half a person's full HP or more also leaves a wound: a named injury (a cracked rib, a gash down the forearm, a concussion) that gives Setback on whatever it would hamper and heals on its own time, whatever their HP says. Light wounds take days, serious ones weeks, grievous ones months or never.
 
@@ -247,7 +247,7 @@ On a new level:
 - **A talent** at every even level.
 - **+1 to one attribute** at levels 3, 6, and 9, to a limit of +5.
 
-Every choice on a new level is the user's. Tell them in braces at the end of the session and apply what they pick. None of it is mentioned on the page: the character is simply better at what they've been doing.
+Every choice on a new level is the user's. Put the choices to them at the end of the session (Procedures/Play.md, "A new level") and apply what they pick. None of it is mentioned on the page: the character is simply better at what they've been doing.
 
 ## 17. Talents
 

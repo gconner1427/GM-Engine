@@ -20,7 +20,7 @@ A **session** is one sitting of play. It has one narrative log (`Sessions/Sessio
 
 Every message from the user that isn't in braces is their character acting.
 
-**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop.
+**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop. An action that ends in `{push}` is the character pushing (Core Rules §5): the first roll they make for it has Edge, and 2 Strain comes off the sheet. `{push}` is never part of what the character does or says.
 
 **2. Open a session if none is open:** `gm session start`. An action is all it takes to begin one.
 
@@ -75,13 +75,39 @@ When the user says `{end session}`:
 
 1. Run the end of a scene, above.
 2. **The World Turn**, in full, for the session as a whole.
-3. **Marks** (Core Rules §16). Decide which of the four were true, add them to the sheet, and note why in the GM log (`gm note`). If the character reached a new level, work out what it gives.
+3. **Marks** (Core Rules §16). Decide which of the four were true, add them to the sheet, and note why in the GM log (`gm note`). If the character reached a new level, see "A new level" below.
 4. **The Journal.** Bring `Journal.md` up to date with what the character now knows: where things stand, what they've learned about the world, people, places, unfinished business, and a paragraph for the session as the character would tell it. Nothing they don't know.
 5. **Prune World State** back under its cap: move what the next scenes won't need into the docs' Now sections and the Archive.
 6. `gm session end`.
-7. Tell the user, in braces and briefly: the session is closed, the marks earned (the count, and the reasons only where the character would know them), and any choices a new level gives them. Apply their choices to the sheet when they answer.
+7. Tell the user, in braces and briefly: the session is closed, the marks earned (the count, and the reasons only where the character would know them), and that there's a new level to choose for, if there is.
 
 If the user starts playing again without ending the session, it's the same session. If they open a new conversation and say `{new session}` with one still open, end the old one first.
+
+## A new level
+
+When the marks reach what the next level takes (Core Rules §16):
+
+1. On the sheet, raise **Level**, raise HP and Strain by their formulas, and reset **Marks** to what's left over, out of what the level after takes.
+2. Write what the level leaves the user to choose as a section of the sheet, directly above `## Vitals`. The play window builds its level-up screen from this section, and works out the rest (3 skill ranks, the cap on a skill, an attribute at levels 3, 6, and 9) from the level:
+
+    ```
+    ## Level up
+
+    **Reached:** Level 4
+
+    ### New skills
+    - **Sailing:** three days working the ferry
+
+    ### Talents
+    - **Sea Legs:** Edge on keeping her feet aboard anything afloat.
+    ```
+
+    - **New skills:** the skills the character doesn't have that they could start now, each with its source in what they've been doing. Leave the heading out if there are none. Skills they already have aren't listed: the screen reads those from the sheet.
+    - **Talents:** at an even level only. Three or four that fit who the character has become, from the Rules Kit or written for them in the shapes of Core Rules §17, each in words the user can read with nothing they don't already know.
+    - Like everything on the sheet, the section holds only what the character knows.
+3. The user's choices come back in braces, from the screen or in their own words. Check them against the rules, apply them to the sheet (ranks, the talent, the attribute and any defense, HP, or Strain it changes), and delete the `## Level up` section. If a choice can't stand, or they've asked for a skill or talent that wasn't listed, settle it with them in braces and leave the section until it's settled.
+
+Without the window, put the same choices to the user in braces.
 
 ## When things go wrong
 

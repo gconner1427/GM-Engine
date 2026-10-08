@@ -57,7 +57,9 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - Interactive tools (the question tool, plan mode) are not available. Ask questions as plain text in your final message, a few at a time.
 - Nothing can prompt the user for permission. If a tool call is denied, don't retry it: work another way, or say plainly what was denied.
 - During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the three questions: ask only for what's missing. The player can't see any file but the Character Sheet and the Journal, so what they need to know to make a character has to be in your message.
-- When the user flags a passage, the window quotes it to you in braces."""
+- When the user flags a passage, the window quotes it to you in braces.
+- An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
+- When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for."""
 
 
 def log_error():

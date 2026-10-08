@@ -72,6 +72,8 @@ Answer from what the character knows and can perceive: the Journal, the sheet, w
 | `{journal}` | Bring `Journal.md` up to date now and say it's done. |
 | `{recap}` | A few lines on where things stand, from what the character knows. |
 | `{undo}` | `gm undo`, restore the state the beat changed, and say so. |
+| an action ending in `{push}` | Play the action as a beat, with the character pushing (Core Rules §5). |
+| choices for a new level | Procedures/Play.md, "A new level." |
 | `{redo that portrait...}`, `{paint that}`, `{no more pictures}` | Procedures/Art.md, "When the player asks." |
 | `{save}` or `{save as ...}` | `gm save "<name>"` and say it's saved. To load, point them to the window's Load button or `gm load`: never load a save yourself. |
 | `{echo off}` / `{echo on}` | Set `chat_echo` in `narrative.json`. Off means beats go only to the session log. |
