@@ -65,6 +65,8 @@ When in doubt, don't. No more than one request in most beats that have any, and 
 
 **Coming back.** When the character returns to a place that already has a picture, run `gm art place "<name>"` (no description) and it becomes the backdrop again. When she leaves a pictured place for somewhere that won't get one, the old backdrop stays until the next place that does.
 
+**A new session.** `gm session start` takes the backdrop down. The top of the narrative stays bare until this session paints a place or comes back to one, so if the session opens somewhere that already has a picture, run `gm art place "<name>"` with the first beat.
+
 Keep it within the Style Guide's content lines, and plainer than that: no gore, no nudity, nothing a painter would refuse. If a request fails, leave it; asking again later retries it.
 
 ## When the player asks

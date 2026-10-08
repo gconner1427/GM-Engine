@@ -58,6 +58,11 @@ def start(narrative):
     narrative.gm_log(number).write_text(head, encoding="utf-8")
     narrative.config.update(sessions=number, open_session=number, beats=0, log_mark=len(head))
     narrative.save()
+    import art
+    pictures = art.load(narrative)
+    if pictures["backdrop"]:  # a new session opens with no backdrop, until a place is painted or come back to
+        pictures["backdrop"] = None
+        art.save(narrative, pictures)
     print(f"Session {number} is open: {narrative.session_log(number).relative_to(narrative.root)}")
     return 0
 
