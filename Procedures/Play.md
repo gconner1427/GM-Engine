@@ -6,12 +6,13 @@ A **session** is one sitting of play. It has one narrative log (`Sessions/Sessio
 
 ## Starting a conversation
 
-1. Read, whole: the engine's `Rules/Core Rules.md`, `Writing/GM Philosophy.md`, `Writing/House Style.md`, and `Writing/Craft Rules.md`; then the narrative's `Style Guide.md`, `World/Rules Kit.md`, `Character Sheet.md`, and `GM Only/State/World State.md`.
+1. Read, whole: the engine's `Rules/Core Rules.md`, `Writing/GM Philosophy.md`, `Writing/House Style.md`, and `Writing/Craft Rules.md`; then the narrative's `Style Guide.md`, `GM Only/World/Rules Kit.md`, `Character Sheet.md`, and `GM Only/State/World State.md`.
 2. Run `gm status`.
 3. Read the end of the latest session log (the last thousand words or so) for where things stopped and how the prose has been sounding, and the end of its GM log.
 4. **Check that the state is current.** If the GM log has beats after World State's "State as of" line, the last conversation ended before the bookkeeping did: bring World State and the docs up to date from those beats' notes before anything else.
 5. Load the docs for whoever and wherever the scene is (ENGINE.md, "What to load, and when").
 6. If no session is open, don't open one yet: wait for the user's first action or `{new session}`. Then answer in one line in braces with where things stand as the character knows it: `{Session 4. Kendrick is at the mill, an hour before dark.}` No recap in prose.
+7. **If the narrative's `CLAUDE.md` notes say the GM opens every session in the world,** don't wait: open the session and commit an opening beat that sets the character down where things stand, through their senses, with the world in motion, up to the first thing they'd answer. It never plays the character and never recaps.
 
 ## The beat
 
@@ -71,7 +72,7 @@ When the user says `{end session}`:
 1. Run the end of a scene, above.
 2. **The World Turn**, in full, for the session as a whole.
 3. **Marks** (Core Rules §16). Decide which of the four were true, add them to the sheet, and note why in the GM log (`gm note`). If the character reached a new level, work out what it gives.
-4. **The Journal.** Bring `Journal.md` up to date with what the character now knows: where things stand, people, places, unfinished business, and a paragraph for the session as the character would tell it. Nothing they don't know.
+4. **The Journal.** Bring `Journal.md` up to date with what the character now knows: where things stand, what they've learned about the world, people, places, unfinished business, and a paragraph for the session as the character would tell it. Nothing they don't know.
 5. **Prune World State** back under its cap: move what the next scenes won't need into the docs' Now sections and the Archive.
 6. `gm session end`.
 7. Tell the user, in braces and briefly: the session is closed, the marks earned (the count, and the reasons only where the character would know them), and any choices a new level gives them. Apply their choices to the sheet when they answer.

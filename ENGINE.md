@@ -2,7 +2,7 @@
 
 The operating manual. Read it at the start of every conversation in a narrative, along with `Rules/GM Rules.md`.
 
-The engine runs a solo narrative. The user makes a world and one character, and says where it starts. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as third person limited prose that reads like a novel. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
+The engine runs a solo narrative. The user says what kind of narrative they want and makes one character. The GM builds the world, as a GM prepares a campaign, and the user discovers it by playing: they never read it. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as third person limited prose that reads like a novel. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
 
 `gm` below is shorthand for `python "<this folder>/engine/gm.py" <command>`. Run it from anywhere inside a narrative.
 
@@ -28,14 +28,14 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
   Style Guide.md             tense, register, content, stakes, and this narrative's writing rules
   Sessions/
     Session N.md             the narrative itself: prose only, one file per session
-  World/                     SHARED: what the user established and what the page has shown
-    World Bible.md           genre, era, the world's laws, dangers, how news travels, what's Reserved
-    Map & Travel.md          regions, established distances and travel times
-    Economy.md               currency, established prices, wages and costs
-    Timeline.md              history and dated events
-    Rules Kit.md             this world's skills, gear, powers, talents, and rulings
-    Names.md                 the pools every new name is drawn from
   GM Only/                   HIDDEN from the user by an honor system
+    World/                   the world you built, which the user has never read
+      World Bible.md         the premise, era, peoples, the world's laws, dangers, how news travels, its secrets
+      Map & Travel.md        regions, established distances and travel times
+      Economy.md             currency, established prices, wages and costs
+      Timeline.md            history and dated events
+      Rules Kit.md           this world's skills, gear, powers, talents, and rulings
+      Names.md               the pools every new name is drawn from
     State/
       World State.md         HOT: read whole at the start of every conversation; ~3,000-word cap
       Pressures.md           WARM: what's moving off the page
@@ -46,13 +46,17 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
     Groups/<Name>.md         families, crews, guilds, governments; Minor Groups.md
     Items.md                 notable items and who holds them
     Bestiary.md              stat lines for kinds of creatures and common sorts of people
-    World Notes.md           hidden canon about the world itself
     Logs/
       Session N GM Log.md    what the player wrote, every roll, every ruling, beat by beat
       beat.md                the staging file for the beat being committed
+      gui.json               the play window's own file: its conversation with you. Leave it alone.
 ```
 
-**Player, shared, hidden.** The Character Sheet, Journal, Style Guide, Sessions, and `World/` are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`.
+**The play window.** The user may be playing through the engine's desktop window instead of VS Code. It runs you headless in the narrative's folder and tells you so at the start of the conversation. Everything here still holds; the differences are in that note (the user sees only your final message, chat echo is off, nothing can prompt for permission).
+
+**Player and hidden.** The Character Sheet, Journal, Style Guide, and Sessions are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`, the world itself included: the user learns the world only through the page and the Journal.
+
+A narrative made before the world moved may still have its world docs in `World/` at the top of the folder (and a `GM Only/World Notes.md`). They're the same docs; use them where they are. `gm` finds either.
 
 ## What to load, and when
 
@@ -69,11 +73,11 @@ Tokens are better spent on the beat than on stale context. Load a doc once per c
 | Place doc | The scene happens there | Whole |
 | Group doc | The scene involves the group | Now + Changed by |
 | `Items.md`, `Bestiary.md` | One of its entries is in the scene | Only that entry |
-| `World/Economy.md` | Anything is bought, sold, paid, owed, or stolen | Whole (it's short) |
-| `World/Map & Travel.md` | Anyone travels, or distance matters | Whole |
-| `World/World Bible.md`, `World Notes.md` | The scene touches the world's laws or its dangers | The relevant section |
+| `Economy.md` | Anything is bought, sold, paid, owed, or stolen | Whole (it's short) |
+| `Map & Travel.md` | Anyone travels, or distance matters | Whole |
+| `World Bible.md` | The scene touches the world's laws, its dangers, or its secrets | The relevant section |
 | `Pressures.md` | Every World Turn | Whole |
-| `World/Names.md` | Never: use `gm name` | |
+| `Names.md` | Never: use `gm name` | |
 | Timeline, World Log, Archive, earlier sessions | You need to know when or how something happened | Search, never read whole |
 | `Writing/Craft Rules History.md` | Adding or changing a rule | The matching part |
 
@@ -81,12 +85,11 @@ Tokens are better spent on the beat than on stale context. Load a doc once per c
 
 Every fact in a doc carries a tag.
 
-- **[Setup]**: the user's canon, from setup or from something they told you in braces since.
+- **[Setup]**: what the user gave you: the premise, their character and the people in that character's life, and anything they've told you in braces since.
 - **[S4]**: on the page in Session 4. Quotes copied word for word.
 - **[GM]**: established by you behind the scenes and not on the page yet. Canon, hidden. Retag it **[S#]** when the page shows it.
 - **[Off S4]**: an off-page consequence from a World Turn during or after Session 4. Canon, hidden. Retag it when the page shows it.
 - **Open**: not established. You decide it when play needs it, and write it down the moment you do.
-- **Reserved**: the user's to decide. Ask in braces; never assume it.
 
 The page wins over every other tag. After that, [Setup] wins over [GM] and [Off].
 
@@ -119,7 +122,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 
 | When | Do | Procedure |
 |---|---|---|
-| A new narrative | The folder, the interview, the rules kit, the character, the opening | `Procedures/New Narrative.md` |
+| A new narrative | Three questions, building the world, the character, the opening | `Procedures/New Narrative.md` |
 | A conversation starts | Load, check the state is current | `Procedures/Play.md` |
 | The user writes an action | The beat | `Procedures/Play.md` |
 | A scene ends | Docs follow the page, World State, a light World Turn | `Procedures/Play.md`, `Procedures/World Turn.md` |
@@ -130,16 +133,17 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 ## The principles
 
 1. **The user plays one person. You play the world.** Never the other way around, in either direction.
-2. **Nothing resets.** What happened stays happened: in the docs, in the people, in the places.
-3. **Every change lands somewhere.** Most consequences are small, and many are nothing, but each one is asked about.
-4. **People change, and act from who they've become.** Read Changed by before writing anyone.
-5. **The world doesn't wait for the character.** Pressures move with time and with events, off the page.
-6. **Knowledge moves by a channel, at the world's speed.** Nobody learns anything without a way to learn it, and that includes the character.
-7. **The world keeps its laws.** Magic, technology, economics, biology, and the law work the same way every time.
-8. **The dice are real.** What's uncertain is rolled, and the roll stands.
-9. **The game stays behind the page.** The user reads a novel. The numbers are on the sheet and in your logs, and nowhere else.
-10. **The page wins.** What's in a session log happened. Fix the docs to match it.
-11. **The user's taste is the standard.** What they flag gets fixed and becomes a rule.
+2. **The world is discovered.** You built it and the user hasn't read it. They learn it the way their character does, and no faster.
+3. **Nothing resets.** What happened stays happened: in the docs, in the people, in the places.
+4. **Every change lands somewhere.** Most consequences are small, and many are nothing, but each one is asked about.
+5. **People change, and act from who they've become.** Read Changed by before writing anyone.
+6. **The world doesn't wait for the character.** Pressures move with time and with events, off the page.
+7. **Knowledge moves by a channel, at the world's speed.** Nobody learns anything without a way to learn it, and that includes the character.
+8. **The world keeps its laws.** Magic, technology, economics, biology, and the law work the same way every time.
+9. **The dice are real.** What's uncertain is rolled, and the roll stands.
+10. **The game stays behind the page.** The user reads a novel. The numbers are on the sheet and in your logs, and nowhere else.
+11. **The page wins.** What's in a session log happened. Fix the docs to match it.
+12. **The user's taste is the standard.** What they flag gets fixed and becomes a rule.
 
 ## Commands
 
@@ -156,6 +160,7 @@ gm fate <odds> "<question>"               certain, likely, even, unlikely, remot
 gm name ["<pool>"] [--for "<who>"]
 gm add cast|place|group "<Name>"
 gm new-narrative "<Name>" [--at <parent folder>]
+gm play ["<narrative folder>"] [--browser]   the play window (for the user, never run by the GM)
 ```
 
 Any command takes `--narrative <path>` to run from outside the narrative.

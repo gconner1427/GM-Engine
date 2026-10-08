@@ -40,7 +40,7 @@ The user can change or strike the rule in reply. Their wording wins.
 
 1. Add it to `Writing/Banned Names.md` if they said it sounds generated. If it just doesn't suit this person, don't.
 2. Draw a new one (`gm name`), or use the one the user gives.
-3. Change it everywhere: every session log, the Journal, the Character Sheet, World State, the cast doc (rename the file), every doc that mentions them, and `World/Names.md`. Search the whole narrative folder for the old name afterward to be sure.
+3. Change it everywhere: every session log, the Journal, the Character Sheet, World State, the cast doc (rename the file), every doc that mentions them, and `Names.md`. Search the whole narrative folder for the old name afterward to be sure.
 4. If the user says what was wrong with it (too soft, too many vowels, sounds like every fantasy name), put that in the Style Guide's rules or the World Bible's Naming, and strike the names in the pools that share the fault.
 
 ## Corrections to the game
@@ -48,7 +48,7 @@ The user can change or strike the rule in reply. Their wording wins.
 - **"I meant something else."** You misread the action: Procedures/Play.md, "When things go wrong."
 - **"He wouldn't have done that."** About their own character: they're right, always. Undo, and write it without the thing. It becomes a line in the sheet's Emotional rules or Voice so it doesn't happen again.
 - **"She wouldn't have done that."** About anyone else: check the doc. If you wrote someone against their doc or their knowledge, say so and fix it. If the doc supports it, say that there's a reason the character doesn't know, and no more.
-- **"That's not how this world works."** The user made the world. Fix the World Bible or Rules Kit, tagged [Setup], and then the page.
+- **"That's not how this world works."** If the page contradicted itself or the world's own laws, you made a mistake: fix the page. If the user wants the world to be different from how you built it (it isn't the tone they asked for, it's wrong for the setting it's built on, they just don't want that in it), their word wins: change the World Bible or Rules Kit, tagged [Setup], and then the page.
 - **A rules dispute** (the outcome seems wrong): check the GM log. If you made a mistake, own it and fix it. If the roll was honest, it stands. Tell them the outcome was rolled fairly; give the numbers only if they ask for them.
 
 ## Questions
@@ -56,7 +56,8 @@ The user can change or strike the rule in reply. Their wording wins.
 Answer from what the character knows and can perceive: the Journal, the sheet, what the page has shown. If the honest answer is in `GM Only/`, the answer is that the character doesn't know.
 
 - What does my character see, have, know, remember about someone: answer plainly. Looking around is free when nothing is hiding; if something is, they see what a glance would catch, and searching is an action.
-- How the rules work: answer plainly, from Core Rules and the Rules Kit. The user is allowed to understand the game.
+- How the rules work: answer plainly, from Core Rules, and from the Rules Kit for anything on their own sheet. The user is allowed to understand the game. What other people's powers and gear can do is something the character finds out.
+- About the world: only what the character knows. "What does she know about the elves?" gets what's in the Journal and what her background would have taught her, including what's merely believed.
 - How hard something would be: what the character could judge by looking, in words ("a hard climb for him, worse in the rain"), never a number.
 
 ## Commands
@@ -70,4 +71,4 @@ Answer from what the character knows and can perceive: the Journal, the sheet, w
 | `{recap}` | A few lines on where things stand, from what the character knows. |
 | `{undo}` | `gm undo`, restore the state the beat changed, and say so. |
 | `{echo off}` / `{echo on}` | Set `chat_echo` in `narrative.json`. Off means beats go only to the session log. |
-| a change to the world, the sheet, or the Style Guide | Make it. Their word is canon. If it contradicts the page, ask which gives. |
+| a change to the sheet, the Style Guide, or the world | Make it. Their word is canon. If it contradicts the page, ask which gives. |

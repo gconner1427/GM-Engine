@@ -24,9 +24,11 @@ class Narrative:
         self.config_path = self.root / CONFIG
         self.config = json.loads(self.config_path.read_text(encoding="utf-8"))
         self.name = self.config["name"]
-        self.world_dir = self.root / "World"
         self.sessions_dir = self.root / "Sessions"
         self.gm_dir = self.root / "GM Only"
+        self.world_dir = self.gm_dir / "World"
+        if not self.world_dir.exists() and (self.root / "World").exists():
+            self.world_dir = self.root / "World"  # a narrative made when the player wrote the world
         self.state_dir = self.gm_dir / "State"
         self.logs_dir = self.gm_dir / "Logs"
         self.sheet = self.root / "Character Sheet.md"

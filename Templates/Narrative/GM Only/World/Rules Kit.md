@@ -1,6 +1,6 @@
 # Rules Kit: {{NARRATIVE}}
 
-This world's layer on the engine's Core Rules. The core is the same in every world (six attributes, one kind of roll, five outcomes). The kit names what this world puts on top of it: its skills, its gear, its powers, its talents. Built during setup (Procedures/New Narrative.md) and added to as play needs it.
+This world's layer on the engine's Core Rules. The core is the same in every world (six attributes, one kind of roll, five outcomes). The kit names what this world puts on top of it: its skills, its gear, its powers, its talents. Built during setup (Procedures/New Narrative.md) and added to as play needs it. The player sees only the parts of it that are on their Character Sheet.
 
 ## Skills
 

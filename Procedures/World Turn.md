@@ -33,12 +33,11 @@ Think past the names in the docs: for each thing the character did, who would pl
 - **Roll what's open.** Whether a bystander noticed, whether the rumor got as far as the capital, whether the sick man lasted the week: Core Rules §12. Don't choose the answer that's more interesting.
 - **One step at a time.** A pressure moves one step per turn, or one per stretch of time its **Moves when** names. Nothing leaps to its end because the session is ending.
 - **Obey the world.** Laws, travel times, prices, and knowledge channels hold off the page exactly as they do on it.
-- **Never settle a Reserved.** If a consequence would need one decided, ask the user in braces, without saying why.
 - **The character is the user's, off the page too.** Never decide what the player character did, said, thought, or worked out in time the page skipped. If a time jump needs to know what they did with it, the user's action already said, or you ask.
 
 ## 3. Apply and log
 
-- Write each consequence where it lives, tagged **[Off S#]**: a cast doc's Now, Knows, or Changed by; World State's Secrets & Knowledge; a place's Now or Has; Items; Economy; a group's Now; Pressures (**Stands**, **Clock**, **Last moved**, and a history line); `GM Only/World Notes.md` for anything about the world itself.
+- Write each consequence where it lives, tagged **[Off S#]**: a cast doc's Now, Knows, or Changed by; World State's Secrets & Knowledge; a place's Now or Has; Items; Economy; a group's Now; Pressures (**Stands**, **Clock**, **Last moved**, and a history line); the World Bible or Timeline for anything about the world itself.
 - Anything that could reach the character in the next few scenes also goes in World State (People in motion, Pressures near the page).
 - New pressures go in `Pressures.md` with every field filled.
 - Add an entry to `GM Only/State/World Log.md`: what moved and why, one line each.

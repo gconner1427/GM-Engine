@@ -72,7 +72,9 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 
 - **No rule of three:** A major Claude tic. Threes feel finished, so they become the default: three-item lists, three parallel sentences, three fragments in a row, three "not"s. Use one or two, or the one that matters. A three earns its place when each item carries the POV's feeling, not just the rhythm. Also OK: a real count, where three things are just what's there. Watch for three action beats in a row and three clauses building to a punchline.
 
-- **"The way" only when it earns it:** Don't use "the way" to describe something that doesn't need describing.
+- **No "the way" to explain how something was done:** "He looked at her the way anyone looks at a stranger," "she said it the way people do when they're tired." The phrase tells the reader what kind of action it was instead of showing the action. Write what the person actually did: where the eyes went, what the hands did, what was said. Same for "like" and "as if" doing the same job on a look, a gesture, or a line of speech.
+    - ✗ "He looked her over the way anyone on a road looked over anyone else, pack and quiver and boots, without much hurry about it and without anything in it she needed to mind." → ✓ "His eyes went to her pack, the quiver, her boots, and came back up to her face."
+    - OK: "the way" as a plain direction or route ("the way she'd come").
 
 - **Comparisons come from what the POV has seen:** They can only compare to things and behavior they've witnessed, in their own world and life.
 
@@ -80,7 +82,7 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
     - The reverse too: the POV doesn't go blank on what their background would have taught them. If the sheet doesn't say, write around it or ask after the beat; don't write them vague to get around it, and don't invent it.
     - Their "never" and "nobody ever" claims have to hold up against the lines around them and the sessions behind them.
     - **Know-how gets a source.** When the POV does something cold that takes knowing (a knot, a hand sign, a way of reading tracks), one clause on where they got it makes it theirs. The source comes from the sheet's "Background and know-how." If it isn't there, leave the clause out and ask the user in braces after the beat.
-    - **The living world doesn't leak.** Pressures, the World Log, World Notes, and everything in a cast doc above "On the page" are GM knowledge. The POV knows only what the page showed them learning. Nothing in the prose points at what's hidden: no ominous aside, no detail lingered on because you know it matters, no "little did he know."
+    - **The living world doesn't leak.** Pressures, the World Log, the World Bible, and everything in a cast doc above "On the page" are GM knowledge. The POV knows only what the page showed them learning. Nothing in the prose points at what's hidden: no ominous aside, no detail lingered on because you know it matters, no "little did he know."
 
 - **No asking what they already know:** No question the POV would know the answer to from their history; a question that only hands the reader a fact is the author talking.
 
@@ -171,7 +173,7 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 
 ## 5. Characters
 
-- **Names come from the pools:** Every new name is drawn with `gm name` from the narrative's `World/Names.md`, never made up on the spot. If no pool fits, add names to one first, from a source that fits the people, and then draw.
+- **Names come from the pools:** Every new name is drawn with `gm name` from the narrative's `Names.md`, never made up on the spot. If no pool fits, add names to one first, from a source that fits the people, and then draw.
 
 - **Minor characters get first names only,** unless the world's naming (World Bible) says otherwise. Many don't get a name at all: the POV doesn't learn the name of everyone they pass.
 

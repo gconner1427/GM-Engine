@@ -1,6 +1,6 @@
 # Economy
 
-Money in this world. The GM loads it whenever anything is bought, sold, paid, owed, or stolen. What the player character has is on the Character Sheet; what anyone else has is on their **Money** line.
+Money in this world. Load it whenever anything is bought, sold, paid, owed, or stolen. What the player character has is on the Character Sheet; what anyone else has is on their **Money** line.
 
 ## Currency
 

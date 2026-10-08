@@ -5,7 +5,7 @@ The live state of {{NARRATIVE}}: where people are, what they have, what they kno
 **State as of:** before Session 1
 **Last updated:** {{DATE}}
 
-Bring it up to date at the end of every scene and every session (Procedures/Play.md). Keep it under about 3,000 words. Tags: **[Setup]** the user's canon, **[S#]** on the page in that session, **[GM]** yours and not on the page yet, **[Off S#]** an off-page consequence from the World Turn, **Open** not established (you decide it when play needs it), **Reserved** the user's to decide.
+Bring it up to date at the end of every scene and every session (Procedures/Play.md). Keep it under about 3,000 words. Tags: **[Setup]** what the player gave (the premise and their character), **[S#]** on the page in that session, **[GM]** yours and not on the page yet, **[Off S#]** an off-page consequence from the World Turn, **Open** not established (you decide it when play needs it).
 
 ---
 

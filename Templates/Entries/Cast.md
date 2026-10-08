@@ -7,7 +7,7 @@
 
 (Appearance in a line or two: what the character would notice.)
 
-Everything from here to the line is design: who they are underneath, whether or not the page has shown it. Tag each part **[Setup]** if the user gave it and **[GM]** if you did. Leave a section out rather than pad it.
+Everything from here to the line is design: who they are underneath, whether or not the page has shown it. Tag each part **[GM]**, or **[Setup]** for someone the player gave you as part of their character's life. Leave a section out rather than pad it.
 
 ## Who they are
 

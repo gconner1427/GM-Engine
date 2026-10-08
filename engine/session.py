@@ -170,7 +170,7 @@ def banned():
 
 
 def pools(text):
-    """[(section title, [line index of every unused name])] for World/Names.md."""
+    """[(section title, [line index of every unused name])] for the world's Names.md."""
     lines, out, current = text.split("\n"), [], None
     fenced = False
     for i, line in enumerate(lines):
@@ -192,7 +192,7 @@ def name(narrative, pool=None, who=None):
     never = banned()
     found = [(t, [i for i in free if lines[i][2:].strip().lower() not in never]) for t, free in found]
     if not pool:
-        print("Name pools in World/Names.md (unused names left):")
+        print("Name pools in Names.md (unused names left):")
         for title, free in found:
             print(f"  {title}: {len(free)}")
         return 0
@@ -201,7 +201,7 @@ def name(narrative, pool=None, who=None):
         sys.exit(f"{len(matches)} pools match {pool!r}. Pools: {', '.join(t for t, _ in found) or 'none'}")
     title, free = matches[0]
     if not free:
-        sys.exit(f"No unused names left in {title!r}. Add more to World/Names.md.")
+        sys.exit(f"No unused names left in {title!r}. Add more to {path.relative_to(narrative.root)}.")
     i = dice.RNG.choice(free)
     picked = lines[i][2:].strip()
     lines[i] = f"- ~~{picked}~~" + (f" ({who})" if who else "")

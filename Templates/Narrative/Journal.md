@@ -6,6 +6,12 @@ What your character knows, kept by the GM so you don't have to open anything mar
 
 (A few lines: where they are, the day and time, what just happened.)
 
+## The world as they know it
+
+What someone with your character's life would know about the world: the land, its peoples, how things work, what everyone believes. Written before play starts and added to as they learn more. Some of it is only what people say.
+
+(none yet)
+
 ## People
 
 One line each: who they are as far as your character knows, and where things stand between them.

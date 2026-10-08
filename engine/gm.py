@@ -2,8 +2,9 @@
 
 Run from anywhere inside a narrative (a folder with narrative.json), or pass --narrative <path>.
 
+    gm play ["<narrative folder>"] [--browser]   the play window: set up and play narratives
     gm new-narrative "<Name>" [--at <parent folder>]
-    gm status                                  session, vitals, the clock, pressures
+    gm status                                 session, vitals, the clock, pressures
 
     gm session start | end
     gm beat [--again]                          commit the staged beat (GM Only/Logs/beat.md)
@@ -93,6 +94,10 @@ def main(argv):
     cmd, args = args[0], args[1:]
     path = take(args, "narrative")
 
+    if cmd == "play":
+        import gui
+        browser = take(args, "browser", False)
+        return gui.run(args[0] if args else path, browser)
     if cmd == "new-narrative":
         at = take(args, "at")
         if not args:

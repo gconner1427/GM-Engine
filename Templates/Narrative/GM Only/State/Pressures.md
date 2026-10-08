@@ -16,7 +16,7 @@ Entry format (every field is required):
 **Moves when:** what makes it advance (time alone, an event, someone's choice, the character's actions)
 **Heading toward:** what happens when the clock fills, if nothing stops it
 **Touches:** the people, places, and groups it involves, comma-separated, as their doc names
-**Last moved:** [S#] or [Off S#] or [Setup]
+**Last moved:** [S#] or [Off S#] or [GM]
 - History, one line per step, with tags.
 ```
 

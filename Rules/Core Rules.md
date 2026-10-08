@@ -1,6 +1,6 @@
 # Core Rules
 
-The game underneath the prose. It's the same in every world: fantasy, science fiction, the present day, after the end. Each narrative's `World/Rules Kit.md` names what that world puts on top (its skills, gear, powers, and talents).
+The game underneath the prose. It's the same in every world: fantasy, science fiction, the present day, after the end. Each narrative's `Rules Kit.md` names what that world puts on top (its skills, gear, powers, and talents).
 
 The rules exist to keep the world honest. They decide what happens when it's truly uncertain, so the outcome comes from the character's ability, the difficulty, and chance, never from what would make the better scene. None of it reaches the page: the user sees numbers only on the Character Sheet.
 

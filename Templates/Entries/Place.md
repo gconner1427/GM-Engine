@@ -15,7 +15,7 @@ What the place holds that matters: stock, furniture, fixtures, and things left h
 
 ## Hidden
 
-What's here that the character hasn't found, tagged [GM] or [Setup]. What it would take to find each one.
+What's here that the character hasn't found, tagged [GM]. What it would take to find each one.
 
 ## Now
 

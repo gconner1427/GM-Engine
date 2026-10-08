@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GM Engine</title>
+<style>
+:root {
+  --bg: #12100c; --panel: #1a1712; --raised: #231f18; --well: #0e0c09; --line: #352e25; --line-soft: #2a251d;
+  --ink: #ebe3d2; --dim: #a79d89; --faint: #70675a;
+  --accent: #c9a25b; --accent-soft: #c9a25b22; --accent-ink: #1a1408;
+  --good: #7fa46a; --mid: #cfa24e; --bad: #c0584c; --strain: #6b93c4; --warn: #d98a5f;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: "Segoe UI", system-ui, sans-serif;
+  --story-size: 18px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); overflow: hidden; }
+button { font: inherit; color: var(--ink); background: var(--raised); border: 1px solid var(--line); border-radius: 6px;
+  padding: 6px 12px; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: linear-gradient(#d4ae68, #b98f48); color: var(--accent-ink); border-color: #b98f48; font-weight: 600; }
+button.primary:hover:not(:disabled) { background: linear-gradient(#dfba76, #c59a50); }
+button.quiet { background: none; border-color: transparent; color: var(--dim); }
+button.quiet:hover:not(:disabled) { color: var(--ink); border-color: var(--line); }
+button.icon { padding: 5px 8px; line-height: 1; display: inline-grid; place-items: center; }
+button.icon svg { width: 16px; height: 16px; display: block; }
+input, textarea, select { font: inherit; color: var(--ink); background: var(--well); border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px 10px; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.view { height: 100%; animation: fadein .35s ease; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+[hidden] { display: none !important; }
+.caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
+
+/* ---- home: the title screen ---- */
+#home { overflow: auto; padding: 56px 24px 64px;
+  background: radial-gradient(900px 520px at 50% -80px, #2a2216 0%, transparent 70%), var(--bg); }
+.home-inner { max-width: 720px; margin: 0 auto; }
+.masthead { text-align: center; margin-bottom: 44px; }
+.masthead svg { width: 68px; height: 68px; color: var(--accent); stroke-width: 1.1; }
+.masthead h1 { font: 400 34px var(--serif); letter-spacing: 9px; text-transform: uppercase; margin: 10px 0 6px; padding-left: 9px; }
+.masthead p { color: var(--dim); margin: 0; font: italic 15px var(--serif); }
+.rule { display: flex; align-items: center; gap: 14px; color: var(--dim); margin: 36px 0 14px; }
+.rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--line)); }
+.rule::after { background: linear-gradient(270deg, transparent, var(--line)); }
+.slot { display: flex; align-items: center; gap: 16px; background: linear-gradient(var(--panel), #17140f); border: 1px solid var(--line);
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; transition: border-color .2s, transform .2s; }
+.slot:hover { border-color: #5a4c33; transform: translateY(-1px); }
+.slot .what { flex: 1; min-width: 0; }
+.slot .name { font: 600 20px var(--serif); }
+.slot .lead { color: var(--accent); font-size: 13px; margin-top: 1px; }
+.slot .meta { color: var(--faint); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+.form { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 10px; }
+.form .row { display: flex; gap: 8px; align-items: center; }
+.form .row input { flex: 1; min-width: 0; }
+.form label { color: var(--dim); font-size: 12px; }
+.empty { color: var(--faint); padding: 8px 2px; text-align: center; font-style: italic; }
+.warnbox { border: 1px solid var(--warn); color: var(--warn); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; }
+
+/* ---- game ---- */
+#game { display: grid; grid-template-rows: auto 1fr; }
+header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 7px 12px;
+  border-bottom: 1px solid var(--line); background: linear-gradient(#1f1b15, var(--panel)); }
+header .left, header .right { display: flex; align-items: center; gap: 6px; }
+header .right { justify-content: flex-end; }
+header .title { font: 400 17px var(--serif); letter-spacing: 3px; text-transform: uppercase; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46vw; }
+header select { padding: 4px 8px; background: var(--raised); }
+.menu { position: relative; }
+.menu-items { position: absolute; right: 0; top: 118%; background: var(--raised); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px; display: grid; gap: 2px; min-width: 240px; z-index: 20; box-shadow: 0 10px 30px #000a; }
+.menu-items button { text-align: left; background: none; border-color: transparent; }
+.menu-items button:hover { background: var(--accent-soft); }
+.body { display: grid; grid-template-columns: minmax(0, 1fr) 440px; min-height: 0; }
+.body.wide { grid-template-columns: minmax(0, 1fr); }
+.body.wide aside { display: none; }
+.main { display: grid; grid-template-rows: 1fr auto; min-height: 0; min-width: 0; position: relative;
+  background: radial-gradient(1100px 600px at 50% 0, #1b1711 0%, transparent 75%), var(--bg); }
+#story { overflow: auto; padding: 44px 36px 28px; }
+.page { max-width: 66ch; margin: 0 auto; font: var(--story-size)/1.72 var(--serif); }
+.page p { margin: 0 0 1em; }
+.page p.fresh { animation: arrive 1.4s ease-out, mark 9s ease-out; margin-left: -18px; padding-left: 16px; border-left: 2px solid transparent; }
+@keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes mark { 0%, 55% { border-left-color: var(--accent); } 100% { border-left-color: transparent; } }
+.page p.opens::first-letter { font-size: 3.1em; float: left; line-height: .86; padding: .06em .09em 0 0; color: var(--accent); }
+.page hr { border: none; text-align: center; margin: 1.9em 0; height: 1em; line-height: 1em; }
+.page hr::after { content: "\2726\2003\2726\2003\2726"; color: var(--faint); font-size: .62em; }
+.chapter { text-align: center; margin: 0 0 2.6em; }
+.chapter .caps { color: var(--accent); font-size: 12px; letter-spacing: 4px; }
+.chapter::after { content: ""; display: block; width: 90px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+.hint { color: var(--dim); font: italic 17px/1.7 var(--serif); text-align: center; padding: 16vh 20px 0; }
+.hint svg { width: 44px; height: 44px; color: var(--accent); stroke-width: 1.1; display: block; margin: 0 auto 14px; }
+.hint button { margin-top: 20px; font: 600 14px var(--sans); font-style: normal; padding: 9px 20px; }
+#latest { position: absolute; right: 26px; bottom: 100%; margin-bottom: 14px; border-radius: 999px; box-shadow: 0 6px 18px #0009; z-index: 5; }
+
+.talk { max-width: 76ch; margin: 0 auto; display: grid; gap: 14px; }
+.msg { border-radius: 10px; padding: 11px 15px; border: 1px solid var(--line); background: var(--panel); overflow-wrap: anywhere; }
+.msg.you { background: var(--raised); margin-left: 14%; white-space: pre-wrap; border-color: #40382c; }
+.msg.gm { margin-right: 6%; border-left: 2px solid var(--accent); }
+.msg.note { border-style: dashed; color: var(--dim); font-size: 13px; }
+.msg .who { color: var(--accent); margin-bottom: 5px; font-size: 10px; }
+.msg.you .who { color: var(--faint); }
+
+.composer { border-top: 1px solid var(--line); background: linear-gradient(var(--panel), #17140f); padding: 10px 18px 14px; position: relative; }
+.working { display: flex; align-items: center; gap: 12px; color: var(--dim); max-width: 900px; margin: 0 auto 10px; }
+.working svg { width: 26px; height: 26px; color: var(--accent); flex: none; animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); }
+@keyframes tumble { 0% { transform: rotate(0); } 40% { transform: rotate(200deg); } 60% { transform: rotate(160deg); } 100% { transform: rotate(360deg); } }
+.working .lines { flex: 1; min-width: 0; }
+.working .now { color: var(--ink); font: italic 15px var(--serif); }
+.working .echo { font-size: 12px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.working .clock { font-variant-numeric: tabular-nums; color: var(--faint); }
+.modes { display: flex; max-width: 900px; margin: 0 auto 8px; align-items: center; gap: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--well); }
+.seg button { border: none; background: none; border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--dim); }
+.seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.modes .tip { color: var(--faint); font-size: 12px; }
+.compose-row { display: flex; gap: 8px; align-items: flex-end; max-width: 900px; margin: 0 auto; }
+.compose-row textarea { flex: 1; resize: none; min-height: 46px; max-height: 220px; font: 15px/1.5 var(--sans); padding: 11px 13px; border-radius: 8px; }
+.compose-row button { height: 46px; padding: 0 20px; border-radius: 8px; }
+body.gmmode .compose-row textarea { border-color: #5a4c33; background: #151109; }
+
+aside { border-left: 1px solid var(--line); background: var(--panel); display: grid; grid-template-rows: auto 1fr; min-height: 0; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); background: #17140f; }
+.tabs button { flex: 1; border: none; border-radius: 0; background: none; color: var(--faint); padding: 11px 4px 9px;
+  border-bottom: 2px solid transparent; font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.6px; }
+.tabs button:hover { color: var(--dim); }
+.tabs button.on { color: var(--accent); border-bottom-color: var(--accent); }
+.tabs .badge { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: 6px; vertical-align: middle;
+  box-shadow: 0 0 8px var(--accent); }
+.pane { overflow: auto; padding: 16px 18px 32px; }
+
+.md h1 { font: 600 20px var(--serif); margin: 0 0 10px; }
+.md h2 { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; color: var(--accent); margin: 24px 0 9px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--line-soft); }
+.md h3 { font: 600 15px var(--serif); margin: 16px 0 4px; }
+.md h4 { font: 600 13px var(--sans); margin: 12px 0 4px; }
+.md p { margin: 0 0 10px; }
+.md ul, .md ol { margin: 0 0 10px; padding-left: 20px; }
+.md li { margin-bottom: 4px; }
+.md li.in1 { margin-left: 18px; } .md li.in2 { margin-left: 36px; }
+.md li::marker { color: var(--faint); }
+.md table { border-collapse: collapse; width: 100%; margin: 0 0 12px; font-size: 13px; }
+.md th, .md td { border: 1px solid var(--line); padding: 5px 8px; text-align: left; }
+.md th { color: var(--dim); font-weight: 600; background: var(--raised); }
+.md code { background: var(--well); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+.md pre { background: var(--well); padding: 10px; border-radius: 6px; overflow: auto; font-size: 12.5px; }
+.md hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+.md s { color: var(--faint); }
+.md > :first-child { margin-top: 0; }
+
+/* ---- the character panel ---- */
+.hero { background: linear-gradient(160deg, #2a241a, var(--raised) 60%); border: 1px solid var(--line); border-radius: 12px; padding: 16px; position: relative; }
+.hero.glow { animation: glow 2.4s ease-out; }
+@keyframes glow { 0% { box-shadow: 0 0 0 1px var(--accent), 0 0 26px #c9a25b88; } 100% { box-shadow: none; } }
+.hero .top { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.portrait { width: 60px; height: 60px; border-radius: 50%; flex: none; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #3a3122, #17130d);
+  border: 1px solid var(--accent); box-shadow: 0 0 0 3px #17130d, 0 0 0 4px #4b3f2a; font: 400 22px var(--serif); color: var(--accent); letter-spacing: 1px; }
+.hero .who { font: 600 21px/1.2 var(--serif); }
+.hero .aka { color: var(--faint); font-size: 12px; }
+.hero .level { margin-left: auto; text-align: center; flex: none; }
+.hero .level b { display: block; font: 400 26px/1 var(--serif); color: var(--accent); }
+.hero .level span { font-size: 9px; color: var(--faint); }
+.hero .concept { color: var(--dim); font: italic 14px/1.5 var(--serif); margin-bottom: 12px; }
+.bar { margin: 9px 0; position: relative; }
+.bar .label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.bar .label .caps { color: var(--dim); font-size: 10px; }
+.bar .label .num { font-size: 12px; font-variant-numeric: tabular-nums; }
+.bar .label .band { color: var(--faint); font-size: 11px; margin-left: 8px; font-style: italic; }
+.bar .track { height: 10px; background: var(--well); border-radius: 5px; overflow: hidden; border: 1px solid #000; }
+.bar .fill { height: 100%; border-radius: 4px; transition: width .8s cubic-bezier(.2, .7, .2, 1), background .8s; background-image: linear-gradient(#fff3, transparent 60%); }
+.bar.thin .track { height: 4px; border: none; }
+.bar .delta { position: absolute; right: 0; top: -6px; font: 600 15px var(--sans); animation: floatup 2.2s ease-out forwards; pointer-events: none; }
+@keyframes floatup { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; } 100% { opacity: 0; transform: translateY(-22px); } }
+.bar.hit .track { animation: shake .45s; }
+@keyframes shake { 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+.states { display: grid; gap: 5px; margin-top: 12px; font-size: 13px; }
+.states div { display: flex; gap: 8px; }
+.states .caps { color: var(--faint); font-size: 10px; width: 78px; flex: none; padding-top: 3px; }
+.states .hurt { color: var(--warn); }
+.block { margin-top: 22px; }
+.block > .caps { color: var(--accent); display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.block > .caps::after { content: ""; flex: 1; height: 1px; background: var(--line-soft); }
+.tiles { display: grid; gap: 8px; }
+.tiles.six { grid-template-columns: repeat(6, 1fr); } .tiles.four { grid-template-columns: repeat(4, 1fr); }
+.tile { background: var(--well); border: 1px solid var(--line-soft); border-radius: 8px; padding: 9px 2px 7px; text-align: center; }
+.tile b { display: block; font: 400 21px/1.1 var(--serif); }
+.tile b.up { color: var(--accent); } .tile b.down { color: var(--warn); }
+.tile span { font-size: 9px; color: var(--faint); letter-spacing: 1px; text-transform: uppercase; }
+.tiles.four .tile { border-radius: 8px 8px 16px 16px; }
+.skill { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 7px 0; border-bottom: 1px solid var(--line-soft); }
+.skill:last-child { border-bottom: none; }
+.skill .name { font-weight: 600; }
+.skill .note { grid-column: 1 / -1; color: var(--faint); font-size: 12px; }
+.pips { display: inline-flex; gap: 4px; align-items: center; }
+.pips i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #5a4c33; }
+.pips i.on { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 5px #c9a25b66; }
+.talent { background: var(--well); border: 1px solid var(--line-soft); border-left: 2px solid var(--accent); border-radius: 6px; padding: 9px 12px; margin-bottom: 8px; }
+.talent .name { font: 600 15px var(--serif); } .talent .text { color: var(--dim); font-size: 13px; }
+.gear .where { color: var(--faint); font-size: 10px; margin: 12px 0 5px; }
+.gear .where:first-child { margin-top: 0; }
+.gear .item { padding: 4px 0 4px 14px; position: relative; font-size: 13.5px; }
+.gear .item::before { content: ""; position: absolute; left: 2px; top: 12px; width: 4px; height: 4px; transform: rotate(45deg); background: #5a4c33; }
+.purse { display: flex; align-items: center; gap: 10px; background: var(--well); border: 1px solid var(--line-soft); border-radius: 8px; padding: 9px 12px; margin-top: 12px; }
+.purse svg { width: 18px; height: 18px; color: var(--accent); flex: none; }
+details.about { border-bottom: 1px solid var(--line-soft); }
+details.about summary { cursor: pointer; padding: 9px 0; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+details.about summary::-webkit-details-marker { display: none; }
+details.about summary::before { content: "\203A"; color: var(--accent); width: 10px; transition: transform .15s; display: inline-block; }
+details.about[open] summary::before { transform: rotate(90deg); }
+details.about .md { padding: 0 0 10px 18px; color: var(--dim); font-size: 13.5px; }
+
+/* ---- journal and world ---- */
+.stands { background: linear-gradient(160deg, #2a241a, var(--raised) 60%); border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; font: italic 15px/1.6 var(--serif); }
+.stands .caps { display: block; color: var(--accent); font-style: normal; margin-bottom: 6px; font-size: 10px; }
+.journal li { list-style: none; margin: 0 0 9px -20px; padding-left: 12px; border-left: 2px solid var(--line); }
+.journal li strong:first-child { color: var(--ink); font-family: var(--serif); font-size: 15px; }
+.journal li { color: var(--dim); }
+.choice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.choice button { text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--well); }
+.choice button b { display: block; font: 600 15px var(--serif); }
+.choice button span { color: var(--faint); font-size: 12px; }
+.choice button.on { border-color: var(--accent); background: var(--accent-soft); }
+.choice button.on b { color: var(--accent); }
+.form .note { color: var(--faint); font-size: 12px; font-style: italic; }
+
+#flag { position: fixed; z-index: 30; border-radius: 999px; box-shadow: 0 6px 18px #000a; display: inline-flex; align-items: center; gap: 6px; }
+#flag svg { width: 14px; height: 14px; }
+.shade { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; z-index: 40; animation: fadein .15s; }
+.dialog { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; width: min(580px, 92vw); display: grid; gap: 12px;
+  box-shadow: 0 20px 60px #000c; }
+.dialog .head { font: 600 18px var(--serif); }
+.dialog blockquote { margin: 0; padding: 8px 14px; border-left: 2px solid var(--accent); color: var(--dim); font: italic 15px/1.55 var(--serif);
+  max-height: 180px; overflow: auto; }
+.dialog textarea { min-height: 84px; resize: vertical; }
+.dialog .row { display: flex; justify-content: flex-end; gap: 8px; }
+#toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); background: var(--raised); border: 1px solid var(--warn);
+  color: var(--ink); padding: 10px 18px; border-radius: 8px; z-index: 50; max-width: 80vw; box-shadow: 0 10px 30px #000a; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: #5a4c33; }
+::selection { background: #c9a25b55; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="d20" viewBox="0 0 48 48"><path d="M24 3 42.2 13.5v21L24 45 5.8 34.500v-21Z"/><path d="M24 12.500 35 31.500H13Z"/>
+    <path d="M24 3v9.500M5.800 13.500 24 12.500l18.200 1M13 31.500 5.800 13.500M35 31.500l7.200-18M13 31.500 5.800 34.500M35 31.500l7.200 3M13 31.500 24 45l11-13.500"/></symbol>
+  <symbol id="i-back" viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 16 16"><rect x="1.500" y="2.500" width="13" height="11" rx="1.500"/><path d="M10 2.500v11"/></symbol>
+  <symbol id="i-more" viewBox="0 0 16 16"><path d="M3 8h.01M8 8h.01M13 8h.01" stroke-width="2.200"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 16 16"><path d="M3.500 14V2.500h8l-1.500 3 1.500 3h-8"/></symbol>
+  <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3v10M4 9l4 4 4-4"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 20 20"><ellipse cx="10" cy="6" rx="6.500" ry="3"/><path d="M3.500 6v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3V6M3.500 10v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3v-4"/></symbol>
+</svg>
+
+<div id="home" class="view">
+  <div class="home-inner">
+    <div class="masthead">
+      <svg><use href="#d20"/></svg>
+      <h1>GM Engine</h1>
+      <p>Solo narratives, run by a game master behind the page.</p>
+    </div>
+    <div id="noclaude" class="warnbox" hidden>Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.</div>
+    <div class="rule caps">Continue</div>
+    <div id="list"></div>
+    <div class="rule caps">A new narrative</div>
+    <div class="form">
+      <label for="newgenre">Genre and tone</label>
+      <input id="newgenre" placeholder="Grim low fantasy. Space opera with some humor. A slow-burn western.">
+      <label>The world</label>
+      <div class="choice" id="newworld">
+        <button data-world="original" class="on"><b>Original</b><span>The GM invents it</span></button>
+        <button data-world="dnd"><b>D&amp;D</b><span>A world in that tradition</span></button>
+        <button data-world="other"><b>Another setting</b><span>Star Wars, Mass Effect, a book…</span></button>
+      </div>
+      <input id="newsetting" hidden>
+      <label for="newname">A title, if you have one</label>
+      <input id="newname" placeholder="Leave blank and the GM will name it">
+      <label for="newparent">The folder it's created in</label>
+      <div class="row"><input id="newparent"><button id="browse">Browse…</button></div>
+      <div class="row" style="justify-content:space-between">
+        <button id="addexisting" class="quiet" title="A narrative folder made earlier, or on another computer">Add an existing folder…</button>
+        <button id="create" class="primary">Create the world</button>
+      </div>
+      <div class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</div>
+    </div>
+  </div>
+</div>
+
+<div id="game" class="view" hidden>
+  <header>
+    <div class="left">
+      <button id="back" class="quiet icon" title="All narratives"><svg><use href="#i-back"/></svg></button>
+      <select id="sessions" title="Which session to read" hidden></select>
+    </div>
+    <div class="title" id="title"></div>
+    <div class="right">
+      <button id="newsession" hidden>New session</button>
+      <button id="endsession" hidden>End session</button>
+      <button id="smaller" class="quiet" title="Smaller text">A−</button>
+      <button id="larger" class="quiet" title="Larger text">A+</button>
+      <button id="panel" class="quiet icon" title="Show or hide the side panel"><svg><use href="#i-panel"/></svg></button>
+      <div class="menu">
+        <button id="more" class="quiet icon" title="More"><svg><use href="#i-more"/></svg></button>
+        <div class="menu-items" id="moreitems" hidden>
+          <button data-act="undo">Take back the last beat</button>
+          <button data-act="recap">Where do things stand?</button>
+          <button data-act="fresh">Start a fresh GM conversation</button>
+          <button data-act="folder">Open the narrative's folder</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="body" id="body">
+    <div class="main">
+      <div id="story"></div>
+      <div class="composer">
+        <button id="latest" hidden><svg style="width:13px;height:13px;vertical-align:-2px"><use href="#i-down"/></svg> Latest</button>
+        <div class="working" id="working" hidden>
+          <svg><use href="#d20"/></svg>
+          <div class="lines"><div class="now" id="workingtext"></div><div class="echo" id="echo"></div></div>
+          <span class="clock" id="clock"></span>
+          <button id="stop" class="quiet">Stop</button>
+        </div>
+        <div class="modes" id="modes">
+          <div class="seg"><button id="modeact" class="on">As my character</button><button id="modegm">To the GM</button></div>
+          <span class="tip" id="modetip"></span>
+        </div>
+        <div class="compose-row">
+          <textarea id="input" rows="1"></textarea>
+          <button id="send" class="primary">Send</button>
+        </div>
+      </div>
+    </div>
+    <aside>
+      <div class="tabs" id="tabs">
+        <button data-tab="sheet" class="on">Character</button>
+        <button data-tab="journal">Journal</button>
+        <button data-tab="gm">GM<span class="badge" id="gmbadge" hidden></span></button>
+      </div>
+      <div class="pane" id="pane"></div>
+    </aside>
+  </div>
+</div>
+
+<button id="flag" class="primary" hidden><svg><use href="#i-flag"/></svg>Flag this passage</button>
+<div class="shade" id="flagdialog" hidden>
+  <div class="dialog">
+    <div class="head">What's wrong with it?</div>
+    <blockquote id="flagquote"></blockquote>
+    <textarea id="flagnote" placeholder="Too flowery. This line sounds stiff. That name sounds generated."></textarea>
+    <div class="row"><button id="flagcancel">Cancel</button><button id="flagsend" class="primary">Send to the GM</button></div>
+  </div>
+</div>
+<div id="toast" hidden></div>
+
+<script>
+const TOKEN = "__GM_TOKEN__";
+const START = __GM_START__;
+const $ = id => document.getElementById(id);
+const WORKING = ["The GM considers", "Dice roll behind the screen", "The world answers", "The page is being written"];
+const ABOUT = ["Who they are", "What they want", "Voice", "Emotional rules", "Background and know-how", "People", "Changed by"];
+let prefs = {size: 18, wide: false};
+
+async function api(route, data) {
+  const res = await fetch("/api/" + route, {method: "POST", headers: {"Content-Type": "application/json", "X-GM-Token": TOKEN},
+                                            body: JSON.stringify(data || {})});
+  const body = await res.json().catch(() => ({error: "The window got an unreadable answer."}));
+  if (!res.ok) throw new Error(body.error || "Something went wrong.");
+  return body;
+}
+
+let toastTimer;
+function toast(text) {
+  $("toast").textContent = text;
+  $("toast").hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").hidden = true, 6000);
+}
+const guard = fn => async (...args) => { try { await fn(...args); } catch (e) { toast(e.message); } };
+
+function applyPrefs(save) {
+  document.documentElement.style.setProperty("--story-size", prefs.size + "px");
+  $("body").classList.toggle("wide", !!prefs.wide);
+  if (save) api("prefs", {prefs}).catch(() => {});
+}
+
+// ---- markdown ---------------------------------------------------------------
+
+function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+function inline(s) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/~~([^~]+)~~/g, "<s>$1</s>")
+    .replace(/(^|[^*\w])\*([^*\s](?:[^*]*[^*\s])?)\*(?![*\w])/g, "$1<em>$2</em>")
+    .replace(/(^|[^\w])_([^_\s](?:[^_]*[^_\s])?)_(?!\w)/g, "$1<em>$2</em>");
+}
+
+const RULE = /^\s*(-{3,}|\*\s*\*\s*\*|_{3,})\s*$/;
+const ITEM = /^(\s*)([-*]|\d+\.)\s+(.*)$/;
+const CELLS = line => line.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+
+function md(text) {
+  const lines = text.replace(/<!--[\s\S]*?-->/g, "").split(/\r?\n/);
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    let m;
+    if (/^```/.test(line)) {
+      const buf = [];
+      for (i++; i < lines.length && !/^```/.test(lines[i]); i++) buf.push(lines[i]);
+      i++;
+      out.push("<pre>" + esc(buf.join("\n")) + "</pre>");
+    } else if (!line.trim()) {
+      i++;
+    } else if ((m = line.match(/^(#{1,4})\s+(.*)$/))) {
+      out.push(`<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`);
+      i++;
+    } else if (RULE.test(line)) {
+      out.push("<hr>");
+      i++;
+    } else if (/^\s*\|/.test(line)) {
+      const rows = [];
+      for (; i < lines.length && /^\s*\|/.test(lines[i]); i++) rows.push(lines[i]);
+      const headed = rows.length > 1 && /^\s*\|[\s:|-]+\|?\s*$/.test(rows[1]);
+      let html = "<table>";
+      rows.forEach((row, n) => {
+        if (headed && n === 1) return;
+        const tag = headed && n === 0 ? "th" : "td";
+        html += "<tr>" + CELLS(row).map(c => `<${tag}>${inline(c)}</${tag}>`).join("") + "</tr>";
+      });
+      out.push(html + "</table>");
+    } else if (ITEM.test(line)) {
+      const ordered = /^\s*\d+\./.test(line);
+      let html = ordered ? `<ol start="${parseInt(line, 10)}">` : "<ul>";
+      while (i < lines.length && (m = lines[i].match(ITEM))) {
+        let body = m[3];
+        const depth = Math.min(Math.floor(m[1].length / 2), 2);
+        for (i++; i < lines.length && lines[i].trim() && !ITEM.test(lines[i]) && /^\s+/.test(lines[i]); i++) body += " " + lines[i].trim();
+        html += `<li${depth ? ` class="in${depth}"` : ""}>${inline(body)}</li>`;
+      }
+      out.push(html + (ordered ? "</ol>" : "</ul>"));
+    } else {
+      const buf = [line.trim()];
+      for (i++; i < lines.length && lines[i].trim() && !/^(#{1,4}\s|```|\s*\|)/.test(lines[i]) && !RULE.test(lines[i]) && !ITEM.test(lines[i]); i++)
+        buf.push(lines[i].trim());
+      out.push("<p>" + inline(buf.join(" ")) + "</p>");
+    }
+  }
+  return out.join("\n");
+}
+
+// ---- reading the docs the panels are built from ------------------------------------
+
+const untag = s => s.replace(/[ \t]*\[(?:Setup|GM|Off S\d+|S\d+)\]/g, "");
+const blank = v => !v || /^\(|^(unknown|none|nothing|n\/a)\b/i.test(v.trim());
+
+function grab(text, name) {
+  const m = text.match(new RegExp("^(?:- )?\\*\\*" + name + ":\\*\\*[ \\t]*(.*)$", "m"));
+  return m ? untag(m[1]).trim() : "";
+}
+
+function part(text, heading) {
+  const m = text.match(new RegExp("^## " + heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[ \\t]*$", "m"));
+  if (!m) return "";
+  const rest = text.slice(m.index + m[0].length);
+  const end = rest.search(/^(## |---\s*$)/m);
+  return (end < 0 ? rest : rest.slice(0, end)).trim();
+}
+
+function pairs(sec) {      // a two-row table: names over values
+  const rows = sec.split(/\r?\n/).filter(l => /^\s*\|/.test(l)).filter(l => !/^\s*\|[\s:|-]+\|?\s*$/.test(l));
+  if (rows.length < 2) return [];
+  const values = CELLS(rows[1]);
+  return CELLS(rows[0]).map((name, i) => ({name, value: values[i] || ""}));
+}
+
+function entries(sec) {    // "- **Name:** text" lines
+  return sec.split(/\r?\n/).map(l => l.match(/^\s*[-*]\s+\*\*(.+?)\*\*:?\s*(.*)$/)).filter(Boolean)
+    .map(m => ({name: m[1].replace(/:$/, "").trim(), text: untag(m[2]).trim()}));
+}
+
+function pieces(text) {    // a gear line into its things
+  const cut = text.includes(";") ? text.split(";") : text.split(/,(?![^()]*\))/);
+  return cut.map(s => s.trim().replace(/^and\s+/i, "").replace(/\.$/, "")).filter(Boolean);
+}
+
+const prose = sec => untag(sec).split(/\r?\n/).filter(l => !/^\(.*\)$/.test(l.trim())).join("\n").trim();
+
+// ---- home -------------------------------------------------------------------
+
+function when(iso) {
+  if (!iso) return "";
+  const d = new Date(iso), days = Math.floor((new Date().setHours(0, 0, 0, 0) - new Date(iso).setHours(0, 0, 0, 0)) / 864e5);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7) return days + " days ago";
+  return d.toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
+}
+
+async function showHome() {
+  game = null;
+  document.body.classList.remove("gmmode");
+  $("game").hidden = true;
+  $("home").hidden = false;
+  const h = await api("home");
+  if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
+  $("noclaude").hidden = !!h.claude;
+  if (!$("newparent").value) $("newparent").value = h.default_parent;
+  const list = $("list");
+  list.innerHTML = h.narratives.length ? "" : '<div class="empty">Nothing yet. Start one below.</div>';
+  for (const n of h.narratives) {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    const hero = n.character ? `${esc(n.character)}${n.level ? " · Level " + esc(n.level) : ""}` : "";
+    const state = n.missing ? "The folder is gone." : !n.set_up ? "Not set up yet"
+      : n.sessions ? `Session ${n.sessions}${n.played ? " · last played " + when(n.played) : ""}` : "Ready to begin";
+    slot.innerHTML = `<div class="what"><div class="name">${esc(n.name)}</div>${hero ? `<div class="lead">${hero}</div>` : ""}
+      <div class="meta" title="${esc(n.path)}">${state}</div></div>`;
+    const open = document.createElement("button");
+    open.className = "primary";
+    open.textContent = !n.set_up ? "Set up" : n.sessions ? "Continue" : "Begin";
+    open.disabled = n.missing;
+    open.onclick = guard(() => openGame(n.path));
+    const drop = document.createElement("button");
+    drop.className = "quiet";
+    drop.textContent = "Remove";
+    drop.title = "Take it off this list. The folder isn't touched.";
+    drop.onclick = guard(async () => { await api("forget", {path: n.path}); showHome(); });
+    slot.append(open, drop);
+    list.append(slot);
+  }
+}
+
+$("browse").onclick = guard(async () => {
+  const r = await api("pick-folder", {start: $("newparent").value});
+  if (r.path) $("newparent").value = r.path;
+});
+let newWorld = "original";
+$("newworld").onclick = e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  newWorld = b.dataset.world;
+  for (const o of $("newworld").children) o.classList.toggle("on", o === b);
+  $("newsetting").hidden = newWorld === "original";
+  $("newsetting").placeholder = newWorld === "dnd" ? "A published setting, if you have one in mind (optional)" : "Which setting? And an era, if it matters";
+  if (newWorld !== "original") $("newsetting").focus();
+};
+$("create").onclick = guard(async () => {
+  const genre = $("newgenre").value.trim(), setting = $("newsetting").value.trim(), title = $("newname").value.trim();
+  if (!genre) return toast("Say what genre and tone you want, so the GM knows what to build.");
+  if (newWorld === "other" && !setting) return toast("Say which setting to build it on.");
+  const world = newWorld === "original" ? "Original: invent it."
+    : newWorld === "dnd" ? "Built on D&D." + (setting ? " Setting: " + setting : " No particular published setting.")
+    : "Built on an existing setting: " + setting;
+  const r = await api("create", {name: title, parent: $("newparent").value});
+  $("newgenre").value = $("newsetting").value = $("newname").value = "";
+  openGame(r.path);
+  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nTitle: ${title || "none yet; choose one."}`, true);
+});
+$("addexisting").onclick = guard(async () => {
+  const r = await api("pick-folder", {});
+  if (!r.path) return;
+  await api("add", {path: r.path});
+  showHome();
+});
+
+// ---- game -------------------------------------------------------------------
+
+let game = null;   // the narrative open in the window; pinned is an earlier session being reread, or null for the latest
+let timer;
+
+function openGame(path) {
+  game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
+          shownParas: 0, shownLog: "", seenChannel: null, wasBusy: false, jump: false,
+          open: new Set(), vitals: null, sent: ""};
+  $("home").hidden = true;
+  $("game").hidden = false;
+  $("story").innerHTML = "";
+  $("pane").innerHTML = "";
+  $("input").value = "";
+  $("latest").hidden = true;
+  document.body.classList.remove("gmmode");
+  $("modeact").classList.add("on");
+  $("modegm").classList.remove("on");
+  setTab("sheet");
+  clearTimeout(timer);
+  tick();
+}
+
+async function tick() {
+  if (!game) return;
+  const mine = game;
+  try {
+    const s = await api("state", {path: mine.path, viewing: mine.pinned, have: mine.have});
+    if (game !== mine) return;
+    apply(s);
+  } catch (e) {
+    if (game === mine) toast(e.message);
+  }
+  if (game === mine) timer = setTimeout(tick, mine.state && mine.state.busy ? 1000 : 2500);
+}
+
+function apply(s) {
+  const before = game.state;
+  game.state = s;
+  Object.assign(game.texts, s.texts);
+  game.have = Object.assign({}, s.stamps, {channel: s.channel_count});
+  if (s.channel) game.channel = s.channel;
+  if (game.seenChannel === null) game.seenChannel = game.channel.length;
+
+  $("title").textContent = s.name;
+  const play = s.set_up;
+  $("modes").hidden = !play;
+  $("newsession").hidden = !play || !!s.open_session || !s.sessions;
+  $("endsession").hidden = !play || !s.open_session;
+  $("newsession").disabled = $("endsession").disabled = s.busy;
+  $("smaller").hidden = $("larger").hidden = !play;
+  $("sessions").hidden = s.sessions < 2;
+  if ($("sessions").options.length !== s.sessions) {
+    $("sessions").innerHTML = "";
+    for (let n = s.sessions; n >= 1; n--) $("sessions").add(new Option("Session " + n, n));
+  }
+  $("sessions").value = s.viewing || "";
+  document.querySelector('[data-tab="gm"]').hidden = !play;
+  if (!play && game.tab === "gm") setTab("sheet");
+
+  $("working").hidden = !s.busy;
+  if (s.busy) {
+    const t = s.elapsed;
+    $("workingtext").textContent = (play ? WORKING[Math.floor(t / 7) % WORKING.length] : "The GM is at work on the world") + "…";
+    $("clock").textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+    $("echo").textContent = game.sent ? "“" + game.sent.replace(/\s+/g, " ").slice(0, 160) + "”" : "";
+  }
+  $("send").disabled = s.busy;
+  $("input").placeholder = !play ? "Answer the GM…"
+    : game.mode === "act" ? "What does your character do?" : "A correction, a question, a command…";
+  $("modetip").textContent = game.mode === "act" ? "First or third person. Only what you state happens."
+    : "Sent in braces. It never goes in the narrative.";
+
+  const finished = game.wasBusy && !s.busy;
+  game.wasBusy = s.busy;
+  const newTalk = game.channel.length > game.seenChannel && game.channel[game.channel.length - 1].who !== "you";
+  if (play && newTalk && game.tab !== "gm") {
+    $("gmbadge").hidden = false;
+    if (finished) { if (prefs.wide) { prefs.wide = false; applyPrefs(true); } setTab("gm"); }
+  }
+  if (play) renderStory(); else renderTalk($("story"), true);
+  if ("sheet" in s.texts && game.tab === "sheet" || "journal" in s.texts && game.tab === "journal"
+      || s.channel && game.tab === "gm" || !before) renderPane();
+}
+
+function renderStory() {
+  const s = game.state, el = $("story");
+  const text = game.texts.log || "";
+  const key = s.viewing + "|" + text;
+  if (key === game.shownLog && el.querySelector(".page, .hint")) return;
+  const sameSession = game.shownLog.startsWith(s.viewing + "|");
+  game.shownLog = key;
+  const body = text.replace(/^\s*#\s+Session\s+\d+\s*/, "");
+  if (!body.trim()) {
+    el.innerHTML = `<div class="hint"><svg><use href="#d20"/></svg>${s.sessions ? "This session hasn't begun." : "The world is ready."}<br>
+      Say what your character does, and the narrative starts.</div>`;
+    game.shownParas = 0;
+    return;
+  }
+  const nearEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 160;
+  const page = document.createElement("div");
+  page.className = "page";
+  page.innerHTML = `<div class="chapter"><span class="caps">Session ${s.viewing}</span></div>` + md(body);
+  const paras = [...page.children].slice(1);
+  if (paras[0] && paras[0].tagName === "P" && /^[A-Za-z]/.test(paras[0].textContent)) paras[0].classList.add("opens");
+  const first = sameSession && paras.length > game.shownParas ? paras[game.shownParas] : null;
+  if (first) paras.slice(game.shownParas).forEach(p => p.tagName === "P" && p.classList.add("fresh"));
+  const keep = el.scrollTop;
+  el.replaceChildren(page);
+  if (first && (nearEnd || game.jump)) first.scrollIntoView({block: "start", behavior: "smooth"});
+  else if (!sameSession) el.scrollTop = el.scrollHeight;
+  else el.scrollTop = keep;
+  game.shownParas = paras.length;
+  game.jump = false;
+  showLatest();
+}
+
+function showLatest() {
+  const el = $("story");
+  $("latest").hidden = !el.querySelector(".page") || el.scrollHeight - el.scrollTop - el.clientHeight < 500;
+}
+$("story").addEventListener("scroll", showLatest);
+$("latest").onclick = () => $("story").scrollTo({top: $("story").scrollHeight, behavior: "smooth"});
+
+function renderTalk(el, main) {
+  const nearEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 200;
+  const count = el.querySelectorAll(".msg").length;
+  if (count === game.channel.length && count) return;
+  if (!game.channel.length) {
+    if (main && $("begin")) return;
+    el.innerHTML = main
+      ? `<div class="hint"><svg><use href="#d20"/></svg>This narrative hasn't been built yet.<br>The GM will ask what kind of narrative you want,
+         build the world, and help you make your character.<br><button class="primary" id="begin">Begin setup</button></div>`
+      : `<div class="empty">Nothing yet. Corrections, questions, and the GM's answers show up here.</div>`;
+    if (main) $("begin").onclick = guard(() => send("Set up this narrative.", true));
+    return;
+  }
+  const talk = document.createElement("div");
+  talk.className = "talk";
+  for (const m of game.channel) {
+    const d = document.createElement("div");
+    d.className = "msg " + m.who;
+    if (m.who === "gm") d.innerHTML = '<div class="who caps">The GM</div><div class="md">' + md(m.text.replace(/^\{([\s\S]*)\}$/, "$1")) + "</div>";
+    else if (m.who === "you") { d.innerHTML = '<div class="who caps">You</div>'; d.append(m.text); }
+    else d.textContent = m.text;
+    talk.append(d);
+  }
+  el.replaceChildren(talk);
+  if (nearEnd || !count) el.scrollTop = el.scrollHeight;
+  if (main || game.tab === "gm") { game.seenChannel = game.channel.length; $("gmbadge").hidden = true; }
+}
+
+// ---- the character panel -------------------------------------------------------------
+
+function meter(key, label, value, color, band) {
+  const m = value.match(/(-?\d+)\s*\/\s*(\d+)/);
+  if (!m || !+m[2]) return "";
+  const pct = Math.max(0, Math.min(100, 100 * m[1] / m[2]));
+  return `<div class="bar" data-bar="${key}"><div class="label"><span><span class="caps">${label}</span>${band ? `<span class="band">${band}</span>` : ""}</span>
+    <span class="num">${m[1]} / ${m[2]}</span></div><div class="track"><div class="fill" style="width:${pct}%;background-color:${color}"></div></div></div>`;
+}
+
+function health(value) {
+  const m = value.match(/(-?\d+)\s*\/\s*(\d+)/);
+  if (!m || !+m[2]) return ["", "var(--good)"];
+  const f = m[1] / m[2];
+  return f <= 0 ? ["down", "var(--bad)"] : f < .25 ? ["in bad shape", "var(--bad)"] : f < .5 ? ["bloodied", "var(--warn)"]
+    : f <= .75 ? ["hurt", "var(--mid)"] : ["fresh", "var(--good)"];
+}
+
+function heroCard(sheet) {
+  const name = grab(sheet, "Name"), aka = grab(sheet, "Also called"), concept = grab(sheet, "Concept"), level = grab(sheet, "Level");
+  const shown = blank(name) ? "Your character" : name;
+  const initials = blank(name) ? "?" : name.split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+  const [band, color] = health(grab(sheet, "HP"));
+  const marks = grab(sheet, "Marks").match(/(\d+)\s*of\s*(\d+)/);
+  let html = `<div class="hero" id="hero"><div class="top"><div class="portrait">${esc(initials)}</div><div><div class="who">${esc(shown)}</div>`;
+  if (!blank(aka)) html += `<div class="aka">called ${esc(aka)}</div>`;
+  html += "</div>";
+  if (level) html += `<div class="level"><b>${esc(level)}</b><span class="caps">Level</span></div>`;
+  html += "</div>";
+  if (!blank(concept)) html += `<div class="concept">${inline(concept)}</div>`;
+  html += meter("hp", "Health", grab(sheet, "HP"), color, band) + meter("strain", "Strain", grab(sheet, "Strain"), "var(--strain)");
+  if (marks) html += `<div class="bar thin" title="Marks toward the next level"><div class="label"><span class="caps">Marks</span>
+    <span class="num">${marks[1]} of ${marks[2]}</span></div><div class="track"><div class="fill" style="width:${100 * marks[1] / marks[2]}%;background-color:var(--accent)"></div></div></div>`;
+  html += '<div class="states">';
+  for (const key of ["Shape", "Wounds", "Conditions"]) {
+    const v = grab(sheet, key);
+    if (!v) continue;
+    const fine = blank(v) || /^unhurt/i.test(v);
+    html += `<div><span class="caps">${key}</span><span class="${fine ? "" : "hurt"}">${inline(v)}</span></div>`;
+  }
+  return html + "</div></div>";
+}
+
+function block(title, inner) {
+  return inner ? `<div class="block"><div class="caps">${title}</div>${inner}</div>` : "";
+}
+
+function sheetHtml(sheet) {
+  let html = heroCard(sheet);
+  const tiles = (list, cls, signed) => list.length ? `<div class="tiles ${cls}">` + list.map(p => {
+    const n = parseInt(p.value, 10), tone = !signed || !n ? "" : n > 0 ? "up" : "down";
+    return `<div class="tile"><b class="${tone}">${esc(signed && n > 0 ? "+" + n : p.value)}</b><span>${esc(p.name)}</span></div>`;
+  }).join("") + "</div>" : "";
+  html += block("Attributes", tiles(pairs(part(sheet, "Attributes")), "six", true));
+  html += block("Defenses", tiles(pairs(part(sheet, "Defenses")), "four", false));
+
+  const skills = entries(part(sheet, "Skills")).map(e => {
+    let m = e.name.match(/^(.*?)\s+(\d)$/), name = e.name, rank = 0, note = e.text;
+    if (m) { name = m[1]; rank = +m[2]; }
+    else if ((m = e.text.match(/^(\d)\b[:.]?\s*(.*)$/))) { rank = +m[1]; note = m[2]; }
+    const pips = [1, 2, 3, 4, 5].map(n => `<i class="${n <= rank ? "on" : ""}"></i>`).join("");
+    return `<div class="skill"><span class="name">${esc(name)}</span><span class="pips" title="Rank ${rank} of 5">${pips}</span>
+      ${note ? `<span class="note">${inline(note)}</span>` : ""}</div>`;
+  }).join("");
+  html += block("Skills", skills);
+
+  const talents = entries(part(sheet, "Talents and powers")).map(e =>
+    `<div class="talent"><div class="name">${esc(e.name)}</div><div class="text">${inline(e.text)}</div></div>`).join("");
+  html += block("Talents and powers", talents);
+
+  const gear = entries(part(sheet, "Gear"));
+  let pack = "", purse = "";
+  for (const g of gear) {
+    if (/^money$/i.test(g.name)) { if (!blank(g.text)) purse = `<div class="purse"><svg><use href="#i-coin"/></svg><span>${inline(g.text.replace(/\.$/, ""))}</span></div>`; continue; }
+    if (blank(g.text)) continue;
+    pack += `<div class="where caps">${esc(g.name)}</div>` + pieces(g.text).map(p => `<div class="item">${inline(p)}</div>`).join("");
+  }
+  html += block("Gear", pack || purse ? `<div class="gear">${pack}</div>${purse}` : "");
+
+  const looks = grab(sheet, "Looks"), age = grab(sheet, "Age");
+  let about = "";
+  if (!blank(looks)) about += aboutSection("Looks", (blank(age) ? "" : `Age ${age}. `) + looks);
+  for (const title of ABOUT) {
+    const text = prose(part(sheet, title));
+    if (text && !/^\(none yet\)$/i.test(text)) about += aboutSection(title, text);
+  }
+  return html + block("Who they are", about);
+}
+
+function aboutSection(title, text) {
+  return `<details class="about" data-about="${esc(title)}"${game.open.has(title) ? " open" : ""}><summary>${esc(title)}</summary>
+    <div class="md">${md(text)}</div></details>`;
+}
+
+function readVitals(sheet) {
+  const pair = (v, i) => { const m = v.match(/(-?\d+)\s*\/\s*(\d+)/); return m ? +m[i] : null; };
+  const marks = grab(sheet, "Marks").match(/(\d+)\s*of/);
+  return {hp: pair(grab(sheet, "HP"), 1), hpMax: pair(grab(sheet, "HP"), 2), strain: pair(grab(sheet, "Strain"), 1),
+          strainMax: pair(grab(sheet, "Strain"), 2), level: grab(sheet, "Level"), marks: marks ? +marks[1] : null};
+}
+
+function celebrate(was, now) {   // show what just changed on the sheet
+  for (const key of ["hp", "strain"]) {
+    if (was[key] === null || now[key] === null || was[key] === now[key]) continue;
+    const bar = document.querySelector(`[data-bar="${key}"]`);
+    if (!bar) continue;
+    const d = now[key] - was[key], tag = document.createElement("span");
+    tag.className = "delta";
+    tag.textContent = (d > 0 ? "+" : "−") + Math.abs(d);
+    tag.style.color = d > 0 ? "var(--good)" : key === "hp" ? "var(--bad)" : "var(--strain)";
+    bar.append(tag);
+    if (d < 0) bar.classList.add("hit");
+    const fill = bar.querySelector(".fill"), to = fill.style.width;   // slide from where the bar was
+    fill.style.transition = "none";
+    fill.style.width = Math.max(0, Math.min(100, 100 * was[key] / (now[key + "Max"] || 1))) + "%";
+    fill.offsetWidth;
+    fill.style.transition = "";
+    fill.style.width = to;
+  }
+  if (was.level !== now.level || (now.marks !== null && was.marks !== null && now.marks > was.marks)) $("hero") && $("hero").classList.add("glow");
+}
+
+function renderPane() {
+  const pane = $("pane"), keep = pane.scrollTop;
+  if (game.tab === "sheet") {
+    const sheet = game.texts.sheet || "", now = readVitals(sheet);
+    pane.innerHTML = sheetHtml(sheet);
+    for (const d of pane.querySelectorAll("details.about"))
+      d.addEventListener("toggle", () => d.open ? game.open.add(d.dataset.about) : game.open.delete(d.dataset.about));
+    if (game.vitals) celebrate(game.vitals, now);
+    game.vitals = now;
+  } else if (game.tab === "journal") {
+    const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
+    let html = stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "";
+    for (const title of ["The world as they know it", "People", "Places", "Unfinished business", "Sessions"]) {
+      const text = prose(part(journal, title)).split(/\r?\n/).filter(l => !/^one (line|short paragraph)|^promises made|^what someone with/i.test(l.trim())).join("\n").trim();
+      if (text && !/^\(none yet\)$/i.test(text)) html += `<div class="block"><div class="caps">${title}</div><div class="md journal">${md(text)}</div></div>`;
+    }
+    pane.innerHTML = html || '<div class="empty">Nothing in the journal yet. The GM fills it in at the end of each session.</div>';
+  } else {
+    pane.innerHTML = "";
+    renderTalk(pane, false);
+    return;
+  }
+  pane.scrollTop = keep;
+}
+
+function setTab(tab) {
+  if (!game) return;
+  const changed = game.tab !== tab;
+  game.tab = tab;
+  for (const b of $("tabs").children) b.classList.toggle("on", b.dataset.tab === tab);
+  if (changed) { $("pane").scrollTop = 0; if (tab === "sheet") game.vitals = null; }
+  if (game.state) renderPane();
+  if (changed) $("pane").scrollTop = tab === "gm" ? $("pane").scrollHeight : 0;
+}
+$("tabs").onclick = e => { const b = e.target.closest("button"); if (b) setTab(b.dataset.tab); };
+
+function setMode(mode) {
+  game.mode = mode;
+  $("modeact").classList.toggle("on", mode === "act");
+  $("modegm").classList.toggle("on", mode === "gm");
+  document.body.classList.toggle("gmmode", mode === "gm");
+  if (game.state) apply(Object.assign(game.state, {texts: {}, channel: null}));
+  $("input").focus();
+}
+$("modeact").onclick = () => setMode("act");
+$("modegm").onclick = () => setMode("gm");
+
+async function send(text, raw) {
+  text = text.trim();
+  if (!text || !game) return;
+  const play = game.state && game.state.set_up;
+  if (!raw && play && game.mode === "gm" && !/^\{[\s\S]*\}$/.test(text)) text = "{" + text + "}";
+  await api("send", {path: game.path, text});
+  game.sent = text;
+  game.pinned = null;  // back to the session being played
+  game.jump = true;
+  clearTimeout(timer);
+  tick();
+}
+
+const sendInput = guard(async () => {
+  const box = $("input");
+  if (!box.value.trim() || $("send").disabled) return;
+  const text = box.value;
+  await send(text);
+  box.value = "";
+  box.style.height = "";
+});
+$("send").onclick = sendInput;
+$("input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendInput(); } });
+$("input").addEventListener("input", e => { e.target.style.height = ""; e.target.style.height = Math.min(e.target.scrollHeight + 2, 220) + "px"; });
+
+$("stop").onclick = guard(() => api("stop", {path: game.path}));
+$("back").onclick = guard(() => { clearTimeout(timer); return showHome(); });
+$("sessions").onchange = () => {
+  const n = +$("sessions").value;
+  game.pinned = n === game.state.sessions ? null : n;
+  clearTimeout(timer);
+  tick();
+};
+$("newsession").onclick = guard(() => send("{new session}", true));
+$("endsession").onclick = guard(() => send("{end session}", true));
+$("smaller").onclick = () => { prefs.size = Math.max(14, prefs.size - 1); applyPrefs(true); };
+$("larger").onclick = () => { prefs.size = Math.min(26, prefs.size + 1); applyPrefs(true); };
+$("panel").onclick = () => { prefs.wide = !prefs.wide; applyPrefs(true); };
+
+$("more").onclick = e => { e.stopPropagation(); $("moreitems").hidden = !$("moreitems").hidden; };
+document.addEventListener("click", () => $("moreitems").hidden = true);
+$("moreitems").onclick = guard(async e => {
+  const act = e.target.dataset.act;
+  if (act === "undo") await send("{undo}", true);
+  if (act === "recap") await send("{recap}", true);
+  if (act === "fresh") { await api("fresh", {path: game.path}); clearTimeout(timer); tick(); }
+  if (act === "folder") await api("open-folder", {path: game.path});
+});
+
+// ---- flagging a passage ---------------------------------------------------------
+
+let flagged = "";
+document.addEventListener("mouseup", e => {
+  if (e.target.closest("#flag, #flagdialog")) return;
+  setTimeout(() => {
+    const sel = window.getSelection(), text = sel.toString().trim();
+    const at = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement);
+    const inside = sel.rangeCount && at && at.closest("#story .page");
+    if (!game || !inside || text.length < 3 || (game.state && game.state.busy)) { $("flag").hidden = true; return; }
+    flagged = text.slice(0, 2000);
+    const box = sel.getRangeAt(0).getBoundingClientRect();
+    $("flag").style.left = Math.max(8, Math.min(box.left, window.innerWidth - 200)) + "px";
+    $("flag").style.top = Math.min(box.bottom + 8, window.innerHeight - 44) + "px";
+    $("flag").hidden = false;
+  }, 0);
+});
+$("flag").onclick = () => {
+  $("flag").hidden = true;
+  $("flagquote").textContent = flagged;
+  $("flagnote").value = "";
+  $("flagdialog").hidden = false;
+  $("flagnote").focus();
+};
+$("flagcancel").onclick = () => $("flagdialog").hidden = true;
+$("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; } });
+$("flagsend").onclick = guard(async () => {
+  const note = $("flagnote").value.trim();
+  if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");
+  $("flagdialog").hidden = true;
+  await send(`{About this passage in the session log:\n\n"${flagged}"\n\n${note}}`, true);
+  window.getSelection().removeAllRanges();
+});
+
+setInterval(() => api("ping").catch(() => {}), 5000);
+guard(async () => {
+  const h = await api("home");
+  if (h.prefs) Object.assign(prefs, h.prefs);
+  applyPrefs();
+  if (START) openGame(START); else await showHome();
+})();
+</script>
+</body>
+</html>
