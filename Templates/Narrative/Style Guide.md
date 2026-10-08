@@ -4,7 +4,7 @@ What's particular to this narrative's prose. It can override anything in the eng
 
 ## Narration
 
-- **POV:** Third person limited, anchored to the player character. (Fixed by the engine.)
+- **POV:** {{POV}} (The player chose this when the narrative was made. The other choice is in House Style §1.)
 - **Tense:** Unknown (past or present)
 - **Register:** Unknown (how the narration sounds: plain, wry, spare, lyrical, hard-boiled)
 - **Vocabulary:** (words this character and this world use, and words they never would)

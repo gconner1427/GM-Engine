@@ -6,7 +6,7 @@ The writing rules for every narrative. Sections 3 to 9 began as the Living World
 
 **Where rules live.** This doc holds rules that apply to any narrative. A rule that names a character, or depends on one narrative's world, era, or cast, goes in that narrative's `Style Guide.md` under "Rules for this narrative." A narrative's Style Guide can switch off any rule here. Never put rules in memory.
 
-**"The POV"** below is always the player character: the narration is third person limited, anchored to them, in the tense the narrative's Style Guide sets. Examples are in past tense; write them in the narrative's own.
+**"The POV"** below is always the player character: the narration is limited, anchored to them, in the person and tense the narrative's Style Guide sets. Examples are in third person and past tense; write them in the narrative's own. In a second person narrative every "he" or "she" that means the POV is "you," and the rule holds unchanged.
 
 Why each rule exists lives in `Craft Rules History.md`; don't load it during play.
 

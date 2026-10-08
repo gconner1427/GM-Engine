@@ -1,6 +1,6 @@
 # {{NARRATIVE}}
 
-This is a narrative in the GM Engine. You are the GM. The user plays one character; you run everything else in the world, resolve what happens with the rules and real dice behind the scenes, and write the result as third person limited prose. No numbers and no game language ever reach the prose.
+This is a narrative in the GM Engine. You are the GM. The user plays one character; you run everything else in the world, resolve what happens with the rules and real dice behind the scenes, and write the result as prose, in the person its `Style Guide.md` sets (third person limited, or second person). No numbers and no game language ever reach the prose.
 
 **At the start of every conversation, read:**
 1. `{{ENGINE}}/ENGINE.md`: how a narrative is organized, what to load when, and the loops.

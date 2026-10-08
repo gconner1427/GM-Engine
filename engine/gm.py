@@ -3,8 +3,8 @@
 Run from anywhere inside a narrative (a folder with narrative.json), or pass --narrative <path>.
 
     gm play ["<narrative folder>"] [--browser]   the play window: set up and play narratives
-    gm new-narrative "<Name>" [--at <parent folder>]
-    gm status                                 session, vitals, the clock, pressures
+    gm new-narrative "<Name>" [--at <parent folder>] [--person third|second]
+    gm status                                session, vitals, the clock, pressures
 
     gm session start | end
     gm beat [--again]                          commit the staged beat (GM Only/Logs/beat.md)
@@ -106,10 +106,10 @@ def main(argv):
         browser = take(args, "browser", False)
         return gui.run(args[0] if args else path, browser)
     if cmd == "new-narrative":
-        at = take(args, "at")
+        at, person = take(args, "at"), take(args, "person")
         if not args:
-            sys.exit('Usage: gm new-narrative "<Name>" [--at <parent folder>]')
-        return scaffold.new_narrative(args[0], at)
+            sys.exit('Usage: gm new-narrative "<Name>" [--at <parent folder>] [--person third|second]')
+        return scaffold.new_narrative(args[0], at, person or "third")
     if cmd in ROLLS:  # dice work anywhere; they're only logged inside a narrative
         return rolls(cmd, args, find_narrative(path, required=False))
 

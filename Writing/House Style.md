@@ -1,10 +1,12 @@
 # House Style
 
-The prose defaults for every narrative. Each narrative's `Style Guide.md` sets what's particular to it (tense, register, vocabulary, content, how its POV counts time) and can override anything here.
+The prose defaults for every narrative. Each narrative's `Style Guide.md` sets what's particular to it (person, tense, register, vocabulary, content, how its POV counts time) and can override anything here.
 
 ## 1. Point of View & Narrative Distance
 
-- **POV:** Third person limited, anchored to the player character, always. Never first person, never second, never another character's head, whichever person the user writes their actions in. **POV has to be strictly followed at all times.** The narration can't report anything the POV couldn't see, hear, smell, taste, or touch (Craft Rules §7, Line of sight).
+- **POV:** Limited, anchored to the player character, always, in the person the narrative's Style Guide sets. Never first person, never another character's head, and never the other person for a line or a beat, whichever person the user writes their actions in. **POV has to be strictly followed at all times.** The narration can't report anything the POV couldn't see, hear, smell, taste, or touch (Craft Rules §7, Line of sight).
+    - **Third person limited** (the default): the character by name and "he," "she," or "they." It reads like a novel.
+    - **Second person:** the character is "you," the way a GM talks at the table: "You push the door open." Their name appears only when someone says it. Nothing else changes: it's the same close, limited narration, held to every rule here and in the Craft Rules, and it never turns to address the player (no "what do you do?", no "you see" as a way of listing a room). Direct thoughts stay in the character's own voice, so they're still "I."
 - **Psychic distance:** Close. The narration filters the world through the POV's emotional lens, self-consciousness, and immediate physical sensations, drawn from their sheet.
 - **Filter verbs:** Use sparingly (he felt, he noticed, he realized). Mostly give the sensation or the thing itself, since it's already coming through them.
 - **Exposition:** Backstory and world lore stay off the page unless the moment needs them. When it does, it's a brief interior reflection set off by something in the scene (Craft Rules, "Thoughts need a trigger"). Never narrate something the POV wouldn't, because it's normal to them, just so the reader knows.

@@ -1,9 +1,9 @@
 """Creates narratives and entity docs from the templates in Templates/.
 
-    gm new-narrative "The Shattered Coast" --at "D:/Narratives"
+    gm new-narrative "The Shattered Coast" --at "D:/Narratives" --person second
     gm add cast "Mara Hale"          also: place, group
 
-Placeholders in templates: {{NARRATIVE}} {{ENGINE}} {{DATE}} {{NAME}}.
+Placeholders in templates: {{NARRATIVE}} {{ENGINE}} {{DATE}} {{POV}} {{NAME}}.
 """
 
 import datetime
@@ -19,6 +19,9 @@ TEMPLATES = ENGINE / "Templates"
 DEFAULT_PARENT = Path.home() / "GM Narratives"
 TEXT = {".md", ".json", ".txt", ""}
 ADD_KINDS = {"cast": "Cast", "place": "Places", "group": "Groups"}
+# The Style Guide's POV line: the person the narration is written in, chosen when the narrative is made.
+POV = {"third": "Third person limited, anchored to the player character.",
+       "second": 'Second person, anchored to the player character: the narration calls them "you," the way a GM talks at the table.'}
 
 
 def safe(name):
@@ -38,26 +41,28 @@ def today():
     return datetime.date.today().isoformat()
 
 
-def create_narrative(name, parent=None):
+def create_narrative(name, parent=None, person="third"):
     """Make the narrative folder from the template. Returns its path; raises ValueError if it's taken."""
     if not safe(name):
         raise ValueError("The narrative needs a name.")
+    if person not in POV:
+        raise ValueError(f"The narration is in {' or '.join(POV)} person, not {person!r}.")
     target = Path(parent or DEFAULT_PARENT) / safe(name)
     if target.exists() and any(target.iterdir()):
         raise ValueError(f"{target} already exists and isn't empty.")
     shutil.copytree(TEMPLATES / "Narrative", target, dirs_exist_ok=True)
     for empty in ("Sessions", "GM Only/Logs"):
         (target / empty).mkdir(parents=True, exist_ok=True)
-    fill(target, {"NARRATIVE": name, "ENGINE": ENGINE.as_posix(), "DATE": today()})
+    fill(target, {"NARRATIVE": name, "ENGINE": ENGINE.as_posix(), "DATE": today(), "POV": POV[person]})
     config = {"name": name, "engine": ENGINE.as_posix(), "created": today(), "set_up": False,
               "chat_echo": True, "sessions": 0, "open_session": None, "beats": 0, "log_mark": 0}
     (target / CONFIG).write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
     return target
 
 
-def new_narrative(name, parent=None):
+def new_narrative(name, parent=None, person="third"):
     try:
-        target = create_narrative(name, parent)
+        target = create_narrative(name, parent, person)
     except ValueError as e:
         sys.exit(str(e))
     print(f"Created narrative: {target}")

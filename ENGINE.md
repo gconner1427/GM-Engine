@@ -2,7 +2,7 @@
 
 The operating manual. Read it at the start of every conversation in a narrative, along with `Rules/GM Rules.md`.
 
-The engine runs a solo narrative. The user says what kind of narrative they want and makes one character. The GM builds the world, as a GM prepares a campaign, and the user discovers it by playing: they never read it. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as third person limited prose that reads like a novel. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
+The engine runs a solo narrative. The user says what kind of narrative they want and makes one character. The GM builds the world, as a GM prepares a campaign, and the user discovers it by playing: they never read it. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as prose that reads like a novel: third person limited, or second person ("you") if the player chose that when the narrative was made. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
 
 `gm` below is shorthand for `python "<this folder>/engine/gm.py" <command>`. Run it from anywhere inside a narrative.
 

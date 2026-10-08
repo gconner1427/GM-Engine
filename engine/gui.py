@@ -380,7 +380,7 @@ def pick_folder(start=None):
             root.destroy()
 
 
-def create(name, parent):
+def create(name, parent, person="third"):
     """A new narrative folder. With no title yet, it gets a placeholder and the GM titles it during setup."""
     parent = Path(parent or scaffold.DEFAULT_PARENT)
     name = scaffold.safe(name or "")
@@ -389,7 +389,7 @@ def create(name, parent):
         while (parent / name).exists():
             n += 1
             name = f"{UNTITLED} {n}"
-    return remember(scaffold.create_narrative(name, parent))
+    return remember(scaffold.create_narrative(name, parent, person))
 
 
 # ---- the server --------------------------------------------------------------
@@ -504,7 +504,7 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}
         if route == "/api/create":
-            return {"path": create(data.get("name"), (data.get("parent") or "").strip() or None)}
+            return {"path": create(data.get("name"), (data.get("parent") or "").strip() or None, data.get("person") or "third")}
         if route == "/api/add":
             game(path)
             return {"path": remember(path)}

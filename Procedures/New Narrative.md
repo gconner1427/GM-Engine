@@ -6,7 +6,7 @@ Nothing you build is shown to the player except what their character would know.
 
 ## 1. The folder
 
-The play window creates the folder and sends you the player's answers in its first message. If you're asked for a new narrative from the engine folder instead, ask what to call it (or leave it untitled) and where it should live, run `gm new-narrative "<Name>" --at "<parent folder>"`, and tell the player to open that folder. If the folder already exists, this step is done.
+The play window creates the folder and sends you the player's answers in its first message. If you're asked for a new narrative from the engine folder instead, ask what to call it (or leave it untitled) and where it should live, and whether the narration should be third person (like a novel) or second person ("you," like a GM at the table), run `gm new-narrative "<Name>" --at "<parent folder>"` (adding `--person second` for second person), and tell the player to open that folder. If the folder already exists, this step is done.
 
 ## 2. Three questions
 
@@ -20,7 +20,7 @@ These are all you ask about the world. Ask only for the ones the first message d
    - **Isekai:** the character is a person from our world who ends up in another one. The other world is yours to invent, unless the player names one. Don't ask how they cross over; if the player said (summoned, reborn, pulled into a game), use it, and otherwise it's yours to decide.
 3. **A title,** if they have one. If not, you'll give it one.
 
-In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
+In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. The narration's person (third or second) was chosen when the folder was made and is already on the Style Guide's POV line: don't ask again, and if the player wants the other one, change that line. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
 
 Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**.
 
