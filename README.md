@@ -30,6 +30,8 @@ Inside a narrative:
 
 Double-click `Play.cmd`. It opens a desktop window that lists your narratives, creates new ones, and is where you set them up and play them.
 
+For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a shortcut) beside `Play.cmd`. `gm shortcut --desktop` puts one named `GM Engine` on the desktop instead. A shortcut remembers where the engine folder is, so make it again if the folder moves.
+
 - **The narrative** fills the main column and grows as you play. Earlier sessions are in the picker at the top.
 - **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you.
 - **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips, gear as an inventory), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
@@ -136,7 +138,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | `Writing/Banned Names.md` | Names that are never used |
 | `Procedures/` | New Narrative, Play, World Turn, Corrections, Art |
 | `Templates/` | What a new narrative, cast member, place, or group starts as |
-| `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`) |
+| `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`, and its icon `gui/dice.ico`) |
 | `Play.cmd`, `gm.cmd`, `New Narrative.cmd` | Windows launchers |
 
 ## Requirements

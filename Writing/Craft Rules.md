@@ -209,6 +209,8 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 - **Physical plausibility:** Objects behave like the real thing (or like the World Bible says the thing works).
     - Devices behave the way they really do: a lamp needs oil, a radio needs range, a gun needs loading.
     - Everyday things sit where people actually keep them.
+    - **Things happen in the order a body has to do them.** Dressing, undressing, arming, packing, mounting up: walk through it as the person would have to. Shoes come off before trousers, a belt before the thing hung on it, a pack before the coat under it.
+        - ✗ "The jeans were the worst of it... she had to stand on one cuff to get the other foot free. Sneakers, socks, everything else." → ✓ "She heeled her sneakers off, one against the other, and stripped the socks after them. The jeans were the worst of it..."
     - Smells, stains, and other traces on a body come only from what that person actually did.
     - Altered states (drink, drugs, exhaustion, spells, injuries) wear off, or heal, on a real clock. Check the Story Clock since the cause before any line about still feeling it.
 

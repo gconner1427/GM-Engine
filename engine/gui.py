@@ -36,6 +36,7 @@ import scaffold
 from narrative import CONFIG, ENGINE, Narrative, field
 
 PAGE = Path(__file__).resolve().parent / "gui" / "app.html"
+ICON = PAGE.with_name("dice.ico")   # the d20: the window, the taskbar, the browser tab, the shortcut
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
@@ -462,6 +463,11 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "private, max-age=31536000")  # the address changes when the picture does
             self.end_headers()
             return self.wfile.write(data)
+        if route == "/favicon.ico":  # the browser asks before the page has a token to send; it's only the die
+            try:
+                return self.send(200, ICON.read_bytes(), "image/x-icon")
+            except OSError:
+                return self.send(404, {"error": "Not found"})
         if route not in ("/", "/index.html"):
             return self.send(404, {"error": "Not found"})
         html = read(PAGE).replace("__GM_TOKEN__", TOKEN)
@@ -540,6 +546,28 @@ class Handler(BaseHTTPRequestHandler):
         raise ValueError("Not found")
 
 
+def shortcut(desktop=False):
+    """A shortcut to the play window with the die on it; a .cmd file can't carry an icon of its own."""
+    if os.name != "nt":
+        sys.exit("Shortcuts are a Windows thing. Here, run: gm play")
+    pythonw = shutil.which("pythonw")
+    env = dict(os.environ, GM_ICON=str(ICON), GM_HOME=str(ENGINE), GM_DESKTOP="1" if desktop else "",
+               GM_TARGET=pythonw or str(ENGINE / "Play.cmd"),
+               GM_ARGS=f'"{ENGINE / "engine" / "gm.py"}" play' if pythonw else "",
+               GM_STYLE="1" if pythonw else "7")   # 7: Play.cmd's console opens minimized. pythonw has none, and would pass 7 on to the window
+    script = ("$dir = if ($env:GM_DESKTOP) { [Environment]::GetFolderPath('Desktop') } else { $env:GM_HOME }; "
+              "$name = if ($env:GM_DESKTOP) { 'GM Engine.lnk' } else { 'Play.lnk' }; "
+              "$link = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $dir $name)); "
+              "$link.TargetPath = $env:GM_TARGET; $link.Arguments = $env:GM_ARGS; $link.WorkingDirectory = $env:GM_HOME; "
+              "$link.IconLocation = $env:GM_ICON + ',0'; $link.Description = 'GM Engine: the play window'; "
+              "$link.WindowStyle = [int]$env:GM_STYLE; $link.Save(); $link.FullName")
+    done = subprocess.run(["powershell", "-NoProfile", "-Command", script], env=env, capture_output=True, text=True,
+                          creationflags=NO_WINDOW)
+    if done.returncode:
+        sys.exit(f"Couldn't make the shortcut: {done.stderr.strip()}")
+    print(f"Made {done.stdout.strip()}. Double-click it to play; it can be moved or pinned anywhere.")
+
+
 def close_window(server):
     """Exit Game: close the desktop window, or stop waiting on the browser tab."""
     server.quit = True
@@ -575,8 +603,11 @@ def run(start=None, browser=False):
         if webview:
             # Lets the menu's music start without waiting for a click (the window is WebView2 on Windows).
             os.environ.setdefault("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--autoplay-policy=no-user-gesture-required")
-            webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600))
-            webview.start()
+            if os.name == "nt":  # its own taskbar button with the die on it, not one grouped under Python's
+                import ctypes
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("GMEngine.Play")
+            webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True)
+            webview.start(icon=str(ICON))
         else:
             print(f"GM Engine: {url}\nRunning on this computer only. Close the tab, or press Ctrl+C here, to stop.")
             webbrowser.open(url)

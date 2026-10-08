@@ -20,6 +20,12 @@ One entry per rule added or changed because of a correction in play (Procedures/
 **Why:** the pattern behind it, in a line
 ```
 
+### Physical plausibility: things happen in the order a body has to do them (changed, sharpened), 2026-10-07, The Traveler from the Other Shore, Session 2
+**Flagged:** "when she takes her jeans off she would have to take off her shoes first before she could do her pants"
+**Was:** "The jeans were the worst of it. Wet denim didn't come off, it had to be peeled... and she had to stand on one cuff to get the other foot free. Sneakers, socks, everything else."
+**Became:** "She heeled her sneakers off, one against the other, and stripped the socks after them. The jeans were the worst of it... Then everything else."
+**Why:** the list of clothes was ordered for rhythm, not for how a person undresses. Physical plausibility covered objects and devices but said nothing about the order of a physical sequence.
+
 ### Line of sight: a voice they can't see is a guess (changed, sharpened), 2026-10-07, The Traveler from the Other Shore, Session 1
 **Flagged:** "Above for the woman in grey should be it sounded like the woman in grey she can't know for certain"
 **Was:** "'Above!' The woman in grey, close under her, not even winded."

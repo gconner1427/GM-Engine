@@ -3,6 +3,7 @@
 Run from anywhere inside a narrative (a folder with narrative.json), or pass --narrative <path>.
 
     gm play ["<narrative folder>"] [--browser]   the play window: set up and play narratives
+    gm shortcut [--desktop]                  a Play shortcut with the dice icon, here or on the desktop
     gm new-narrative "<Name>" [--at <parent folder>] [--person third|second]
     gm status                                session, vitals, the clock, pressures
 
@@ -105,6 +106,9 @@ def main(argv):
         import gui
         browser = take(args, "browser", False)
         return gui.run(args[0] if args else path, browser)
+    if cmd == "shortcut":
+        import gui
+        return gui.shortcut(take(args, "desktop", False))
     if cmd == "new-narrative":
         at, person = take(args, "at"), take(args, "person")
         if not args:
