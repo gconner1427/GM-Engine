@@ -80,17 +80,27 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
   #splash.on img { animation: logostill 1s ease forwards; } }
 
 /* ---- intro: plays once when the window opens ---- */
-#intro:not(.go) * { animation-play-state: paused; }   /* it waits for the splash */
+#intro:not(.go) * { animation-play-state: paused !important; }   /* it waits for the splash */
 #intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; user-select: none; background: #0b0906; transition: opacity .75s ease; }
 #intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
 #intro.fading { opacity: 0; pointer-events: none; }
 #introcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .4s ease, transform .5s ease; }
-#intro.leaving .stage { opacity: 0; transform: translateY(-10px); }
+#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .45s ease; }
+#intro.leaving .stage { opacity: 0; }
+#intro .matte { position: absolute; left: 0; right: 0; height: 9vh; background: #000; z-index: 2; transition: transform .9s cubic-bezier(.6, 0, .3, 1); }   /* the picture's black bars */
+#intro .matte.top { top: 0; } #intro .matte.bottom { bottom: 0; }
+#intro:not(.go) .matte.top, #intro.leaving .matte.top { transform: translateY(-101%); }
+#intro:not(.go) .matte.bottom, #intro.leaving .matte.bottom { transform: translateY(101%); }
+#intro .grain { position: absolute; inset: 0; pointer-events: none; opacity: .1; animation: grain .5s steps(1) infinite;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .85 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@keyframes grain { 0% { background-position: 0 0; } 20% { background-position: -70px 110px; } 40% { background-position: 130px -40px; }
+  60% { background-position: -160px -90px; } 80% { background-position: 50px 170px; } }
 #intro h1 { font: 400 clamp(34px, 5.4vmin, 58px) var(--serif); text-transform: uppercase; margin: 0; white-space: nowrap;
   letter-spacing: .3em; padding-left: .3em; animation: tracking 3.6s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
 @keyframes tracking { from { letter-spacing: .52em; padding-left: .52em; } to { letter-spacing: .3em; padding-left: .3em; } }
-#intro h1 span { display: inline-block; opacity: 0; animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(2.25s + var(--i) * 75ms); }
+#intro h1 span { display: inline-block; opacity: 0;   /* each letter comes up out of a blur, and later a light crosses the word */
+  animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) calc(2.25s + var(--i) * 75ms) forwards, letterflare 1s ease-in-out calc(4.7s + var(--i) * 95ms); }
+@keyframes letterflare { 50% { color: #fff; text-shadow: 0 0 14px #ffe9b8, 0 0 46px #e6c27e; } }
 #intro h1 .gap { width: .45em; }
 @keyframes letter {
   0% { opacity: 0; transform: translateY(.42em) scale(1.08); filter: blur(10px); color: #fff3d6; text-shadow: 0 0 30px #ffdf9c; }
@@ -728,6 +738,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     <div class="line"><i></i></div>
     <p>Solo narratives, run by a game master behind the page.</p>
   </div>
+  <div class="grain"></div>
+  <div class="matte top"></div><div class="matte bottom"></div>
 </div>
 
 <div id="home" class="view">
@@ -2920,16 +2932,31 @@ const splashed = new Promise(done => {
 
 // ---- the intro ------------------------------------------------------------------
 
-// The die is rolled into being, lands with a flash, and the title comes up under it. On the way out it glides to its
-// place on the home screen, drawn the way the backdrop draws it, so the one fades into the other unnoticed.
+// A short film. Black bars close in, the die is rolled into being with its own afterimages trailing it, and it lands: the
+// picture jolts, light breaks out behind it, and the wire fills in as a solid thing. The title comes up under it while the
+// camera creeps closer. On the way out the die glides to its place on the home screen, in the pose the backdrop has it in,
+// so the one fades into the other unnoticed.
 (() => {
   const el = $("intro");
   if (STILL) { splashed.then(introOver); return el.remove(); }
   $("home").classList.add("waiting");   // the menu holds its entrance until the intro clears
-  const cv = $("introcv"), LAND = 2.1, HOLD = 6.2;
+  const cv = $("introcv"), stage = el.querySelector(".stage"), LAND = 2.1, HOLD = 7;
   const clamp = u => Math.min(1, Math.max(0, u)), ease = u => 1 - (1 - u) ** 3, smooth = u => u * u * (3 - 2 * u);
-  const mix = (a, b, u) => a + (b - a) * u;
-  const sparks = Array.from({length: 70}, () => ({a: Math.random() * 6.283, v: 90 + Math.random() * 380, life: .7 + Math.random() * 1.3, size: .6 + Math.random() * 1.4}));
+  const mix = (a, b, u) => a + (b - a) * u, rand = Math.random;
+  const sparks = Array.from({length: 90}, () => ({a: rand() * 6.283, v: 90 + rand() * 420, life: .7 + rand() * 1.5, size: .6 + rand() * 1.5}));
+  const rays = Array.from({length: 30}, (_, n) => ({a: n / 30 * 6.283 + rand() * .2, wide: .006 + rand() * .026, turn: .02 + rand() * .04}));
+  const bokeh = Array.from({length: 10}, () => ({x: rand(), y: rand(), rad: 16 + rand() * 54, a: .02 + rand() * .045, drift: (rand() - .5) * .012, sway: rand() * 6.28}));
+
+  // the twenty faces, each wound so its front is the outside, and the two faces every edge lies between
+  const FACES = [];
+  const touch = (i, j) => Math.abs(Math.hypot(DIE[i][0] - DIE[j][0], DIE[i][1] - DIE[j][1], DIE[i][2] - DIE[j][2]) - 2) < .01;
+  for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) for (let k = j + 1; k < 12; k++) {
+    if (!touch(i, j) || !touch(j, k) || !touch(i, k)) continue;
+    const [a, b, d] = [DIE[i], DIE[j], DIE[k]], u = b.map((v, n) => v - a[n]), v = d.map((x, n) => x - a[n]);
+    const out = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+    FACES.push(out[0] * (a[0] + b[0] + d[0]) + out[1] * (a[1] + b[1] + d[1]) + out[2] * (a[2] + b[2] + d[2]) > 0 ? [i, j, k] : [i, k, j]);
+  }
+  const between = EDGES.map(([i, j]) => FACES.flatMap((f, n) => f.includes(i) && f.includes(j) ? [n] : []));
   let began = null, leftAt = null, glide = false, over = false;
 
   const leave = () => {
@@ -2951,11 +2978,53 @@ const splashed = new Promise(done => {
     const [c, w, h] = fit(cv), t = ms / 1000, lt = (ms - began) / 1000;
     if (lt > HOLD) leave();
     const out = leftAt === null ? 0 : Math.max(0, ms - leftAt) / 1000, g = glide ? smooth(clamp(out / .9)) : 0;
-    const [hx, hy, hr] = dieSpot(w, h), settle = ease(clamp(lt / LAND)), tumble = (1 - settle) * (1 - g);
+    const tumbleAt = at => (1 - ease(clamp(at / LAND))) * (1 - g);
+    const [hx, hy, hr] = dieSpot(w, h), settle = ease(clamp(lt / LAND)), tumble = tumbleAt(lt);
     const cx = mix(w / 2, hx, g), cy = mix(h * .4, hy, g), r = mix(Math.min(w, h) * .115 * (.55 + .45 * settle), hr, g);
     const since = lt - LAND, flash = since > 0 ? Math.exp(-since * 2.4) * (1 - g) : 0;
 
+    // the camera: a slow push in, and a jolt when the die lands. Both are gone by the time the die reaches home.
+    const zoom = mix(1 + .07 * clamp(lt / HOLD), 1, g), jolt = since > 0 ? 8 * Math.exp(-since * 7) * (1 - g) : 0;
+    const jx = jolt * Math.sin(since * 71), jy = jolt * Math.cos(since * 53);
+    stage.style.transformOrigin = `50% ${h / 2 - stage.offsetTop}px`;
+    stage.style.transform = `translate(${jx.toFixed(2)}px, ${jy.toFixed(2)}px) scale(${zoom.toFixed(4)})`;
+    c.translate(w / 2 + jx, h / 2 + jy);
+    c.scale(zoom, zoom);
+    c.translate(-w / 2, -h / 2);
+
     drawGlow(c, w, h, cx, cy, r, t, flash, mix(clamp(lt / 1.2), 1, g));
+
+    if (since > 0) {   // shafts of light behind the die, strong at the landing and faint after
+      const power = (.14 * Math.exp(-since * 1.3) + .022) * clamp(since * 10) * (1 - g), reach = r * 10;
+      const shaft = c.createRadialGradient(cx, cy, r * .5, cx, cy, reach);
+      shaft.addColorStop(0, `rgba(255,226,165,${power})`);
+      shaft.addColorStop(.3, `rgba(255,226,165,${power * .55})`);
+      shaft.addColorStop(1, "rgba(255,226,165,0)");
+      c.fillStyle = shaft;
+      for (const spread of [2.6, 1]) {   // each shaft twice, a wide faint one under a narrow one, so its sides are soft
+        c.beginPath();
+        for (const ray of rays) {
+          const a = ray.a + t * ray.turn, half = ray.wide * spread;
+          c.moveTo(cx, cy);
+          c.lineTo(cx + Math.cos(a - half) * reach, cy + Math.sin(a - half) * reach);
+          c.lineTo(cx + Math.cos(a + half) * reach, cy + Math.sin(a + half) * reach);
+          c.closePath();
+        }
+        c.fill();
+      }
+    }
+
+    const haze = clamp(lt / 2.5) * (1 - g), depth = 1 + (zoom - 1) * 5;   // out-of-focus motes close to the lens; they pass faster
+    if (haze > 0) for (const b of bokeh) {
+      const x = w / 2 + ((((b.x + t * b.drift) % 1) + 1) % 1 - .5) * w * 1.2 * depth, y = h / 2 + (b.y - .5 + Math.sin(t * .2 + b.sway) * .02) * h * depth;
+      const disc = c.createRadialGradient(x, y, 0, x, y, b.rad);
+      disc.addColorStop(0, `rgba(214,176,108,${b.a * haze})`);
+      disc.addColorStop(.8, `rgba(214,176,108,${b.a * haze})`);
+      disc.addColorStop(.93, `rgba(236,204,140,${b.a * haze * 1.7})`);
+      disc.addColorStop(1, "rgba(236,204,140,0)");
+      c.fillStyle = disc;
+      c.beginPath(); c.arc(x, y, b.rad, 0, 6.29); c.fill();
+    }
     drawEmbers(c, w, h, t, mix(clamp(lt / 1.8), 1, g));
 
     if (since > 0 && since < 1.4) {   // the landing: a bloom, a streak of light, a ring going out
@@ -2982,7 +3051,45 @@ const splashed = new Promise(done => {
 
     const hurry = leftAt === null ? 0 : out / .35;   // skipped mid-drawing: finish the die on the way out
     const grow = lt > LAND || hurry >= 1 ? null : EDGES.map((_, n) => Math.max(hurry, smooth(clamp((lt - .25 - n * .038) / .5))));
-    drawDie(c, diePoints(cx, cy, r, t, die.turn, 2.4 * tumble, 7.5 * tumble), flash, grow, 1 - g);
+    const trail = leftAt === null ? clamp((LAND - lt) / .5) : 0;   // where the die just was, while it tumbles
+    if (trail > 0) for (let k = 6; k >= 1; k--) {
+      const was = tumbleAt(lt - k * .014);
+      c.globalAlpha = trail * .3 * (1 - k / 7);
+      drawDie(c, diePoints(cx, cy, r, t, die.turn, 2.4 * was, 7.5 * was), 0, grow, 0);
+    }
+    c.globalAlpha = 1;
+    const pts = diePoints(cx, cy, r, t, die.turn, 2.4 * tumble, 7.5 * tumble);
+    drawDie(c, pts, flash, grow, 1 - g);
+
+    // Landed, the wire fills in: dark faces lit from up and to the left, with the edges nearest the eye drawn back over them.
+    // Where the home screen's die is the wire one, they thin out again on the way there.
+    const firm = clamp(since / .45) * (solid ? 1 : 1 - g);
+    if (firm > 0) {
+      const bob = Math.sin(t * .4) * 6;
+      const front = FACES.map(([i, j, k]) => (pts[j][0] - pts[i][0]) * (pts[k][1] - pts[i][1]) - (pts[j][1] - pts[i][1]) * (pts[k][0] - pts[i][0]) > 0);
+      FACES.forEach((face, n) => {
+        if (!front[n]) return;
+        let nx = 0, ny = 0, nz = 0;
+        for (const v of face) { const p = pts[v], s = (5 - p[2]) / (5 * r); nx += (p[0] - cx) * s; ny += (p[1] - cy - bob) * s; nz += p[2]; }
+        const lit = Math.max(0, (nx * -.45 + ny * -.65 + nz * .61) / Math.hypot(nx, ny, nz));
+        const shade = Math.min(1, .02 + .15 * lit * lit + .13 * lit ** 14 + .45 * flash);
+        c.fillStyle = `rgba(${mix(35, 236, shade)},${mix(28, 204, shade)},${mix(19, 140, shade)},${.94 * firm})`;
+        c.beginPath();
+        face.forEach((v, m) => m ? c.lineTo(pts[v][0], pts[v][1]) : c.moveTo(pts[v][0], pts[v][1]));
+        c.closePath();
+        c.fill();
+      });
+      c.strokeStyle = `rgba(${201 + 54 * flash},${162 + 68 * flash},${91 + 89 * flash},${.85 * firm})`;
+      c.lineWidth = 1.2 + flash;
+      c.lineJoin = "round";
+      c.beginPath();
+      EDGES.forEach(([i, j], n) => {
+        if (!between[n].some(f => front[f])) return;
+        c.moveTo(pts[i][0], pts[i][1]);
+        c.lineTo(pts[j][0], pts[j][1]);
+      });
+      c.stroke();
+    }
 
     if (since > 0) for (const s of sparks) {
       const age = since / s.life;
@@ -2992,6 +3099,10 @@ const splashed = new Promise(done => {
       c.strokeStyle = `rgba(246,214,150,${(1 - age) ** 2 * (1 - g)})`;
       c.lineWidth = s.size;
       c.beginPath(); c.moveTo(px, py); c.lineTo(x, y); c.stroke();
+    }
+    if (since > 0 && since < .7) {   // for an instant the whole picture is washed out
+      c.fillStyle = `rgba(255,238,205,${.3 * Math.exp(-since * 8) * (1 - g)})`;
+      c.fillRect(-w, -h, w * 3, h * 3);
     }
     requestAnimationFrame(frame);
   };
