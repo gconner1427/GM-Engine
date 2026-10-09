@@ -33,6 +33,7 @@ from pathlib import Path
 import art
 import saves
 import scaffold
+import session
 from narrative import CONFIG, ENGINE, Narrative, field
 
 PAGE = Path(__file__).resolve().parent / "gui" / "app.html"
@@ -58,6 +59,7 @@ NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 GM_RULE = f'python "{ENGINE.as_posix()}/engine/gm.py" *'
 WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not typed into a terminal or VS Code.
 - The user sees only your final message of each turn, in a side panel. They read the narrative in the session log, which the window shows live. Chat echo is therefore off whatever `gm status` says: after committing a beat, your whole reply is exactly {added}.
+- A conversation's first message opens with your startup reading, which the window loaded for you: every file the narrative's CLAUDE.md and Procedures/Play.md, "Starting a conversation" (steps 1 to 3) tell you to read, as each stands now, then what `gm status` prints, then the end of the latest session log and of its GM log. Don't read any of them again: go on from step 4. (In a narrative that isn't set up yet, the reading is ENGINE.md, GM Rules, Procedures/New Narrative.md, and Core Rules instead.) Where a log is marked "the end of it only" and you need more of it, read the file. What the player sent is everything after the line `===== THE PLAYER'S MESSAGE =====`, and only that is their message.
 - Interactive tools (the question tool, plan mode) are not available. Ask questions as plain text in your final message, a few at a time.
 - Nothing can prompt the user for permission. If a tool call is denied, don't retry it: work another way, or say plainly what was denied.
 - During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the five questions and the content they want: ask only for what's missing.
@@ -121,6 +123,17 @@ def find_claude():
     version = lambda p: [int(n) for n in re.findall(r"\d+", p.parts[-4])]  # the extension's folder name
     bundled = sorted(Path.home().glob(".vscode*/extensions/anthropic.claude-code-*/resources/native-binary/claude*"), key=version)
     return str(bundled[-1]) if bundled else None
+
+
+def opening(root, text):
+    """A conversation's first message: the GM's startup reading, then what the player sent. The reading
+    holds GM Only docs, so it goes to Claude Code and is never kept in the channel."""
+    try:
+        reading = session.brief(Narrative(root))
+    except Exception:
+        log_error()
+        return text  # the GM reads the files itself, as it does outside the window
+    return f"===== STARTUP READING =====\n\n{reading}\n===== THE PLAYER'S MESSAGE =====\n\n{text}"
 
 
 def claude_command(conversation):
@@ -237,7 +250,7 @@ class Game:
         errors = []
         drain = threading.Thread(target=lambda: errors.extend(self.process.stderr), daemon=True)
         drain.start()
-        self.process.stdin.write(text)
+        self.process.stdin.write(text if conversation else opening(self.root, text))
         self.process.stdin.close()
         reply, failure = "", None
         for line in self.process.stdout:

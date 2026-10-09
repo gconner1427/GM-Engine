@@ -219,22 +219,75 @@ def name(narrative, pool=None, who=None):
 
 # ---- status ----------------------------------------------------------------
 
-def status(narrative):
+def status_text(narrative):
     cfg = narrative.config
-    print(f"{narrative.name}")
+    out = [f"{narrative.name}"]
     if not cfg.get("set_up"):
-        print("  Not set up yet: Procedures/New Narrative.md")
+        out.append("  Not set up yet: Procedures/New Narrative.md")
     opened = narrative.open_session()
-    print(f"  Sessions: {cfg.get('sessions', 0)}" + (f"   Open: Session {opened}, {cfg.get('beats', 0)} beats" if opened else "   None open"))
-    print(f"  Chat echo: {'on' if cfg.get('chat_echo', True) else 'off'}")
+    out.append(f"  Sessions: {cfg.get('sessions', 0)}" + (f"   Open: Session {opened}, {cfg.get('beats', 0)} beats" if opened else "   None open"))
+    out.append(f"  Chat echo: {'on' if cfg.get('chat_echo', True) else 'off'}")
     vitals = section(read(narrative.sheet), "Vitals")
     if vitals:
-        print("\n" + vitals)
+        out.append("\n" + vitals)
     clock = section(read(narrative.state_dir / "World State.md"), "Story Clock")
     if clock:
-        print("\n" + clock)
+        out.append("\n" + clock)
     found = narrative.pressures()
-    print(f"\nPressures: {len(found)}")
+    out.append(f"\nPressures: {len(found)}")
     for title, text in found:
-        print(f"  {title} [{field(text, 'Clock') or 'no clock'}]: {field(text, 'Stands') or ''}")
+        out.append(f"  {title} [{field(text, 'Clock') or 'no clock'}]: {field(text, 'Stands') or ''}")
+    return "\n".join(out)
+
+
+def status(narrative):
+    print(status_text(narrative))
     return 0
+
+
+# ---- the startup reading ---------------------------------------------------
+
+READ_ALWAYS = ["ENGINE.md", "Rules/GM Rules.md"]
+READ_TO_PLAY = ["Procedures/Play.md", "Rules/Core Rules.md", "Writing/GM Philosophy.md", "Writing/House Style.md",
+                "Writing/Craft Rules.md"]
+READ_TO_SET_UP = ["Procedures/New Narrative.md", "Rules/Core Rules.md"]
+LOG_TAIL = 1000     # words from the end of the latest session log
+GM_LOG_TAIL = 1500  # and from the end of its GM log
+
+
+def tail(text, words):
+    """(the end of a log, whether that's all of it): whole paragraphs or beats, about this many words of them."""
+    blocks = re.split(r"\n\s*\n", text.strip())
+    kept, count = [], 0
+    for block in reversed(blocks):
+        kept.append(block)
+        count += len(block.split())
+        if count >= words:
+            break
+    return "\n\n".join(reversed(kept)), len(kept) == len(blocks)
+
+
+def brief(narrative):
+    """What the GM reads at the start of a conversation (Procedures/Play.md, "Starting a conversation",
+    steps 1 to 3), as one text. The play window sends it with a conversation's first message, so the
+    GM doesn't spend a tool call on every file. It holds GM Only docs: it goes to the GM and nowhere else."""
+    set_up = narrative.config.get("set_up")
+    parts = []
+
+    def add(title, text):
+        if text.strip():
+            parts.append(f"===== {title} =====\n\n{text.strip()}\n")
+
+    for name in READ_ALWAYS + (READ_TO_PLAY if set_up else READ_TO_SET_UP):
+        add(f"{(ENGINE / name).as_posix()} (whole)", read(ENGINE / name))
+    if set_up:
+        for path in (narrative.root / "Style Guide.md", narrative.world_dir / "Rules Kit.md", narrative.sheet,
+                     narrative.state_dir / "World State.md"):
+            add(f"{path.relative_to(narrative.root).as_posix()} (whole)", read(path))
+    add("gm status", status_text(narrative))
+    number = narrative.config.get("sessions", 0)
+    if set_up and number:
+        for path, words in ((narrative.session_log(number), LOG_TAIL), (narrative.gm_log(number), GM_LOG_TAIL)):
+            text, whole = tail(read(path), words)
+            add(f"{path.relative_to(narrative.root).as_posix()} ({'whole' if whole else 'the end of it only'})", text)
+    return "\n".join(parts)

@@ -55,7 +55,7 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
 
 **Saved games.** The user can save the narrative and load an earlier save (the folder is a local Git repository for this; ignore `.git` and `.gitignore`). After a load, every file is as it was at that save and the conversation starts fresh, so nothing special is needed: read the state as you would at the start of any conversation, and trust the files over anything you think you remember.
 
-**The play window.** The user may be playing through the engine's desktop window instead of VS Code. It runs you headless in the narrative's folder and tells you so at the start of the conversation. Everything here still holds; the differences are in that note (the user sees only your final message, chat echo is off, nothing can prompt for permission).
+**The play window.** The user may be playing through the engine's desktop window instead of VS Code. It runs you headless in the narrative's folder and tells you so at the start of the conversation. Everything here still holds; the differences are in that note (the user sees only your final message, chat echo is off, nothing can prompt for permission, and your startup reading arrives with the conversation's first message, so you don't read those files yourself).
 
 **Player and hidden.** The Character Sheet, Journal, Style Guide, Sessions, and Art are the user's to read at any time, so nothing goes in them that the character doesn't know. Everything else goes in `GM Only/`, the world itself included: the user learns the world only through the page and the Journal.
 

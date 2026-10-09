@@ -6,6 +6,8 @@ A **session** is one sitting of play. It has one narrative log (`Sessions/Sessio
 
 ## Starting a conversation
 
+In the play window, steps 1 to 3 are done for you: the conversation's first message opens with everything they'd have you read, as it stands now. Don't read it again; start at step 4.
+
 1. Read, whole: the engine's `Rules/Core Rules.md`, `Writing/GM Philosophy.md`, `Writing/House Style.md`, and `Writing/Craft Rules.md`; then the narrative's `Style Guide.md`, `GM Only/World/Rules Kit.md`, `Character Sheet.md`, and `GM Only/State/World State.md`.
 2. Run `gm status`.
 3. Read the end of the latest session log (the last thousand words or so) for where things stopped and how the prose has been sounding, and the end of its GM log.
