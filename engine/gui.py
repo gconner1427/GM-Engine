@@ -45,6 +45,7 @@ PREFS = STORE / "prefs.json"      # the window's own: text size, whether the sid
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
+VERSION = ENGINE / "VERSION"   # one line, "Alpha 0.0.1": the corner of the main menu, and About
 MENU_TRACKS = ("1", "2")
 ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
@@ -507,6 +508,11 @@ class Handler(BaseHTTPRequestHandler):
         if route not in ("/", "/index.html"):
             return self.send(404, {"error": "Not found"})
         html = read(PAGE).replace("__GM_TOKEN__", TOKEN)
+        try:
+            version = VERSION.read_text(encoding="utf-8").strip()
+        except OSError:
+            version = ""
+        html = html.replace("__GM_VERSION__", version.replace("&", "&amp;").replace("<", "&lt;"))
         html = html.replace("__GM_START__", json.dumps(getattr(self.server, "start", None)).replace("<", "\\u003c"))
         self.send(200, html.encode("utf-8"), "text/html")
 

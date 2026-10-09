@@ -141,7 +141,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .masthead::after { content: ""; display: block; width: 300px; height: 1px; margin: 22px auto 0; background: var(--rule); }
 #studiomark { position: absolute; z-index: 1; top: 22px; right: 26px; width: clamp(84px, 11vmin, 124px); opacity: .9; -webkit-user-drag: none; user-select: none;
   animation: markin 1.2s ease .5s both; }
-#home.waiting #studiomark { animation: none; opacity: 0; }
+#version { position: absolute; z-index: 1; right: 26px; bottom: 18px; color: var(--faint); font: 600 10.5px var(--sans); letter-spacing: 2px; text-transform: uppercase;
+  user-select: none; animation: markin 1.2s ease .5s both; }
+#home.waiting #studiomark, #home.waiting #version { animation: none; opacity: 0; }
 @keyframes markin { from { opacity: 0; } to { opacity: .9; } }
 #mainmenu { display: grid; gap: 2px; width: min(100%, 400px); }
 #mainmenu button { position: relative; background: none; border: none; border-radius: 0; width: 100%; padding: clamp(7px, 1.2vmin, 11px) 0;
@@ -688,6 +690,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   <canvas id="homebg"></canvas>
   <canvas id="homedie"></canvas>
   <img id="studiomark" alt="Gravelight Studios">
+  <span id="version">__GM_VERSION__</span>
   <div class="home-menu">
     <div class="masthead">
       <svg><use href="#d20"/></svg>
@@ -738,7 +741,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       </ul>
       <h3 class="caps">What runs it</h3>
       <p>The GM is Claude, run through Claude Code with your own sign-in. Pictures are painted by Codex, if you have it installed and signed in. Each narrative lives in a folder of its own, and you can run as many as you like.</p>
-      <p class="credit"><img alt=""><span>GM Engine is made by Gravelight Studios.</span></p>
+      <p class="credit"><img alt=""><span>GM Engine __GM_VERSION__ is made by Gravelight Studios.</span></p>
     </div>
     <div class="row"><button data-close>Close</button></div>
   </div>
