@@ -1,6 +1,6 @@
 # GM Engine
 
-A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, whether the world is original, built on D&D or another setting, or an isekai, and what the story is about, if you have one in mind) and make one character. The GM builds the world and keeps it to itself, the way a GM prepares a campaign, so you discover it by playing. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as prose: third person limited, or second person ("You push the door open") if you'd rather it sound like a GM at the table. You choose when you make the narrative. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
+A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, whether the world is original, built on D&D or another setting, or an isekai, and what the story is about, if you have one in mind) and make one character. The GM builds the world and a campaign in it, the way a GM prepares one before the players sit down, and keeps both to itself, so you discover them by playing. The campaign has a goal your character is meant to work toward (bring down a dark lord, stop a war, find someone) and a hook that pulls them into it, and the GM opens every session by setting the scene, so you always have something to play off. You can still go after anything else you like: side quests and detours are part of the game. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as prose: third person limited, or second person ("You push the door open") if you'd rather it sound like a GM at the table. You choose when you make the narrative. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
 
 It grew out of the Living World Engine and keeps its idea of a persistent world. The difference is who's in charge. There, the engine proposes and the author decides everything. Here, you control one person and the GM decides the rest.
 
@@ -21,7 +21,7 @@ Inside a narrative:
 
 - `Sessions/Session N.md`: the narrative itself, one file per session, growing as you play.
 - `Character Sheet.md`: level, HP, attributes, skills, gear, money, and who your character is.
-- `Journal.md`: what your character knows about people, places, and unfinished business.
+- `Journal.md`: what your character knows: the goal they're working toward, people, places, and unfinished business.
 - `Style Guide.md`: tense, tone, content limits, and writing rules for this narrative.
 
 `GM Only/` is the GM's: the world itself and how it really works, what other people want and know, what's moving off the page, every roll, every ruling. Nothing locks it. It's an honor system.
@@ -33,13 +33,14 @@ Double-click `Play.cmd`. It opens a desktop window that lists your narratives, c
 For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a shortcut) beside `Play.cmd`. `gm shortcut --desktop` puts one named `GM Engine` on the desktop instead. A shortcut remembers where the engine folder is, so make it again if the folder moves.
 
 - **The narrative** fills the main column and grows as you play. Earlier sessions are in the picker at the top.
-- **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you.
+- **Begin** starts a session, and the GM goes first: it sets the scene and puts something in front of your character, and you play from there. The first session's opening is the hook, the event that pulls your character into the campaign.
+- **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you. Between sessions it speaks to the GM only.
 - **Push** (under the message box) is for when your character gives an action everything they have. Switch it on before you send: it costs 2 Strain and gives them a better chance on that action's first roll. If nothing needed rolling, nothing is spent. It switches itself off after each action.
 - **Undo** and **I meant…** (shown while a session is open) take back the last beat. Undo removes it and everything it changed; press it twice to confirm. "I meant…" is for when the GM misread you: it shows what you wrote, you correct it, and the beat is played again from that.
 - **In a shop,** a button with the shop's name appears above the message box. It opens the shop: what's for sale and for how much, what the keeper would buy from you and what they'd pay, and your money. Click things into your basket on the Buy and Sell tabs, see what it comes to and what you'd have left, and press **Make the trade**. The GM plays the trade as a short beat and settles your money and your gear. To haggle, ask for something that isn't on the shelf, or steal, type it as your character as usual. The button goes when your character leaves.
 - **When a session ends,** a card shows the session as your character would tell it, which of the four marks it earned and why, and how far that puts you toward the next level. "How the last session ended" in the ⋯ menu shows it again.
 - **A new level** opens its own screen after that card, at the end of the session that earned it: place your three skill ranks, pick a talent or an attribute when the level gives one, and confirm. "Later" puts it off, and a button on the Character tab brings it back.
-- **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
+- **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (the goal your character is working toward, and what they know about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
 - **The top bar** has the button that ends or starts a session, a button to hide the side panel for reading, and the ⋯ menu, where Save game, Load game, and the text size are.
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it. Or press "Add to 'To the GM'" to quote it in the message box, switched to speak to the GM, and write the correction there; select and add more passages to send several at once.
 - **During setup** the main column is your conversation with the GM: it tells you what your character would know about the world and helps you make them, and the Character tab fills in as you go.
@@ -77,6 +78,7 @@ Without the window: `gm save "a name"`, `gm saves`, and `gm load <number>` from 
 
 Use the play window, or open the narrative's folder in VS Code and start a Claude Code conversation there. Either way:
 
+- **The GM opens each session.** Say `{new session}` (the window's Begin button) and the GM sets the scene and brings something to your character. You answer it, or do something else entirely.
 - **Anything you write outside braces is your character acting**, in first or third person: `I swing my sword at the goblin` or `Kendrick swings his sword at the goblin`. Say what they do, say, or try. The GM works out what comes of it and writes the beat, which stops when your character would have to do something you haven't said.
 - **Anything in `{braces}` is you talking to the GM.** It never goes in the narrative.
 
@@ -90,7 +92,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 
 | | |
 |---|---|
-| `{new session}` / `{end session}` | Start or close a session. Ending one updates the Journal and awards marks toward the next level. |
+| `{new session}` / `{end session}` | Start or close a session. The GM opens a new one by setting the scene. Ending one updates the Journal and awards marks toward the next level. |
 | `{sheet}` | Show the character sheet. |
 | `{recap}` | Where things stand, as your character knows it. |
 | `{undo}` | Take back the last beat. |
@@ -105,8 +107,8 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 
 1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), say what the story is about if you have one in mind (fighting a dark lord, winning a war), name any themes you want in it, pick the content you want included (explicit language, explicit sex, nudity, graphic violence, gore; whatever you don't pick is left out), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
 2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). When it's done, the character creator opens, starting with a page on what your character would know.
-3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Say where they are when it opens, or leave that to the GM.
-4. Write your character's first action.
+3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Where the story opens is the GM's to choose, as at any table.
+4. Press **Begin**. The GM opens the first session: it sets the scene and hooks your character into the campaign. Then it's your move.
 
 The GM asks you nothing else about the world, and never shows you what it built.
 
@@ -119,6 +121,7 @@ A game install copies a world that someone already made onto your machine. This 
 - the world itself: its lands, peoples, history, laws, and secrets;
 - the starting region, with its towns, roads, and the places worth finding;
 - the factions, and the people who run them and what each one wants;
+- the campaign: what your character will be working toward, who stands against it, and how it could end;
 - the trouble already in motion before you arrive;
 - the rules for this world: its skills, gear, powers, and dangers;
 - the pools of names every character will be drawn from.
@@ -142,7 +145,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | `Rules/GM Rules.md` | The standing rules for the GM: who decides what, where a beat ends, honest dice, what's hidden |
 | `Writing/Craft Rules.md` | The writing rules for every narrative (`Craft Rules History.md` has the reasons) |
 | `Writing/House Style.md` | The prose defaults |
-| `Writing/GM Philosophy.md` | Character first, no plot, an honest world |
+| `Writing/GM Philosophy.md` | It's a game: a campaign with no script, an honest world |
 | `Writing/Banned Names.md` | Names that are never used |
 | `Procedures/` | New Narrative, Play, World Turn, Corrections, Art |
 | `Templates/` | What a new narrative, cast member, place, or group starts as |

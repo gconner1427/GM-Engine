@@ -82,7 +82,7 @@ Only things someone is carrying that a coming scene could turn on. Notable items
 
 ## Loose ends
 
-What the narrative has set going around the character: promises, debts, enemies made, questions raised, people looking for them. These are notes so nothing is forgotten, never a plan. They close through play or through the world's own motion, and you never force one shut.
+What the narrative has set going around the character apart from the campaign: side quests they've taken up, promises, debts, enemies made, questions raised, people looking for them. These are notes so nothing is forgotten, never a plan. They close through play or through the world's own motion, and you never force one shut.
 
 (none yet)
 

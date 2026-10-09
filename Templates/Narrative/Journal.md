@@ -6,6 +6,12 @@ What your character knows, kept by the GM so you don't have to open anything mar
 
 (A few lines: where they are, the day and time, what just happened.)
 
+## The goal
+
+What your character is working toward, as far as they understand it: what they're after, why it matters to them, and the next thing they know to do about it. It changes as they learn more.
+
+(none yet)
+
 ## The world as they know it
 
 What someone with your character's life would know about the world: the land, its peoples, how things work, what everyone believes. Written before play starts and added to as they learn more. Some of it is only what people say.
@@ -26,7 +32,7 @@ One line each: what it is, where it is, what your character knows about it.
 
 ## Unfinished business
 
-Promises made, debts owed either way, questions without answers, people looking for them.
+Everything else they've taken up or left hanging: jobs taken on, promises made, debts owed either way, questions without answers, people looking for them.
 
 (none yet)
 

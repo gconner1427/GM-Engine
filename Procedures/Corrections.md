@@ -4,7 +4,7 @@ Anything the user writes in `{braces}` is the user talking to you, not their cha
 
 A message can hold both: an action, and a note in braces. Handle the braces first.
 
-Braces work whether or not a session is open, and never open one (only an action or `{new session}` does). Between sessions, anything that would go in a session's GM log (`gm note`) waits for the next session or goes in the doc it belongs to.
+Braces work whether or not a session is open, and never open one (only `{new session}` or an action does, and either way the GM opens it with a beat of its own). Between sessions, anything that would go in a session's GM log (`gm note`) waits for the next session or goes in the doc it belongs to.
 
 ## Corrections to the writing
 
@@ -66,7 +66,7 @@ Answer from what the character knows and can perceive: the Journal, the sheet, w
 
 | The user says | Do |
 |---|---|
-| `{new session}` | End the open session if there is one, then `gm session start`. |
+| `{new session}` | End the open session if there is one, then open the next with your opening beat (Procedures/Play.md, "Opening a session"). |
 | `{end session}` | Procedures/Play.md, "The end of a session." |
 | `{sheet}` | Show the Character Sheet's top half (through Gear), as it stands. |
 | `{journal}` | Bring `Journal.md` up to date now and say it's done. |

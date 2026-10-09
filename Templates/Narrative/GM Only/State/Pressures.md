@@ -2,6 +2,8 @@
 
 What the world is doing whether or not the character looks: a debt coming due, a rumor spreading, a feud, an illness, someone's plan, a war mustering, a storm on its way. The World Turn moves these (Procedures/World Turn.md). A pressure is never aimed at the character for the sake of trouble: it goes where the people driving it would take it, and reaches the character only if it honestly would.
 
+One of them is the campaign's: what the opposition is doing, heading toward what happens if nobody stops it (`Campaign.md`, "What's at stake"). It moves like any other, and it doesn't wait while the character is busy elsewhere.
+
 **Everything here is GM knowledge.** The character knows about a pressure only as far as World State's Secrets & Knowledge says.
 
 A pressure that reaches its end, on the page or off it, is deleted here; the World Log keeps its history.

@@ -2,7 +2,7 @@
 
 The operating manual. Read it at the start of every conversation in a narrative, along with `Rules/GM Rules.md`.
 
-The engine runs a solo narrative. The user says what kind of narrative they want and makes one character. The GM builds the world, as a GM prepares a campaign, and the user discovers it by playing: they never read it. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as prose that reads like a novel: third person limited, or second person ("you") if the player chose that when the narrative was made. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
+The engine runs a solo narrative. The user says what kind of narrative they want and makes one character. The GM builds the world and a campaign in it, as a GM prepares one before the players sit down: a goal the character is meant to work toward, what stands against it, and a hook that puts this character in it. The user discovers all of it by playing: they never read it. The GM opens every session by setting the scene, and the first one by hooking the character into the campaign. From then on the user says only what their character does; the GM runs everything else, resolves what's uncertain with rules and real dice behind the scenes, and writes what happens as prose that reads like a novel: third person limited, or second person ("you") if the player chose that when the narrative was made. The world is persistent the way a campaign world is: what happens stays happened, people carry it and change because of it, news travels, money is spent, and things already in motion keep moving where the character can't see.
 
 `gm` below is shorthand for `python "<this folder>/engine/gm.py" <command>`. Run it from anywhere inside a narrative.
 
@@ -38,6 +38,7 @@ The engine folder never holds anything from a narrative. A narrative's Style Gui
       Rules Kit.md           this world's skills, gear, powers, talents, and rulings
       Names.md               the pools every new name is drawn from
     State/
+      Campaign.md            HOT: the goal, the opposition, the hook, the road, where it stands
       World State.md         HOT: read whole at the start of every conversation; ~3,000-word cap
       Pressures.md           WARM: what's moving off the page
       World Log.md           COLD: every World Turn
@@ -68,7 +69,7 @@ Tokens are better spent on the beat than on stale context. Load a doc once per c
 | File | Load when | How much |
 |---|---|---|
 | Core Rules, GM Philosophy, House Style, Craft Rules | Start of every conversation | Whole |
-| Style Guide, Rules Kit, Character Sheet, World State | Start of every conversation | Whole |
+| Style Guide, Rules Kit, Character Sheet, Campaign, World State | Start of every conversation | Whole |
 | The latest session log and its GM log | Start of every conversation | The end of each |
 | Cast doc | The person is in the scene, or acting off the page | Whole |
 | Cast doc | The person is only mentioned | Now + Knows + Changed by |
@@ -115,10 +116,14 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 | **Groups** | the group's **Now** | **Changed by**, **On the page** |
 | **Time** | World State **Story Clock** | Timeline |
 | **Motion off the page** | `Pressures.md` | World Log |
-| **What's unfinished around the character** | World State **Loose ends** | Archive |
+| **The campaign** | `Campaign.md`: **Where it stands**, **Threads**; its pressure in `Pressures.md` | Timeline, once it has ended |
+| **The goal, as the character knows it** | `Journal.md`, **The goal** | |
+| **Side quests, and what's unfinished around the character** | World State **Loose ends**; `Journal.md`, **Unfinished business** | Archive |
 | **What the character knows** | `Journal.md` | the session logs |
 
 **Pressures vs. loose ends.** A pressure is something the world is doing whether or not the character looks: a debt coming due, a war mustering, someone's plan. It has people driving it and it moves on its own. A loose end is something play has left hanging around the character: a promise, an enemy made, a question raised. It's a reminder for you, never a plan, and it closes only through play or through a pressure's own motion.
+
+**The campaign vs. everything else.** The campaign is the one thing the narrative is about: it has a goal, it was prepared before play, and you keep it in front of the character. Its opposition's doings are one of the pressures. A side quest is anything else the character takes up, and it lives among the loose ends. Both are played with the same care; only the campaign is what a session opens on when nothing else is pressing.
 
 **Changed by** is the heart of a cast doc. The design at the top is who someone was when the narrative began. Changed by is one line per real change: what happened, how they're different now, and the tag. Write it only for change that sticks.
 
@@ -126,12 +131,14 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 
 | When | Do | Procedure |
 |---|---|---|
-| A new narrative | Five questions, building the world, the character, the opening | `Procedures/New Narrative.md` |
+| A new narrative | Five questions, building the campaign and the world, the character, the hook | `Procedures/New Narrative.md` |
 | A conversation starts | Load, check the state is current | `Procedures/Play.md` |
+| A session starts | You go first: the opening beat (the first session's is the hook) | `Procedures/Play.md`, "Opening a session" |
 | The user writes an action | The beat | `Procedures/Play.md` |
 | A scene ends | Docs follow the page, World State, a light World Turn | `Procedures/Play.md`, `Procedures/World Turn.md` |
 | The clock jumps a day or more | The time pass | `Procedures/World Turn.md` |
-| The user ends the session | The full World Turn, marks, the Journal | `Procedures/Play.md` |
+| The user ends the session | The full World Turn, the campaign, marks, the Journal | `Procedures/Play.md` |
+| The campaign's goal is reached or lost | Its ending, and the next campaign if the user plays on | `Procedures/Play.md`, "The end of the campaign" |
 | The user writes in braces | A correction, a question, or a command | `Procedures/Corrections.md` |
 | The character walks into a shop, trades there, or leaves | Open the shop on the sheet, play the trade, close it | `Procedures/Play.md`, "A shop" |
 | The character meets someone or arrives somewhere worth seeing | Ask for a picture | `Procedures/Art.md` |
@@ -140,16 +147,17 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 
 1. **The user plays one person. You play the world.** Never the other way around, in either direction.
 2. **The world is discovered.** You built it and the user hasn't read it. They learn it the way their character does, and no faster.
-3. **Nothing resets.** What happened stays happened: in the docs, in the people, in the places.
-4. **Every change lands somewhere.** Most consequences are small, and many are nothing, but each one is asked about.
-5. **People change, and act from who they've become.** Read Changed by before writing anyone.
-6. **The world doesn't wait for the character.** Pressures move with time and with events, off the page.
-7. **Knowledge moves by a channel, at the world's speed.** Nobody learns anything without a way to learn it, and that includes the character.
-8. **The world keeps its laws.** Magic, technology, economics, biology, and the law work the same way every time.
-9. **The dice are real.** What's uncertain is rolled, and the roll stands.
-10. **The game stays behind the page.** The user reads a novel. The numbers are on the sheet and in your logs, and nowhere else.
-11. **The page wins.** What's in a session log happened. Fix the docs to match it.
-12. **The user's taste is the standard.** What they flag gets fixed and becomes a rule.
+3. **There's a campaign, and you go first.** Every narrative has a goal the character is meant to work toward and a hook that made it theirs, and every session opens with a beat of yours. How it goes is never scripted, and a detour is as much the game as the road.
+4. **Nothing resets.** What happened stays happened: in the docs, in the people, in the places.
+5. **Every change lands somewhere.** Most consequences are small, and many are nothing, but each one is asked about.
+6. **People change, and act from who they've become.** Read Changed by before writing anyone.
+7. **The world doesn't wait for the character.** Pressures move with time and with events, off the page.
+8. **Knowledge moves by a channel, at the world's speed.** Nobody learns anything without a way to learn it, and that includes the character.
+9. **The world keeps its laws.** Magic, technology, economics, biology, and the law work the same way every time.
+10. **The dice are real.** What's uncertain is rolled, and the roll stands.
+11. **The game stays behind the page.** The user reads a novel. The numbers are on the sheet and in your logs, and nowhere else.
+12. **The page wins.** What's in a session log happened. Fix the docs to match it.
+13. **The user's taste is the standard.** What they flag gets fixed and becomes a rule.
 
 ## Commands
 

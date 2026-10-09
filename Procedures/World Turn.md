@@ -29,7 +29,7 @@ Think past the names in the docs: for each thing the character did, who would pl
 - **Proportionate.** A quiet scene makes small ripples or none. Most scenes make between zero and three. "Nothing moved" is a fine result.
 - **No manufactured trouble.** A ripple is a consequence, not a complication added to make things interesting. If the honest consequence is dull, it's dull.
 - **No manufactured mercy either.** If the honest consequence is that the watch now has the character's description, they have it.
-- **Not everything is about the character.** Pressures move for their own reasons. Most of what the world does in a week would have happened without them.
+- **Not everything is about the character.** Pressures move for their own reasons, the campaign's included: it advances on its own clock while the character is busy elsewhere, no faster and no slower for that. Most of what the world does in a week would have happened without them.
 - **Roll what's open.** Whether a bystander noticed, whether the rumor got as far as the capital, whether the sick man lasted the week: Core Rules §12. Don't choose the answer that's more interesting.
 - **One step at a time.** A pressure moves one step per turn, or one per stretch of time its **Moves when** names. Nothing leaps to its end because the session is ending.
 - **Obey the world.** Laws, travel times, prices, and knowledge channels hold off the page exactly as they do on it.
@@ -38,7 +38,7 @@ Think past the names in the docs: for each thing the character did, who would pl
 ## 3. Apply and log
 
 - Write each consequence where it lives, tagged **[Off S#]**: a cast doc's Now, Knows, or Changed by; World State's Secrets & Knowledge; a place's Now or Has; Items; Economy; a group's Now; Pressures (**Stands**, **Clock**, **Last moved**, and a history line); the World Bible or Timeline for anything about the world itself.
-- Anything that could reach the character in the next few scenes also goes in World State (People in motion, Pressures near the page).
+- Anything that could reach the character in the next few scenes also goes in World State (People in motion, Pressures near the page). Anything that gives the campaign a way to reach them goes in `Campaign.md`, "Threads": the next session's opening is chosen from these.
 - New pressures go in `Pressures.md` with every field filled.
 - Add an entry to `GM Only/State/World Log.md`: what moved and why, one line each.
 

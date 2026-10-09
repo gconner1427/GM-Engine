@@ -282,7 +282,7 @@ def brief(narrative):
         add(f"{(ENGINE / name).as_posix()} (whole)", read(ENGINE / name))
     if set_up:
         for path in (narrative.root / "Style Guide.md", narrative.world_dir / "Rules Kit.md", narrative.sheet,
-                     narrative.state_dir / "World State.md"):
+                     narrative.state_dir / "Campaign.md", narrative.state_dir / "World State.md"):
             add(f"{path.relative_to(narrative.root).as_posix()} (whole)", read(path))
     add("gm status", status_text(narrative))
     number = narrative.config.get("sessions", 0)

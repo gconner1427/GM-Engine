@@ -1240,7 +1240,7 @@ function coins(text) {     // "14 crowns, 6 shillings" into counted coins; anyth
 
 const prose = sec => untag(sec).split(/\r?\n/).filter(l => !/^\(.*\)$/.test(l.trim())).join("\n").trim();
 const journalPart = (journal, title) =>   // one section of the Journal, without the template's line on what goes in it
-  prose(part(journal, title)).split(/\r?\n/).filter(l => !/^one (line|short paragraph)|^promises made|^what someone with/i.test(l.trim())).join("\n").trim();
+  prose(part(journal, title)).split(/\r?\n/).filter(l => !/^one (line|short paragraph)|^promises made|^everything else they've taken up|^what your character is working toward|^what someone with/i.test(l.trim())).join("\n").trim();
 
 // ---- home -------------------------------------------------------------------
 
@@ -1405,7 +1405,7 @@ DIE.forEach((p, i) => DIE.forEach((q, j) => { if (i < j && Math.abs(Math.hypot(p
 const EMBERS = Array.from({length: 46}, () => ({x: Math.random(), y: Math.random(), size: .8 + Math.random() * 1.8, speed: .012 + Math.random() * .03,
                                                 sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));
 const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let backdropOn = false;
+let backdropOn = false, veiled = !STILL, drawn = false;   // veiled: the splash and the intro are over it, so there is nothing to draw it for
 // How the die is turned is a 3×3 matrix in rows, in the canvas's own directions: x to the right, y down, z toward the eye.
 function turnAbout([x, y, z], by) {   // by so many radians about a unit axis
   const c = Math.cos(by), s = Math.sin(by), k = 1 - c;
@@ -1432,8 +1432,8 @@ $("home").addEventListener("pointerdown", e => {
 EDGES.forEach(e => { if (DIE[e[0]][1] > DIE[e[1]][1]) e.reverse(); });   // every edge runs top to bottom, and so does the list: the intro draws the die downward
 EDGES.sort((a, b) => DIE[a[0]][1] + DIE[a[1]][1] - DIE[b[0]][1] - DIE[b[1]][1]);
 
-function fit(cv) {   // a canvas sized to its box and wiped, with its context in CSS pixels
-  const ratio = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+function fit(cv, most) {   // a canvas sized to its box and wiped, with its context in CSS pixels; most caps how fine its own pixels are
+  const ratio = Math.min(window.devicePixelRatio || 1, most || 9), w = cv.clientWidth, h = cv.clientHeight;
   if (cv.width !== Math.round(w * ratio) || cv.height !== Math.round(h * ratio)) { cv.width = Math.round(w * ratio); cv.height = Math.round(h * ratio); }
   const c = cv.getContext("2d");
   c.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -1463,7 +1463,7 @@ function drawGlow(c, w, h, cx, cy, r, t, heat, strength) {
   glow.addColorStop(.45, `rgba(120,90,45,${.07 * strength})`);
   glow.addColorStop(1, "rgba(0,0,0,0)");
   c.fillStyle = glow;
-  c.fillRect(0, 0, w, h);
+  c.fillRect(cx - r * 4.6, cy - r * 4.6, r * 9.2, r * 9.2);   // only as far as it reaches
 }
 
 // grow, when given, is how far along each edge has been drawn (0 to 1); bloom puts a soft halo on the lines.
@@ -1613,7 +1613,8 @@ function startBackdrop() {
   backdropOn = true;
   const frame = ms => {
     if ($("home").hidden) { backdropOn = false; return; }
-    drawBackdrop(ms);
+    if (!veiled || !drawn) drawBackdrop(ms);   // once even so, so the first frame the player sees isn't the one that sets everything up
+    drawn = true;
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
@@ -1725,7 +1726,11 @@ function apply(s) {
   $("title").textContent = s.name;
   const play = s.set_up;
   $("modes").hidden = !play;
-  $("newsession").hidden = !play || !!s.open_session || !s.sessions;
+  const between = play && !s.open_session;   // no session open: the GM opens the next one, and nothing is played until it has
+  $("newsession").hidden = !between || !!creation(game.texts.sheet || "");
+  $("newsession").textContent = s.sessions ? "Begin session " + (s.sessions + 1) : "Begin";
+  if (between && game.mode === "act") { game.held = true; showMode("gm"); }
+  else if (!between && game.held) { game.held = false; showMode("act"); }   // the session is open: back to playing
   $("endsession").hidden = !play || !s.open_session;
   $("newsession").disabled = $("endsession").disabled = s.busy;
   $("savebtn").hidden = $("loadbtn").hidden = !play;
@@ -1750,10 +1755,11 @@ function apply(s) {
   $("send").disabled = s.busy;
   $("input").placeholder = !play ? "Answer the GM…"
     : game.mode === "act" ? "What does your character do?" : "A correction, a question, a command…";
-  const between = play && !s.open_session && s.sessions > 0;
-  $("modetip").textContent = game.mode === "act"
-    ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "")   // otherwise each mode's tooltip says what it is
-    : (between ? "Sent in braces. It won't start a session." : "Sent in braces. It never goes in the narrative.");
+  $("modeact").disabled = between;
+  $("modeact").title = between ? "No session is open. Press Begin and the GM opens it; then it's your move."
+    : "What your character does, in first or third person. Only what you state happens.";
+  $("modetip").textContent = game.mode === "act" ? ""   // each mode's tooltip says what it is
+    : (between ? "No session is open: this goes to the GM. Begin, at the top, starts one." : "Sent in braces. It never goes in the narrative.");
   $("undo").hidden = $("meant").hidden = !play || !s.open_session;
   $("undo").disabled = $("meant").disabled = s.busy || !s.can_undo;
   const strain = readVitals(game.texts.sheet || "").strain;
@@ -1867,13 +1873,16 @@ function renderStory() {
   const s = game.state, el = $("story");
   const text = game.texts.log || "";
   const key = s.viewing + "|" + text;
-  if (key === game.shownLog && el.querySelector(".page, .hint")) return;
+  if (key === game.shownLog && el.querySelector(".page, .hint")) { if ($("beginplay")) $("beginplay").disabled = s.busy; return; }
   const sameSession = game.shownLog.startsWith(s.viewing + "|");
   game.shownLog = key;
   const body = text.replace(/^\s*#\s+Session\s+\d+\s*/, "");
   if (!body.trim()) {
+    const open = !!s.open_session;   // an open session with nothing in it yet: the GM is about to open it, or was stopped
     el.innerHTML = `<div class="hint"><svg><use href="#d20"/></svg>${s.sessions ? "This session hasn't begun." : "The world is ready."}<br>
-      Say what your character does, and the narrative starts.</div>`;
+      ${open ? "Say what your character does, and the narrative starts." : `The GM sets the scene, and then it's your move.<br>
+      <button class="primary" id="beginplay"${s.busy ? " disabled" : ""}>Begin</button>`}</div>`;
+    if ($("beginplay")) $("beginplay").onclick = guard(() => send("{new session}", true));
     game.shownParas = 0;
     return;
   }
@@ -2100,7 +2109,10 @@ function renderPane() {
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     const pages = [];   // one inner tab per section that has something in it
-    if (stands) pages.push({tab: "Now", html: `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>`});
+    const goal = journalPart(journal, "The goal");   // what the character is working toward: the first thing the Journal shows
+    if (stands || goal) pages.push({tab: "Now", html:
+      (stands ? `<div class="stands"><span class="caps">Where things stand</span>${inline(stands.replace(/\s*\n\s*/g, " "))}</div>` : "") +
+      (goal ? `<div class="block"><div class="caps">The goal</div><div class="md journal">${md(goal)}</div></div>` : "")});
     for (const [tab, title] of [["World", "The world as they know it"], ["People", "People"], ["Places", "Places"], ["Unfinished", "Unfinished business"], ["Sessions", "Sessions"]]) {
       const text = journalPart(journal, title);
       if (text && !/^\(none yet\)$/i.test(text))
@@ -2459,12 +2471,12 @@ $("shopgo").onclick = guard(async () => {
 
 // ---- making the character ---------------------------------------------------------
 
-// The world's part of the creator (its peoples, walks of life, homes, skills, talents, openings) is the sheet's
+// The world's part of the creator (its peoples, walks of life, homes, skills, talents) is the sheet's
 // "Character creation" section, which the GM writes during setup. The rest is the same in every world.
 const ATTRS = [["Might", "strength, force, hitting hard"], ["Agility", "speed, balance, aim, quiet feet"], ["Vigor", "health, stamina, shrugging off pain"],
                ["Wits", "reasoning, memory, noticing"], ["Will", "nerve, focus, holding out"], ["Presence", "force of personality, reading people"]];
 const SPREAD = [2, 1, 1, 0, 0, -1], START_RANKS = 10, START_CAP = 2, START_TALENTS = 2;   // Core Rules, "Making the player character"
-const OTHER = "Something else", GM_PICKS = "The GM chooses";
+const OTHER = "Something else";
 const TRAITS = ["Bold", "Cautious", "Warm", "Guarded", "Curious", "Blunt", "Charming", "Quiet", "Hot-tempered", "Patient", "Stubborn", "Cynical", "Idealistic", "Loyal",
                 "Self-serving", "Honest", "Sly", "Kind", "Ruthless", "Dutiful", "Reckless", "Proud", "Humble", "Playful", "Grim"];
 const VOICES = ["Plain-spoken", "Formal", "Talkative", "Few words", "Dry humor", "Jokes a lot", "Swears freely", "Never swears", "Gentle", "Sharp-tongued", "Polite", "Sarcastic"];
@@ -2479,7 +2491,7 @@ function creation(sheet) {   // what the GM offers a new character, or null when
     return m ? {name: w.name, text: m[1], skills: m[2].split(/\s*,\s*(?:and\s+)?|\s+and\s+/).filter(Boolean)} : w;
   });
   return {key: sec, peoples: listed(sec, "Peoples"), walks, homes: listed(sec, "Homes"), skills: listed(sec, "Skills"),
-          talents: listed(sec, "Talents"), openings: listed(sec, "Openings")};
+          talents: listed(sec, "Talents")};
 }
 
 const mkWorld = () => journalPart(untag(game.texts.journal || ""), "The world as they know it").replace(/^\(none yet\)$/i, "");
@@ -2488,7 +2500,7 @@ const mkVal = key => game.make[key] === OTHER ? mkText(key + "Other") : game.mak
 
 function makerSteps(c) {
   return [["world", "The world"], ["identity", "Identity"], ["looks", "Looks"], ["origins", "Origins"], ["nature", "Nature"], ["attributes", "Attributes"],
-          ["skills", "Skills"], ["talents", "Talents"], ["opening", "Opening"], ["review", "Review"]]
+          ["skills", "Skills"], ["talents", "Talents"], ["review", "Review"]]
     .filter(([id]) => id === "world" ? mkWorld() : id === "skills" ? c.skills.length : true);
 }
 
@@ -2577,9 +2589,6 @@ const MAKER = {
       `<div class="talent pick${game.make.talents.includes(t.name) ? " on" : ""}" data-talent="${n}"><div class="name">${esc(t.name)}</div><div class="text">${inline(t.text)}</div></div>`).join("")) +
     mkArea("talentOwn", "A talent of your own", "counts as one of the two; the GM writes it up with you", "Never lost in a city she's walked. Reads a liar at a glance."),
 
-  opening: c => `<h2>Opening</h2><p class="lede">Where your character is, and what they're doing, when the narrative begins.</p>
-    ${mkPick("opening", "Where it starts", "", [{name: GM_PICKS, text: "An ordinary moment in the life you've described"}].concat(c.openings), {cards: true, other: "Where they are and what they're doing"})}`,
-
   review: c => {
     const [lines, left] = makerLines(c);
     return `<h2>${esc(mkText("name") || "Your character")}</h2><p class="lede">Go back to any step to change it. The GM fits them into the world from this.</p>
@@ -2621,8 +2630,6 @@ function makerLines(c) {   // the character as made, a line for each part with s
   add("A talent of their own", mkText("talentOwn"));
   const owed = START_TALENTS - m.talents.length - (mkText("talentOwn") ? 1 : 0);
   if (owed > 0) left.push(owed > 1 ? "both talents" : "one talent");
-  const opening = mkVal("opening").trim();
-  if (opening && opening !== GM_PICKS) add("Where it starts", opening); else left.push("where it starts");
   add("Note", mkText("note"));
   return [lines, left];
 }
@@ -2724,11 +2731,14 @@ function setTab(tab) {
 }
 $("tabs").onclick = e => { const b = e.target.closest("button"); if (b) setTab(b.dataset.tab); };
 
-function setMode(mode) {
+function showMode(mode) {
   game.mode = mode;
   $("modeact").classList.toggle("on", mode === "act");
   $("modegm").classList.toggle("on", mode === "gm");
   document.body.classList.toggle("gmmode", mode === "gm");
+}
+function setMode(mode) {
+  showMode(mode);
   if (game.state) apply(Object.assign(game.state, {texts: {}, channel: null}));
   $("input").focus();
 }
