@@ -56,7 +56,8 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - The user sees only your final message of each turn, in a side panel. They read the narrative in the session log, which the window shows live. Chat echo is therefore off whatever `gm status` says: after committing a beat, your whole reply is exactly {added}.
 - Interactive tools (the question tool, plan mode) are not available. Ask questions as plain text in your final message, a few at a time.
 - Nothing can prompt the user for permission. If a tool call is denied, don't retry it: work another way, or say plainly what was denied.
-- During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the three questions: ask only for what's missing. The player can't see any file but the Character Sheet and the Journal, so what they need to know to make a character has to be in your message.
+- During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the three questions: ask only for what's missing.
+- The player makes their character on the window's character creator, a step-by-step screen built from the sheet's `## Character creation` section (Procedures/New Narrative.md, step 4). Its first page shows the Journal's "The world as they know it," and the player can't see any other file. So don't repeat the world or the choices in your message and don't interview them: say only that the world is ready and the creator is open. What they made comes back in braces.
 - When the user flags a passage, the window quotes it to you in braces.
 - An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
 - When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for.
@@ -288,6 +289,8 @@ class Game:
                 out["texts"][key] = read(path)
         if have.get("channel") != len(self.data["channel"]):
             out["channel"] = self.data["channel"]
+        if not have:  # the window has just opened this narrative
+            out["draft"] = self.data.get("draft")
         mark = stamp(art.art_dir(self.narrative) / "art.json") + str(self.art_trouble)
         out["stamps"]["art"] = mark
         if have.get("art") != mark:
@@ -295,6 +298,12 @@ class Game:
             out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
                           "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error")} for i in index["items"]]}
         return out
+
+    def keep_draft(self, draft):
+        """The character creator's answers so far, so a character half made survives the window closing."""
+        with self.lock:
+            self.data["draft"] = draft if isinstance(draft, dict) else None
+            self.save()
 
     def save_game(self, label):
         if self.busy():
@@ -520,6 +529,10 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/add":
             game(path)
             return {"path": remember(path)}
+        if route == "/api/opened":  # to the top of the list, which is what the main menu's Continue opens
+            if (Path(path) / CONFIG).exists():
+                remember(path)
+            return {"ok": True}
         if route == "/api/forget":
             forget(path)
             return {"ok": True}
@@ -527,6 +540,9 @@ class Handler(BaseHTTPRequestHandler):
             return game(path).state(data.get("viewing"), data.get("have") or {})
         if route == "/api/send":
             game(path).send(data.get("text") or "")
+            return {"ok": True}
+        if route == "/api/draft":
+            game(path).keep_draft(data.get("draft"))
             return {"ok": True}
         if route == "/api/save":
             return {"save": game(path).save_game(data.get("label") or "")}

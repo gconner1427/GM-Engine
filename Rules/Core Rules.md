@@ -221,9 +221,9 @@ Tags say what else is true of a weapon, in words that mean what they say: reach,
 
 ## 15. Making the player character
 
-Done with the user during setup (Procedures/New Narrative.md):
+Done by the user during setup, on the play window's character creator or in conversation (Procedures/New Narrative.md). Whatever they leave open, the GM chooses to fit the person they described:
 
-1. **Attributes:** +2, +1, +1, 0, 0, -1, placed to fit who the user describes.
+1. **Attributes:** +2, +1, +1, 0, 0, -1, one to each attribute.
 2. **Skills:** 10 ranks, no skill above 2, each with a source in the character's background.
 3. **Talents:** two. One from their background, one that's simply theirs.
 4. **Defenses, HP, Strain:** from the formulas above.

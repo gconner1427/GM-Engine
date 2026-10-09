@@ -126,6 +126,9 @@ GM Rules, "The player's character is the player's," is the rule. These are how i
 - **Never "a beat" for a pause:** "A beat." "After a beat." "A beat too long." It's a script direction, and it tells the reader a pause happened instead of showing one. Fill the pause with what happens in it (a swallow, the fire, a hand moving), or let the next line come without it.
     - ✗ "'...the way you did in the crypt?' A beat, and then lower still, and quicker." → ✓ "'...the way you did in the crypt?' She swallowed. The next part came lower still, and quicker."
 
+- **No "longer than she needed to":** Don't measure a look, a hold, a pause, or a silence against how long it should have taken: "longer than she needed to," "a second longer than it took," "a moment too long," "longer than the question deserved." It tells the reader a hesitation meant something instead of showing it, and it turns into a stamp fast. Give what happens in that time (what's under the hand, what the eyes are on), or let the action come straight. Before writing any hesitation, search the session logs for "longer than" and "too long."
+    - ✗ "There was an iron ring on this side, cold, and she stood there holding it longer than she needed to. Then she turned it." → ✓ "There was an iron ring on this side, cold enough to ache in her fingers. She turned it."
+
 - **"Says it to the [object]":** Don't use "said it to the floor / wall / window" or "shook his head at the road" as the default way to show someone not meeting eyes. When the line before already says where they're looking, cut the tag.
 
 - **Don't narrate an established trait:** Once the page has shown a character's trait, stop pointing at it. Let them do it and let the others react.

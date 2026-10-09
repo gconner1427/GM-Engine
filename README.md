@@ -28,7 +28,7 @@ Inside a narrative:
 
 ### The play window
 
-Double-click `Play.cmd`. It opens a desktop window that lists your narratives, creates new ones, and is where you set them up and play them.
+Double-click `Play.cmd`. It opens a desktop window that lists your narratives, creates new ones, and is where you set them up and play them. Once you've opened one, Continue at the top of the main menu goes straight back into the narrative you opened last.
 
 For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a shortcut) beside `Play.cmd`. `gm shortcut --desktop` puts one named `GM Engine` on the desktop instead. A shortcut remembers where the engine folder is, so make it again if the folder moves.
 
@@ -103,8 +103,8 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 ## Starting a narrative
 
 1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
-2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). It then tells you what your character would know and asks who they are.
-3. Make your character with the GM, and say where they are when it opens (or leave that to the GM).
+2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). When it's done, the character creator opens, starting with a page on what your character would know.
+3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Say where they are when it opens, or leave that to the GM.
 4. Write your character's first action.
 
 The GM asks you nothing else about the world, and never shows you what it built.

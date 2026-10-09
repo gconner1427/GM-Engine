@@ -61,3 +61,9 @@ One entry per rule added or changed because of a correction in play (Procedures/
 **Was:** "He looked her over the way anyone on a road looked over anyone else, pack and quiver and boots, without much hurry about it and without anything in it she needed to mind."
 **Became:** "His eyes went to her pack, the quiver, her boots, and came back up to her face."
 **Why:** "the way" (and "like" or "as if" doing the same job) labels the kind of action for the reader instead of showing the action. The old rule was too loose to stop it. Swept in the same session: "He said it like a price he'd been hoping to haggle down" became "His shoulders came down under the wet coat."
+
+### No "longer than she needed to" (new), 2026-10-08, The Traveler from the Other Shore, Session 5
+**Flagged:** "longer than she needed to is becoming a crutch phrase it is used a lot"
+**Was:** "There was an iron ring on this side, cold, and she stood there holding it longer than she needed to. Then she turned it."
+**Became:** "There was an iron ring on this side, cold enough to ache in her fingers. She turned it."
+**Why:** measuring a hesitation against how long it should have taken labels it as meaningful instead of showing it, and the phrase had become a stamp: it or a close cousin ("a second longer," "a moment too long") was already in Sessions 1, 2, and 3. Only the Session 5 use was changed; earlier sessions left alone.

@@ -75,35 +75,66 @@ Now prepare it, in `GM Only/`, without a word to the player about what's in it. 
 
 Write the Journal's "The world as they know it": a page on what an ordinary person raised in the starting region knows. The land and its peoples, who rules and how they're regarded, how life is lived, what everyone says about magic or the stars or the old war. Common knowledge only, in plain words, including beliefs that happen to be wrong (without marking them).
 
-Then give the player the same thing in your reply, followed by what they need to make a character:
-- the peoples and walks of life someone here could come from;
-- the kinds of things a starting character could be good at (the Rules Kit's skills, in words);
-- any powers a person could plausibly have at the start, as the world understands them.
+Then write what a character here can be made from, as a section of the Character Sheet directly above `## Vitals`. The play window builds its character creator from this section: a step-by-step screen where the player picks with buttons and types only what needs words. The window supplies what's the same in every world (name, gender, age, looks, nature, voice, the attribute spread, the 10 skill ranks); this section is the world's part.
 
-**In an isekai** the character was raised in our world and knows nothing of the other one, so neither does the player. The Journal's "The world as they know it" says only that they come from our world (where and when, once the player has said), and it grows as they learn. Tell the player nothing about the other world: no peoples, no powers, no names. If they're to be born into a new body there, say only that much, since it changes who they'll describe. What they need to make a character is just this: an ordinary person of our world, and the kinds of things such a person could be good at (the Rules Kit's skills that someone from our world could have, in words).
+```
+## Character creation
 
-Ask who their character is.
+### Peoples
+- **Hillfolk:** who they are, as everyone knows it.
+
+### Walks of life
+- **Ferry hand:** the life, in a line. Skills: Boats, Haggling.
+
+### Homes
+- **Oxbow:** the place, in a line.
+
+### Skills
+- **Boats:** what it covers.
+
+### Talents
+- **Sea Legs:** Edge on keeping their feet aboard anything afloat.
+
+### Openings
+- **Market morning in Oxbow:** the moment, in a line.
+```
+
+- **Peoples:** the peoples a character could be. Leave the heading out if there's only one.
+- **Walks of life:** six to ten lives someone in the starting region could have led, across its ranks and trades. Each ends with `Skills:` and the two to four skills that life teaches, by their names under Skills; the creator marks those for the player.
+- **Homes:** four to eight places in the starting region a person could come from.
+- **Skills:** every Rules Kit skill a starting character could have, with what it covers.
+- **Talents:** eight to twelve, from the Rules Kit or written in the shapes of Core Rules §17, spread across the walks of life and across kinds of character. A power a person could plausibly start with is one of these, described as the world understands it.
+- **Openings:** two to four places and moments in the starting region where the narrative could open for anyone. Leave the heading out if none would suit every character: the creator always offers "The GM chooses" and the player's own words.
+- Every line is common knowledge, in words the player can read knowing nothing but the Journal's page. Nothing from `GM Only/` that an ordinary person wouldn't say.
+
+**In an isekai** the character was raised in our world and knows nothing of the other one, so neither does the player. The Journal's "The world as they know it" says only that they come from our world (where and when, once the player has said), and it grows as they learn. Nothing about the other world goes in the section: no peoples, no powers, no names. Leave Peoples and Homes out, make the walks of life those of our world, list only the skills and talents someone from our world could have, and make the Openings the two there are: the last ordinary day, just before the crossing, or the moment they arrive. If they're to be born into a new body there, say only that much in your reply, since it changes who they'll describe.
+
+Then tell the player, in a line or two, that the world is ready and the character creator is open. The creator's first page shows them the Journal's page, so don't repeat it.
+
+**Without the play window,** the same section is your list: give the player the Journal's page in your reply, then the choices, a step at a time, and take their answers in conversation.
 
 ## 5. The character (`Character Sheet.md`)
 
-The character is the player's, in every part.
+The character is the player's, in every part. What they made comes back from the creator in braces, a line for each part, ending with anything they left to you.
 
-1. **Who they are.** Name, age, looks, concept, and the sections under the line on the sheet: who they are, what they want, voice, emotional rules, background and know-how, people. Take these in the player's own words and write them down as given, tagged **[Setup]**. This is what you'll draw on for every thought the character has, so ask follow-ups where it's thin: how do they talk, what do they do when they're scared, what would they never do.
-2. **Fit them into the world.** Place their home, their family, and their history in the region you built, and tell the player the names of the places and people they'd know. People they name get cast docs, their design tagged **[Setup]**. If their idea doesn't fit the world as built, bend the world where it costs nothing (it isn't on the page yet); where it can't bend, say what doesn't fit, in terms of common knowledge, and offer the nearest thing that does.
-3. **The numbers** (Core Rules §15). Propose attributes, skills, and two talents that fit the person described, and let the player change anything. Then fill in the defenses, HP, and Strain.
-4. **Gear and money.** What this person would own and carry, priced by the Economy.
+1. **Who they are.** Fill in the top of the sheet and the sections under the line (who they are, what they want, voice, emotional rules, background and know-how, people) from what they chose and wrote, tagged **[Setup]**. Their words go down as given. What they picked with a button goes down as plainly as they picked it: "blunt, loyal, stubborn" is three words on the sheet, not a paragraph you wrote about them. Looks become the one or two lines a stranger would notice. A part they left empty stays empty; the GM never invents the character's past. Don't interview them. Ask only for what you can't run the character without, once, in a short round.
+2. **Fit them into the world.** Place their home, their family, and their history in the region you built, and tell the player the names of the places and people they'd know. People they name get cast docs, their design tagged **[Setup]**. If something they wrote in their own words doesn't fit the world as built, bend the world where it costs nothing (it isn't on the page yet); where it can't bend, say what doesn't fit, in terms of common knowledge, and offer the nearest thing that does.
+3. **The numbers** (Core Rules §15). What they chose stands, if the rules allow it. What they left to you (attributes, skill ranks, a talent), choose to fit the person described, and say what you chose so they can change it. A talent of their own, write up with them in the shapes of Core Rules §17. Every skill rank needs a source in their background: if one has none, ask where it came from. Then fill in the defenses, HP, and Strain.
+4. **Gear and money.** What this person would own and carry, priced by the Economy, with anything they said is always on them.
+5. **Their portrait.** Ask for it from their looks: `gm art portrait "<name>" "<their looks, as a painter would need them>"` (Procedures/Art.md).
+6. **Delete the `## Character creation` section** once the sheet is written. Whatever is still unsettled, settle in conversation.
 
 **In an isekai,** step 2 places them in our world: their home, work, and people are there, and get no cast docs unless they could matter again. The numbers are those of the person they were. Anything the crossing gives them isn't on the sheet yet: it's added when it happens on the page, as the character comes to understand it. Their gear is what they have on them when they cross, if they cross in their own body, and nothing if they don't. Our world's money buys nothing there.
 
-5. **Their portrait.** Once the player has settled how the character looks, ask for it: `gm art portrait "<name>" "<their looks, as a painter would need them>"` (Procedures/Art.md).
-
 Then go back to the Journal: add what this particular person would know beyond the ordinary (their trade, their people, their home ground), and fill in People and Places for who and what they'd know going in.
+
+**A new character later** (Core Rules §7) is made the same way: write the section again, for the world as it now stands and what a newcomer would know of it, and the creator opens.
 
 ## 6. Where it starts
 
-Ask the player where their character is and what they're doing when the narrative opens, and offer to choose for them. If they leave it to you, pick an ordinary moment in the life they described, somewhere the world's motion could reach, without putting them in the middle of anything they didn't choose.
+The creator's last step asks where the character is and what they're doing when the narrative opens. If they left it to you, pick an ordinary moment in the life they described, somewhere the world's motion could reach, without putting them in the middle of anything they didn't choose.
 
-**In an isekai,** ask instead where their character is in our world and what they're doing on the last ordinary day, and whether they want the narrative to open there, just before the crossing, or at the moment they arrive. Where they arrive is yours, and you don't say.
+**In an isekai,** they chose between the last ordinary day and the moment of arrival; if they left it to you, open on the last ordinary day. Where in our world that day finds them is theirs to say; ask if they haven't. Where they arrive is yours, and you don't say.
 
 Then write `GM Only/State/World State.md` for that moment: the clock, the character, the scene, anyone in motion, what's known and not known, the pressures near the page. Fill in the Journal's "Where things stand."
 
