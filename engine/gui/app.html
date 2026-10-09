@@ -85,21 +85,21 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 #intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
 #intro.fading { opacity: 0; pointer-events: none; }
 #introcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .45s ease; }
+#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .45s ease; will-change: transform; }
 #intro.leaving .stage { opacity: 0; }
 #intro .matte { position: absolute; left: 0; right: 0; height: 9vh; background: #000; z-index: 2; transition: transform .9s cubic-bezier(.6, 0, .3, 1); }   /* the picture's black bars */
 #intro .matte.top { top: 0; } #intro .matte.bottom { bottom: 0; }
 #intro:not(.go) .matte.top, #intro.leaving .matte.top { transform: translateY(-101%); }
 #intro:not(.go) .matte.bottom, #intro.leaving .matte.bottom { transform: translateY(101%); }
-#intro .grain { position: absolute; inset: 0; pointer-events: none; opacity: .1; animation: grain .5s steps(1) infinite;
+#intro .grain { position: absolute; inset: -180px; pointer-events: none; opacity: .1; will-change: transform; animation: grain .5s steps(1) infinite;   /* bigger than the window, and shifted about */
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .85 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-@keyframes grain { 0% { background-position: 0 0; } 20% { background-position: -70px 110px; } 40% { background-position: 130px -40px; }
-  60% { background-position: -160px -90px; } 80% { background-position: 50px 170px; } }
-#intro h1 { font: 400 clamp(34px, 5.4vmin, 58px) var(--serif); text-transform: uppercase; margin: 0; white-space: nowrap;
-  letter-spacing: .3em; padding-left: .3em; animation: tracking 3.6s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
-@keyframes tracking { from { letter-spacing: .52em; padding-left: .52em; } to { letter-spacing: .3em; padding-left: .3em; } }
+@keyframes grain { 0% { transform: none; } 20% { transform: translate(-70px, 110px); } 40% { transform: translate(130px, -40px); }
+  60% { transform: translate(-160px, -90px); } 80% { transform: translate(50px, 170px); } }
+#intro h1 { font: 400 clamp(34px, 5.4vmin, 58px) var(--serif); text-transform: uppercase; margin: 0; white-space: nowrap; letter-spacing: .3em; padding-left: .3em; }
 #intro h1 span { display: inline-block; opacity: 0;   /* each letter comes up out of a blur, and later a light crosses the word */
-  animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) calc(2.25s + var(--i) * 75ms) forwards, letterflare 1s ease-in-out calc(4.7s + var(--i) * 95ms); }
+  animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) calc(2.25s + var(--i) * 75ms) forwards, letterflare 1s ease-in-out calc(4.7s + var(--i) * 95ms),
+    gather 3.6s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
+@keyframes gather { from { translate: calc(var(--k) * .22em) 0; } to { translate: 0 0; } }   /* the word starts spread wide and draws together; --k is how far a letter sits from the middle */
 @keyframes letterflare { 50% { color: #fff; text-shadow: 0 0 14px #ffe9b8, 0 0 46px #e6c27e; } }
 #intro h1 .gap { width: .45em; }
 @keyframes letter {
@@ -734,7 +734,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 <div id="intro">
   <canvas id="introcv"></canvas>
   <div class="stage">
-    <h1><span style="--i:0">G</span><span style="--i:1">M</span><span class="gap"></span><span style="--i:2">E</span><span style="--i:3">n</span><span style="--i:4">g</span><span style="--i:5">i</span><span style="--i:6">n</span><span style="--i:7">e</span></h1>
+    <h1><span style="--i:0;--k:-4">G</span><span style="--i:1;--k:-3">M</span><span class="gap"></span><span style="--i:2;--k:-1">E</span><span style="--i:3;--k:0">n</span><span style="--i:4;--k:1">g</span><span style="--i:5;--k:2">i</span><span style="--i:6;--k:3">n</span><span style="--i:7;--k:4">e</span></h1>
     <div class="line"><i></i></div>
     <p>Solo narratives, run by a game master behind the page.</p>
   </div>
@@ -2944,7 +2944,36 @@ const splashed = new Promise(done => {
   const clamp = u => Math.min(1, Math.max(0, u)), ease = u => 1 - (1 - u) ** 3, smooth = u => u * u * (3 - 2 * u);
   const mix = (a, b, u) => a + (b - a) * u, rand = Math.random;
   const sparks = Array.from({length: 90}, () => ({a: rand() * 6.283, v: 90 + rand() * 420, life: .7 + rand() * 1.5, size: .6 + rand() * 1.5}));
-  const rays = Array.from({length: 30}, (_, n) => ({a: n / 30 * 6.283 + rand() * .2, wide: .006 + rand() * .026, turn: .02 + rand() * .04}));
+  // The shafts of light and the out-of-focus motes are painted once each and stamped down after that.
+  const painted = (size, paint) => { const sheet = document.createElement("canvas"); sheet.width = sheet.height = size; paint(sheet.getContext("2d"), size / 2); return sheet; };
+  const shafts = painted(720, (pen, half) => {
+    const fade = pen.createRadialGradient(half, half, half * .05, half, half, half);
+    fade.addColorStop(0, "rgba(255,226,165,1)");
+    fade.addColorStop(.3, "rgba(255,226,165,.55)");
+    fade.addColorStop(1, "rgba(255,226,165,0)");
+    pen.fillStyle = fade;
+    const rays = Array.from({length: 30}, (_, n) => ({a: n / 30 * 6.283 + rand() * .2, wide: .006 + rand() * .026}));
+    for (const [spread, alpha] of [[2.6, .5], [1, .6]]) {   // each shaft twice, a wide faint one under a narrow one, so its sides are soft
+      pen.globalAlpha = alpha;
+      pen.beginPath();
+      for (const ray of rays) {
+        pen.moveTo(half, half);
+        pen.lineTo(half + Math.cos(ray.a - ray.wide * spread) * half, half + Math.sin(ray.a - ray.wide * spread) * half);
+        pen.lineTo(half + Math.cos(ray.a + ray.wide * spread) * half, half + Math.sin(ray.a + ray.wide * spread) * half);
+        pen.closePath();
+      }
+      pen.fill();
+    }
+  });
+  const mote = painted(128, (pen, half) => {
+    const disc = pen.createRadialGradient(half, half, 0, half, half, half);
+    disc.addColorStop(0, "rgba(214,176,108,.58)");
+    disc.addColorStop(.8, "rgba(214,176,108,.58)");
+    disc.addColorStop(.93, "rgba(236,204,140,1)");
+    disc.addColorStop(1, "rgba(236,204,140,0)");
+    pen.fillStyle = disc;
+    pen.fillRect(0, 0, half * 2, half * 2);
+  });
   const bokeh = Array.from({length: 10}, () => ({x: rand(), y: rand(), rad: 16 + rand() * 54, a: .02 + rand() * .045, drift: (rand() - .5) * .012, sway: rand() * 6.28}));
 
   // the twenty faces, each wound so its front is the outside, and the two faces every edge lies between
@@ -2957,11 +2986,12 @@ const splashed = new Promise(done => {
     FACES.push(out[0] * (a[0] + b[0] + d[0]) + out[1] * (a[1] + b[1] + d[1]) + out[2] * (a[2] + b[2] + d[2]) > 0 ? [i, j, k] : [i, k, j]);
   }
   const between = EDGES.map(([i, j]) => FACES.flatMap((f, n) => f.includes(i) && f.includes(j) ? [n] : []));
-  let began = null, leftAt = null, glide = false, over = false;
+  let began = null, leftAt = null, glide = false, over = false, fine = 1.5, slow = 0, last = 0, top = null, seen = "";
 
   const leave = () => {
     if (leftAt !== null) return;
     leftAt = performance.now();
+    veiled = false;   // the home screen is about to show through
     glide = !$("home").hidden;
     removeEventListener("keydown", leave);
     el.classList.add("leaving");
@@ -2975,7 +3005,10 @@ const splashed = new Promise(done => {
   const frame = ms => {
     if (over) return;
     if (began === null) began = ms;
-    const [c, w, h] = fit(cv), t = ms / 1000, lt = (ms - began) / 1000;
+    if (last && ms - last > 26 && ms - last < 200) slow++; else slow = Math.max(0, slow - .25);   // a machine that can't keep up gets a coarser picture
+    if (slow > 12 && fine > 1) { fine = 1; slow = 0; }
+    last = ms;
+    const [c, w, h] = fit(cv, fine), t = ms / 1000, lt = (ms - began) / 1000;
     if (lt > HOLD) leave();
     const out = leftAt === null ? 0 : Math.max(0, ms - leftAt) / 1000, g = glide ? smooth(clamp(out / .9)) : 0;
     const tumbleAt = at => (1 - ease(clamp(at / LAND))) * (1 - g);
@@ -2986,7 +3019,7 @@ const splashed = new Promise(done => {
     // the camera: a slow push in, and a jolt when the die lands. Both are gone by the time the die reaches home.
     const zoom = mix(1 + .07 * clamp(lt / HOLD), 1, g), jolt = since > 0 ? 8 * Math.exp(-since * 7) * (1 - g) : 0;
     const jx = jolt * Math.sin(since * 71), jy = jolt * Math.cos(since * 53);
-    stage.style.transformOrigin = `50% ${h / 2 - stage.offsetTop}px`;
+    if (seen !== w + "x" + h) { seen = w + "x" + h; top = stage.offsetTop; stage.style.transformOrigin = `50% ${h / 2 - top}px`; }
     stage.style.transform = `translate(${jx.toFixed(2)}px, ${jy.toFixed(2)}px) scale(${zoom.toFixed(4)})`;
     c.translate(w / 2 + jx, h / 2 + jy);
     c.scale(zoom, zoom);
@@ -2996,35 +3029,21 @@ const splashed = new Promise(done => {
 
     if (since > 0) {   // shafts of light behind the die, strong at the landing and faint after
       const power = (.14 * Math.exp(-since * 1.3) + .022) * clamp(since * 10) * (1 - g), reach = r * 10;
-      const shaft = c.createRadialGradient(cx, cy, r * .5, cx, cy, reach);
-      shaft.addColorStop(0, `rgba(255,226,165,${power})`);
-      shaft.addColorStop(.3, `rgba(255,226,165,${power * .55})`);
-      shaft.addColorStop(1, "rgba(255,226,165,0)");
-      c.fillStyle = shaft;
-      for (const spread of [2.6, 1]) {   // each shaft twice, a wide faint one under a narrow one, so its sides are soft
-        c.beginPath();
-        for (const ray of rays) {
-          const a = ray.a + t * ray.turn, half = ray.wide * spread;
-          c.moveTo(cx, cy);
-          c.lineTo(cx + Math.cos(a - half) * reach, cy + Math.sin(a - half) * reach);
-          c.lineTo(cx + Math.cos(a + half) * reach, cy + Math.sin(a + half) * reach);
-          c.closePath();
-        }
-        c.fill();
-      }
+      c.save();
+      c.translate(cx, cy);
+      c.rotate(t * .03);
+      c.globalAlpha = power;
+      c.drawImage(shafts, -reach, -reach, reach * 2, reach * 2);
+      c.restore();
     }
 
     const haze = clamp(lt / 2.5) * (1 - g), depth = 1 + (zoom - 1) * 5;   // out-of-focus motes close to the lens; they pass faster
     if (haze > 0) for (const b of bokeh) {
       const x = w / 2 + ((((b.x + t * b.drift) % 1) + 1) % 1 - .5) * w * 1.2 * depth, y = h / 2 + (b.y - .5 + Math.sin(t * .2 + b.sway) * .02) * h * depth;
-      const disc = c.createRadialGradient(x, y, 0, x, y, b.rad);
-      disc.addColorStop(0, `rgba(214,176,108,${b.a * haze})`);
-      disc.addColorStop(.8, `rgba(214,176,108,${b.a * haze})`);
-      disc.addColorStop(.93, `rgba(236,204,140,${b.a * haze * 1.7})`);
-      disc.addColorStop(1, "rgba(236,204,140,0)");
-      c.fillStyle = disc;
-      c.beginPath(); c.arc(x, y, b.rad, 0, 6.29); c.fill();
+      c.globalAlpha = b.a * haze * 1.7;
+      c.drawImage(mote, x - b.rad, y - b.rad, b.rad * 2, b.rad * 2);
     }
+    c.globalAlpha = 1;
     drawEmbers(c, w, h, t, mix(clamp(lt / 1.8), 1, g));
 
     if (since > 0 && since < 1.4) {   // the landing: a bloom, a streak of light, a ring going out
@@ -3033,7 +3052,7 @@ const splashed = new Promise(done => {
       bloom.addColorStop(.35, `rgba(214,170,96,${.16 * flash})`);
       bloom.addColorStop(1, "rgba(0,0,0,0)");
       c.fillStyle = bloom;
-      c.fillRect(0, 0, w, h);
+      c.fillRect(cx - r * 4.5, cy - r * 4.5, r * 9, r * 9);
       c.save();
       c.translate(cx, cy);
       c.scale(1, .022);
@@ -3052,9 +3071,9 @@ const splashed = new Promise(done => {
     const hurry = leftAt === null ? 0 : out / .35;   // skipped mid-drawing: finish the die on the way out
     const grow = lt > LAND || hurry >= 1 ? null : EDGES.map((_, n) => Math.max(hurry, smooth(clamp((lt - .25 - n * .038) / .5))));
     const trail = leftAt === null ? clamp((LAND - lt) / .5) : 0;   // where the die just was, while it tumbles
-    if (trail > 0) for (let k = 6; k >= 1; k--) {
-      const was = tumbleAt(lt - k * .014);
-      c.globalAlpha = trail * .3 * (1 - k / 7);
+    if (trail > 0) for (let k = 4; k >= 1; k--) {
+      const was = tumbleAt(lt - k * .02);
+      c.globalAlpha = trail * .32 * (1 - k / 5);
       drawDie(c, diePoints(cx, cy, r, t, die.turn, 2.4 * was, 7.5 * was), 0, grow, 0);
     }
     c.globalAlpha = 1;
