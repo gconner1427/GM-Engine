@@ -1,6 +1,6 @@
 # GM Engine
 
-A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, and whether the world is original, built on D&D or another setting, or an isekai) and make one character. The GM builds the world and keeps it to itself, the way a GM prepares a campaign, so you discover it by playing. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as prose: third person limited, or second person ("You push the door open") if you'd rather it sound like a GM at the table. You choose when you make the narrative. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
+A game master for solo narratives, run by Claude Code. You say what kind of narrative you want (the genre and tone, whether the world is original, built on D&D or another setting, or an isekai, and what the story is about, if you have one in mind) and make one character. The GM builds the world and keeps it to itself, the way a GM prepares a campaign, so you discover it by playing. After that you say only what your character does. The GM runs everything else (every other person, every monster, every event, and how your actions ripple outward), settles what's uncertain with rules and real dice behind the scenes, and writes what happens as prose: third person limited, or second person ("You push the door open") if you'd rather it sound like a GM at the table. You choose when you make the narrative. It reads like a novel, not like a game: no hit points, no damage numbers, no rolls on the page.
 
 It grew out of the Living World Engine and keeps its idea of a persistent world. The difference is who's in charge. There, the engine proposes and the author decides everything. Here, you control one person and the GM decides the rest.
 
@@ -102,7 +102,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 
 ## Starting a narrative
 
-1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
+1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), say what the story is about if you have one in mind (fighting a dark lord, winning a war), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
 2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). When it's done, the character creator opens, starting with a page on what your character would know.
 3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Say where they are when it opens, or leave that to the GM.
 4. Write your character's first action.

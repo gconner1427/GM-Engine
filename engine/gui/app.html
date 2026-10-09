@@ -50,7 +50,36 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 [hidden] { display: none !important; }
 .caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
 
+/* ---- splash: the studio's logo, before the intro ---- */
+#splash { position: fixed; inset: 0; z-index: 101; display: grid; place-items: center; overflow: hidden; user-select: none; background: #000; transition: opacity .75s ease; }
+#splash.fading { opacity: 0; pointer-events: none; }
+#splash .logo { position: relative; width: min(66vmin, 600px); aspect-ratio: 1; transition: opacity .7s ease, filter .7s ease; }
+#splash.dark .logo { opacity: 0; filter: blur(6px) brightness(1.4); }
+#splash img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; -webkit-user-drag: none; }
+#splash .halo { position: absolute; inset: -40%; opacity: 0; background: radial-gradient(closest-side, #ffcf7a3d, #c8862a1a 45%, transparent 72%); }
+#splash .shine { position: absolute; inset: 0; mix-blend-mode: screen; -webkit-mask: var(--logo) center / 100% 100% no-repeat; mask: var(--logo) center / 100% 100% no-repeat;
+  background: linear-gradient(105deg, transparent 42%, #fff4d6cc 50%, transparent 58%) 100% 0 / 300% 100% no-repeat; }
+#splash.on .logo { animation: logodrift 5s ease-out forwards; }   /* it never quite stops moving */
+#splash.on img { animation: logoin 1.7s cubic-bezier(.2, .8, .2, 1) forwards; }
+#splash.on .halo { animation: halo 5s ease-out forwards; }
+#splash.on .shine { animation: shine 1.5s cubic-bezier(.4, 0, .2, 1) 1.5s forwards; }
+@keyframes logodrift { from { transform: scale(.97); } to { transform: scale(1.035); } }
+@keyframes logoin {
+  0% { opacity: 0; transform: scale(.9); filter: blur(14px) brightness(2.4); }
+  55% { opacity: 1; filter: blur(0) brightness(1.3); }
+  100% { opacity: 1; transform: none; filter: none; } }
+@keyframes halo {
+  0% { opacity: 0; transform: scale(.55); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: .65; transform: scale(1.1); } }
+@keyframes shine { to { background-position: 0 0; } }
+@keyframes logostill { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  #splash.on .logo, #splash.on .halo, #splash.on .shine { animation: none; }
+  #splash.on img { animation: logostill 1s ease forwards; } }
+
 /* ---- intro: plays once when the window opens ---- */
+#intro:not(.go) * { animation-play-state: paused; }   /* it waits for the splash */
 #intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; user-select: none; background: #0b0906; transition: opacity .75s ease; }
 #intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
 #intro.fading { opacity: 0; pointer-events: none; }
@@ -85,10 +114,36 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .masthead { margin-bottom: 40px; animation: menuin .8s cubic-bezier(.2, .8, .2, 1) both; }
 #home.waiting .masthead, #home.waiting #mainmenu button { animation: none; opacity: 0; }
 .masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin-left: -4px; }
-.masthead h1 { font: 400 46px/1.1 var(--serif); letter-spacing: 10px; text-transform: uppercase; margin: 14px 0 10px; white-space: nowrap;
-  text-shadow: 0 0 34px #c9a25b55; }
-.masthead p { color: var(--dim); margin: 0; font: italic 15px var(--serif); }
-.masthead::after { content: ""; display: block; width: 220px; height: 1px; margin-top: 22px; background: linear-gradient(90deg, var(--accent), transparent); }
+/* the title: struck gold with a bevel line through the middle, tall first letters, and a glint that crosses it now and then */
+.masthead h1 { font: 400 clamp(46px, 6.2vmin, 62px)/1 var(--serif); letter-spacing: .17em; text-transform: uppercase; margin: 16px 0 14px; white-space: nowrap;
+  display: flex; align-items: baseline; gap: .34em; width: max-content; padding-bottom: .06em; color: transparent; -webkit-background-clip: text; background-clip: text;
+  background-image: linear-gradient(105deg, transparent 42%, #fffbeecc 50%, transparent 58%),
+    linear-gradient(#fff8e2 6%, #f0d9a8 30%, #c9a25b 50%, #7d5f2a 54%, #d9b771 72%, #9c7738 96%);
+  background-size: 260% 100%, 100% 100%; background-position: 130% 0, 0 0; background-repeat: no-repeat;
+  filter: drop-shadow(0 1px 0 #2a1f0c) drop-shadow(0 3px 2px #000c) drop-shadow(0 0 26px #c9a25b4d);
+  animation: glint 9s ease-in-out 1.6s infinite; }
+.masthead h1 b { font-weight: 400; font-size: 1.32em; letter-spacing: .08em; }
+@keyframes glint { 0% { background-position: 130% 0, 0 0; } 22%, 100% { background-position: -70% 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { .masthead h1 { animation: none; } }
+/* the painted title, once it has loaded, stands in for the typed one, its die, and its rule. The picture has empty space around the
+   lettering, so it's pulled out by that much to sit on the menu's left edge. */
+#titleart { --w: clamp(430px, 62vmin, 640px); position: relative; width: var(--w); aspect-ratio: 3 / 1;
+  margin: calc(var(--w) * -.05) 0 calc(var(--w) * -.025) calc(var(--w) * -.058); filter: drop-shadow(0 8px 16px #000b); user-select: none; }
+#titleart img { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-user-drag: none; }
+#titleart i { position: absolute; inset: 0; mix-blend-mode: screen; -webkit-mask: var(--title) center / 100% 100% no-repeat; mask: var(--title) center / 100% 100% no-repeat;
+  background: linear-gradient(105deg, transparent 44%, #fff4d6b3 50%, transparent 56%) 130% 0 / 260% 100% no-repeat; animation: titleglint 9s ease-in-out 1.6s infinite; }
+@keyframes titleglint { 0% { background-position: 130% 0; } 22%, 100% { background-position: -70% 0; } }
+@media (prefers-reduced-motion: reduce) { #titleart i { display: none; } }
+.masthead.art > svg, .masthead.art > h1, .masthead.art::after { display: none; }
+.masthead p { color: var(--dim); margin: 0; font: italic 15px var(--serif); letter-spacing: .3px; }
+.masthead::after { content: ""; display: block; width: 300px; height: 7px; margin-top: 22px;
+  background: linear-gradient(135deg, transparent 50%, var(--accent-hi) 50%) 0 0 / 3.5px 3.5px no-repeat, linear-gradient(45deg, transparent 50%, var(--accent-hi) 50%) 0 3.5px / 3.5px 3.5px no-repeat,
+    linear-gradient(-135deg, transparent 50%, var(--accent-hi) 50%) 3.5px 0 / 3.5px 3.5px no-repeat, linear-gradient(-45deg, transparent 50%, var(--accent-hi) 50%) 3.5px 3.5px / 3.5px 3.5px no-repeat,
+    linear-gradient(90deg, var(--accent), transparent) 13px 3px / 100% 1px no-repeat; }
+#studiomark { position: absolute; z-index: 1; top: 22px; right: 26px; width: clamp(84px, 11vmin, 124px); opacity: .9; -webkit-user-drag: none; user-select: none;
+  animation: markin 1.2s ease .5s both; }
+#home.waiting #studiomark { animation: none; opacity: 0; }
+@keyframes markin { from { opacity: 0; } to { opacity: .9; } }
 #mainmenu { display: grid; gap: 4px; justify-items: start; }
 #mainmenu button { position: relative; background: none; border: none; border-radius: 0; text-align: left; width: 100%; padding: 11px 18px;
   font: 400 23px var(--serif); letter-spacing: 4px; text-transform: uppercase; color: var(--ink);
@@ -158,7 +213,14 @@ header select { background: none; border-color: transparent; box-shadow: none; c
 header select:hover, header select:focus { color: var(--accent-hi); border-color: transparent; box-shadow: none; }
 .menu { position: relative; }
 .menu-items { position: absolute; right: 0; top: calc(100% + 12px); background: linear-gradient(#231f18, #17140f); border: 1px solid var(--edge); border-radius: 2px;
-  padding: 6px; display: grid; gap: 1px; min-width: 264px; z-index: 20; box-shadow: 0 0 0 1px #000, 0 18px 44px #000c; animation: dialogin .18s ease-out; }
+  padding: 6px; display: grid; gap: 1px; min-width: 264px; z-index: 20; box-shadow: 0 0 0 1px #000, 0 18px 44px #000c;
+  transform-origin: top right; transition: opacity .2s ease, transform .3s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+.menu-items[hidden] { display: grid !important; visibility: hidden; opacity: 0; pointer-events: none; transform: translateY(-8px) scale(.96);
+  transition: opacity .14s ease, transform .14s ease-in, visibility 0s .14s; }
+.menu-items:not([hidden]) button { animation: settle .35s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: .13s; }
+.menu-items:not([hidden]) button:nth-child(1) { animation-delay: .04s; }
+.menu-items:not([hidden]) button:nth-child(2) { animation-delay: .07s; }
+.menu-items:not([hidden]) button:nth-child(3) { animation-delay: .1s; }
 .menu-items button { text-align: left; background: none; border-color: transparent; color: var(--ink); padding: 9px 12px;
   font: 400 15px var(--serif); letter-spacing: .3px; text-transform: none; }
 .menu-items button:hover:not(:disabled) { background: linear-gradient(90deg, var(--accent-soft), transparent); color: var(--accent-hi); }
@@ -200,7 +262,10 @@ header select:hover, header select:focus { color: var(--accent-hi); border-color
   transition: border-color .2s; }
 .journal li.faced img:hover { border-color: var(--accent); }
 #lightbox { position: fixed; inset: 0; background: radial-gradient(90% 80% at 50% 45%, #000c, #000f); backdrop-filter: blur(6px); z-index: 60; display: grid; place-items: center;
-  cursor: zoom-out; animation: fadein .25s; }
+  cursor: zoom-out; transition: opacity .3s ease, visibility 0s; }
+#lightbox[hidden] { display: grid !important; visibility: hidden; opacity: 0; pointer-events: none; transition: opacity .2s ease, visibility 0s .2s; }
+#lightbox img { transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+#lightbox[hidden] img { transform: scale(.95); transition: transform .2s ease-in; }
 #lightbox img { max-width: 92vw; max-height: 82vh; border-radius: 1px; border: 1px solid var(--edge); box-shadow: 0 0 0 1px #000, 0 24px 90px #000; }
 #lightbox div { position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; font: 400 17px var(--serif); letter-spacing: 5px; text-transform: uppercase;
   text-shadow: 0 0 24px #c9a25b66; }
@@ -499,11 +564,23 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 #flag:hover { background: linear-gradient(#e2c07e, #b98f48); }
 #flag svg { width: 14px; height: 14px; }
 .shade { position: fixed; inset: 0; background: radial-gradient(90% 80% at 50% 45%, #000a, #000e); backdrop-filter: blur(5px); display: grid; place-items: center; z-index: 40;
-  animation: fadein .2s; }
+  transition: opacity .34s ease, visibility 0s; }
+/* a closed dialog stays laid out but unseen, so it can ease out as well as in */
+.shade[hidden] { display: grid !important; visibility: hidden; opacity: 0; pointer-events: none; transition: opacity .22s ease, visibility 0s .22s; }
+.shade[hidden] .dialog { opacity: 0; transform: translateY(20px) scale(.96); transition: transform .22s cubic-bezier(.4, 0, 1, 1), opacity .18s ease; }
+.shade:not([hidden]) .dialog > * { animation: settle .55s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: .2s; }
+.shade:not([hidden]) .dialog > :nth-child(1) { animation-delay: .05s; }
+.shade:not([hidden]) .dialog > :nth-child(2) { animation-delay: .1s; }
+.shade:not([hidden]) .dialog > :nth-child(3) { animation-delay: .15s; }
+.shade:not([hidden]) .dialog .head::before { animation: rule .7s cubic-bezier(.2, .8, .2, 1) .15s backwards; }
+@keyframes settle { from { opacity: 0; transform: translateY(12px); } }
+@keyframes rule { from { opacity: 0; transform: translateX(-50%) scaleX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .shade .dialog, .menu-items, #lightbox img { transform: none !important; }
+  .shade .dialog > *, .shade .dialog .head::before, .menu-items button { animation: none !important; } }
 .dialog { position: relative; border: 1px solid var(--edge); border-radius: 2px; padding: 28px 30px 24px; width: min(580px, 92vw); display: grid; gap: 14px;
   background: var(--corners), radial-gradient(120% 70% at 50% 0, #2a2317, transparent 70%), linear-gradient(#1e1a13, #14110d);
-  box-shadow: 0 0 0 1px #000, 0 30px 90px #000e, inset 0 1px 0 #ffffff0d; animation: dialogin .3s cubic-bezier(.2, .8, .2, 1); }
-@keyframes dialogin { from { opacity: 0; transform: translateY(10px); } }
+  box-shadow: 0 0 0 1px #000, 0 30px 90px #000e, inset 0 1px 0 #ffffff0d; transition: transform .46s cubic-bezier(.2, .8, .2, 1), opacity .3s ease; }
 .dialog > * { min-width: 0; }
 .dialog .head { position: relative; text-align: center; font: 400 19px var(--serif); letter-spacing: 5px; padding: 0 0 16px 5px; margin-bottom: 4px; text-transform: uppercase;
   text-shadow: 0 0 26px #c9a25b55; }
@@ -513,9 +590,20 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .dialog blockquote { margin: 0; padding: 6px 16px; border-left: 1px solid var(--accent); color: var(--dim); font: italic 16px/1.6 var(--serif);
   max-height: 180px; overflow: auto; }
 .dialog textarea { min-height: 84px; resize: vertical; }
+.dialog #newstory { min-height: 64px; }
+#newdialog .dialog { max-height: 96vh; overflow-y: auto; }
 .dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .dialog .row button { padding: 10px 20px; }
 .dialog.wide { width: min(700px, 94vw); }
+.about { max-height: 62vh; overflow: auto; padding-right: 10px; font: 16px/1.65 var(--serif); }
+.about p { margin: 0 0 6px; color: var(--dim); }
+.about .lede { color: var(--ink); font-size: 18px; }
+.about h3 { margin: 20px 0 6px; color: var(--accent); }
+.about ul { margin: 0; padding-left: 20px; color: var(--dim); }
+.about li { margin-bottom: 4px; }
+.about b { color: var(--ink); font-weight: 600; }
+.about .credit { display: flex; align-items: center; gap: 14px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line-soft); font-style: italic; }
+.about .credit img { width: 56px; height: 56px; }
 .savewhere { color: var(--accent); font: italic 15px var(--serif); text-align: center; }
 #savelist { max-height: 56vh; overflow: auto; padding-right: 4px; }
 #savelist .slot { padding: 12px 16px; margin-bottom: 8px; }
@@ -563,6 +651,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   <symbol id="g-thing" viewBox="0 0 20 20"><path d="M10 2.500 16.500 6v8L10 17.500 3.500 14V6zM3.500 6 10 9.500 16.500 6M10 9.500v8"/></symbol>
 </svg>
 
+<div id="splash"><div class="logo"><i class="halo"></i><img alt="Gravelight Studios"><i class="shine"></i></div></div>
+
 <div id="intro">
   <canvas id="introcv"></canvas>
   <div class="stage">
@@ -574,10 +664,12 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 
 <div id="home" class="view">
   <canvas id="homebg"></canvas>
+  <img id="studiomark" alt="Gravelight Studios">
   <div class="home-menu">
     <div class="masthead">
       <svg><use href="#d20"/></svg>
-      <h1>GM Engine</h1>
+      <h1 aria-label="GM Engine"><span><b>G</b>M</span><span><b>E</b>ngine</span></h1>
+      <div id="titleart" hidden><img alt="GM Engine"><i></i></div>
       <p>Solo narratives, run by a game master behind the page.</p>
     </div>
     <div id="noclaude" class="warnbox" hidden>Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.</div>
@@ -586,7 +678,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <button id="menunarratives" style="--n:1">Narratives</button>
       <button id="menunew" style="--n:2">New Narrative</button>
       <button id="menusettings" style="--n:3">Settings</button>
-      <button id="menuexit" class="last" style="--n:4">Exit Game</button>
+      <button id="menuabout" style="--n:4">About</button>
+      <button id="menuexit" class="last" style="--n:5">Exit Game</button>
     </nav>
   </div>
 </div>
@@ -599,6 +692,32 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <button id="addexisting" class="quiet" title="A narrative folder made earlier, or on another computer">Add an existing folder…</button>
       <button data-close>Close</button>
     </div>
+  </div>
+</div>
+<div class="shade" id="aboutdialog" hidden>
+  <div class="dialog wide">
+    <div class="head">About GM Engine</div>
+    <div class="about">
+      <p class="lede">GM Engine is a game master for solo role-playing. You play one character; the GM plays everyone and everything else, and writes what happens as a story.</p>
+      <h3 class="caps">How you play</h3>
+      <p>You say what kind of story you want, and you make one character. From then on you say only what that character does. The GM answers with what happens next, in prose that reads like a novel: no hit points, no damage numbers, and no dice rolls on the page.</p>
+      <h3 class="caps">The world is the GM's</h3>
+      <p>The GM builds the world from your premise and keeps it to itself, the way a game master prepares a campaign. You learn its places, its people and its secrets the way your character does, by going and finding out. Nothing in this window shows you the GM's notes.</p>
+      <h3 class="caps">A real game underneath</h3>
+      <p>Behind the story there are rules and real dice. When something is uncertain, the GM rolls for it out of sight, and the result stands, whether or not it goes your way. Your character has health, skills and gear, earns levels, and can fail, be hurt, or die. Other people want things of their own, and the world keeps moving while you are elsewhere.</p>
+      <h3 class="caps">What you get</h3>
+      <ul>
+        <li><b>The story</b>, one session at a time, kept to read back.</li>
+        <li><b>A character sheet and inventory</b> that change as you play.</li>
+        <li><b>A journal</b> of what your character knows about people, places and unfinished business.</li>
+        <li><b>Pictures</b> of the major moments: your portrait, a place that matters, a new face. They show only what your character has seen.</li>
+        <li><b>Saved games</b>, kept on your own computer. Nothing is uploaded.</li>
+      </ul>
+      <h3 class="caps">What runs it</h3>
+      <p>The GM is Claude, run through Claude Code with your own sign-in. Pictures are painted by Codex, if you have it installed and signed in. Each narrative lives in a folder of its own, and you can run as many as you like.</p>
+      <p class="credit"><img alt=""><span>GM Engine is made by Gravelight Studios.</span></p>
+    </div>
+    <div class="row"><button data-close>Close</button></div>
   </div>
 </div>
 <div class="shade" id="settingsdialog" hidden>
@@ -630,6 +749,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
         <button data-world="isekai"><b>Isekai</b><span>From our world into another</span></button>
       </div>
       <input id="newsetting" hidden>
+      <label for="newstory">The story, if you have one in mind</label>
+      <textarea id="newstory" rows="2" placeholder="Fighting a dark lord. Saving a princess. Winning a war. Leave blank and the GM will decide."></textarea>
       <label>The narration</label>
       <div class="choice" id="newperson">
         <button data-person="third" class="on"><b>Third person</b><span>Reads like a novel: “She draws her sword.”</span></button>
@@ -1022,7 +1143,7 @@ async function showHome() {
   startBackdrop();
   const h = await api("home");
   if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
-  if (!game) playMenuMusic();
+  introDone.then(() => { if (!game) playMenuMusic(); });   // the splash and the intro play in silence
   $("noclaude").hidden = !!h.claude;
   if (!$("newparent").value) $("newparent").value = h.default_parent;
   const last = h.narratives.find(n => !n.missing);   // the list is kept most recently opened first
@@ -1056,12 +1177,13 @@ async function showHome() {
   }
 }
 
-const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog"];
+const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog", "aboutdialog"];
 const closeHomeDialogs = () => HOME_DIALOGS.forEach(id => $(id).hidden = true);
 for (const id of HOME_DIALOGS) $(id).addEventListener("click", e => { if (e.target.closest("[data-close]")) $(id).hidden = true; });
 $("menunarratives").onclick = () => $("narrativesdialog").hidden = false;
 $("menunew").onclick = () => { $("newdialog").hidden = false; $("newgenre").focus(); };
 $("menusettings").onclick = () => $("settingsdialog").hidden = false;
+$("menuabout").onclick = () => { $("aboutdialog").hidden = false; document.querySelector(".about").scrollTop = 0; };
 $("menuexit").onclick = guard(async () => {
   await api("exit");
   $("farewell").hidden = false;   // only seen in a browser tab, which a page can't always close itself
@@ -1075,6 +1197,8 @@ musicGain.gain.value = 0;
 musicGain.connect(audio.destination);
 const tracks = {};
 let musicSource = null, musicTrack = 0, musicWanted = false;
+let introOver;
+const introDone = new Promise(done => introOver = done);   // settled when the intro clears and the menu comes in
 
 function loadTrack(n) {
   return tracks[n] = tracks[n] || fetch(`/bgm?n=${n}&t=${TOKEN}`).then(r => {
@@ -1291,6 +1415,7 @@ $("newperson").onclick = e => {
 };
 $("create").onclick = guard(async () => {
   const genre = $("newgenre").value.trim(), setting = $("newsetting").value.trim(), title = $("newname").value.trim();
+  const story = $("newstory").value.trim();
   if (!genre) return toast("Say what genre and tone you want, so the GM knows what to build.");
   if (newWorld === "other" && !setting) return toast("Say which setting to build it on.");
   const world = newWorld === "original" ? "Original: invent it."
@@ -1298,10 +1423,10 @@ $("create").onclick = guard(async () => {
     : newWorld === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
     : "Built on an existing setting: " + setting;
   const r = await api("create", {name: title, parent: $("newparent").value, person: newPerson});
-  $("newgenre").value = $("newsetting").value = $("newname").value = "";
+  $("newgenre").value = $("newsetting").value = $("newstory").value = $("newname").value = "";
   openGame(r.path);
   const narration = newPerson === "second" ? "Second person (\"you\")." : "Third person limited.";
-  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nThe story: ${story || "none given; it's yours to decide."}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
 });
 $("addexisting").onclick = guard(async () => {
   const r = await api("pick-folder", {});
@@ -2356,13 +2481,49 @@ $("flagsend").onclick = guard(async () => {
   window.getSelection().removeAllRanges();
 });
 
+// ---- the splash -----------------------------------------------------------------
+
+// The studio's logo comes up out of the dark, a glint crosses it, and it fades to black; the intro comes up out of the black.
+// A click or a key skips it.
+const splashed = new Promise(done => {
+  const el = $("splash"), img = el.querySelector("img"), logo = `/logo?t=${TOKEN}`;
+  let gone = false;
+  const leave = () => {
+    if (gone) return;
+    gone = true;
+    removeEventListener("keydown", leave);
+    el.classList.add("dark");
+    setTimeout(() => {
+      el.classList.add("fading");
+      done();
+      setTimeout(() => el.remove(), 800);
+    }, 900);   // the fade, and a beat of black
+  };
+  el.addEventListener("pointerdown", leave);
+  addEventListener("keydown", leave);
+  el.style.setProperty("--logo", `url("${logo}")`);   // the glint is cut to the logo's own shape
+  img.onload = () => setTimeout(() => {   // a moment of black first, so the window has settled before anything moves
+    if (gone) return;
+    el.classList.add("on");
+    setTimeout(leave, 4300);
+  }, 900);
+  img.onerror = leave;   // no logo, no splash
+  img.src = logo;
+  $("studiomark").onerror = e => e.target.remove();
+  $("studiomark").src = document.querySelector(".about .credit img").src = logo;   // and it sits small in the corner of the main menu
+  const art = $("titleart"), title = `/title?t=${TOKEN}`;   // the main menu's title; without the picture, the typed one stays
+  art.style.setProperty("--title", `url("${title}")`);
+  art.firstElementChild.onload = () => { art.hidden = false; art.parentNode.classList.add("art"); };
+  art.firstElementChild.src = title;
+});
+
 // ---- the intro ------------------------------------------------------------------
 
 // The die is rolled into being, lands with a flash, and the title comes up under it. On the way out it glides to its
 // place on the home screen, drawn the way the backdrop draws it, so the one fades into the other unnoticed.
 (() => {
   const el = $("intro");
-  if (STILL) return el.remove();
+  if (STILL) { splashed.then(introOver); return el.remove(); }
   $("home").classList.add("waiting");   // the menu holds its entrance until the intro clears
   const cv = $("introcv"), LAND = 2.1, HOLD = 6.2;
   const clamp = u => Math.min(1, Math.max(0, u)), ease = u => 1 - (1 - u) ** 3, smooth = u => u * u * (3 - 2 * u);
@@ -2379,12 +2540,10 @@ $("flagsend").onclick = guard(async () => {
     setTimeout(() => {
       el.classList.add("fading");
       $("home").classList.remove("waiting");
+      introOver();
       setTimeout(() => { over = true; el.remove(); }, 800);
     }, glide ? 950 : 0);
   };
-  el.addEventListener("pointerdown", leave);
-  addEventListener("keydown", leave);
-
   const frame = ms => {
     if (over) return;
     if (began === null) began = ms;
@@ -2435,7 +2594,12 @@ $("flagsend").onclick = guard(async () => {
     }
     requestAnimationFrame(frame);
   };
-  requestAnimationFrame(frame);
+  splashed.then(() => {
+    el.classList.add("go");
+    el.addEventListener("pointerdown", leave);
+    addEventListener("keydown", leave);
+    requestAnimationFrame(frame);
+  });
 })();
 
 setInterval(() => api("ping").catch(() => {}), 5000);

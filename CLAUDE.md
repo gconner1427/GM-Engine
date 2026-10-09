@@ -4,7 +4,7 @@ This folder is the engine: the rules, writing rules, procedures, templates, and 
 
 **If the user asks for a new narrative:** the play window (`Play.cmd`) is the usual way. Otherwise follow `Procedures/New Narrative.md`, step 1: ask for its name and where it should live, run `python engine/gm.py new-narrative "<Name>" --at "<folder>"`, and tell them to open that folder to set it up and play.
 
-**The world belongs to the GM.** In a narrative, the GM builds the world from a three-question premise and the user discovers it by playing. Nothing in the engine, the templates, or the play window may show the user the world docs.
+**The world belongs to the GM.** In a narrative, the GM builds the world from a four-question premise and the user discovers it by playing. Nothing in the engine, the templates, or the play window may show the user the world docs.
 
 **If the user is working on the engine itself:**
 - A change to how the game works goes in `Rules/Core Rules.md`. The tables in `engine/dice.py` (outcome margins, fate odds, how damage is halved and doubled) have to match it.

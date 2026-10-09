@@ -8,7 +8,7 @@ Nothing you build is shown to the player except what their character would know.
 
 The play window creates the folder and sends you the player's answers in its first message. If you're asked for a new narrative from the engine folder instead, ask what to call it (or leave it untitled) and where it should live, and whether the narration should be third person (like a novel) or second person ("you," like a GM at the table), run `gm new-narrative "<Name>" --at "<parent folder>"` (adding `--person second` for second person), and tell the player to open that folder. If the folder already exists, this step is done.
 
-## 2. Three questions
+## 2. Four questions
 
 These are all you ask about the world. Ask only for the ones the first message didn't answer, in one round:
 
@@ -18,11 +18,12 @@ These are all you ask about the world. Ask only for the ones the first message d
    - **Built on D&D:** a world in that tradition. Ask which published setting, if they have one in mind; otherwise it's a world of your own with that game's peoples, magic, and monsters.
    - **Built on another setting:** Star Wars, Mass Effect, a book series, anything. Ask only which one. If the setting covers very different eras, ask which era, or whether to leave it to you.
    - **Isekai:** the character is a person from our world who ends up in another one. The other world is yours to invent, unless the player names one. Don't ask how they cross over; if the player said (summoned, reborn, pulled into a game), use it, and otherwise it's yours to decide.
-3. **A title,** if they have one. If not, you'll give it one.
+3. **The story,** if they have one in mind: what the narrative is about, in a line. Fighting a dark lord, saving a princess, winning a war. If not, it's yours to decide, and you don't say what you decided.
+4. **A title,** if they have one. If not, you'll give it one.
 
 In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. The narration's person (third or second) was chosen when the folder was made and is already on the Style Guide's POV line: don't ask again, and if the player wants the other one, change that line. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
 
-Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**.
+Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**, with the story if they named one.
 
 ## 3. Build the world
 
@@ -42,7 +43,7 @@ Now prepare it, in `GM Only/`, without a word to the player about what's in it. 
 
 **`GM Only/Bestiary.md`:** the world's common dangers.
 
-**`GM Only/State/Pressures.md`:** three to six things already in motion when the narrative starts, each driven by someone or something in the docs, with every field filled. They exist because the world would have them, not to give the character a plot. At least a couple should have nothing to do with wherever the character is likely to start.
+**`GM Only/State/Pressures.md`:** three to six things already in motion when the narrative starts, each driven by someone or something in the docs, with every field filled. They exist because the world would have them, not to give the character a plot (the story the player named, if they named one, is the exception). At least a couple should have nothing to do with wherever the character is likely to start.
 
 **`GM Only/World/Rules Kit.md`:** the world in the rules. Skills (12 to 20, in the world's own words, covering the list in the kit template), common weapons and armor, one power entry for each law a person can use, and a starting handful of talents.
 
@@ -55,6 +56,13 @@ Now prepare it, in `GM Only/`, without a word to the player about what's in it. 
 - **People first.** A region is interesting because of who wants what from whom. Start from the groups and the people, and let places, history, and trouble follow from them.
 - **It has to work without the character.** Everything in motion would be in motion if they never showed up.
 - **The tone is the player's.** A grim world and a swashbuckling one differ in what's common, what's possible, and what things cost, not just in adjectives.
+
+**If the player named a story:**
+- Build the world so that story is in it. The dark lord is a person in `GM Only/Cast/` with a group behind them and reasons of their own; the war is between two of the region's powers; the princess is someone, held somewhere, by someone who wants something for it. What the player named is one of the pressures, already moving, and the starting region is where it can be reached.
+- They gave the outline and nothing else. Who the dark lord is, why the war started, and what's true underneath are yours, and they're as hidden as anything else in the world. The story they asked for has to be there to be had, and it can turn out to be more than they expected, but never something else in its place.
+- It still has to work without the character. The war is being fought and the princess is being held whether or not they ever take a hand in it. Don't make them the chosen one, the heir, or the only one who can, unless the player said so.
+- The rest of the world is built as it would be anyway: other groups, and other pressures that have nothing to do with the story.
+- In step 4, some of the walks of life and at least one opening should put a character within reach of the story, and the Journal's page says what everyone knows of it. In step 6, if the opening is left to you, choose a moment the story could reach soon.
 
 **If it's built on an existing setting:**
 - Be faithful to what a fan knows: its peoples, places, powers, technology, history, and how it feels. Record which parts you took as they stand and anything you changed in the World Bible's section for it.

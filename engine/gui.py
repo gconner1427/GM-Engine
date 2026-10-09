@@ -42,6 +42,8 @@ KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
 PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
+LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
+TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
 MENU_TRACKS = ("1", "2")
 ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
@@ -56,7 +58,7 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - The user sees only your final message of each turn, in a side panel. They read the narrative in the session log, which the window shows live. Chat echo is therefore off whatever `gm status` says: after committing a beat, your whole reply is exactly {added}.
 - Interactive tools (the question tool, plan mode) are not available. Ask questions as plain text in your final message, a few at a time.
 - Nothing can prompt the user for permission. If a tool call is denied, don't retry it: work another way, or say plainly what was denied.
-- During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the three questions: ask only for what's missing.
+- During setup the window shows your messages as a conversation, and neither side needs braces. The folder already exists, and the first message usually carries the player's answers to the four questions: ask only for what's missing.
 - The player makes their character on the window's character creator, a step-by-step screen built from the sheet's `## Character creation` section (Procedures/New Narrative.md, step 4). Its first page shows the Journal's "The world as they know it," and the player can't see any other file. So don't repeat the world or the choices in your message and don't interview them: say only that the world is ready and the creator is open. What they made comes back in braces.
 - When the user flags a passage, the window quotes it to you in braces.
 - An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
@@ -424,8 +426,8 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def send_audio(self, data):
-        """An <audio> seeks and loops by asking for byte ranges, so answer them."""
+    def send_media(self, data, kind="audio/mpeg"):
+        """An <audio> or a <video> seeks and loops by asking for byte ranges, so answer them."""
         start, end = 0, len(data) - 1
         m = re.fullmatch(r"bytes=(\d*)-(\d*)", self.headers.get("Range") or "")
         if m and (m[1] or m[2]):
@@ -441,7 +443,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Range", f"bytes {start}-{end}/{len(data)}")
         else:
             self.send_response(200)
-        self.send_header("Content-Type", "audio/mpeg")
+        self.send_header("Content-Type", kind)
         self.send_header("Accept-Ranges", "bytes")
         self.send_header("Content-Length", str(end - start + 1))
         self.send_header("Cache-Control", "private, max-age=3600")
@@ -461,9 +463,23 @@ class Handler(BaseHTTPRequestHandler):
             if one("n") not in MENU_TRACKS:
                 return self.send(404, {"error": "No such track."})
             try:
-                return self.send_audio((MENU_BGM / f"Menu BGM {one('n')}.mp3").read_bytes())
+                return self.send_media((MENU_BGM / f"Menu BGM {one('n')}.mp3").read_bytes())
             except OSError:
                 return self.send(404, {"error": "No such track."})
+        if route == "/logo":  # the studio's logo, for the splash before the intro
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            try:
+                return self.send_media(LOGO.read_bytes(), "image/png")
+            except OSError:
+                return self.send(404, {"error": "No logo."})
+        if route == "/title":  # the main menu's title
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            try:
+                return self.send_media(TITLE.read_bytes(), "image/png")
+            except OSError:
+                return self.send(404, {"error": "No title."})
         if route == "/art":  # an <img> can't send a header, so the token rides in the address
             if one("t") != TOKEN:
                 return self.send(403, {"error": "Not allowed."})

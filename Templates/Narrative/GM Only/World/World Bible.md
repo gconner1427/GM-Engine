@@ -8,7 +8,7 @@ Every fact here is one of two kinds, and the difference matters every time someo
 
 ## The premise
 
-What the player asked for, in their words, tagged **[Setup]**: the genre and tone, and the kind of world (original, built on a setting they named, or an isekai). Everything below has to be a world they'd recognize as what they asked for.
+What the player asked for, in their words, tagged **[Setup]**: the genre and tone, the kind of world (original, built on a setting they named, or an isekai), and the story they want, if they named one. Everything below has to be a world they'd recognize as what they asked for.
 
 Unknown.
 
