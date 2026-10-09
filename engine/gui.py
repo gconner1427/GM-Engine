@@ -41,7 +41,7 @@ THREE = PAGE.with_name("three.min.js")   # three.js r160, kept here so the main 
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
-PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music
+PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
@@ -549,8 +549,9 @@ class Handler(BaseHTTPRequestHandler):
             bgm = str(data["prefs"].get("bgm", 2))
             write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
                                "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
-                               "volume": min(100, max(0, int(data["prefs"].get("volume", 60))))})
-            return {"ok": True}
+                               "volume": min(100, max(0, int(data["prefs"].get("volume", 60)))),
+                               "fullscreen": bool(data["prefs"].get("fullscreen"))})
+            return {"ok": True, "desktop": set_fullscreen(self.server, bool(data["prefs"].get("fullscreen")))}
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}
         if route == "/api/create":
@@ -626,6 +627,17 @@ def close_window(server):
         window.destroy()
 
 
+def set_fullscreen(server, on):
+    """The Fullscreen setting, for the desktop window. False if there isn't one: a browser tab does its own."""
+    windows = list(getattr(sys.modules.get("webview"), "windows", []))
+    if windows and on != server.fullscreen:   # pywebview can only toggle, so which way the window is gets kept here
+        windows[0].toggle_fullscreen()
+        if not on:
+            windows[0].maximize()   # a window that opened fullscreen would otherwise come back small
+        server.fullscreen = on
+    return bool(windows)
+
+
 def finish():
     """Let a beat in progress finish writing before the program exits."""
     for g in list(GAMES.values()):
@@ -638,6 +650,7 @@ def serve(start):
     server.start = remember(start) if start and (Path(start) / CONFIG).exists() else None
     server.seen = None
     server.quit = False
+    server.fullscreen = False
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server, f"http://127.0.0.1:{server.server_address[1]}/"
 
@@ -657,8 +670,9 @@ def run(start=None, browser=False):
             if os.name == "nt":  # its own taskbar button with the die on it, not one grouped under Python's
                 import ctypes
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("GMEngine.Play")
+            server.fullscreen = bool(read_json(PREFS, {}).get("fullscreen"))
             webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True,
-                                  text_select=True)   # off by default in pywebview; flagging a passage needs it
+                                  fullscreen=server.fullscreen, text_select=True)   # off by default in pywebview; flagging a passage needs it
             webview.start(icon=str(ICON))
         else:
             print(f"GM Engine: {url}\nRunning on this computer only. Close the tab, or press Ctrl+C here, to stop.")
