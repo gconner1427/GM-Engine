@@ -657,7 +657,8 @@ def run(start=None, browser=False):
             if os.name == "nt":  # its own taskbar button with the die on it, not one grouped under Python's
                 import ctypes
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("GMEngine.Play")
-            webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True)
+            webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True,
+                                  text_select=True)   # off by default in pywebview; flagging a passage needs it
             webview.start(icon=str(ICON))
         else:
             print(f"GM Engine: {url}\nRunning on this computer only. Close the tab, or press Ctrl+C here, to stop.")
