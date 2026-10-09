@@ -135,6 +135,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | Path | What it is |
 |---|---|
 | `ENGINE.md` | The operating manual: the folder map, what's tracked where, the loops, the principles |
+| `ROADMAP.md` | Features to add or expand later |
 | `Rules/Core Rules.md` | The game underneath: attributes, the roll and its five outcomes, health, fights, powers, growth. The same in every world. |
 | `Rules/GM Rules.md` | The standing rules for the GM: who decides what, where a beat ends, honest dice, what's hidden |
 | `Writing/Craft Rules.md` | The writing rules for every narrative (`Craft Rules History.md` has the reasons) |
