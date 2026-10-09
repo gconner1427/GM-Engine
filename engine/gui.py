@@ -42,12 +42,13 @@ THREE = PAGE.with_name("three.min.js")   # three.js r160, kept here so the main 
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
-PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen
+PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen, the GM's model
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
 VERSION = ENGINE / "VERSION"   # one line, "Alpha 0.0.1": the corner of the main menu, and About
 MENU_TRACKS = ("1", "2")
+MODELS = ("opus", "sonnet")   # the GM Model setting. Family names: Claude Code runs the newest of each. "" leaves it to Claude Code
 ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
 MAX_BODY = 2_000_000
@@ -154,7 +155,8 @@ def claude_command(conversation):
     cmd = [find_claude(), "-p", "--output-format", "stream-json", "--verbose", "--permission-mode", "acceptEdits",
            "--add-dir", str(ENGINE), "--allowedTools", f"PowerShell({GM_RULE})", f"Bash({GM_RULE})",
            "--append-system-prompt", WINDOW_NOTE]
-    model = read_json(SETTINGS, {}).get("model")
+    chosen = read_json(PREFS, {}).get("model")   # the GM Model setting; left at Default, config.json's, if it names one
+    model = chosen if chosen in MODELS else read_json(SETTINGS, {}).get("model")
     if model:
         cmd += ["--model", model]
     if conversation:
@@ -577,7 +579,8 @@ class Handler(BaseHTTPRequestHandler):
             write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
                                "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
                                "volume": min(100, max(0, int(data["prefs"].get("volume", 60)))),
-                               "fullscreen": bool(data["prefs"].get("fullscreen"))})
+                               "fullscreen": bool(data["prefs"].get("fullscreen")),
+                               "model": data["prefs"].get("model") if data["prefs"].get("model") in MODELS else ""})
             return {"ok": True, "desktop": set_fullscreen(self.server, bool(data["prefs"].get("fullscreen")))}
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}

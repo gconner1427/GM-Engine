@@ -47,6 +47,8 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 
 The window hands what you type to Claude Code, the same GM that runs in VS Code, using the copy the VS Code extension installed and your existing sign-in. VS Code doesn't need to be open. Every time the window opens, it looks for Claude Code and for Codex and says so if either is missing or isn't signed in: without Claude Code there is no GM, and without Codex the game plays but no pictures are painted. The window never shows rolls, rulings, or anything in `GM Only/`.
 
+**GM Model** in Settings chooses which Claude model runs the GM: Default (whichever Claude Code uses on your plan), Opus, or Sonnet. Opus is the strongest writer and uses the most of your plan; Sonnet uses less, for making a plan last. It can be changed at any time, and the GM's next message is written by the one chosen. Pictures aren't affected.
+
 "Start a fresh GM conversation" in the ⋯ menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
 
 ### Pictures
@@ -159,6 +161,6 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 - For pictures: the Codex extension in VS Code, signed in.
 - For the play window in its own desktop window: `pip install pywebview`. Without it, the window opens as a browser tab.
 
-The play window keeps its list of narratives in `.gm-engine/narratives.json` in your home folder. An optional `.gm-engine/config.json` can set `"claude"` (the path to Claude Code, if it isn't found) and `"model"`.
+The play window keeps its list of narratives in `.gm-engine/narratives.json` in your home folder. An optional `.gm-engine/config.json` can set `"claude"` (the path to Claude Code, if it isn't found) and `"model"` (a model for the GM, used while the GM Model setting is at Default).
 
 The launchers are Windows `.cmd` files. On other systems, call `python engine/gm.py` directly.
