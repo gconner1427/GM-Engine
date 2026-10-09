@@ -126,6 +126,19 @@ def find_claude():
     return str(bundled[-1]) if bundled else None
 
 
+def claude_state():
+    """What the window says about Claude Code when it opens: "ready", "signed out", or "missing"."""
+    claude = find_claude()
+    if not claude:
+        return "missing"
+    try:
+        done = subprocess.run([claude, "auth", "status", "--json"], stdin=subprocess.DEVNULL, capture_output=True,
+                              encoding="utf-8", errors="replace", timeout=15, creationflags=NO_WINDOW)
+        return "ready" if json.loads(done.stdout)["loggedIn"] else "signed out"
+    except (OSError, subprocess.TimeoutExpired, ValueError, KeyError, TypeError):
+        return "ready"   # it couldn't say (an older Claude Code can't): if it's signed out, the first message will say so
+
+
 def opening(root, text):
     """A conversation's first message: the GM's startup reading, then what the player sent. The reading
     holds GM Only docs, so it goes to Claude Code and is never kept in the channel."""
@@ -396,8 +409,8 @@ def home():
         listed.append({"path": path, "missing": cfg is None, "name": (cfg or {}).get("name", root.name),
                        "set_up": bool((cfg or {}).get("set_up")), "sessions": sessions, "played": played,
                        "character": "" if name.lower().startswith(("unknown", "(")) else name, "level": field(sheet, "Level") or ""})
-    return {"narratives": listed, "default_parent": str(scaffold.DEFAULT_PARENT), "claude": find_claude(),
-            "prefs": read_json(PREFS, {})}
+    return {"narratives": listed, "default_parent": str(scaffold.DEFAULT_PARENT), "claude": claude_state(),
+            "codex": art.codex_state(), "prefs": read_json(PREFS, {})}
 
 
 def pick_folder(start=None):

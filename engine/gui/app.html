@@ -207,6 +207,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 .form label { color: var(--dim); font: 600 10px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; margin-top: 6px; }
 .empty { color: var(--faint); padding: 14px 2px; text-align: center; font: italic 15px/1.6 var(--serif); }
 .warnbox { border: 1px solid #d98a5f66; border-left: 2px solid var(--warn); color: var(--warn); background: #d98a5f12; border-radius: 2px; padding: 10px 14px; margin-bottom: 20px; }
+.warnbox.mild { border-color: var(--edge); border-left-color: var(--dim); color: var(--dim); background: #ffffff08; }   /* something optional is missing */
 
 /* ---- game ---- */
 #game { display: grid; grid-template-rows: auto 1fr; }
@@ -754,7 +755,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <div id="titleart" hidden><img alt="GM Engine"><i></i></div>
       <p>Solo narratives, run by a game master behind the page.</p>
     </div>
-    <div id="noclaude" class="warnbox" hidden>Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.</div>
+    <div id="noclaude" class="warnbox" hidden></div>
+    <div id="nocodex" class="warnbox mild" hidden></div>
     <nav id="mainmenu">
       <button id="menucontinue" style="--n:0" hidden><span>Continue</span><small id="continuename"></small></button>
       <button id="menunarratives" style="--n:1"><span>Narratives</span></button>
@@ -1253,6 +1255,25 @@ function when(iso) {
   return d.toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
 }
 
+// Every time the window opens: Claude Code is the GM, so nothing plays without it; Codex only paints the pictures.
+// The main menu says what's missing. Opened straight into a narrative, there's no menu to say it, so a toast does.
+const PROGRAM_NOTES = {
+  noclaude: {
+    "missing": "Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.",
+    "signed out": "Claude Code is installed, but it isn't signed in. Sign in to Claude Code in VS Code, then reopen this window."},
+  nocodex: {
+    "missing": "Codex wasn't found on this computer, so no pictures will be painted. The game plays without them. For pictures, install the Codex extension in VS Code and sign in, then reopen this window.",
+    "signed out": "Codex is installed, but it isn't signed in, so no pictures will be painted. The game plays without them. For pictures, sign in to Codex in VS Code, then reopen this window."}};
+function checkPrograms(h, say) {
+  const notes = [["noclaude", h.claude], ["nocodex", h.codex]].map(([id, state]) => {
+    const note = PROGRAM_NOTES[id][state] || "";   // nothing to say about one that's ready
+    $(id).textContent = note;
+    $(id).hidden = !note;
+    return note;
+  }).filter(Boolean);
+  if (say && notes.length) introDone.then(() => toast(notes[0]));
+}
+
 async function showHome() {
   game = null;
   document.body.classList.remove("gmmode");
@@ -1262,7 +1283,7 @@ async function showHome() {
   const h = await api("home");
   if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
   introDone.then(() => { if (!game) playMenuMusic(); });   // the splash and the intro play in silence
-  $("noclaude").hidden = !!h.claude;
+  checkPrograms(h);
   if (!$("newparent").value) $("newparent").value = h.default_parent;
   const last = h.narratives.find(n => !n.missing);   // the list is kept most recently opened first
   $("menucontinue").hidden = !last;
@@ -3148,7 +3169,7 @@ guard(async () => {
   const h = await api("home");
   if (h.prefs) Object.assign(prefs, h.prefs);
   applyPrefs();
-  if (START) openGame(START); else await showHome();
+  if (START) { openGame(START); checkPrograms(h, true); } else await showHome();
 })();
 </script>
 </body>

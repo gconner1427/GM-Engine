@@ -41,11 +41,24 @@ A difficulty the player picks during new narrative setup. It raises or lowers th
 
 Difficulty doesn't take the place of the stakes (Core Rules §7): setup asks for both, and the difficulty limits which stakes can be chosen.
 - **Touches:** the table settings in `Procedures/New Narrative.md`, step 2; the `Style Guide.md` template, which holds them; the play window's New Narrative window (`engine/gui/app.html`); `Rules/Core Rules.md`, the Bestiary and stat lines the GM writes, and the Economy's prices, for how each setting changes the numbers.
+
+### An installer
+The engine packaged so it can be installed on another machine and played there, without copying the folder over and setting up Python by hand. It's for the user's own machines, not for handing out. The installer installs everything it can: Python is bundled, and so is Git, which saved games need. What it can't carry, it checks for and reports:
+- **Claude Code** is required. If it's missing, the installer says so and says the engine can't run without it.
+- **Codex** is optional. If it's missing, the installer says pictures won't be painted, and carries on.
+
+The play window already makes the same check every time it opens, and asks each program whether it's signed in (`claude_state` in `engine/gui.py`, `codex_state` in `engine/art.py`), so the installer's check should use the same two.
+
+The installer doesn't move narratives. Getting one to another machine is the user's to do however they like (a flash drive, cloud storage), and "Add an existing folder" in the play window's Narratives list brings it in once it's there.
+- **Touches:** `Play.cmd`, which starts the play window now; `engine/gui.py`, which has to find the engine's rules, templates, and page from wherever it was installed; `engine/art.py`, which finds the `codex` program; `engine/saves.py`, which has to run the bundled Git; `VERSION`, which the installer would carry.
 ## To expand
 
 Things the engine already does that should go further.
 
-*(nothing yet)*
+### Signing in from the play window
+When the play window's check finds Claude Code or Codex installed but not signed in, the warning gets a Sign in button, so the player doesn't have to go to VS Code to do it. The button runs the program's own sign-in command (`claude auth login`, `codex login`), which opens the provider's sign-in page in the browser, where the player signs in the way they always do (Google, Apple, or an email and password), and keeps the credentials itself: nothing is typed into the game or a terminal, and the game never sees a password. The window then repeats the check until the program says it's signed in, and clears the warning.
+- **Touches:** `claude_state` in `engine/gui.py` and `codex_state` in `engine/art.py`, which make the check; a new route in `engine/gui.py` to start the sign-in; `checkPrograms` and the two warnings in `engine/gui/app.html`.
+- **Open questions:** whether either command ever falls back to asking for a code to be pasted in when the browser can't report back, in which case the window would have to show a console for that case only; neither flow has been run yet, and testing Claude Code's means signing out of it.
 
 ## Maybe
 

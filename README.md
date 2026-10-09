@@ -45,7 +45,7 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it. Or press "Add to 'To the GM'" to quote it in the message box, switched to speak to the GM, and write the correction there; select and add more passages to send several at once.
 - **During setup** the main column is your conversation with the GM: it tells you what your character would know about the world and helps you make them, and the Character tab fills in as you go.
 
-The window hands what you type to Claude Code, the same GM that runs in VS Code, using the copy the VS Code extension installed and your existing sign-in. VS Code doesn't need to be open. The window never shows rolls, rulings, or anything in `GM Only/`.
+The window hands what you type to Claude Code, the same GM that runs in VS Code, using the copy the VS Code extension installed and your existing sign-in. VS Code doesn't need to be open. Every time the window opens, it looks for Claude Code and for Codex and says so if either is missing or isn't signed in: without Claude Code there is no GM, and without Codex the game plays but no pictures are painted. The window never shows rolls, rulings, or anything in `GM Only/`.
 
 "Start a fresh GM conversation" in the ⋯ menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
 

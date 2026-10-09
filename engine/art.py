@@ -160,6 +160,20 @@ def find_codex():
     return str(bundled[-1]) if bundled else None
 
 
+def codex_state():
+    """What the play window says about Codex when it opens: "ready", "signed out", or "missing"."""
+    codex = find_codex()
+    if not codex:
+        return "missing"
+    try:
+        done = subprocess.run([codex, "login", "status"], stdin=subprocess.DEVNULL, capture_output=True,
+                              encoding="utf-8", errors="replace", timeout=15, creationflags=NO_WINDOW)
+    except (OSError, subprocess.TimeoutExpired):
+        return "signed out"
+    said = f"{done.stdout}\n{done.stderr}"   # "Logged in using ChatGPT"; signed out, it says it's not logged in
+    return "ready" if re.search(r"^\s*logged in", said, re.IGNORECASE | re.MULTILINE) else "signed out"
+
+
 def brief(kind, look, art_style):
     return ("Use your image generation tool to make exactly one image. Do not run any shell commands, and do not "
             "copy, move, or edit any files.\n\n"
