@@ -627,6 +627,10 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .mk-sum span + span { font: 16px/1.55 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; }
 .mk-nav { display: flex; align-items: center; gap: 10px; padding: 14px 28px 18px; background: linear-gradient(#18150fd9, #0f0d0a); border-top: 1px solid var(--line-soft); }
 .mk-nav .gap { flex: 1; }
+.mk-early { margin: 0; padding: 12px 18px; border: 1px solid var(--line-soft); border-left: 2px solid var(--accent); border-radius: 2px; background: #c9a25b0d; color: var(--dim); font: italic 15px/1.6 var(--serif); }
+.mk-build { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ink); font: italic 15px var(--serif); }   /* what the GM is building, while the player waits */
+.mk-build svg { width: 24px; height: 24px; flex: none; color: var(--accent); animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); filter: drop-shadow(0 0 8px #c9a25b88); }
+.mk-build .clock { font: 13px var(--sans); font-variant-numeric: tabular-nums; color: var(--faint); letter-spacing: 1px; }
 .mk-nav button { padding: 12px 24px; letter-spacing: 2.4px; }
 #tomake { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 16px; z-index: 5; white-space: nowrap; box-shadow: 0 0 0 1px #000, 0 8px 22px #000b; }
 
@@ -1780,7 +1784,7 @@ function apply(s) {
   $("working").hidden = !s.busy;
   if (s.busy) {
     const t = s.elapsed;
-    $("workingtext").textContent = (play ? WORKING[Math.floor(t / 7) % WORKING.length] : "The GM is at work on the world") + "…";
+    $("workingtext").textContent = (play ? WORKING[Math.floor(t / 7) % WORKING.length] : s.building || "The GM is at work on the world") + "…";
     $("clock").textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
     $("echo").textContent = game.sent ? "“" + game.sent.replace(/\s+/g, " ").slice(0, 160) + "”" : "";
   }
@@ -1810,22 +1814,31 @@ function apply(s) {
     if (finished) { if (prefs.wide) { prefs.wide = false; applyPrefs(true); } setTab("gm"); }
   }
   const made = creation(game.texts.sheet || "");
+  // While the world is being built there's nobody on the sheet and nothing to pick from yet, so the player
+  // starts on the parts of a character that are the same in every world. It lasts until the GM is done.
+  const nobody = unnamed(game.texts.sheet || "");
+  const early = !play && s.busy && nobody && !game.created && (!made || game.early);
+  game.early = early;
   if ("draft" in s) {   // a character half made when the window last closed
-    if (made && !game.make) game.make = s.draft;
-    else if (!made && s.draft) api("draft", {path: game.path, draft: null}).catch(() => {});
+    if ((made || early) && !game.make) game.make = s.draft;
+    else if (!made && !nobody && s.draft) api("draft", {path: game.path, draft: null}).catch(() => {});
     delete s.draft;
   }
-  if (!made && game.make) {   // the GM has the character now
+  if (!made && !early && game.make && (game.created || !nobody)) {   // the GM has the character now
     game.make = null;
     game.talk = game.madeOnce = false;
     api("draft", {path: game.path, draft: null}).catch(() => {});
   }
   if (finished && made && game.madeOnce) game.talk = true;   // the GM answered with the creator still open: show what it said
-  const making = !!made && !s.busy && !game.talk && !game.pinned;
+  const making = (early || !!made && !s.busy) && !game.talk && !game.pinned;
   $("story").classList.toggle("making", making);
   $("story").parentElement.classList.toggle("making", making);
-  $("tomake").hidden = !made || s.busy || !game.talk;
-  if (making) renderMaker(made); else if (play) renderStory(); else renderTalk($("story"), true);
+  $("tomake").hidden = !(early || made && !s.busy) || !game.talk;
+  if (making) renderMaker(early ? EARLY : made); else if (play) renderStory(); else renderTalk($("story"), true);
+  if (making && early) {   // the creator's own page stays put between ticks, so its line on the build is kept current here
+    $("mkbuild").textContent = (s.building || "The GM is at work on the world") + "…";
+    $("mkclock").textContent = Math.floor(s.elapsed / 60) + ":" + String(s.elapsed % 60).padStart(2, "0");
+  }
   const shop = play && !made && !game.pinned && shopOf(game.texts.sheet || "");
   $("shopbtn").hidden = !shop;
   if (shop) { $("shopname").textContent = shop.name; $("shopbtn").classList.toggle("new", game.shopSeen !== shop.name); }
@@ -2530,10 +2543,15 @@ const mkWorld = () => journalPart(untag(game.texts.journal || ""), "The world as
 const mkText = key => (game.make[key] || "").trim();
 const mkVal = key => game.make[key] === OTHER ? mkText(key + "Other") : game.make[key] || "";   // what was picked, or what was typed in its place
 
+// The creator as it stands while the world is still being built: only the steps that need nothing from the world.
+const EARLY = {key: "early", early: true, peoples: [], walks: [], homes: [], skills: [], talents: []};
+const EARLY_STEPS = ["identity", "looks", "nature", "attributes"];
+const unnamed = sheet => { const m = sheet.match(/^\*\*Name:\*\*[ \t]*(.*)$/m); return !m || /^(unknown|\(|$)/i.test(m[1].trim()); };   // nobody's on the sheet yet
+
 function makerSteps(c) {
   return [["world", "The world"], ["identity", "Identity"], ["looks", "Looks"], ["origins", "Origins"], ["nature", "Nature"], ["attributes", "Attributes"],
           ["skills", "Skills"], ["talents", "Talents"], ["review", "Review"]]
-    .filter(([id]) => id === "world" ? mkWorld() : id === "skills" ? c.skills.length : true);
+    .filter(([id]) => c.early ? EARLY_STEPS.includes(id) : id === "world" ? mkWorld() : id === "skills" ? c.skills.length : true);
 }
 
 function mkField(label, hint, inner) {
@@ -2557,7 +2575,7 @@ const MAKER = {
   world: () => `<h2>The world</h2><p class="lede">What your character knows going in. It stays in the Journal, under World.</p><div class="md">${md(mkWorld())}</div>`,
 
   identity: c => `<h2>Identity</h2><p class="lede">Who is your character?</p>
-    <div class="mk-pair">${mkInput("name", "Name")}${mkInput("aka", "Also called", "optional", "A nickname, a title")}</div>
+    <div class="mk-pair">${mkInput("name", "Name", c.early ? "or wait to see what names the world has" : "")}${mkInput("aka", "Also called", "optional", "A nickname, a title")}</div>
     ${mkPick("gender", "Gender", "", ["Male", "Female", "Nonbinary"], {other: "Their gender, in your words"})}
     <div class="mk-pair">${mkPick("age", "Age", "", ["Young", "Adult", "Middle-aged", "Old"])}${mkInput("years", "In years", "optional", "34")}</div>
     ${c.peoples.length ? mkPick("people", "People", "", c.peoples, {cards: true, other: "Who their people are"}) : ""}`,
@@ -2670,15 +2688,24 @@ function renderMaker(c) {
   const el = $("story"), shown = el.querySelector(".mk-body");
   if (shown && game.makeShown === c.key) return;   // already up: a tick mustn't take the page out from under the player
   game.make = Object.assign({step: 0, traits: [], voice: [], talents: [], attrs: {}, ranks: {}}, game.make);
-  game.madeOnce = true;
+  if (!c.early) game.madeOnce = true;
   const m = game.make, steps = makerSteps(c);
+  if (m.early && !c.early) {   // the world is ready: the rest of the creator opens, at the page on what they'd know
+    m.step = 0;
+    toast("The world is ready. The rest of your character is open.", true);
+  }
+  m.early = !!c.early;
   m.step = Math.min(Math.max(0, m.step), steps.length - 1);
   const [id] = steps[m.step], next = steps[m.step + 1], keep = shown && game.makeStep === id ? shown.scrollTop : 0;
+  const waiting = `<p class="mk-early">The world is still being built, which usually takes 10 to 20 minutes. These parts of your character are yours whatever it turns out to be, and you can change any of them once it's ready.</p>`;
   el.innerHTML = `<div class="mk-rail">${steps.map(([, title], n) => `<button data-step="${n}" class="${n === m.step ? "on" : n < m.step ? "done" : ""}"><i></i>${title}</button>`).join("")}</div>
-    <div class="mk-body"><div class="mk-page">${MAKER[id](c)}</div></div>
-    <div class="mk-nav"><button class="quiet" data-ask>Ask the GM something</button><span class="gap"></span>
+    <div class="mk-body"><div class="mk-page">${c.early ? waiting : ""}${MAKER[id](c)}</div></div>
+    <div class="mk-nav">${c.early ? `<span class="mk-build"><svg><use href="#d20"/></svg><span id="mkbuild"></span><span class="clock" id="mkclock"></span></span>`
+        : `<button class="quiet" data-ask>Ask the GM something</button>`}<span class="gap"></span>
+      ${c.early ? `<button class="quiet" data-ask title="Your conversation with the GM, and the button that stops the build">The GM's side</button>` : ""}
       <button data-go="-1"${m.step ? "" : " disabled"}>Back</button>
-      ${next ? `<button class="primary" data-go="1">Next: ${next[1]}</button>` : `<button class="primary" data-create>Create character</button>`}</div>`;
+      ${next ? `<button class="primary" data-go="1">Next: ${next[1]}</button>`
+        : c.early ? `<button class="primary" disabled>The rest opens with the world</button>` : `<button class="primary" data-create>Create character</button>`}</div>`;
   if (game.makeStep === id) el.querySelector(".mk-page").style.animation = "none";   // only a new step arrives
   el.querySelector(".mk-body").scrollTop = keep;
   game.makeShown = c.key;
@@ -2700,7 +2727,7 @@ $("story").addEventListener("input", e => {
   keepDraft();
 });
 $("story").addEventListener("click", guard(async e => {
-  const c = game && game.make && $("story").classList.contains("making") && creation(game.texts.sheet || ""), at = sel => e.target.closest(sel);
+  const c = game && game.make && $("story").classList.contains("making") && (game.early ? EARLY : creation(game.texts.sheet || "")), at = sel => e.target.closest(sel);
   if (!c) return;
   const m = game.make;
   let el, focus;
@@ -2750,6 +2777,7 @@ async function createCharacter(c) {
   const [lines, left] = makerLines(c);
   await send("{My character, from the character creator.\n\n" + lines.map(([label, text]) => `${label}: ${text}`).join("\n")
     + (left.length ? `\n\nLeft to you: ${left.join(", ")}.` : "") + "}", true);
+  game.created = true;   // it's the GM's now: the creator doesn't come back while the sheet is written
 }
 
 function setTab(tab) {

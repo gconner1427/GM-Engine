@@ -53,6 +53,14 @@ ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
 MAX_BODY = 2_000_000
 CHANNEL_KEEP = 400
+BUILDING = (   # what the window says the GM is doing while it builds the world, by the file it last wrote
+    ("State/Campaign.md", "Preparing the campaign"), ("World Bible.md", "Laying down the world and its laws"),
+    ("Names.md", "Gathering names"), ("Map & Travel.md", "Drawing the map"), ("Economy.md", "Counting out the coin"),
+    ("Timeline.md", "Writing the history"), ("Rules Kit.md", "Fitting the rules to the world"),
+    ("Bestiary.md", "Stocking the wilds"), ("Items.md", "Hiding things worth finding"),
+    ("State/Pressures.md", "Setting trouble in motion"), ("State/World State.md", "Setting the opening scene"),
+    ("/Groups/", "Raising the powers that be"), ("/Cast/", "Peopling the world"), ("/Places/", "Building its places"),
+    ("Journal.md", "Writing what your character would know"), ("Character Sheet.md", "Working on the character sheet"))
 UNTITLED = "Untitled Narrative"
 IDLE_QUIT = 20 # seconds without a ping before a browser-tab window counts as closed
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
@@ -323,6 +331,8 @@ class Game:
                 out["texts"][key] = read(path)
         if have.get("channel") != len(self.data["channel"]):
             out["channel"] = self.data["channel"]
+        if out["busy"] and not out["set_up"]:
+            out["building"] = self.building()
         if not have:  # the window has just opened this narrative
             out["draft"] = self.data.get("draft")
         mark = stamp(art.art_dir(self.narrative) / "art.json") + str(self.art_trouble)
@@ -332,6 +342,21 @@ class Game:
             out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
                           "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error")} for i in index["items"]]}
         return out
+
+    def building(self):
+        """During setup: what the GM is at work on, as a line for the player to watch. It says which kind of
+        thing was last written (the map, the people), from the file's place in the folder, and never a word of it."""
+        newest, line = self.started or 0, "Imagining the world"
+        hidden = [p for p in self.narrative.gm_dir.rglob("*.md") if p.parent != self.narrative.logs_dir]
+        for path in hidden + [self.root / "Journal.md", self.narrative.sheet]:
+            try:
+                changed = path.stat().st_mtime
+            except OSError:
+                continue
+            if changed > newest:
+                where = path.relative_to(self.root).as_posix()
+                newest, line = changed, next((say for part, say in BUILDING if part in where), line)
+        return line
 
     def keep_draft(self, draft):
         """The character creator's answers so far, so a character half made survives the window closing."""

@@ -108,7 +108,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 ## Starting a narrative
 
 1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), say what the story is about if you have one in mind (fighting a dark lord, winning a war), name any themes you want in it, pick the content you want included (explicit language, explicit sex, nudity, graphic violence, gore; whatever you don't pick is left out), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
-2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). When it's done, the character creator opens, starting with a page on what your character would know.
+2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). While it does, you can start on your character: the parts that are the same in any world (who they are, their looks, their nature, their attributes) open at once. When the world is done, the rest of the character creator opens, starting with a page on what your character would know.
 3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Where the story opens is the GM's to choose, as at any table.
 4. Press **Begin**. The GM opens the first session: it sets the scene and hooks your character into the campaign. Then it's your move.
 
@@ -128,9 +128,11 @@ A game install copies a world that someone already made onto your machine. This 
 - the rules for this world: its skills, gear, powers, and dangers;
 - the pools of names every character will be drawn from.
 
-The window shows the GM at work with a running timer. There's no progress bar, since the GM is writing, not copying, so the time varies with the world you asked for: a small original setting is quicker, a sprawling one or one built on a big existing setting takes longer. Leave the window open and come back to it.
+You don't have to sit and watch. As soon as the install starts, the character creator opens on the parts of a character that don't depend on the world: their name, gender and age, their looks, their nature, and their attributes. Anything you set there is kept, and you can change it once you've seen the world. "The GM's side" at the bottom shows your conversation with the GM, and the button that stops the build.
 
-When the install finishes, the GM tells you what your character would know and asks who they are. Making your character takes a few more short exchanges, and their portrait is painted while you finish.
+The bottom of the creator shows what the GM is working on (drawing the map, peopling the world, setting trouble in motion) with a running timer. It says only what kind of thing is being made, never what's in it. There's no progress bar, since the GM is writing, not copying, so the time varies with the world you asked for: a small original setting is quicker, a sprawling one or one built on a big existing setting takes longer.
+
+When the install finishes, the rest of the creator opens: a page on what your character would know, then the world's own choices (their people, their walk of life, where they're from, their skills and talents). Their portrait is painted while you finish.
 
 Like any install, it happens once. After that the narrative opens straight from the title screen, and a beat of play takes about a minute.
 
