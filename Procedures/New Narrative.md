@@ -8,7 +8,7 @@ Nothing you build is shown to the player except what their character would know.
 
 The play window creates the folder and sends you the player's answers in its first message. If you're asked for a new narrative from the engine folder instead, ask what to call it (or leave it untitled) and where it should live, and whether the narration should be third person (like a novel) or second person ("you," like a GM at the table), run `gm new-narrative "<Name>" --at "<parent folder>"` (adding `--person second` for second person), and tell the player to open that folder. If the folder already exists, this step is done.
 
-## 2. Four questions
+## 2. Five questions
 
 These are all you ask about the world. Ask only for the ones the first message didn't answer, in one round:
 
@@ -19,11 +19,17 @@ These are all you ask about the world. Ask only for the ones the first message d
    - **Built on another setting:** Star Wars, Mass Effect, a book series, anything. Ask only which one. If the setting covers very different eras, ask which era, or whether to leave it to you.
    - **Isekai:** the character is a person from our world who ends up in another one. The other world is yours to invent, unless the player names one. Don't ask how they cross over; if the player said (summoned, reborn, pulled into a game), use it, and otherwise it's yours to decide.
 3. **The story,** if they have one in mind: what the narrative is about, in a line. Fighting a dark lord, saving a princess, winning a war. If not, it's yours to decide, and you don't say what you decided.
-4. **A title,** if they have one. If not, you'll give it one.
+4. **Themes,** if they want any: what the narrative keeps coming back to. Revenge, found family, what power costs. If not, they're yours to decide, and you don't say what you decided.
+5. **A title,** if they have one. If not, you'll give it one.
 
-In the same round, give the table settings with their defaults and let the player change any: past tense; violence shown plainly; sex faded out; strong language as the characters would use it; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. The narration's person (third or second) was chosen when the folder was made and is already on the Style Guide's POV line: don't ask again, and if the player wants the other one, change that line. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
+**The content** is the player's too, and the play window sends it as five lines, each yes or no: explicit language, explicit sex on the page, nudity outside sex scenes, graphic violence, gore. If the first message didn't carry them, ask in the same round, with every one a no unless they say otherwise. Write each onto its line under the Style Guide's "Content."
+- A yes means it's written in full when the narrative goes there. It doesn't mean it has to be put in, or put in often.
+- A no means it's left out: language kept mild, sex faded out, bodies kept out of view, violence told without dwelling on the damage, no gore. The world can still be a hard one; what changes is what the prose shows.
+- Each line stands alone. Graphic violence without gore is a fight told in full with the wounds left undescribed; nudity without explicit sex is a body described at the bath and a fade when the scene turns to sex.
 
-Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**, with the story if they named one.
+In the same round, give the other table settings with their defaults and let the player change any: past tense; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. The narration's person (third or second) was chosen when the folder was made and is already on the Style Guide's POV line: don't ask again, and if the player wants the other one, change that line. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
+
+Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**, with the story and the themes if they named any.
 
 ## 3. Build the world
 
@@ -56,6 +62,7 @@ Now prepare it, in `GM Only/`, without a word to the player about what's in it. 
 - **People first.** A region is interesting because of who wants what from whom. Start from the groups and the people, and let places, history, and trouble follow from them.
 - **It has to work without the character.** Everything in motion would be in motion if they never showed up.
 - **The tone is the player's.** A grim world and a swashbuckling one differ in what's common, what's possible, and what things cost, not just in adjectives.
+- **Themes are built in, never stated.** A theme the player named (or one you chose) belongs in who wants what and what it costs them: several of the groups, people, and pressures should turn on it, each from a different side. Nobody in the world says it out loud, and the prose never does.
 
 **If the player named a story:**
 - Build the world so that story is in it. The dark lord is a person in `GM Only/Cast/` with a group behind them and reasons of their own; the war is between two of the region's powers; the princess is someone, held somewhere, by someone who wants something for it. What the player named is one of the pressures, already moving, and the starting region is where it can be reached.

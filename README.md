@@ -103,7 +103,7 @@ When something reads wrong, say so in braces: `{that line sounds stiff}`, `{too 
 
 ## Starting a narrative
 
-1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), say what the story is about if you have one in mind (fighting a dark lord, winning a war), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
+1. Double-click `Play.cmd`. Under "A new narrative," give the genre and tone, choose the world (original, D&D, another setting you name, or isekai: someone from our world who ends up in another), say what the story is about if you have one in mind (fighting a dark lord, winning a war), name any themes you want in it, pick the content you want included (explicit language, explicit sex, nudity, graphic violence, gore; whatever you don't pick is left out), choose the narration (third person, or second person), add a title if you have one, and press **Create the world**.
 2. The GM builds the world (see "Installing a new narrative" below: allow 10 to 20 minutes). When it's done, the character creator opens, starting with a page on what your character would know.
 3. Make your character on the character creator, a step at a time: buttons for what can be picked, a box where it takes words. Say where they are when it opens, or leave that to the GM.
 4. Write your character's first action.

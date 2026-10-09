@@ -12,9 +12,11 @@ What's particular to this narrative's prose. It can override anything in the eng
 
 ## Content
 
-- **Violence:** Unknown (how graphic)
-- **Sex:** Unknown (off the page, fade out, or on the page)
-- **Language:** Unknown
+- **Language:** Unknown (explicit, or kept mild)
+- **Sex:** Unknown (explicit and on the page, or faded out)
+- **Nudity:** Unknown (described when it's there, or kept out of view; this is nudity outside sex scenes)
+- **Violence:** Unknown (graphic, or told without dwelling on the damage)
+- **Gore:** Unknown (described, or left out)
 - **Anything off the table:** (subjects the narrative never goes to)
 
 ## Art

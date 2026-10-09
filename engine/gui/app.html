@@ -651,7 +651,13 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   max-height: 180px; overflow: auto; }
 .dialog textarea { min-height: 84px; resize: vertical; }
 .dialog #newstory { min-height: 64px; }
-#newdialog .dialog { max-height: 96vh; overflow-y: auto; }
+/* a new narrative is asked for in two columns, so the whole of it shows at once; a narrow window gets one column and scrolls */
+#newdialog .dialog { width: min(1180px, 96vw); max-height: 96vh; overflow-y: auto; }
+#newdialog .form { grid-template-columns: 1fr 1fr; gap: 10px 32px; }
+#newdialog .col { display: grid; gap: 10px; align-content: start; min-width: 0; }
+#newdialog .form > .note { grid-column: 1 / -1; margin-top: 4px; }
+#newworld { grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px) { #newdialog .form { grid-template-columns: 1fr; } }
 .dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .dialog .row button { padding: 10px 20px; }
 .dialog.wide { width: min(700px, 94vw); }
@@ -800,9 +806,10 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 </div>
 <div id="farewell" hidden><div><svg><use href="#d20"/></svg>The game has closed.<br>You can close this tab.</div></div>
 <div class="shade" id="newdialog" hidden>
-  <div class="dialog wide">
+  <div class="dialog">
     <div class="head">New Narrative</div>
     <div class="form">
+      <div class="col">
       <label for="newgenre">Genre and tone</label>
       <input id="newgenre" placeholder="Grim low fantasy. Space opera with some humor. A slow-burn western.">
       <label>The world</label>
@@ -815,6 +822,18 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <input id="newsetting" hidden>
       <label for="newstory">The story, if you have one in mind</label>
       <textarea id="newstory" rows="2" placeholder="Fighting a dark lord. Saving a princess. Winning a war. Leave blank and the GM will decide."></textarea>
+      <label for="newthemes">Themes, if you want any</label>
+      <input id="newthemes" placeholder="Revenge. Found family. What power costs. Leave blank and the GM will decide.">
+      </div>
+      <div class="col">
+      <label>Content to include (pick any; the rest is left out)</label>
+      <div class="choice three" id="newcontent">
+        <button data-content="language"><b>Explicit language</b><span>Swearing, uncensored</span></button>
+        <button data-content="sex"><b>Explicit sex</b><span>On the page, not faded out</span></button>
+        <button data-content="nudity"><b>Nudity</b><span>Outside of sex scenes</span></button>
+        <button data-content="violence"><b>Graphic violence</b><span>Told in full, not softened</span></button>
+        <button data-content="gore"><b>Gore</b><span>Wounds, described</span></button>
+      </div>
       <label>The narration</label>
       <div class="choice" id="newperson">
         <button data-person="third" class="on"><b>Third person</b><span>Reads like a novel: “She draws her sword.”</span></button>
@@ -824,6 +843,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <input id="newname" placeholder="Leave blank and the GM will name it">
       <label for="newparent">The folder it's created in</label>
       <div class="row"><input id="newparent"><button id="browse">Browse…</button></div>
+      </div>
       <div class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</div>
     </div>
     <div class="row"><button data-close>Cancel</button><button id="create" class="primary">Create the world</button></div>
@@ -1591,9 +1611,17 @@ $("newperson").onclick = e => {
   newPerson = b.dataset.person;
   for (const o of $("newperson").children) o.classList.toggle("on", o === b);
 };
+// The content the player wants on the page: any number of these, and whatever isn't picked is left out.
+const CONTENT = {language: "Explicit language", sex: "Explicit sex on the page", nudity: "Nudity outside sex scenes",
+  violence: "Graphic violence", gore: "Gore"};
+$("newcontent").onclick = e => {
+  const b = e.target.closest("button");
+  if (b) b.classList.toggle("on");
+};
 $("create").onclick = guard(async () => {
   const genre = $("newgenre").value.trim(), setting = $("newsetting").value.trim(), title = $("newname").value.trim();
-  const story = $("newstory").value.trim();
+  const story = $("newstory").value.trim(), themes = $("newthemes").value.trim();
+  const content = [...$("newcontent").children].map(b => `${CONTENT[b.dataset.content]}: ${b.classList.contains("on") ? "yes" : "no"}.`).join(" ");
   if (!genre) return toast("Say what genre and tone you want, so the GM knows what to build.");
   if (newWorld === "other" && !setting) return toast("Say which setting to build it on.");
   const world = newWorld === "original" ? "Original: invent it."
@@ -1601,10 +1629,10 @@ $("create").onclick = guard(async () => {
     : newWorld === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
     : "Built on an existing setting: " + setting;
   const r = await api("create", {name: title, parent: $("newparent").value, person: newPerson});
-  $("newgenre").value = $("newsetting").value = $("newstory").value = $("newname").value = "";
+  $("newgenre").value = $("newsetting").value = $("newstory").value = $("newthemes").value = $("newname").value = "";
   openGame(r.path);
   const narration = newPerson === "second" ? "Second person (\"you\")." : "Third person limited.";
-  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nThe story: ${story || "none given; it's yours to decide."}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
 });
 $("addexisting").onclick = guard(async () => {
   const r = await api("pick-folder", {});

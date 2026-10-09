@@ -126,7 +126,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 
 | When | Do | Procedure |
 |---|---|---|
-| A new narrative | Four questions, building the world, the character, the opening | `Procedures/New Narrative.md` |
+| A new narrative | Five questions, building the world, the character, the opening | `Procedures/New Narrative.md` |
 | A conversation starts | Load, check the state is current | `Procedures/Play.md` |
 | The user writes an action | The beat | `Procedures/Play.md` |
 | A scene ends | Docs follow the page, World State, a light World Turn | `Procedures/Play.md`, `Procedures/World Turn.md` |
