@@ -467,17 +467,17 @@ aside::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; wid
   min-width: 0; transition: border-color .2s, background .2s; }
 .thing:only-child, .thing.open { grid-column: 1 / -1; }
 .thing.more { cursor: pointer; } .thing.more:hover { border-color: var(--edge); background: linear-gradient(90deg, var(--accent-soft), transparent); }
-.thing .glyph { width: 42px; height: 42px; flex: none; position: relative; display: grid; place-items: center; border-radius: 1px; color: var(--dim);
+.thing .glyph, .ware .glyph { width: 42px; height: 42px; flex: none; position: relative; display: grid; place-items: center; border-radius: 1px; color: var(--dim);
   background: radial-gradient(circle at 50% 30%, #2b251b, #110e0a); border: 1px solid var(--line); box-shadow: inset 0 0 10px #000a; }
-.thing .glyph svg { width: 22px; height: 22px; stroke-width: 1.2; }
-.thing .glyph b { position: absolute; right: -5px; bottom: -5px; min-width: 17px; padding: 0 4px; border-radius: 1px; background: var(--accent); color: var(--accent-ink);
+.thing .glyph svg, .ware .glyph svg { width: 22px; height: 22px; stroke-width: 1.2; }
+.thing .glyph b, .ware .glyph b { position: absolute; right: -5px; bottom: -5px; min-width: 17px; padding: 0 4px; border-radius: 1px; background: var(--accent); color: var(--accent-ink);
   font: 700 10.5px/16px var(--sans); text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px #14110d; }
 .thing .what { min-width: 0; flex: 1; align-self: center; }
-.thing .name { font: 400 15px/1.3 var(--serif); overflow-wrap: anywhere; }
+.thing .name, .ware .name { font: 400 15px/1.3 var(--serif); overflow-wrap: anywhere; }
 .thing .chip, .skill.pick .chip { display: inline-block; padding: 0 6px; border-radius: 1px; border: 1px solid var(--edge); color: var(--accent); font: 600 9.5px/16px var(--sans);
   letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
 .thing .chip { margin-top: 3px; }
-.thing .note { color: var(--faint); font-size: 11.5px; line-height: 1.4; margin-top: 2px; overflow-wrap: anywhere;
+.thing .note, .ware .note { color: var(--faint); font-size: 11.5px; line-height: 1.4; margin-top: 2px; overflow-wrap: anywhere;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .thing.open .note { display: block; color: var(--dim); }
 .bag.ready .thing .glyph { color: var(--accent-hi); border-color: var(--edge); box-shadow: inset 0 0 12px #c9a25b26; }
@@ -546,6 +546,40 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .tile.pick:hover { background: #1f1b14; }
 .talent.pick.on, .tile.pick.on { box-shadow: inset 0 0 0 1px var(--accent), 0 0 20px #c9a25b26; background: linear-gradient(#c9a25b2b, #c9a25b12), var(--well); }
 .tile.pick.full { opacity: .4; cursor: default; background: var(--well); }
+
+/* ---- a shop ---- */
+#shopbtn { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 16px; z-index: 5; display: inline-flex; align-items: center; gap: 9px;
+  white-space: nowrap; background: linear-gradient(#3b301c, #2a2214); box-shadow: 0 0 0 1px #000, 0 8px 22px #000b; }
+#shopbtn.new { animation: beckon 2.4s ease-in-out infinite; }
+#shopbtn:hover { background: linear-gradient(#e2c07e, #b98f48); }
+#shopbtn svg { width: 16px; height: 16px; }
+#shopdialog .dialog { width: min(760px, 94vw); }
+.shopwho { display: flex; align-items: center; gap: 14px; }
+.shopwho img { width: 46px; height: 56px; flex: none; border-radius: 1px; border: 1px solid var(--accent); object-fit: cover; object-position: center 20%; cursor: zoom-in; }
+.shopwho .keeper { flex: 1; min-width: 0; font: 400 17px var(--serif); }
+.shopwho .caps { display: block; color: var(--accent); font-size: 9px; letter-spacing: 2.4px; }
+.shopwho .purse { flex: none; max-width: 60%; }
+.shopwho .purse.short { border-color: var(--bad); }
+#shoptabs { justify-self: center; }
+#shoptabs button { padding: 8px 26px; }
+#shoptabs button span { margin-left: 7px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+#shopbody { max-height: 40vh; min-height: 96px; overflow: auto; padding-right: 4px; display: grid; gap: 6px; align-content: start; }
+.ware { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; background: linear-gradient(90deg, #ffffff08, transparent);
+  border: 1px solid var(--line-soft); border-radius: 2px; padding: 7px 10px 7px 7px; cursor: pointer; transition: border-color .2s, background .2s; }
+.ware:hover { border-color: var(--edge); }
+.ware.in { border-color: var(--accent); background: linear-gradient(90deg, #c9a25b24, transparent 80%); }
+.ware.gone { opacity: .45; cursor: default; }
+.ware .what { min-width: 0; }
+.ware .note { -webkit-line-clamp: 3; }
+.ware .price { text-align: right; font: 400 15px var(--serif); color: var(--accent-hi); white-space: nowrap; }
+.ware .price span { display: block; color: var(--faint); font: 11px var(--sans); }
+.tally { border-top: 1px solid var(--line-soft); padding-top: 12px; display: grid; gap: 4px; font: 400 15px var(--serif); }
+.tally div { display: flex; justify-content: space-between; gap: 18px; color: var(--dim); }
+.tally div span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tally div span:last-child { flex: none; font-variant-numeric: tabular-nums; }
+.tally .net { color: var(--ink); font-size: 17px; margin-top: 4px; } .tally .net span:last-child { color: var(--accent-hi); }
+.tally .short, .tally .short span:last-child { color: var(--bad); }
+.tally .empty { display: block; padding: 4px 2px; }
 
 /* ---- making the character: a step at a time, in place of the story ---- */
 .main.making .composer { display: none; }
@@ -658,6 +692,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   <symbol id="i-flag" viewBox="0 0 16 16"><path d="M3.500 14V2.500h8l-1.500 3 1.500 3h-8"/></symbol>
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3v10M4 9l4 4 4-4"/></symbol>
   <symbol id="i-coin" viewBox="0 0 20 20"><ellipse cx="10" cy="6" rx="6.500" ry="3"/><path d="M3.500 6v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3V6M3.500 10v4c0 1.700 2.900 3 6.500 3s6.500-1.300 6.500-3v-4"/></symbol>
+  <symbol id="i-shop" viewBox="0 0 20 20"><path d="M4.500 3.500h11L17 8.500a2.330 2.330 0 0 1-4.670 0 2.330 2.330 0 0 1-4.660 0A2.330 2.330 0 0 1 3 8.500zM4.500 11.500v5h11v-5M8.500 16.500v-3h3v3"/></symbol>
   <symbol id="g-blade" viewBox="0 0 20 20"><path d="M17 3l-3.5.5-7 7 3 3 7-7zM4.5 8.5l7 7M7 13l-3.5 3.5"/></symbol>
   <symbol id="g-bow" viewBox="0 0 20 20"><path d="M6 2.5c7 2.5 7 12.5 0 15M6 2.5v15M2.5 10H17M14.5 7.500 17 10l-2.5 2.5"/></symbol>
   <symbol id="g-gun" viewBox="0 0 20 20"><path d="M2.5 6h15v3.5H10c0 1.500-1 2.300-2.5 2.300L7 16H3.500l1-6.500h-2zM14.5 6V4.500"/></symbol>
@@ -826,6 +861,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
         <div id="arrival" hidden></div>
         <button id="latest" hidden><svg style="width:13px;height:13px;vertical-align:-2px"><use href="#i-down"/></svg> Latest</button>
         <button id="tomake" class="primary" hidden>Back to the character creator</button>
+        <button id="shopbtn" class="primary" hidden title="See what's for sale here, and what they'd buy from you"><svg><use href="#i-shop"/></svg><span id="shopname"></span></button>
         <div class="working" id="working" hidden>
           <svg><use href="#d20"/></svg>
           <div class="lines"><div class="now" id="workingtext"></div><div class="echo" id="echo"></div></div>
@@ -908,6 +944,16 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     <div id="levelbody"></div>
     <textarea id="levelnote" placeholder="Anything else for the GM: a skill or a talent that isn't listed, or why a choice fits."></textarea>
     <div class="row"><button id="levellater">Later</button><button id="levelgo" class="primary">Confirm</button></div>
+  </div>
+</div>
+<div class="shade" id="shopdialog" hidden>
+  <div class="dialog">
+    <div class="head" id="shophead"></div>
+    <div class="shopwho" id="shopwho"></div>
+    <div class="seg" id="shoptabs"></div>
+    <div id="shopbody"></div>
+    <div class="tally" id="shoptally"></div>
+    <div class="row"><button id="shopclose">Close</button><button id="shopgo" class="primary">Make the trade</button></div>
   </div>
 </div>
 <div id="lightbox" hidden><img alt=""><div></div></div>
@@ -1570,7 +1616,7 @@ function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
           open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null, ended: null, loaded: false,
-          make: null, madeOnce: false, talk: false, makeShown: "", makeStep: ""};
+          make: null, madeOnce: false, talk: false, makeShown: "", makeStep: "", cart: null, shoptab: "buy", shopSeen: null};
   closeHomeDialogs();
   stopMenuMusic();
   api("opened", {path}).catch(() => {});   // so the main menu's Continue comes back to this one
@@ -1579,7 +1625,7 @@ function openGame(path) {
   $("story").innerHTML = "";
   $("pane").innerHTML = "";
   $("input").value = "";
-  $("latest").hidden = $("tomake").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = $("summarydialog").hidden = $("meantdialog").hidden = true;
+  $("latest").hidden = $("tomake").hidden = $("shopbtn").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = $("summarydialog").hidden = $("meantdialog").hidden = $("shopdialog").hidden = true;
   document.body.classList.remove("gmmode");
   $("modeact").classList.add("on");
   $("modegm").classList.remove("on");
@@ -1676,6 +1722,11 @@ function apply(s) {
   $("story").parentElement.classList.toggle("making", making);
   $("tomake").hidden = !made || s.busy || !game.talk;
   if (making) renderMaker(made); else if (play) renderStory(); else renderTalk($("story"), true);
+  const shop = play && !made && !game.pinned && shopOf(game.texts.sheet || "");
+  $("shopbtn").hidden = !shop;
+  if (shop) { $("shopname").textContent = shop.name; $("shopbtn").classList.toggle("new", game.shopSeen !== shop.name); }
+  else game.shopSeen = null;
+  if (!$("shopdialog").hidden) { if (shop) renderShop(); else $("shopdialog").hidden = true; }
   if (before && !game.loaded && before.open_session && s.open_session !== before.open_session) game.ended = before.open_session;
   game.loaded = false;
   if (game.ended && !s.busy) { const n = game.ended; game.ended = null; openSummary(n); }
@@ -2068,7 +2119,7 @@ $("summarygo").onclick = () => {
 function lastAction() {   // what the player last sent as their character
   for (let i = game.channel.length - 1; i >= 0; i--) {
     const m = game.channel[i];
-    if (m.who === "you" && !/^\{[\s\S]*\}$/.test(m.text.trim())) return m.text.replace(/\s*\{push\}\s*$/i, "").trim();
+    if (m.who === "you" && !/^\{[\s\S]*\}$/.test(m.text.trim())) return m.text.replace(/\s*\{(push|trade\b[^}]*)\}\s*$/i, "").trim();
   }
   return "";
 }
@@ -2179,6 +2230,165 @@ $("levelgo").onclick = guard(async () => {
   if (note) lines.push("Note: " + note);
   await send("{" + lines.join("\n") + "}", true);
   $("leveldialog").hidden = true;
+});
+
+// ---- a shop -----------------------------------------------------------------------
+
+// While the character is somewhere that sells, the sheet has a "Shop" section, which the GM writes (Procedures/Play.md, "A shop"):
+// the world's coins, what's for sale, and what the keeper would buy. The player fills a basket here, and the whole trade goes
+// to the GM as one action, who plays it and settles the sheet.
+const PLENTY = 99;   // how many of a thing can go in the basket when the shop gives no count
+
+function coinage(sec) {   // the world's coins, largest first; one with no letters in it ("$") is written before the number
+  return listed(sec, "Coins").map(e => {
+    const m = e.name.match(/^(.*?)\s*\((.*)\)$/), one = (m ? m[1] : e.name).trim(), word = /[a-z]/i.test(one);
+    return {one, many: m ? m[2].trim() : word ? one + "s" : one, word, worth: parseFloat(e.text.replace(/,/g, ""))};
+  }).filter(c => c.one && c.worth > 0).sort((a, b) => b.worth - a.worth);
+}
+
+function worth(text, coins) {   // "1 crown, 4 shillings" or "$4.50" in the smallest coin; null when it isn't a plain amount
+  let rest = text.replace(/\s*\([^)]*\)/g, "").trim().replace(/\.$/, ""), total = 0;
+  if (!rest || !coins.length) return null;
+  while (rest) {
+    const m = rest.match(/^([^\d\s]*)\s*(\d+(?:,\d{3})*(?:\.\d+)?)\s*/);
+    if (!m) return null;
+    rest = rest.slice(m[0].length);
+    let coin = coins.find(c => !c.word && c.one === m[1]);
+    if (!coin && !m[1]) for (const c of coins) {
+      const said = c.word && [c.many, c.one].find(w => rest.toLowerCase().startsWith(w.toLowerCase()) && !/^[a-z]/i.test(rest.slice(w.length)));
+      if (said) { coin = c; rest = rest.slice(said.length); break; }
+    }
+    if (!coin) return null;
+    total += parseFloat(m[2].replace(/,/g, "")) * coin.worth;
+    rest = rest.replace(/^\s*(?:,\s*)?(?:and\s+)?/i, "");
+  }
+  return Math.round(total * 100) / 100;
+}
+
+function coinText(n, coins) {   // so much of the smallest coin, said in the world's coins
+  const out = [], said = (k, c) => {
+    const num = Number.isInteger(k) ? k.toLocaleString("en-US") : k.toFixed(2);
+    return c.word ? `${num} ${k === 1 ? c.one : c.many}` : c.one + num;
+  };
+  let left = Math.round(n * 100) / 100;
+  coins.forEach((c, i) => {
+    const k = i === coins.length - 1 ? Math.round(left / c.worth * 100) / 100 : Math.floor(left / c.worth + 1e-9);
+    if (!k) return;
+    left -= k * c.worth;
+    out.push(said(k, c));
+  });
+  return out.join(", ") || said(0, coins[coins.length - 1]);
+}
+
+function shopOf(sheet) {   // the shop the character is in, or null
+  const sec = part(sheet, "Shop"), name = grab(sec, "Name");
+  if (blank(name)) return null;
+  const coins = coinage(sec), keeper = grab(sec, "Keeper");
+  const ware = (e, left) => {   // "- **Name:** price ×3. What's said about it."
+    let price = e.text, note = "";
+    const cut = price.search(/\.\s+\S/), count = /^(.*?)\s*(?:[×x]\s*(\d+)|\((\d+)(?:\s+left)?\))$/i;
+    if (cut >= 0) { note = price.slice(cut + 1).trim(); price = price.slice(0, cut); }
+    price = price.replace(/\.$/, "").trim();
+    const m = price.match(count);
+    if (m) { price = m[1].trim(); left = +(m[2] || m[3]); }
+    return {name: e.name, price, note, left, worth: worth(price, coins)};
+  };
+  const stock = listed(sec, "For sale").map(e => ware(e, PLENTY)), wanted = listed(sec, "Will buy").map(e => ware(e, 1));
+  const purse = grab(part(sheet, "Gear"), "Money"), none = blank(purse) || /^no (money|coin)/i.test(purse);
+  return {name, keeper: blank(keeper) ? "" : keeper, coins, stock, wanted, purse: none ? "" : purse, has: none ? 0 : worth(purse, coins),
+          counted: coins.length > 0 && stock.concat(wanted).every(w => w.worth !== null)};
+}
+
+function basket(shop) {   // what's in the basket, held to what's there to trade, and what it comes to
+  if (!game.cart || game.cart.shop !== shop.name) game.cart = {shop: shop.name, buy: {}, sell: {}};
+  const side = (list, picked) => list.map(w => ({w, n: Math.min(picked[w.name] || 0, w.left)})).filter(l => l.n > 0);
+  const total = lines => lines.reduce((a, l) => a + l.n * l.w.worth, 0);
+  const buy = side(shop.stock, game.cart.buy), sell = side(shop.wanted, game.cart.sell);
+  const net = Math.round((total(buy) - total(sell)) * 100) / 100;
+  return {buy, sell, cost: total(buy), gain: total(sell), net, short: shop.counted && shop.has !== null && net > shop.has};
+}
+
+function renderShop() {
+  const shop = shopOf(game.texts.sheet || "");
+  if (!shop) return $("shopdialog").hidden = true;   // the character has left, or the keeper is done dealing
+  const b = basket(shop), selling = game.shoptab === "sell", face = shop.keeper && faceOf(shop.keeper);
+  const money = n => coinText(n, shop.coins), count = lines => lines.reduce((a, l) => a + l.n, 0);
+  $("shophead").textContent = shop.name;
+  $("shopwho").innerHTML = (face ? `<img src="${src(face)}" alt="">` : "")
+    + `<div class="keeper">${shop.keeper ? `<span class="caps">Keeper</span>${esc(shop.keeper)}` : ""}</div>`
+    + `<div class="purse${b.short ? " short" : shop.has === 0 ? " none" : ""}" title="What you have"><svg><use href="#i-coin"/></svg>
+       <span>${shop.has === 0 ? "No money" : shop.has !== null && shop.coins.length ? esc(money(shop.has)) : inline(shop.purse.replace(/\.$/, ""))}</span></div>`;
+  if (face) $("shopwho").querySelector("img").onclick = () => enlarge(face);
+  $("shoptabs").innerHTML = [["buy", "Buy", count(b.buy)], ["sell", "Sell", count(b.sell)]].map(([key, label, n]) =>
+    `<button data-shoptab="${key}"${selling === (key === "sell") ? ' class="on"' : ""}>${label}${n ? `<span>${n}</span>` : ""}</button>`).join("");
+
+  const picked = selling ? game.cart.sell : game.cart.buy, keep = $("shopbody").scrollTop;
+  $("shopbody").innerHTML = (selling ? shop.wanted : shop.stock).map((w, i) => {
+    const n = Math.min(picked[w.name] || 0, w.left);
+    const left = selling ? (w.left > 1 ? `you have ${w.left}` : "") : w.left < 1 ? "sold" : w.left < PLENTY ? `${w.left} left` : "";
+    return `<div class="ware${n ? " in" : ""}${w.left < 1 ? " gone" : ""}" data-ware="${i}" data-by="1">
+      <div class="glyph"><svg><use href="#g-${kindOf(w.name)}"/></svg>${n ? `<b>${n}</b>` : ""}</div>
+      <div class="what"><div class="name">${inline(w.name)}</div>${w.note ? `<div class="note">${inline(w.note)}</div>` : ""}</div>
+      <div class="price">${inline(w.price)}${left ? `<span>${left}</span>` : ""}</div>
+      <span class="step"><button data-ware="${i}" data-by="-1"${n ? "" : " disabled"}>−</button><button data-ware="${i}" data-by="1"${n < w.left ? "" : " disabled"}>+</button></span></div>`;
+  }).join("") || `<div class="empty">${selling ? "Nothing you carry is wanted here." : "Nothing is for sale here."}</div>`;
+  $("shopbody").scrollTop = keep;
+
+  const named = lines => lines.map(l => l.w.name + (l.n > 1 ? " ×" + l.n : "")).join(", ");
+  let tally = "";
+  if (b.buy.length) tally += `<div><span>Buying: ${esc(named(b.buy))}</span><span>${shop.counted ? esc(money(b.cost)) : ""}</span></div>`;
+  if (b.sell.length) tally += `<div><span>Selling: ${esc(named(b.sell))}</span><span>${shop.counted ? esc(money(b.gain)) : ""}</span></div>`;
+  if (!tally) tally = '<div class="empty">Pick what to buy and what to sell, then make the trade.</div>';
+  else if (!shop.counted) tally += '<div class="net"><span>The keeper adds it up when you make the trade.</span><span></span></div>';
+  else {
+    tally += `<div class="net"><span>${b.net > 0 ? "You pay" : b.net < 0 ? "You're paid" : "An even trade"}</span><span>${b.net ? esc(money(Math.abs(b.net))) : ""}</span></div>`;
+    if (b.short) tally += `<div class="short"><span>More than you have</span><span>${esc(money(b.net - shop.has))} short</span></div>`;
+    else if (shop.has !== null) tally += `<div><span>Left in your purse</span><span>${esc(money(shop.has - b.net))}</span></div>`;
+  }
+  $("shoptally").innerHTML = tally;
+  $("shopgo").disabled = !b.buy.length && !b.sell.length || b.short || game.state.busy;
+}
+
+$("shopbtn").onclick = () => {
+  const shop = shopOf(game.texts.sheet || "");
+  if (!shop) return;
+  game.shopSeen = shop.name;
+  $("shopbtn").classList.remove("new");
+  if (!shop.stock.length && shop.wanted.length) game.shoptab = "sell";
+  renderShop();
+  $("shopbody").scrollTop = 0;
+  $("shopdialog").hidden = false;
+};
+$("shoptabs").onclick = e => {
+  const b = e.target.closest("[data-shoptab]");
+  if (!b) return;
+  game.shoptab = b.dataset.shoptab;
+  renderShop();
+  $("shopbody").scrollTop = 0;
+};
+$("shopbody").onclick = e => {
+  const el = e.target.closest("[data-ware]"), shop = shopOf(game.texts.sheet || "");
+  if (!el || el.disabled || !shop) return;
+  const selling = game.shoptab === "sell", w = (selling ? shop.wanted : shop.stock)[+el.dataset.ware], picked = selling ? game.cart.sell : game.cart.buy;
+  if (!w) return;
+  picked[w.name] = Math.max(0, Math.min(w.left, (picked[w.name] || 0) + +el.dataset.by));
+  if (!picked[w.name]) delete picked[w.name];
+  renderShop();
+};
+$("shopclose").onclick = () => $("shopdialog").hidden = true;
+$("shopgo").onclick = guard(async () => {
+  const shop = shopOf(game.texts.sheet || "");
+  if (!shop) return $("shopdialog").hidden = true;
+  const b = basket(shop), said = l => `${l.w.name}${l.n > 1 ? " ×" + l.n : ""} (${l.w.price}${l.n > 1 ? " each" : ""})`;
+  if (!b.buy.length && !b.sell.length) return toast("Nothing in the basket yet.");
+  if (b.short) return toast("That comes to more than you have.");
+  const lines = [];
+  if (b.buy.length) lines.push("Buying: " + b.buy.map(said).join("; "));
+  if (b.sell.length) lines.push("Selling: " + b.sell.map(said).join("; "));
+  if (shop.counted) lines.push(b.net > 0 ? `In all I pay ${coinText(b.net, shop.coins)}.` : b.net < 0 ? `In all I'm paid ${coinText(-b.net, shop.coins)}.` : "It comes out even.");
+  await send(`I make a trade at ${shop.name}. {trade\n${lines.join("\n")}}`, true);
+  game.cart = null;
+  $("shopdialog").hidden = true;
 });
 
 // ---- making the character ---------------------------------------------------------
@@ -2569,7 +2779,7 @@ $("loadbtn").onclick = guard(async () => {
   $("loaddialog").hidden = false;
 });
 $("loadclose").onclick = () => $("loaddialog").hidden = true;
-for (const id of ["savedialog", "loaddialog", "leveldialog", "meantdialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
+for (const id of ["savedialog", "loaddialog", "leveldialog", "meantdialog", "shopdialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
 
 // ---- flagging a passage ---------------------------------------------------------
 
@@ -2597,7 +2807,7 @@ $("flag").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("shopdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");

@@ -1,6 +1,6 @@
 # Play
 
-How a narrative is run: starting a conversation, the beat, the end of a scene, and the end of a session.
+How a narrative is run: starting a conversation, the beat, the end of a scene, the end of a session, a new level, and a shop.
 
 A **session** is one sitting of play. It has one narrative log (`Sessions/Session N.md`, prose only, appended beat by beat) and one GM log (`GM Only/Logs/Session N GM Log.md`). A session stays open across conversations until the user ends it.
 
@@ -20,7 +20,7 @@ A **session** is one sitting of play. It has one narrative log (`Sessions/Sessio
 
 Every message from the user that isn't in braces is their character acting.
 
-**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop. An action that ends in `{push}` is the character pushing (Core Rules §5): the first roll they make for it has Edge, and 2 Strain comes off the sheet. `{push}` is never part of what the character does or says.
+**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop. An action that ends in `{push}` is the character pushing (Core Rules §5): the first roll they make for it has Edge, and 2 Strain comes off the sheet. `{push}` is never part of what the character does or says. An action that ends in `{trade ...}` is a trade made on the shop screen ("A shop," below).
 
 **2. Open a session if none is open:** `gm session start`. An action is all it takes to begin one.
 
@@ -52,7 +52,7 @@ Then `gm beat`. It appends the prose to the session log and files the rest, with
 
 **6a. Ask for a picture, only if the beat was a major moment** (Procedures/Art.md): the first sight of a town, a castle, or somewhere else that matters; a new person with a part to play; an object or a mystery found. `gm art ...` in the same call as `gm beat`. Most beats ask for nothing.
 
-**7. Update the Character Sheet** in the same turn if anything on it changed: HP, Strain, shape, wounds, conditions, gear, money. The **Shape** line is words the user can read at a glance.
+**7. Update the Character Sheet** in the same turn if anything on it changed: HP, Strain, shape, wounds, conditions, gear, money. The **Shape** line is words the user can read at a glance. If the beat took the character into a shop or out of one, open or close it ("A shop," below).
 
 **8. Give the beat in the chat,** exactly as committed and nothing else, if `gm status` shows chat echo on. If it's off, reply only `{added}`: the user is reading the log.
 
@@ -118,6 +118,53 @@ When the marks reach what the next level takes (Core Rules §16):
 3. The user's choices come back in braces, from the screen or in their own words. Check them against the rules, apply them to the sheet (ranks, the talent, the attribute and any defense, HP, or Strain it changes), and delete the `## Level up` section. If a choice can't stand, or they've asked for a skill or talent that wasn't listed, settle it with them in braces and leave the section until it's settled.
 
 Without the window, put the same choices to the user in braces.
+
+## A shop
+
+When the character is somewhere that sells (a shop, a stall, a peddler's cart, a quartermaster's window) and whoever keeps it is ready to deal, the play window gives the user a shop screen: what's for sale and for how much, what the keeper would buy from them, and their money. The user fills a basket and makes the trade, and it comes to you as one action.
+
+**1. Open it.** In the same turn as the beat that brings the character in, write the shop as a section of the sheet, directly above `## Vitals`. The play window builds its shop screen from this section:
+
+```
+## Shop
+
+**Name:** Harrow's Chandlery
+**Keeper:** Old Harrow
+
+### Coins
+- **crown:** 240
+- **shilling:** 12
+- **penny (pence):** 1
+
+### For sale
+- **Tin lantern:** 4 shillings ×1. Horn pane, a little dented.
+- **Rope, fifty feet:** 2 shillings, 6 pence ×3
+- **Lamp oil, a pint:** 3 pence
+
+### Will buy
+- **Wolf pelt:** 6 shillings ×2. "Good winter fur."
+- **Short sword:** 18 shillings
+```
+
+- **Name** and **Keeper:** what the character knows them as. "A stall under a blue awning," "the woman with ink on her hands," until they learn better.
+- **Coins:** every coin of the world's currency, each with what it's worth in the smallest one, from the Economy. The plural goes in parentheses when it isn't the name with an s. A currency written with a sign goes in as the sign (`- **$:** 1`), and its prices are written `$4.50`. The window does its sums with this list, so it has to be there even when there's only one coin.
+- **For sale:** what the character can see on the shelves or has been told is to be had, one line each: the name, the price, `×` and how many there are, then a full stop and anything worth saying about it, in a line. Leave the count off only where there's plenty (bread, nails, lamp oil). Nothing kept under the counter is listed until the keeper brings it out.
+- **Will buy:** each thing in the character's gear that this keeper would take, under the name it has on the sheet, with what they'd pay for one, and `×` how many the character has if it's more than one. What the keeper has no use for isn't listed. Leave the heading out if they buy nothing.
+- **Prices** are the keeper's, set before the character asks (Core Rules §14, "Buying and selling"): an established price holds, and the rest come from the Economy, the keeper's nature, what they make of the character, and whatever is moving prices. Write a price as coins and nothing else (`1 crown, 4 shillings`), or the window can't add it up.
+- Like everything on the sheet, the section holds only what the character knows.
+
+**2. A trade** arrives as an action that ends in `{trade ...}`, listing what the character buys and sells, each price, and what it comes to. It's the character acting, so it's a beat:
+
+- Check it against the section and the sheet: the stock, the prices, and their money. If it can't be done as stated, say so in braces and stop.
+- Nothing is rolled unless something is uncertain. A trade at the keeper's own prices isn't.
+- Write it short: the goods and the coin change hands on the page in a few lines, with whatever the keeper says or does. The character buys and sells exactly what's listed and does nothing else. Per the Craft Rules, the payment is on the page and the number usually isn't.
+- In the same turn, settle the sheet to the coin (the money, and each thing bought or sold in its gear line) and the section (what's left of the stock, what the character still has to sell). The prices paid go in the beat's GM notes, and from there to the Economy. The keeper's money and the shop's **Has** follow at the end of the scene.
+
+**3. Everything else is played as it always is.** Haggling, asking for what isn't on the shelf, a favor, a theft: the user types it and it's a beat like any other (Core Rules §11). Whatever it changes, change in the section in the same turn: a price that came down, a thing brought out from the back, a keeper who won't sell to them now.
+
+**4. Close it.** Delete the `## Shop` section in the turn the character leaves, the keeper stops dealing, or the scene turns into something else. A shop left open after the character has walked out is a mistake.
+
+Without the window, the section is still written (the user can open the sheet to see what's for sale), and they buy and sell by saying so.
 
 ## When things go wrong
 

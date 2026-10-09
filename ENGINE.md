@@ -111,6 +111,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 | **Places** | the place's **Now** and **Has** | **Changed by** |
 | **Notable items** | `Items.md`: **Holder**, **Where**, **State** | the entry's history; Archive |
 | **Economy** | `Economy.md` | Timeline for big shifts |
+| **The shop the character is in** | Character Sheet, **Shop** (only while they're in it) | the place's **Has**; `Economy.md` for the prices |
 | **Groups** | the group's **Now** | **Changed by**, **On the page** |
 | **Time** | World State **Story Clock** | Timeline |
 | **Motion off the page** | `Pressures.md` | World Log |
@@ -132,6 +133,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 | The clock jumps a day or more | The time pass | `Procedures/World Turn.md` |
 | The user ends the session | The full World Turn, marks, the Journal | `Procedures/Play.md` |
 | The user writes in braces | A correction, a question, or a command | `Procedures/Corrections.md` |
+| The character walks into a shop, trades there, or leaves | Open the shop on the sheet, play the trade, close it | `Procedures/Play.md`, "A shop" |
 | The character meets someone or arrives somewhere worth seeing | Ask for a picture | `Procedures/Art.md` |
 
 ## The principles

@@ -65,6 +65,7 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - When the user flags a passage, the window quotes it to you in braces.
 - An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
 - When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for.
+- While the sheet has a `## Shop` section, the window shows the player a shop button that opens a shop screen built from it: the stock and its prices, what the keeper would buy, and their money (Procedures/Play.md, "A shop"). So don't list a shop's goods or prices in your message. What they buy and sell comes back as one action that ends in `{trade ...}`, and it's a beat.
 - When a session ends, the window shows a summary card built from the Journal's entry for that session and the mark lines under it (Procedures/Play.md, "The end of a session"). So your closing message stays short: the card already shows the marks.
 - The window's Undo button sends `{undo}`, and its "I meant" button sends `{I meant: ...}` with the action as the player meant it."""
 

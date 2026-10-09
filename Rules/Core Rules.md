@@ -219,6 +219,8 @@ Tags say what else is true of a weapon, in words that mean what they say: reach,
 
 **Money** is counted in the world's own currency, to the coin, on the Character Sheet (Craft Rules, "Track props and transactions").
 
+**Buying and selling.** A thing costs what the world's Economy says it costs, and a price the page has set holds. Someone who deals in a thing buys it for about half of what they'd sell it for: more if it's scarce or they have a buyer waiting, less if it's worn or hard to move, and nothing if they have no use for it. The keeper names the price, and the character can take it, leave it, or try to change it (§11). While the character is in a shop, what's for sale and what would be bought are listed for the user (Procedures/Play.md, "A shop").
+
 ## 15. Making the player character
 
 Done by the user during setup, on the play window's character creator or in conversation (Procedures/New Narrative.md). Whatever they leave open, the GM chooses to fit the person they described:
