@@ -34,12 +34,12 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 
 - **The narrative** fills the main column and grows as you play. Earlier sessions are in the picker at the top.
 - **The message box** at the bottom is how you play. "As my character" sends an action; "To the GM" sends a note in braces for you.
-- **Push** (beside those two) is for when your character gives an action everything they have. Switch it on before you send: it costs 2 Strain and gives them a better chance on that action's first roll. If nothing needed rolling, nothing is spent. It switches itself off after each action.
+- **Push** (under the message box) is for when your character gives an action everything they have. Switch it on before you send: it costs 2 Strain and gives them a better chance on that action's first roll. If nothing needed rolling, nothing is spent. It switches itself off after each action.
 - **Undo** and **I meant…** (shown while a session is open) take back the last beat. Undo removes it and everything it changed; press it twice to confirm. "I meant…" is for when the GM misread you: it shows what you wrote, you correct it, and the beat is played again from that.
 - **When a session ends,** a card shows the session as your character would tell it, which of the four marks it earned and why, and how far that puts you toward the next level. "How the last session ended" in the ⋯ menu shows it again.
 - **A new level** opens its own screen after that card, at the end of the session that earned it: place your three skill ranks, pick a talent or an attribute when the level gives one, and confirm. "Later" puts it off, and a button on the Character tab brings it back.
 - **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (what your character knows about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
-- **The top bar** has text size (A− and A+), a button to hide the side panel for reading, and the ⋯ menu.
+- **The top bar** has the button that ends or starts a session, a button to hide the side panel for reading, and the ⋯ menu, where Save game, Load game, and the text size are.
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it.
 - **During setup** the main column is your conversation with the GM: it tells you what your character would know about the world and helps you make them, and the Character tab fills in as you go.
 
@@ -52,7 +52,7 @@ The window hands what you type to Claude Code, the same GM that runs in VS Code,
 The GM has pictures painted for the major moments: your character's portrait at the end of setup, the first sight of a town, a castle, or another place that matters, a new person with a part to play, and an object or a mystery found. Ordinary rooms, roads, and passers-by get nothing. They're painted by Codex's image generation, using the Codex program its VS Code extension installed and your Codex sign-in, so Codex needs to be installed and signed in.
 
 - Each picture takes a minute or two and arrives while you keep playing. A new face slides in at the corner of the narrative when it's ready.
-- Your portrait sits on your character sheet, the current place runs across the top of the narrative, faces appear beside names in the Journal, and everything is in the **Gallery** tab. Click any picture to see it large.
+- Your portrait sits on your character sheet, the current place is a strip across the top of the narrative, faces appear beside names in the Journal, and everything is in the **Gallery** tab. Click any picture to see it large.
 - A picture only ever shows what your character has seen, under the name they know it by.
 - Pictures are painted while the play window is open. Playing in VS Code instead, run `gm art run` to paint what's waiting.
 - In braces: `{redo her portrait, she should look older}`, `{paint that}`, `{no more pictures}`. The art style for a narrative is a line in its Style Guide.
@@ -63,8 +63,8 @@ The files are in the narrative's `Art/` folder.
 
 A narrative has saved games, kept in its own folder on your computer. Nothing is uploaded.
 
-- **Save** (top bar) saves the game exactly as it stands. Give the save a name if you like.
-- **Load** lists your saves like save slots: the session each was made in, your character's name and level, and when. Pick one and the whole narrative goes back to that point: the story, your sheet, the Journal, the pictures, and everything the GM tracks behind the scenes.
+- **Save game** (in the ⋯ menu) saves the game exactly as it stands. Give the save a name if you like.
+- **Load game** lists your saves like save slots: the session each was made in, your character's name and level, and when. Pick one and the whole narrative goes back to that point: the story, your sheet, the Journal, the pictures, and everything the GM tracks behind the scenes.
 - The game also saves itself at the end of every session, and again just before any load, so loading never loses anything. You can always load your way back.
 - After a load, the GM starts from its notes as they were at that save and remembers nothing that came after.
 
@@ -143,7 +143,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | `Writing/Banned Names.md` | Names that are never used |
 | `Procedures/` | New Narrative, Play, World Turn, Corrections, Art |
 | `Templates/` | What a new narrative, cast member, place, or group starts as |
-| `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`, and its icon `gui/dice.ico`) |
+| `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`, its icon `gui/dice.ico`, and `gui/three.min.js`, the three.js library that draws the main menu's die) |
 | `Play.cmd`, `gm.cmd`, `New Narrative.cmd` | Windows launchers |
 
 ## Requirements

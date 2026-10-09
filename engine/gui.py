@@ -37,6 +37,7 @@ from narrative import CONFIG, ENGINE, Narrative, field
 
 PAGE = Path(__file__).resolve().parent / "gui" / "app.html"
 ICON = PAGE.with_name("dice.ico")   # the d20: the window, the taskbar, the browser tab, the shortcut
+THREE = PAGE.with_name("three.min.js")   # three.js r160, kept here so the main menu's die needs no network
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
@@ -496,6 +497,11 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/favicon.ico":  # the browser asks before the page has a token to send; it's only the die
             try:
                 return self.send(200, ICON.read_bytes(), "image/x-icon")
+            except OSError:
+                return self.send(404, {"error": "Not found"})
+        if route == "/three.js":  # a public library, and a <script> can't send a header either
+            try:
+                return self.send_media(THREE.read_bytes(), "text/javascript")
             except OSError:
                 return self.send(404, {"error": "Not found"})
         if route not in ("/", "/index.html"):

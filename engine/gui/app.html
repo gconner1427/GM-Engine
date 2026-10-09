@@ -12,7 +12,7 @@
   --good: #7fa46a; --mid: #cfa24e; --bad: #c0584c; --strain: #6b93c4; --warn: #d98a5f;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --sans: "Segoe UI", system-ui, sans-serif;
-  --story-size: 18px;
+  --story-size: 18px; --side: 420px;
   /* the house ornaments: a gold rule that fades at both ends, a bracket in each corner of a frame, and a film of grain */
   --rule: linear-gradient(90deg, transparent, var(--accent) 25%, var(--accent) 75%, transparent);
   --corner: linear-gradient(var(--accent), var(--accent));
@@ -107,15 +107,18 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 /* ---- home: the title screen ---- */
 #home { position: relative; overflow: hidden; background: var(--bg); }
 #homebg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#homedie { position: absolute; pointer-events: none; }
 #home::after { content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(90deg, #12100ce6 0%, #12100c88 34%, transparent 62%), radial-gradient(120% 90% at 50% 50%, transparent 55%, #000a 100%); }
-.home-menu { position: relative; z-index: 1; height: 100%; width: min(520px, 92vw); display: flex; flex-direction: column; justify-content: center;
-  padding: 40px 24px 56px clamp(36px, 8vw, 130px); }
-.masthead { margin-bottom: 40px; animation: menuin .8s cubic-bezier(.2, .8, .2, 1) both; }
+/* One column, as wide as the title and centred on it: the title, its line, and every button share the axis that runs down
+   through the title's die. The die itself takes the middle of the room that's left (dieSpot). */
+.home-menu { --w: clamp(430px, 62vmin, 640px); --pad: clamp(20px, 5vw, 90px); position: relative; z-index: 1; box-sizing: content-box; height: 100%; width: var(--w);
+  display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 0 0 var(--pad); }
+.masthead { margin-bottom: clamp(22px, 4vmin, 40px); animation: menuin .8s cubic-bezier(.2, .8, .2, 1) both; }
 #home.waiting .masthead, #home.waiting #mainmenu button { animation: none; opacity: 0; }
-.masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin-left: -4px; }
+.masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin: 0 auto; }
 /* the title: struck gold with a bevel line through the middle, tall first letters, and a glint that crosses it now and then */
-.masthead h1 { font: 400 clamp(46px, 6.2vmin, 62px)/1 var(--serif); letter-spacing: .17em; text-transform: uppercase; margin: 16px 0 14px; white-space: nowrap;
+.masthead h1 { font: 400 clamp(46px, 6.2vmin, 62px)/1 var(--serif); letter-spacing: .17em; text-transform: uppercase; margin: 16px auto 14px; white-space: nowrap;
   display: flex; align-items: baseline; gap: .34em; width: max-content; padding-bottom: .06em; color: transparent; -webkit-background-clip: text; background-clip: text;
   background-image: linear-gradient(105deg, transparent 42%, #fffbeecc 50%, transparent 58%),
     linear-gradient(#fff8e2 6%, #f0d9a8 30%, #c9a25b 50%, #7d5f2a 54%, #d9b771 72%, #9c7738 96%);
@@ -125,39 +128,44 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .masthead h1 b { font-weight: 400; font-size: 1.32em; letter-spacing: .08em; }
 @keyframes glint { 0% { background-position: 130% 0, 0 0; } 22%, 100% { background-position: -70% 0, 0 0; } }
 @media (prefers-reduced-motion: reduce) { .masthead h1 { animation: none; } }
-/* the painted title, once it has loaded, stands in for the typed one, its die, and its rule. The picture has empty space around the
-   lettering, so it's pulled out by that much to sit on the menu's left edge. */
-#titleart { --w: clamp(430px, 62vmin, 640px); position: relative; width: var(--w); aspect-ratio: 3 / 1;
-  margin: calc(var(--w) * -.05) 0 calc(var(--w) * -.025) calc(var(--w) * -.058); filter: drop-shadow(0 8px 16px #000b); user-select: none; }
+/* the painted title, once it has loaded, stands in for the typed one, its die, and its rule. The picture has empty space above
+   and below the lettering, so it's pulled in by that much. */
+#titleart { position: relative; width: var(--w); aspect-ratio: 3 / 1; margin: calc(var(--w) * -.05) 0 calc(var(--w) * -.04); filter: drop-shadow(0 8px 16px #000b); user-select: none; }
 #titleart img { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-user-drag: none; }
 #titleart i { position: absolute; inset: 0; mix-blend-mode: screen; -webkit-mask: var(--title) center / 100% 100% no-repeat; mask: var(--title) center / 100% 100% no-repeat;
   background: linear-gradient(105deg, transparent 44%, #fff4d6b3 50%, transparent 56%) 130% 0 / 260% 100% no-repeat; animation: titleglint 9s ease-in-out 1.6s infinite; }
 @keyframes titleglint { 0% { background-position: 130% 0; } 22%, 100% { background-position: -70% 0; } }
 @media (prefers-reduced-motion: reduce) { #titleart i { display: none; } }
 .masthead.art > svg, .masthead.art > h1, .masthead.art::after { display: none; }
-.masthead p { color: var(--dim); margin: 0; font: italic 15px var(--serif); letter-spacing: .3px; }
-.masthead::after { content: ""; display: block; width: 300px; height: 7px; margin-top: 22px;
-  background: linear-gradient(135deg, transparent 50%, var(--accent-hi) 50%) 0 0 / 3.5px 3.5px no-repeat, linear-gradient(45deg, transparent 50%, var(--accent-hi) 50%) 0 3.5px / 3.5px 3.5px no-repeat,
-    linear-gradient(-135deg, transparent 50%, var(--accent-hi) 50%) 3.5px 0 / 3.5px 3.5px no-repeat, linear-gradient(-45deg, transparent 50%, var(--accent-hi) 50%) 3.5px 3.5px / 3.5px 3.5px no-repeat,
-    linear-gradient(90deg, var(--accent), transparent) 13px 3px / 100% 1px no-repeat; }
+.masthead p { color: var(--dim); margin: 0; font: italic clamp(14px, 1.9vmin, 16px) var(--serif); letter-spacing: .6px; }
+.masthead::after { content: ""; display: block; width: 300px; height: 1px; margin: 22px auto 0; background: var(--rule); }
 #studiomark { position: absolute; z-index: 1; top: 22px; right: 26px; width: clamp(84px, 11vmin, 124px); opacity: .9; -webkit-user-drag: none; user-select: none;
   animation: markin 1.2s ease .5s both; }
 #home.waiting #studiomark { animation: none; opacity: 0; }
 @keyframes markin { from { opacity: 0; } to { opacity: .9; } }
-#mainmenu { display: grid; gap: 4px; justify-items: start; }
-#mainmenu button { position: relative; background: none; border: none; border-radius: 0; text-align: left; width: 100%; padding: 11px 18px;
-  font: 400 23px var(--serif); letter-spacing: 4px; text-transform: uppercase; color: var(--ink);
-  transition: color .2s, padding-left .25s cubic-bezier(.2, .8, .2, 1), background .25s;
+#mainmenu { display: grid; gap: 2px; width: min(100%, 400px); }
+#mainmenu button { position: relative; background: none; border: none; border-radius: 0; width: 100%; padding: clamp(7px, 1.2vmin, 11px) 0;
+  font: 400 clamp(19px, 2.5vmin, 23px)/1.25 var(--serif); letter-spacing: 4px; text-indent: 4px; text-transform: uppercase; color: var(--ink);   /* the indent evens out the spacing after the last letter */
+  transition: color .2s, background .3s;
   animation: menuin .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--n) * 80ms + .1s); }
-#mainmenu button::before { content: ""; position: absolute; left: 0; top: 50%; width: 7px; height: 7px; margin-top: -4px; background: var(--accent);
-  transform: rotate(45deg) scale(0); transition: transform .25s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 0 10px var(--accent); }
-#mainmenu button:hover, #mainmenu button:focus-visible { color: var(--accent); padding-left: 32px; outline: none;
-  background: linear-gradient(90deg, var(--accent-soft), transparent 80%); }
-#mainmenu button:hover::before, #mainmenu button:focus-visible::before { transform: rotate(45deg) scale(1); left: 10px; }
-#mainmenu button small { display: block; margin-top: 3px; font: italic 400 14px var(--serif); letter-spacing: .5px; text-transform: none; color: var(--dim); }
-#mainmenu button.last { color: var(--dim); margin-top: 14px; }
-#mainmenu button.last:hover { color: var(--accent); }
-@keyframes menuin { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+/* under the pointer a button lights along the line and a diamond comes in on each side of its name, as on the title's rule */
+#mainmenu button span { position: relative; display: inline-block; }
+#mainmenu button span::before, #mainmenu button span::after { content: ""; position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -4px; background: var(--accent);
+  opacity: 0; transform: rotate(45deg) scale(.4); transition: transform .25s cubic-bezier(.2, .8, .2, 1), opacity .2s, left .25s cubic-bezier(.2, .8, .2, 1), right .25s cubic-bezier(.2, .8, .2, 1);
+  box-shadow: 0 0 10px var(--accent); }
+#mainmenu button span::before { left: -44px; }
+#mainmenu button span::after { right: -40px; }
+#mainmenu button:hover, #mainmenu button:focus-visible { color: var(--accent-hi); outline: none;
+  background: linear-gradient(90deg, transparent, var(--accent-soft) 30%, var(--accent-soft) 70%, transparent); }
+#mainmenu button:hover span::before, #mainmenu button:focus-visible span::before { left: -30px; opacity: 1; transform: rotate(45deg); }
+#mainmenu button:hover span::after, #mainmenu button:focus-visible span::after { right: -26px; opacity: 1; transform: rotate(45deg); }
+#mainmenu button small { display: block; margin-top: 2px; font: italic 400 14px var(--serif); letter-spacing: .5px; text-indent: 0; text-transform: none; color: var(--dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#mainmenu #menucontinue:not(:hover, :focus-visible) { color: var(--accent); }   /* the way back in is the first thing offered */
+/* leaving stands apart, under a short rule of its own */
+#mainmenu button.last { color: var(--dim); margin-top: clamp(16px, 3vmin, 28px); }
+#mainmenu button.last::before { content: ""; position: absolute; left: 50%; top: calc(clamp(16px, 3vmin, 28px) / -2); width: 150px; height: 1px; margin-left: -75px; background: var(--rule); opacity: .55; }
+@keyframes menuin { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 #list { max-height: 56vh; overflow: auto; padding-right: 4px; }
 .dialog .form { background: none; border: none; padding: 0; }
 .setting { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
@@ -189,20 +197,20 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 
 /* ---- game ---- */
 #game { display: grid; grid-template-rows: auto 1fr; }
-header { position: relative; z-index: 4; display: flex; justify-content: space-between; align-items: center; gap: 10px; height: 54px; padding: 0 14px;
+header { position: relative; z-index: 4; display: flex; justify-content: space-between; align-items: center; gap: 10px; height: 48px; padding: 0 14px;
   background: linear-gradient(#1d1913, #14110d); box-shadow: 0 8px 28px #0009; }
 header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
   background: linear-gradient(90deg, var(--line), var(--edge) 28%, var(--accent) 50%, var(--edge) 72%, var(--line)); }
 header .left, header .right { display: flex; align-items: center; gap: 2px; }
 header .right { justify-content: flex-end; }
 /* the title sits over the story column, on the same axis as the chapter heading and the page under it */
-header .title { position: absolute; left: 0; right: 460px; top: 0; bottom: 0; padding: 0 200px; display: flex; align-items: center; justify-content: center; gap: 18px;
+header .title { position: absolute; left: 0; right: var(--side); top: 0; bottom: 0; padding: 0 150px; display: flex; align-items: center; justify-content: center; gap: 18px;
   pointer-events: none; }
-#game:has(.body.wide) header .title { right: 0; padding: 0 500px; }
+#game:has(.body.wide) header .title { right: 0; padding: 0 280px; }
 @media (max-width: 1300px) { header .title::before, header .title::after { display: none; } }
 header .title::before, header .title::after { content: ""; flex: none; width: 54px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent)); }
 header .title::after { transform: scaleX(-1); }
-header .title span { min-width: 0; font: 400 15px var(--serif); letter-spacing: 4px; padding-left: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden;
+header .title span { min-width: 0; font: 400 14px var(--serif); letter-spacing: 4px; color: var(--dim); padding-left: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis; text-shadow: 0 0 26px #c9a25b55; }
 header button { background: none; border-color: transparent; color: var(--dim); padding: 8px 10px; }
 header button:hover:not(:disabled) { color: var(--accent-hi); }
@@ -224,20 +232,26 @@ header select:hover, header select:focus { color: var(--accent-hi); border-color
 .menu-items button { text-align: left; background: none; border-color: transparent; color: var(--ink); padding: 9px 12px;
   font: 400 15px var(--serif); letter-spacing: .3px; text-transform: none; }
 .menu-items button:hover:not(:disabled) { background: linear-gradient(90deg, var(--accent-soft), transparent); color: var(--accent-hi); }
-.body { display: grid; grid-template-columns: minmax(0, 1fr) 460px; min-height: 0; }
+.menu-items hr { border: none; height: 1px; margin: 5px 6px; background: var(--line-soft); }
+.menu-items .textsize { display: flex; align-items: center; gap: 4px; padding: 3px 6px 3px 12px; font: 400 15px var(--serif); letter-spacing: .3px; }
+.menu-items .textsize span { flex: 1; }
+.menu-items .textsize button { padding: 6px 12px; border-color: var(--line); font: 600 11px var(--sans); letter-spacing: 1px; }
+.body { display: grid; grid-template-columns: minmax(0, 1fr) var(--side); min-height: 0; }
 .body.wide { grid-template-columns: minmax(0, 1fr); }
 .body.wide aside { display: none; }
 .main { display: grid; grid-template-rows: auto 1fr auto; min-height: 0; min-width: 0; position: relative;
   background: var(--grain), radial-gradient(1000px 560px at 50% -6%, #261e13 0%, transparent 72%), radial-gradient(120% 100% at 50% 50%, transparent 50%, #0009 100%), var(--bg); }
 #backdrop { grid-row: 1; } #story { grid-row: 2; } .composer { grid-row: 3; }   /* so the story keeps the middle row when there's no backdrop */
-#story { overflow: auto; padding: 52px 40px 36px;
+#story { overflow: auto; padding: 40px 40px 32px;
   -webkit-mask-image: linear-gradient(transparent, #000 34px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(transparent, #000 34px, #000 calc(100% - 28px), transparent); }
-#backdrop { height: 220px; position: relative; cursor: zoom-in; background: #000 center 40% / cover no-repeat; animation: fadein 1.2s ease; }
-#backdrop::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 110% at 50% 35%, transparent 35%, #000b 100%); }
-#backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 30%, #12100cb0 74%, var(--bg) 100%); }
-#backdrop span { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 16px;
-  color: var(--ink); text-shadow: 0 1px 10px #000, 0 0 24px #000; font: 400 14px var(--serif); letter-spacing: 6px; padding-left: 6px; }
-#backdrop span::before, #backdrop span::after { content: ""; width: 64px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent)); }
+/* where the character is: a strip of the place's picture, thin enough to leave the page to the story; a click shows the whole of it */
+#backdrop { height: 68px; position: relative; cursor: zoom-in; background: #000 center 42% / cover no-repeat; animation: fadein 1.2s ease; }
+#backdrop::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #12100cf2, #12100c4d 32%, #12100c4d 68%, #12100cf2); transition: opacity .3s; }
+#backdrop:hover::before { opacity: .6; }
+#backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(#12100c40, #12100c8c 60%, var(--bg) 100%); }
+#backdrop span { position: absolute; inset: 0 0 4px; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 16px;
+  color: var(--ink); text-shadow: 0 1px 10px #000, 0 0 24px #000; font: 400 13px var(--serif); letter-spacing: 6px; padding-left: 6px; }
+#backdrop span::before, #backdrop span::after { content: ""; width: 54px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent)); }
 #backdrop span::after { transform: scaleX(-1); }
 #arrival { position: absolute; left: 24px; bottom: 100%; margin-bottom: 18px; z-index: 6; display: flex; align-items: center; gap: 14px; cursor: zoom-in;
   background: var(--corners), linear-gradient(#262117, #1a1611); border: 1px solid var(--edge); border-radius: 2px; padding: 10px 22px 10px 10px;
@@ -300,37 +314,45 @@ header select:hover, header select:focus { color: var(--accent-hi); border-color
 #story .msg.gm .md h2 { font-size: 12px; }
 #story .msg .who { font-size: 10px; margin-bottom: 8px; }
 
-.composer { position: relative; padding: 14px 28px 20px; background: linear-gradient(#18150fd9, #0f0d0a); }
+.composer { position: relative; padding: 12px 28px 12px; background: linear-gradient(#16130ecc, #0f0d0a); }
 .composer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--edge) 18%, var(--edge) 82%, transparent); }
 .composer:has(.working:not([hidden]))::before { background: linear-gradient(90deg, transparent, var(--accent-hi), transparent) 0 0 / 40% 100% no-repeat,
   linear-gradient(90deg, transparent, var(--edge) 18%, var(--edge) 82%, transparent); animation: sweep 2.4s linear infinite; }
 @keyframes sweep { from { background-position: -67% 0, 0 0; } to { background-position: 167% 0, 0 0; } }
-.working, .modes, .compose-row { max-width: 840px; margin-left: auto; margin-right: auto; }
-.working { display: flex; align-items: center; gap: 14px; color: var(--dim); margin-bottom: 12px; }
+.working, .modes, .compose-row { max-width: 760px; margin-left: auto; margin-right: auto; }
+.working { display: flex; align-items: center; gap: 14px; color: var(--dim); margin-bottom: 10px; }
 .working svg { width: 28px; height: 28px; color: var(--accent); flex: none; animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); filter: drop-shadow(0 0 8px #c9a25b88); }
 @keyframes tumble { 0% { transform: rotate(0); } 40% { transform: rotate(200deg); } 60% { transform: rotate(160deg); } 100% { transform: rotate(360deg); } }
 .working .lines { flex: 1; min-width: 0; }
 .working .now { color: var(--ink); font: italic 16px var(--serif); }
 .working .echo { font-size: 12px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .working .clock { font-variant-numeric: tabular-nums; color: var(--faint); letter-spacing: 1px; }
-.modes { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+/* one box to write in, with Send inside it; under it, quietly, who is being spoken to and what can be done about the last beat */
+.compose-row { display: flex; gap: 6px; align-items: flex-end; padding: 5px; border: 1px solid var(--edge); border-radius: 3px; background: linear-gradient(#0a0806, #100d0a);
+  box-shadow: inset 0 2px 8px #0008; transition: border-color .2s, box-shadow .2s; }
+.compose-row:focus-within { border-color: var(--accent); box-shadow: inset 0 2px 8px #0008, 0 0 0 1px #c9a25b2e, 0 0 20px #c9a25b1f; }
+.compose-row textarea { flex: 1; resize: none; min-height: 40px; max-height: 220px; font: 16.5px/1.55 var(--serif); padding: 7px 11px; border: none; background: none; box-shadow: none; }
+.compose-row textarea:focus { box-shadow: none; }
+.compose-row button { height: 40px; padding: 0 22px; letter-spacing: 2.6px; }
+body.gmmode .compose-row { border-style: dashed; }
+body.gmmode .compose-row textarea { font: 14.5px/1.75 var(--sans); }
+.modes { display: flex; align-items: center; gap: 18px; margin-top: 6px; padding: 0 6px; }
 .seg { display: inline-flex; flex: none; border: 1px solid var(--line); border-radius: 2px; background: var(--well); }
 .seg button { border: none; background: none; border-radius: 0; padding: 7px 14px; font-size: 10.5px; color: var(--faint); }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button:not(.on):hover:not(:disabled) { color: var(--dim); }
 .seg button.on { color: var(--accent-hi); background: linear-gradient(#c9a25b30, #c9a25b12); box-shadow: inset 0 -1px 0 var(--accent); }
-.modes .tip { color: var(--faint); font: italic 13.5px var(--serif); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.modes .acts { display: flex; gap: 4px; flex: none; }
-.modes .acts button { padding: 7px 10px; font-size: 10.5px; color: var(--dim); background: none; border-color: transparent; }
+.modes .seg { border: none; background: none; gap: 18px; }
+.modes .seg button { padding: 6px 1px; font-size: 10px; }
+.modes .seg button + button { border-left: none; }
+.modes .seg button.on { background: none; }
+.modes .tip { color: var(--faint); font: italic 13px var(--serif); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.modes .acts { display: flex; align-items: center; gap: 2px; flex: none; margin-left: auto; }
+.modes .acts button { padding: 6px 9px; font-size: 10px; color: var(--faint); background: none; border-color: transparent; }
 .modes .acts button:hover:not(:disabled) { color: var(--accent-hi); }
-.modes .acts .push { border-color: var(--line); margin-left: 6px; padding: 7px 14px; }
+.modes .acts .push { border-color: var(--line); color: var(--dim); margin-left: 8px; padding: 4px 11px; }
 .modes .acts .push:hover:not(:disabled) { border-color: var(--strain); color: #b9d0ec; }
 .modes .acts .push.on { background: linear-gradient(#6b93c44d, #6b93c41f); border-color: var(--strain); color: #d4e3f6; box-shadow: 0 0 18px #6b93c455; }
-.compose-row { display: flex; gap: 10px; align-items: flex-end; }
-.compose-row textarea { flex: 1; resize: none; min-height: 52px; max-height: 220px; font: 16.5px/1.55 var(--serif); padding: 12px 16px; border-color: var(--edge);
-  background: linear-gradient(#0a0806, #100d0a); }
-.compose-row button { height: 52px; padding: 0 28px; letter-spacing: 3px; }
-body.gmmode .compose-row textarea { font: 14.5px/1.75 var(--sans); border-style: dashed; }
 
 aside { position: relative; display: grid; grid-template-rows: auto 1fr; min-height: 0; box-shadow: -16px 0 44px #0008;
   background: var(--grain), linear-gradient(#1d1913, #15120d 46%); }
@@ -338,7 +360,7 @@ aside::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; wid
   background: linear-gradient(var(--line), var(--edge) 20%, var(--accent) 50%, var(--edge) 80%, var(--line)); }
 .tabs { display: flex; padding: 0 14px; border-bottom: 1px solid var(--line); }
 .tabs button { position: relative; flex: 1 1 auto; border: none; border-radius: 0; background: none; color: var(--faint); padding: 17px 2px 15px;
-  font: 400 12px var(--serif); letter-spacing: 1.8px; }
+  font: 400 12px var(--serif); letter-spacing: 1.2px; }
 .tabs button::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 7px; height: 7px; margin-left: -3.5px; background: var(--accent);
   box-shadow: 0 0 10px var(--accent); transform: rotate(45deg) scale(0); transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
 .tabs button::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -1px; height: 1px; background: var(--rule); opacity: 0; transition: opacity .25s; }
@@ -664,6 +686,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 
 <div id="home" class="view">
   <canvas id="homebg"></canvas>
+  <canvas id="homedie"></canvas>
   <img id="studiomark" alt="Gravelight Studios">
   <div class="home-menu">
     <div class="masthead">
@@ -674,12 +697,12 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     </div>
     <div id="noclaude" class="warnbox" hidden>Claude Code wasn't found on this computer. Install the Claude Code extension in VS Code and sign in, then reopen this window.</div>
     <nav id="mainmenu">
-      <button id="menucontinue" style="--n:0" hidden>Continue<small id="continuename"></small></button>
-      <button id="menunarratives" style="--n:1">Narratives</button>
-      <button id="menunew" style="--n:2">New Narrative</button>
-      <button id="menusettings" style="--n:3">Settings</button>
-      <button id="menuabout" style="--n:4">About</button>
-      <button id="menuexit" class="last" style="--n:5">Exit Game</button>
+      <button id="menucontinue" style="--n:0" hidden><span>Continue</span><small id="continuename"></small></button>
+      <button id="menunarratives" style="--n:1"><span>Narratives</span></button>
+      <button id="menunew" style="--n:2"><span>New Narrative</span></button>
+      <button id="menusettings" style="--n:3"><span>Settings</span></button>
+      <button id="menuabout" style="--n:4"><span>About</span></button>
+      <button id="menuexit" class="last" style="--n:5"><span>Exit Game</span></button>
     </nav>
   </div>
 </div>
@@ -774,16 +797,16 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     </div>
     <div class="title"><span id="title"></span></div>
     <div class="right">
-      <button id="savebtn" hidden title="Save the game as it stands">Save</button>
-      <button id="loadbtn" hidden title="Go back to a save">Load</button>
       <button id="newsession" hidden>New session</button>
       <button id="endsession" hidden>End session</button>
-      <button id="smaller" class="quiet" title="Smaller text">A−</button>
-      <button id="larger" class="quiet" title="Larger text">A+</button>
       <button id="panel" class="quiet icon" title="Show or hide the side panel"><svg><use href="#i-panel"/></svg></button>
       <div class="menu">
-        <button id="more" class="quiet icon" title="More"><svg><use href="#i-more"/></svg></button>
+        <button id="more" class="quiet icon" title="Save, load, text size, and more"><svg><use href="#i-more"/></svg></button>
         <div class="menu-items" id="moreitems" hidden>
+          <button id="savebtn" hidden title="Save the game as it stands">Save game</button>
+          <button id="loadbtn" hidden title="Go back to a save">Load game</button>
+          <div class="textsize" id="textsize" hidden><span>Text size</span><button id="smaller" title="Smaller text">A−</button><button id="larger" title="Larger text">A+</button></div>
+          <hr id="menurule" hidden>
           <button data-act="summary">How the last session ended</button>
           <button data-act="recap">Where do things stand?</button>
           <button data-act="fresh">Start a fresh GM conversation</button>
@@ -806,18 +829,18 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
           <span class="clock" id="clock"></span>
           <button id="stop" class="quiet">Stop</button>
         </div>
+        <div class="compose-row">
+          <textarea id="input" rows="1"></textarea>
+          <button id="send" class="primary">Send</button>
+        </div>
         <div class="modes" id="modes">
-          <div class="seg"><button id="modeact" class="on">As my character</button><button id="modegm">To the GM</button></div>
+          <div class="seg"><button id="modeact" class="on" title="What your character does, in first or third person. Only what you state happens.">As my character</button><button id="modegm" title="A correction, a question, or a command. It's sent in braces and never goes in the narrative.">To the GM</button></div>
           <span class="tip" id="modetip"></span>
           <div class="acts">
             <button id="undo" hidden title="Take the last beat back out of the narrative, with everything it changed">Undo</button>
             <button id="meant" hidden title="The GM misread what you wrote: the last beat is taken back and played again from what you meant">I meant…</button>
             <button id="push" class="push" hidden>Push · 2 Strain</button>
           </div>
-        </div>
-        <div class="compose-row">
-          <textarea id="input" rows="1"></textarea>
-          <button id="send" class="primary">Send</button>
         </div>
       </div>
     </div>
@@ -887,6 +910,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 <div id="lightbox" hidden><img alt=""><div></div></div>
 <div id="toast" hidden></div>
 
+<script src="/three.js"></script>
 <script>
 const TOKEN = "__GM_TOKEN__";
 const START = __GM_START__;
@@ -1275,11 +1299,27 @@ const EMBERS = Array.from({length: 46}, () => ({x: Math.random(), y: Math.random
                                                 sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));
 const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let backdropOn = false;
-// Unannounced: clicking the die spins it up, more with every click, and it winds back down when left alone.
-const die = {angle: 0, spin: 0, last: 0, x: 0, y: 0, r: 0};
+// How the die is turned is a 3×3 matrix in rows, in the canvas's own directions: x to the right, y down, z toward the eye.
+function turnAbout([x, y, z], by) {   // by so many radians about a unit axis
+  const c = Math.cos(by), s = Math.sin(by), k = 1 - c;
+  return [c + x * x * k, x * y * k - z * s, x * z * k + y * s,
+          y * x * k + z * s, c + y * y * k, y * z * k - x * s,
+          z * x * k - y * s, z * y * k + x * s, c + z * z * k];
+}
+const turns = (a, b) => [0, 3, 6].flatMap(i => [0, 1, 2].map(j => a[i] * b[j] + a[i + 1] * b[j + 3] + a[i + 2] * b[j + 6]));   // b, then a
+const dieTilt = t => .42 + .16 * Math.sin(t * .11);   // it leans toward the eye, and nods a little
+
+// Unannounced: clicking the die pushes it where it was clicked, so that side goes back and the far side comes round. Every
+// click adds to the spin, and it winds back down when left alone. A click dead centre turns it the way it idles.
+const die = {turn: turnAbout([0, 1, 0], 0), spin: [0, 0, 0], last: 0, x: 0, y: 0, r: 0};
 $("home").addEventListener("pointerdown", e => {
-  if (e.target.closest("button") || Math.hypot(e.clientX - die.x, e.clientY - die.y) > die.r) return;
-  die.spin = Math.min(40, die.spin * 1.25 + 2.5);
+  const dx = e.clientX - die.x, dy = e.clientY - die.y, far = Math.hypot(dx, dy);
+  if (e.target.closest("button") || far > die.r) return;
+  const [ux, uy] = far > die.r * .08 ? [-dy / far, dx / far] : [0, 1], tilt = dieTilt(die.last);
+  const push = [ux, uy * Math.cos(tilt), -uy * Math.sin(tilt)];   // the axis as the die has it, under its lean
+  die.spin = die.spin.map((v, i) => v * 1.25 + push[i] * 2.5);
+  const speed = Math.hypot(...die.spin);
+  if (speed > 40) die.spin = die.spin.map(v => v * 40 / speed);
 });
 
 EDGES.forEach(e => { if (DIE[e[0]][1] > DIE[e[1]][1]) e.reverse(); });   // every edge runs top to bottom, and so does the list: the intro draws the die downward
@@ -1294,15 +1334,18 @@ function fit(cv) {   // a canvas sized to its box and wiped, with its context in
   return [c, w, h];
 }
 
-const dieSpot = (w, h) => [w * .68, h * .5, Math.min(w, h) * .13];   // where the die lives on the home screen
+// Where the die lives on the home screen: in the middle of the room to the right of the menu's column, and no bigger than that room allows.
+const dieSpot = (w, h) => {
+  const edge = Math.min(w * .6, document.querySelector(".home-menu").getBoundingClientRect().right);
+  return [(edge + w) / 2, h * .5, Math.min(w * .13, h * .13, (w - edge) * .2)];
+};
 
-function diePoints(cx, cy, r, t, ay, tilt) {
-  const ax = .42 + .16 * Math.sin(t * .11) + (tilt || 0);
+// tilt leans it further over, and twirl turns it about its own upright before anything else: the intro's tumble
+function diePoints(cx, cy, r, t, turn, tilt, twirl) {
+  const m = turns(turnAbout([1, 0, 0], dieTilt(t) + (tilt || 0)), twirl ? turns(turn, turnAbout([0, 1, 0], twirl)) : turn);
   return DIE.map(([x, y, z]) => {
-    const x1 = x * Math.cos(ay) + z * Math.sin(ay), z1 = z * Math.cos(ay) - x * Math.sin(ay);
-    const y2 = y * Math.cos(ax) - z1 * Math.sin(ax), z2 = z1 * Math.cos(ax) + y * Math.sin(ax);
-    const k = 5 / (5 - z2);
-    return [cx + x1 * k * r, cy + y2 * k * r + Math.sin(t * .4) * 6, z2];
+    const z2 = m[6] * x + m[7] * y + m[8] * z, k = 5 / (5 - z2);
+    return [cx + (m[0] * x + m[1] * y + m[2] * z) * k * r, cy + (m[3] * x + m[4] * y + m[5] * z) * k * r + Math.sin(t * .4) * 6, z2];
   });
 }
 
@@ -1352,6 +1395,85 @@ function drawDie(c, pts, heat, grow, bloom) {
   });
 }
 
+// The home screen's die as a solid thing, when three.js has loaded and the machine can draw it: dark faces with their numbers
+// struck in gold, held in the wire die's own pose, so the intro's drawing settles into it. Without it the wire die stays.
+const solid = (() => {
+  if (!window.THREE) return null;
+  try {
+    const cv = $("homedie"), REACH = 2.6;   // from the die's middle to the canvas's edge, in the die's own units
+    const renderer = new THREE.WebGLRenderer({canvas: cv, alpha: true, antialias: true});
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(2 * Math.atan(REACH / 5) * 180 / Math.PI, 1, 1, 10);
+    camera.position.z = 5;   // where diePoints looks from
+
+    const shape = new THREE.IcosahedronGeometry(Math.hypot(1, PHI), 0), at = shape.attributes.position, uv = shape.attributes.uv;
+    const middles = Array.from({length: 20}, (_, f) => [0, 1, 2].reduce((m, k) => m.add(new THREE.Vector3().fromBufferAttribute(at, f * 3 + k)), new THREE.Vector3()));
+    const numbers = [];   // as on a real d20, opposite faces add up to 21
+    let next = 1;
+    middles.forEach((m, f) => {
+      if (numbers[f]) return;
+      numbers[f] = next;
+      numbers[middles.findIndex(o => o.dot(m) < 0 && o.distanceTo(m.clone().negate()) < .01)] = 21 - next++;
+    });
+
+    // every face gets a square of one sheet, with its number sitting in the middle of the triangle cut from that square
+    const CELL = 256, sheet = document.createElement("canvas"), pen = sheet.getContext("2d");
+    sheet.width = CELL * 5; sheet.height = CELL * 4;
+    pen.fillStyle = "#231c13";
+    pen.fillRect(0, 0, sheet.width, sheet.height);
+    pen.fillStyle = "#e6c27e";
+    pen.font = `600 ${CELL * .36}px ${getComputedStyle(document.documentElement).getPropertyValue("--serif")}`;
+    pen.textAlign = "center"; pen.textBaseline = "middle";
+    numbers.forEach((n, f) => {
+      const col = f % 5, row = Math.floor(f / 5), x = (col + .5) * CELL, y = (row + 1) * CELL - CELL * .866 / 3;
+      pen.fillText(n, x, y);
+      if (n === 6 || n === 9) pen.fillRect(x - CELL * .08, y + CELL * .16, CELL * .16, CELL * .02);   // which way up
+      const low = 1 - (row + 1) / 4;
+      uv.setXY(f * 3, (col + .5) / 5, low + .866 / 4);
+      uv.setXY(f * 3 + 1, col / 5, low);
+      uv.setXY(f * 3 + 2, (col + 1) / 5, low);
+    });
+    const faces = new THREE.CanvasTexture(sheet);
+    faces.colorSpace = THREE.SRGBColorSpace;
+    faces.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    const skin = new THREE.MeshStandardMaterial({map: faces, emissive: 0xc9a25b, emissiveMap: faces, roughness: .42, metalness: .15, flatShading: true});
+    const wire = new THREE.LineBasicMaterial({transparent: true, opacity: .85});
+    const COOL = new THREE.Color(0xc9a25b), HOT = new THREE.Color(0xffe6b4);
+    const body = new THREE.Group();
+    body.add(new THREE.Mesh(shape, skin), new THREE.LineSegments(new THREE.EdgesGeometry(shape), wire));
+    body.children[1].scale.setScalar(1.003);   // the gold edges sit just proud of the faces
+    scene.add(body, new THREE.AmbientLight(0xffe8c8, .55));
+    for (const [color, power, x, y, z] of [[0xffdfa8, 2.6, -3, 4, 5], [0xc9a25b, 1.4, 4, -2, -3], [0x8fa6c8, .5, 4, 1, 3]]) {
+      const lamp = new THREE.DirectionalLight(color, power);
+      lamp.position.set(x, y, z);
+      scene.add(lamp);
+    }
+
+    const lean = new THREE.Quaternion(), ACROSS = new THREE.Vector3(1, 0, 0), frame = new THREE.Matrix4();
+    let size = 0;
+    return (cx, cy, r, t, m, heat) => {
+      const side = Math.round(REACH * 2 * r);
+      if (side !== size) {
+        size = side;
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.setSize(side, side, false);
+        cv.style.width = cv.style.height = side + "px";
+      }
+      cv.style.left = cx - side / 2 + "px";
+      cv.style.top = cy - side / 2 + "px";
+      // diePoints' turn and tilt, mirrored, because the canvas's y points down and this one's points up
+      frame.set(m[0], -m[1], m[2], 0, -m[3], m[4], -m[5], 0, m[6], -m[7], m[8], 0, 0, 0, 0, 1);
+      body.quaternion.setFromRotationMatrix(frame).premultiply(lean.setFromAxisAngle(ACROSS, -dieTilt(t)));
+      body.position.y = -Math.sin(t * .4) * 6 / r;
+      skin.emissiveIntensity = .3 + 1.3 * heat;
+      wire.color.copy(COOL).lerp(HOT, heat);
+      renderer.render(scene, camera);
+    };
+  } catch (e) {
+    return null;
+  }
+})();
+
 function drawEmbers(c, w, h, t, strength) {
   for (const e of EMBERS) {
     const y = h - (((1 - e.y) + t * e.speed) % 1) * (h + 20) + 10, x = e.x * w + Math.sin(t * .5 + e.sway) * 22;
@@ -1368,12 +1490,13 @@ function drawBackdrop(ms) {
   const [c, w, h] = fit($("homebg")), t = ms / 1000, [cx, cy, r] = dieSpot(w, h);
   const dt = Math.min(.1, Math.max(0, t - die.last));
   die.last = t;
-  die.angle += (.16 + die.spin) * dt;
-  die.spin *= Math.exp(-dt * .7);   // a click's push dies away
+  const turn = [die.spin[0], die.spin[1] + .16, die.spin[2]], rate = Math.hypot(...turn);   // the idle turn, and whatever the clicks have added
+  if (rate * dt) die.turn = turns(turnAbout(turn.map(v => v / rate), rate * dt), die.turn);
+  die.spin = die.spin.map(v => v * Math.exp(-dt * .7));   // a click's push dies away
   Object.assign(die, {x: cx, y: cy, r: r * 2.1});
-  const heat = Math.min(1, die.spin / 14);
+  const heat = Math.min(1, Math.hypot(...die.spin) / 14);
   drawGlow(c, w, h, cx, cy, r, t, heat, 1);
-  drawDie(c, diePoints(cx, cy, r, t, die.angle), heat);
+  if (solid) solid(cx, cy, r, t, die.turn, heat); else drawDie(c, diePoints(cx, cy, r, t, die.turn), heat);
   drawEmbers(c, w, h, t, 1);
 }
 
@@ -1492,7 +1615,7 @@ function apply(s) {
   $("newsession").disabled = $("endsession").disabled = s.busy;
   $("savebtn").hidden = $("loadbtn").hidden = !play;
   $("savebtn").disabled = $("loadbtn").disabled = s.busy;
-  $("smaller").hidden = $("larger").hidden = !play;
+  $("textsize").hidden = $("menurule").hidden = !play;
   $("sessions").hidden = s.sessions < 2;
   if ($("sessions").options.length !== s.sessions) {
     $("sessions").innerHTML = "";
@@ -1514,7 +1637,7 @@ function apply(s) {
     : game.mode === "act" ? "What does your character do?" : "A correction, a question, a command…";
   const between = play && !s.open_session && s.sessions > 0;
   $("modetip").textContent = game.mode === "act"
-    ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "First or third person. Only what you state happens.")
+    ? (between ? `No session is open. Sending this starts Session ${s.sessions + 1}.` : "")   // otherwise each mode's tooltip says what it is
     : (between ? "Sent in braces. It won't start a session." : "Sent in braces. It never goes in the narrative.");
   $("undo").hidden = $("meant").hidden = !play || !s.open_session;
   $("undo").disabled = $("meant").disabled = s.busy || !s.can_undo;
@@ -1725,9 +1848,8 @@ function heroCard(sheet) {
   html += '<div class="states">';
   for (const key of ["Shape", "Wounds", "Conditions"]) {
     const v = grab(sheet, key);
-    if (!v) continue;
-    const fine = blank(v) || /^unhurt/i.test(v);
-    html += `<div><span class="caps">${key}</span><span class="${fine ? "" : "hurt"}">${inline(v)}</span></div>`;
+    if (!v || blank(v) || /^unhurt/i.test(v)) continue;   // nothing wrong is nothing to show
+    html += `<div><span class="caps">${key}</span><span class="hurt">${inline(v)}</span></div>`;
   }
   html += "</div>";
   const up = levelUp(sheet);
@@ -2373,8 +2495,8 @@ $("sessions").onchange = () => {
 };
 $("newsession").onclick = guard(() => send("{new session}", true));
 $("endsession").onclick = guard(() => send("{end session}", true));
-$("smaller").onclick = () => { prefs.size = Math.max(14, prefs.size - 1); applyPrefs(true); };
-$("larger").onclick = () => { prefs.size = Math.min(26, prefs.size + 1); applyPrefs(true); };
+$("smaller").onclick = e => { e.stopPropagation(); prefs.size = Math.max(14, prefs.size - 1); applyPrefs(true); };
+$("larger").onclick = e => { e.stopPropagation(); prefs.size = Math.min(26, prefs.size + 1); applyPrefs(true); };
 $("panel").onclick = () => { prefs.wide = !prefs.wide; applyPrefs(true); };
 
 $("more").onclick = e => { e.stopPropagation(); $("moreitems").hidden = !$("moreitems").hidden; };
@@ -2416,7 +2538,7 @@ $("loadbtn").onclick = guard(async () => {
   const mine = game, r = await api("saves", {path: game.path});
   if (game !== mine) return;
   const list = $("savelist");
-  list.innerHTML = r.saves.length ? "" : '<div class="empty">No saves yet. Press Save to make one. The game also saves itself at the end of every session.</div>';
+  list.innerHTML = r.saves.length ? "" : '<div class="empty">No saves yet. Save game, in the menu, makes one. The game also saves itself at the end of every session.</div>';
   for (const s of r.saves) {
     const slot = document.createElement("div"), d = new Date(s.when);
     slot.className = "slot" + (s.auto ? " auto" : "");
@@ -2581,7 +2703,7 @@ const splashed = new Promise(done => {
 
     const hurry = leftAt === null ? 0 : out / .35;   // skipped mid-drawing: finish the die on the way out
     const grow = lt > LAND || hurry >= 1 ? null : EDGES.map((_, n) => Math.max(hurry, smooth(clamp((lt - .25 - n * .038) / .5))));
-    drawDie(c, diePoints(cx, cy, r, t, die.angle + 7.5 * tumble, 2.4 * tumble), flash, grow, 1 - g);
+    drawDie(c, diePoints(cx, cy, r, t, die.turn, 2.4 * tumble, 7.5 * tumble), flash, grow, 1 - g);
 
     if (since > 0) for (const s of sparks) {
       const age = since / s.life;
