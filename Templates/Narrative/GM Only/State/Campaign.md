@@ -35,7 +35,7 @@ Why this character is in it. Written once the character is made (Procedures/New 
 - **What brings it to them:** the event that opens the first session.
 - **Why it's theirs:** what on their sheet it catches (someone they love, something they want, a debt, their trade, where they're from), so they have a reason of their own to go after the goal.
 - **What they know at the start:** how much of the goal the hook shows them. Usually the first step, not the whole.
-- **Agreed with the player:** anything the hook needed the character to have already done or accepted (taken the job, made the journey), in the player's words, tagged **[Setup]**. Nothing, if the hook is all the world's doing.
+- **Built on:** what the player gave that the hook and the opening stand on (a want, a trade, a home, something they said in braces), tagged **[Setup]**. The opening itself is yours and is never put to the player.
 
 Unknown.
 

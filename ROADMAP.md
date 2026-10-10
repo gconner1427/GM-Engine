@@ -40,13 +40,6 @@ Everything before the first beat: setting a narrative up, what's ready-made for 
 
 ### Setting one up
 
-#### Small
-
-##### A stepped New Narrative screen
-The New Narrative window asks for everything at once: nine fields in two columns. It becomes a step-at-a-time screen like the character creator, one question to a step, so setting up a narrative and making a character feel like parts of the same thing. Each step's examples are buttons that fill the answer in, and the steps that can be left to the GM say so with a button of their own.
-- **Touches:** the New Narrative window in `engine/gui/app.html` (`#newdialog`); what it sends has to stay what `Procedures/New Narrative.md`, steps 1 and 2, expect.
-- **Open questions:** whether the last step shows everything chosen for a look before the world is built.
-
 #### Medium
 
 ##### Difficulty settings
@@ -57,6 +50,20 @@ A difficulty the player picks during new narrative setup. It raises or lowers th
 
 Difficulty doesn't take the place of the stakes (Core Rules §7): setup asks for both, and the difficulty limits which stakes can be chosen.
 - **Touches:** the table settings in `Procedures/New Narrative.md`, step 2; the `Style Guide.md` template, which holds them; the play window's New Narrative window (`engine/gui/app.html`); `Rules/Core Rules.md`, the Bestiary and stat lines the GM writes, and the Economy's prices, for how each setting changes the numbers.
+
+### While the world is built
+
+#### Large
+
+##### Things to do while the world is built
+A world takes twenty minutes or more to build, and the early steps of the character creator fill five to ten of them. The wait itself is fine; having nothing to do in it isn't. Once the early steps are done, the window offers three things to do, and the player picks whichever they like and can go from one to another:
+- **A practice bout:** a fight against a training dummy with the real dice, so the player learns the five outcomes, Push, and how damage works before the first beat. It needs nothing from the world, because the rules are the same in every one.
+- **A game of chance:** a small dice or card game in the window, played for nothing, for the player who has had enough of the bout. It could later be the game played in a world's taverns.
+- **How to play:** a short page on the window and the rules, for the player who has never played.
+
+None of them is required: a player who wants to walk away still can. They needn't fill the whole wait, and any of them can be dropped the moment the world is ready.
+- **Touches:** the character creator and `EARLY_STEPS` in `engine/gui/app.html`, where the wait is spent now; `engine/dice.py` and `engine/gui.py`, for a bout with the real tables. How to play has to say what `Rules/Core Rules.md` says.
+- **Open questions:** nothing here can show a word of the world, as `BUILDING` can't. Whether a bout is fought as the player's own character, which needs the creator's later steps, or as a stock one. Which game the game of chance is. What happens to a bout or a game in progress when the world is ready. Whether the three stay within reach after the world is built, from the main menu or About.
 
 ### Ready-made worlds and characters
 
@@ -110,6 +117,10 @@ When the GM answers something said to it, the window switches the side panel to 
 ##### Keyboard shortcuts
 Only Enter, Escape, and F11 do anything now. Add a key to save, keys for the side panel's tabs, the up arrow in an empty message box to bring back the last thing sent, and a sheet of all of them on `?`. A dialog puts the cursor in its first field when it opens, and a click outside one closes it.
 - **Touches:** the key handlers and the dialogs in `engine/gui/app.html`.
+
+##### Speaking an action
+The player can say what their character does instead of typing it. On Windows this already works: with the cursor in the message box, Win+H starts Windows' own dictation, and what's said appears in the box as words, to be read over and changed before it's sent. What's missing is any sign of it. The message box gets a microphone button that starts dictation, so the player doesn't have to know the key, and nothing is ever sent by voice alone, since only what the player states happens.
+- **Touches:** the composer in `engine/gui/app.html`; `engine/gui.py`, which would press Win+H for the page, since a page can't start dictation itself. It's for Windows only, as the engine is for now.
 
 ### The wait
 
@@ -207,8 +218,8 @@ The page's text comes in more than a dozen sizes a half-pixel or a pixel apart (
 #### Small
 
 ##### Sounds in play
-Only the main menu has sound. Play gets a few quiet ones: a page turning when a beat arrives, a click on the menus, and a chime for a new level. They have a volume of their own in Settings, apart from the music's.
-- **Touches:** the audio code in `engine/gui/app.html`, which plays the menu's music now; Settings.
+Only the main menu and the world's building have sound. Play gets a few quiet ones: a page turning when a beat arrives, a click on the menus, and a chime for a new level. They have a volume of their own in Settings, apart from the music's.
+- **Touches:** the audio code in `engine/gui/app.html`, which plays the menu's music and the build's now; Settings.
 - **Open questions:** whether the sounds are recorded files or made by the page.
 
 #### Medium

@@ -48,6 +48,7 @@ LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the sp
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
 VERSION = ENGINE / "VERSION"   # one line, "Alpha 0.0.1": the corner of the main menu, and About
 MENU_TRACKS = ("1", "2")
+WORLD_BGM = "World Creation BGM 1.mp3"   # in the same folder: what plays while the GM builds a world
 MODELS = ("opus", "sonnet")   # the GM Model setting. Family names: Claude Code runs the newest of each. "" leaves it to Claude Code
 ERRORS = STORE / "gui.log"
 TOKEN = secrets.token_urlsafe(24)
@@ -514,13 +515,13 @@ class Handler(BaseHTTPRequestHandler):
         route, _, query = self.path.partition("?")
         asked = urllib.parse.parse_qs(query)
         one = lambda key: (asked.get(key) or [""])[0]
-        if route == "/bgm":  # the main menu's music; like a picture, the token rides in the address
+        if route == "/bgm":  # the music: a menu track, or "world" for the build; like a picture, the token rides in the address
             if one("t") != TOKEN:
                 return self.send(403, {"error": "Not allowed."})
-            if one("n") not in MENU_TRACKS:
+            if one("n") not in MENU_TRACKS + ("world",):
                 return self.send(404, {"error": "No such track."})
             try:
-                return self.send_media((MENU_BGM / f"Menu BGM {one('n')}.mp3").read_bytes())
+                return self.send_media((MENU_BGM / (WORLD_BGM if one("n") == "world" else f"Menu BGM {one('n')}.mp3")).read_bytes())
             except OSError:
                 return self.send(404, {"error": "No such track."})
         if route == "/logo":  # the studio's logo, for the splash before the intro

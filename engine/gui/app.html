@@ -665,14 +665,18 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .dialog blockquote { margin: 0; padding: 6px 16px; border-left: 1px solid var(--accent); color: var(--dim); font: italic 16px/1.6 var(--serif);
   max-height: 180px; overflow: auto; }
 .dialog textarea { min-height: 84px; resize: vertical; }
-.dialog #newstory { min-height: 64px; }
-/* a new narrative is asked for in two columns, so the whole of it shows at once; a narrow window gets one column and scrolls */
-#newdialog .dialog { width: min(1180px, 96vw); max-height: 96vh; overflow-y: auto; }
-#newdialog .form { grid-template-columns: 1fr 1fr; gap: 10px 32px; }
-#newdialog .col { display: grid; gap: 10px; align-content: start; min-width: 0; }
-#newdialog .form > .note { grid-column: 1 / -1; margin-top: 4px; }
-#newworld { grid-template-columns: 1fr 1fr; }
-@media (max-width: 900px) { #newdialog .form { grid-template-columns: 1fr; } }
+/* a new narrative is asked for a step at a time, the way the character is made, and the steps all stand the same height so the window holds still */
+#newdialog .dialog { width: min(900px, 96vw); }
+#newdialog .mk-rail { padding: 0 0 12px; } #newdialog .mk-rail button { padding: 7px 4px; gap: 7px; }   /* ten steps, on one line */
+#newdialog .mk-body { height: min(520px, 62vh); padding: 22px 6px 8px; }
+#newdialog .mk-page { max-width: 700px; gap: 20px; }
+#newdialog .mk-nav { padding: 14px 0 0; background: none; }
+#newdialog .choice.two { grid-template-columns: 1fr 1fr; }
+#newdialog .field .browse { display: flex; gap: 8px; } #newdialog .field .browse input { flex: 1; min-width: 0; }
+.nn-leave { justify-self: center; padding: 10px 22px; }
+#newdialog .mk-sum > div { padding: 5px 0; cursor: pointer; transition: background .2s; } #newdialog .mk-sum > div:hover { background: #ffffff07; }
+#newdialog .mk-sum .left { color: var(--faint); font-style: italic; }
+#newdialog .note { margin: 0; text-align: center; color: var(--faint); font: italic 13.5px/1.5 var(--serif); }
 .dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .dialog .row button { padding: 10px 20px; }
 .dialog.wide { width: min(700px, 94vw); }
@@ -834,45 +838,9 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 <div class="shade" id="newdialog" hidden>
   <div class="dialog">
     <div class="head">New Narrative</div>
-    <div class="form">
-      <div class="col">
-      <label for="newgenre">Genre and tone</label>
-      <input id="newgenre" placeholder="Grim low fantasy. Space opera with some humor. A slow-burn western.">
-      <label>The world</label>
-      <div class="choice" id="newworld">
-        <button data-world="original" class="on"><b>Original</b><span>The GM invents it</span></button>
-        <button data-world="dnd"><b>D&amp;D</b><span>A world in that tradition</span></button>
-        <button data-world="other"><b>Another setting</b><span>Star Wars, Mass Effect, a book…</span></button>
-        <button data-world="isekai"><b>Isekai</b><span>From our world into another</span></button>
-      </div>
-      <input id="newsetting" hidden>
-      <label for="newstory">The story, if you have one in mind</label>
-      <textarea id="newstory" rows="2" placeholder="Fighting a dark lord. Saving a princess. Winning a war. Leave blank and the GM will decide."></textarea>
-      <label for="newthemes">Themes, if you want any</label>
-      <input id="newthemes" placeholder="Revenge. Found family. What power costs. Leave blank and the GM will decide.">
-      </div>
-      <div class="col">
-      <label>Content to include (pick any; the rest is left out)</label>
-      <div class="choice three" id="newcontent">
-        <button data-content="language"><b>Explicit language</b><span>Swearing, uncensored</span></button>
-        <button data-content="sex"><b>Explicit sex</b><span>On the page, not faded out</span></button>
-        <button data-content="nudity"><b>Nudity</b><span>Outside of sex scenes</span></button>
-        <button data-content="violence"><b>Graphic violence</b><span>Told in full, not softened</span></button>
-        <button data-content="gore"><b>Gore</b><span>Wounds, described</span></button>
-      </div>
-      <label>The narration</label>
-      <div class="choice" id="newperson">
-        <button data-person="third" class="on"><b>Third person</b><span>Reads like a novel: “She draws her sword.”</span></button>
-        <button data-person="second"><b>Second person</b><span>Like a GM at the table: “You draw your sword.”</span></button>
-      </div>
-      <label for="newname">A title, if you have one</label>
-      <input id="newname" placeholder="Leave blank and the GM will name it">
-      <label for="newparent">The folder it's created in</label>
-      <div class="row"><input id="newparent"><button id="browse">Browse…</button></div>
-      </div>
-      <div class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</div>
-    </div>
-    <div class="row"><button data-close>Cancel</button><button id="create" class="primary">Create the world</button></div>
+    <div class="mk-rail" id="newrail"></div>
+    <div class="mk-body" id="newbody"></div>
+    <div class="mk-nav" id="newnav"></div>
   </div>
 </div>
 
@@ -1285,6 +1253,7 @@ function checkPrograms(h, say) {
 
 async function showHome() {
   game = null;
+  stopWorldMusic();
   document.body.classList.remove("gmmode");
   $("game").hidden = true;
   $("home").hidden = false;
@@ -1293,7 +1262,7 @@ async function showHome() {
   if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
   introDone.then(() => { if (!game) playMenuMusic(); });   // the splash and the intro play in silence
   checkPrograms(h);
-  if (!$("newparent").value) $("newparent").value = h.default_parent;
+  if (!nn.parent) nn.parent = h.default_parent;
   const last = h.narratives.find(n => !n.missing);   // the list is kept most recently opened first
   $("menucontinue").hidden = !last;
   if (last) {
@@ -1329,7 +1298,7 @@ const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog", "aboutd
 const closeHomeDialogs = () => HOME_DIALOGS.forEach(id => $(id).hidden = true);
 for (const id of HOME_DIALOGS) $(id).addEventListener("click", e => { if (e.target.closest("[data-close]")) $(id).hidden = true; });
 $("menunarratives").onclick = () => $("narrativesdialog").hidden = false;
-$("menunew").onclick = () => { $("newdialog").hidden = false; $("newgenre").focus(); };
+$("menunew").onclick = () => { $("newdialog").hidden = false; renderNew(true); };
 $("menusettings").onclick = () => $("settingsdialog").hidden = false;
 $("menuabout").onclick = () => { $("aboutdialog").hidden = false; document.querySelector(".about").scrollTop = 0; };
 $("menuexit").onclick = guard(async () => {
@@ -1350,7 +1319,7 @@ const introDone = new Promise(done => introOver = done);   // settled when the i
 
 function loadTrack(n) {
   return tracks[n] = tracks[n] || fetch(`/bgm?n=${n}&t=${TOKEN}`).then(r => {
-    if (!r.ok) throw new Error("The menu music couldn't be loaded.");
+    if (!r.ok) throw new Error("The music couldn't be loaded.");
     return r.arrayBuffer();
   }).then(bytes => audio.decodeAudioData(bytes));
 }
@@ -1364,8 +1333,8 @@ function loopPoints(buf) {   // an MP3 comes padded with a moment of silence at 
   return [a / buf.sampleRate, (b + 1) / buf.sampleRate];
 }
 
-function fadeMusic(to, secs, from) {
-  const g = musicGain.gain, now = audio.currentTime;
+function fadeMusic(to, secs, from, gain = musicGain) {
+  const g = gain.gain, now = audio.currentTime;
   g.cancelScheduledValues(now);
   g.setValueAtTime(from === undefined ? g.value : from, now);
   g.linearRampToValueAtTime(to, now + secs);
@@ -1395,14 +1364,51 @@ async function playMenuMusic() {
 function stopMenuMusic() {
   musicWanted = false;
   fadeMusic(0, .6);
-  setTimeout(() => { if (!musicWanted) audio.suspend(); }, 700);
+  setTimeout(restAudio, 700);
 }
-for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => { if (musicWanted && audio.state === "suspended") audio.resume(); });
+const restAudio = () => { if (!musicWanted && !worldWanted && !worldSource) audio.suspend(); };   // nothing is playing or on its way out
+for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => { if ((musicWanted || worldWanted) && audio.state === "suspended") audio.resume(); });
+
+// The music while the GM builds a world: a track and a gain of its own, so it can come in while the menu's goes out.
+// It loops for as long as the build takes, and when the GM is done it fades away and only then stops.
+const worldGain = audio.createGain(), WORLD_FADE = 3;
+worldGain.gain.value = 0;
+worldGain.connect(audio.destination);
+let worldSource = null, worldWanted = false, worldTimer;
+
+async function playWorldMusic() {
+  if (worldWanted) return;
+  worldWanted = true;
+  clearTimeout(worldTimer);
+  audio.resume().catch(() => {});
+  if (worldSource) return fadeMusic(musicVolume(), .8, undefined, worldGain);   // caught on its way out
+  const buf = await loadTrack("world").catch(e => { toast(e.message); return null; });
+  if (!buf || !worldWanted || worldSource) return;   // the build ended while it loaded
+  worldSource = audio.createBufferSource();
+  worldSource.buffer = buf;
+  worldSource.loop = true;
+  [worldSource.loopStart, worldSource.loopEnd] = loopPoints(buf);
+  worldSource.connect(worldGain);
+  worldSource.start(0, worldSource.loopStart);
+  fadeMusic(musicVolume(), 1.5, 0, worldGain);
+}
+
+function stopWorldMusic() {
+  if (!worldWanted) return;
+  worldWanted = false;
+  fadeMusic(0, WORLD_FADE, undefined, worldGain);
+  worldTimer = setTimeout(() => {
+    if (worldSource) worldSource.stop();
+    worldSource = null;
+    restAudio();
+  }, WORLD_FADE * 1000 + 100);
+}
 
 $("volume").oninput = () => {
   prefs.volume = +$("volume").value;
   applyPrefs();
   if (musicWanted && musicSource) fadeMusic(musicVolume(), .05);
+  if (worldWanted && worldSource) fadeMusic(musicVolume(), .05, undefined, worldGain);
 };
 $("volume").onchange = () => applyPrefs(true);
 const setFullscreen = guard(async on => {
@@ -1657,52 +1663,191 @@ function startBackdrop() {
 }
 addEventListener("resize", () => { if (STILL && !$("home").hidden) drawBackdrop(0); });
 
-$("browse").onclick = guard(async () => {
-  const r = await api("pick-folder", {start: $("newparent").value});
-  if (r.path) $("newparent").value = r.path;
-});
-let newWorld = "original";
-$("newworld").onclick = e => {
-  const b = e.target.closest("button");
-  if (!b) return;
-  newWorld = b.dataset.world;
-  for (const o of $("newworld").children) o.classList.toggle("on", o === b);
-  $("newsetting").hidden = newWorld === "original";
-  $("newsetting").placeholder = newWorld === "dnd" ? "A published setting, if you have one in mind (optional)"
-    : newWorld === "isekai" ? "How they cross over, or which world, if you have one in mind (optional)"
-    : "Which setting? And an era, if it matters";
-  if (newWorld !== "original") $("newsetting").focus();
-};
-let newPerson = "third";
-$("newperson").onclick = e => {
-  const b = e.target.closest("button");
-  if (!b) return;
-  newPerson = b.dataset.person;
-  for (const o of $("newperson").children) o.classList.toggle("on", o === b);
-};
+// ---- a new narrative: a step at a time, one question to a step, and a look at all of it before the world is built ----
+
 // The content the player wants on the page: any number of these, and whatever isn't picked is left out.
 const CONTENT = {language: "Explicit language", sex: "Explicit sex on the page", nudity: "Nudity outside sex scenes",
   violence: "Graphic violence", gore: "Gore"};
-$("newcontent").onclick = e => {
-  const b = e.target.closest("button");
-  if (b) b.classList.toggle("on");
+const CONTENT_HINTS = {language: "Swearing, uncensored", sex: "On the page, not faded out", nudity: "Outside of sex scenes",
+  violence: "Told in full, not softened", gore: "Wounds, described"};
+const WORLDS = {original: ["Original", "The GM invents it"], dnd: ["D&D", "A world in that tradition"],
+  other: ["Another setting", "Star Wars, Mass Effect, a book…"], isekai: ["Isekai", "From our world into another"]};
+const SETTING_ASK = {dnd: ["A published setting", "optional", "The one you have in mind, if any"],
+  other: ["Which setting", "and an era, if it matters", ""], isekai: ["How they cross over, or which world", "optional", "Summoned. Reborn. Pulled into a game."]};
+const PERSONS = {third: ["Third person", "Reads like a novel: “She draws her sword.”"], second: ["Second person", "Like a GM at the table: “You draw your sword.”"]};
+const NEW_STEPS = [["genre", "Genre"], ["world", "World"], ["has", "Includes"], ["story", "Story"], ["themes", "Themes"], ["content", "Content"],
+  ["person", "Narration"], ["title", "Title"], ["folder", "Folder"], ["review", "Review"]];
+const blankNew = () => ({step: 0, genre: "", world: "original", setting: "", has: "", story: "", themes: "", content: [], also: "", person: "third", title: "", parent: ""});
+const nn = blankNew();
+
+const nnText = key => nn[key].trim();
+const nnList = key => nn[key].split(",").map(t => t.trim()).filter(Boolean);
+const nnInput = (key, ghost) => `<input data-nn="${key}" value="${esc(nn[key])}" placeholder="${esc(ghost || "")}">`;
+// A step's examples: each one fills the answer in. With add, it goes on the end of what's there, and a second click takes it off.
+const nnExamples = (key, list, add) => mkField(add ? "Pick any" : "For example", "", `<div class="chips">${list.map(v =>
+  `<button data-eg="${key}" data-v="${esc(v)}"${add ? " data-add" : ""}>${esc(v)}</button>`).join("")}</div>`);
+const nnLeave = key => `<button class="nn-leave" data-leave="${key}">Leave it to the GM</button>`;
+const nnCards = (attr, all, on, cls) => `<div class="choice ${cls}">${Object.entries(all).map(([id, [name, hint]]) =>
+  `<button data-${attr}="${id}"${on(id) ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span></button>`).join("")}</div>`;
+
+const NEW_PAGES = {
+  genre: () => `<h2>Genre and tone</h2><p class="lede">What kind of story, and how it should feel.</p>
+    <div class="field">${nnInput("genre")}</div>
+    ${nnExamples("genre", ["Grim low fantasy", "Space opera with some humor", "A slow-burn western", "Gothic horror", "Swashbuckling adventure", "A cozy mystery"])}`,
+
+  world: () => {
+    const ask = SETTING_ASK[nn.world];
+    return `<h2>The world</h2><p class="lede">Where it happens. Whichever you pick, the GM builds it and you discover it by playing.</p>
+      ${nnCards("world", WORLDS, id => id === nn.world, "two")}
+      ${ask ? mkField(ask[0], ask[1], nnInput("setting", ask[2])) : ""}
+      ${nn.world === "other" ? nnExamples("setting", ["Star Wars", "Mass Effect"]) : ""}`;
+  },
+
+  has: () => `<h2>In the world</h2><p class="lede">Anything you want the world to have in it. The GM works it into the world and the narrative.</p>
+    <div class="field">${nnInput("has")}</div>
+    ${nnExamples("has", ["Adventurers", "Adventure guilds", "Kingdoms", "Empires", "Dungeons to explore", "Islands to explore"], true)}
+    ${nnLeave("has")}`,
+
+  story: () => `<h2>The story</h2><p class="lede">What the narrative is about, in a line, if you have one in mind.</p>
+    <div class="field"><textarea data-nn="story">${esc(nn.story)}</textarea></div>
+    ${nnExamples("story", ["Fighting a dark lord", "Saving a princess", "Winning a war"])}
+    ${nnLeave("story")}`,
+
+  themes: () => `<h2>Themes</h2><p class="lede">What the narrative keeps coming back to, if you want any.</p>
+    <div class="field">${nnInput("themes")}</div>
+    ${nnExamples("themes", ["Revenge", "Found family", "What power costs"], true)}
+    ${nnLeave("themes")}`,
+
+  content: () => `<h2>Content</h2><p class="lede">Pick any to include. The rest is left out.</p>
+    ${nnCards("content", Object.fromEntries(Object.keys(CONTENT).map(id => [id, [CONTENT[id].replace(/ (on the page|outside sex scenes)$/, ""), CONTENT_HINTS[id]]])), id => nn.content.includes(id), "three")}
+    ${mkField("Anything else to include", "optional", nnInput("also", "Racism. Slavery. Drug use. Whatever else the narrative shouldn't shy away from."))}`,
+
+  person: () => `<h2>The narration</h2><p class="lede">How the story is told.</p>${nnCards("person", PERSONS, id => id === nn.person, "two")}`,
+
+  title: () => `<h2>A title</h2><p class="lede">What the narrative is called, if you have a name for it.</p>
+    <div class="field">${nnInput("title")}</div>
+    ${nnLeave("title")}`,
+
+  folder: () => `<h2>The folder</h2><p class="lede">Where the narrative is kept. It gets a folder of its own inside this one.</p>
+    <div class="field"><div class="browse">${nnInput("parent")}<button data-browse>Browse…</button></div></div>`,
+
+  review: () => {
+    const left = '<span class="left">Left to the GM</span>', setting = nnText("setting"), world = WORLDS[nn.world][0];
+    const rows = [["genre", "Genre and tone", esc(nnText("genre")) || '<span class="left">Not said yet</span>'],
+      ["world", "The world", esc(nn.world === "original" ? "Original: the GM invents it" : nn.world === "other" ? "Built on " + (setting || "…")
+        : (nn.world === "dnd" ? "Built on " : "") + world + (setting ? ": " + setting : ""))],
+      ["has", "In the world", esc(nnText("has")) || left],
+      ["story", "The story", esc(nnText("story")) || left],
+      ["themes", "Themes", esc(nnText("themes")) || left],
+      ["content", "Content", esc(Object.keys(CONTENT).filter(id => nn.content.includes(id)).map(id => CONTENT[id]).concat(nnText("also") || []).join(", ")) || '<span class="left">Nothing explicit</span>'],
+      ["person", "Narration", esc(PERSONS[nn.person][0])],
+      ["title", "Title", esc(nnText("title")) || left],
+      ["folder", "Folder", esc(nnText("parent"))]];
+    return `<h2>Review</h2><p class="lede">Everything you chose. Go back to any step to change it.</p>
+      <div class="mk-sum">${rows.map(([id, label, text]) => `<div data-step="${NEW_STEPS.findIndex(s => s[0] === id)}" title="Change this"><span class="caps">${label}</span><span>${text}</span></div>`).join("")}</div>
+      <p class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</p>`;
+  },
 };
-$("create").onclick = guard(async () => {
-  const genre = $("newgenre").value.trim(), setting = $("newsetting").value.trim(), title = $("newname").value.trim();
-  const story = $("newstory").value.trim(), themes = $("newthemes").value.trim();
-  const content = [...$("newcontent").children].map(b => `${CONTENT[b.dataset.content]}: ${b.classList.contains("on") ? "yes" : "no"}.`).join(" ");
-  if (!genre) return toast("Say what genre and tone you want, so the GM knows what to build.");
-  if (newWorld === "other" && !setting) return toast("Say which setting to build it on.");
-  const world = newWorld === "original" ? "Original: invent it."
-    : newWorld === "dnd" ? "Built on D&D." + (setting ? " Setting: " + setting : " No particular published setting.")
-    : newWorld === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
-    : "Built on an existing setting: " + setting;
-  const r = await api("create", {name: title, parent: $("newparent").value, person: newPerson});
-  $("newgenre").value = $("newsetting").value = $("newstory").value = $("newthemes").value = $("newname").value = "";
-  openGame(r.path);
-  const narration = newPerson === "second" ? "Second person (\"you\")." : "Third person limited.";
-  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+
+function nnMissing(id) {   // what a step still needs before the world can be built
+  if (id === "genre" && !nnText("genre")) return "Say what genre and tone you want, so the GM knows what to build.";
+  if (id === "world" && nn.world === "other" && !nnText("setting")) return "Say which setting to build it on.";
+  if (id === "folder" && !nnText("parent")) return "Choose the folder it's created in.";
+}
+
+function nnMark() {   // light the examples that are in the answer as it stands
+  for (const b of $("newbody").querySelectorAll("[data-eg]"))
+    b.classList.toggle("on", "add" in b.dataset ? nnList(b.dataset.eg).some(t => same(t, b.dataset.v)) : same(nn[b.dataset.eg], b.dataset.v));
+}
+
+function renderNew(focus) {
+  nn.step = Math.min(Math.max(0, nn.step), NEW_STEPS.length - 1);
+  const [id] = NEW_STEPS[nn.step], next = NEW_STEPS[nn.step + 1];
+  $("newrail").innerHTML = NEW_STEPS.map(([, title], n) => `<button data-step="${n}" class="${n === nn.step ? "on" : n < nn.step ? "done" : ""}"><i></i>${title}</button>`).join("");
+  $("newbody").innerHTML = `<div class="mk-page">${NEW_PAGES[id]()}</div>`;
+  $("newnav").innerHTML = `<button class="quiet" data-close>Cancel</button><span class="gap"></span>
+    <button data-go="-1"${nn.step ? "" : " disabled"}>Back</button>
+    ${next ? `<button class="primary" data-go="1">Next: ${next[1]}</button>` : `<button class="primary" data-create>Create the world</button>`}`;
+  if (!focus) $("newbody").querySelector(".mk-page").style.animation = "none";   // only a new step arrives
+  else $("newbody").scrollTop = 0;
+  nnMark();
+  const box = focus && $("newbody").querySelector(focus === true ? "[data-nn]" : `[data-nn="${focus}"]`);
+  if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+}
+
+function nnGo(step) {   // going on past a step that needs an answer asks for it; going back, or anywhere by the rail, never does
+  const missing = step === nn.step + 1 && nnMissing(NEW_STEPS[nn.step][0]);
+  if (missing) return toast(missing);
+  nn.step = step;
+  renderNew(true);
+}
+
+$("newdialog").addEventListener("input", e => {
+  const key = e.target.dataset.nn;
+  if (!key) return;
+  nn[key] = e.target.value;
+  nnMark();
 });
+$("newdialog").addEventListener("keydown", e => {   // Enter in a one-line answer goes on to the next step
+  if (e.key !== "Enter" || !e.target.matches("input[data-nn]") || nn.step >= NEW_STEPS.length - 1) return;
+  e.preventDefault();
+  nnGo(nn.step + 1);
+});
+$("newdialog").addEventListener("click", guard(async e => {
+  const at = sel => e.target.closest(sel);
+  let el, focus = false;
+  if ((el = at("[data-step]"))) return nnGo(+el.dataset.step);
+  if ((el = at("[data-go]"))) return nnGo(nn.step + +el.dataset.go);
+  if (at("[data-create]")) return createNarrative();
+  if ((el = at("[data-leave]"))) { nn[el.dataset.leave] = ""; return nnGo(nn.step + 1); }
+  if ((el = at("[data-eg]"))) {
+    const key = el.dataset.eg, v = el.dataset.v;
+    if ("add" in el.dataset) {
+      const had = nnList(key), rest = had.filter(t => !same(t, v));
+      nn[key] = (rest.length < had.length ? rest : had.concat(v)).join(", ");
+    } else nn[key] = same(nn[key], v) ? "" : v;
+    focus = key;
+  } else if ((el = at("[data-world]"))) {
+    if (nn.world !== el.dataset.world) nn.setting = "";   // what was said of one kind of world doesn't carry to another
+    nn.world = el.dataset.world;
+    focus = "setting";
+  }
+  else if ((el = at("[data-person]"))) nn.person = el.dataset.person;
+  else if ((el = at("[data-content]"))) {
+    const id = el.dataset.content, i = nn.content.indexOf(id);
+    if (i >= 0) nn.content.splice(i, 1); else nn.content.push(id);
+  } else if (at("[data-browse]")) {
+    const r = await api("pick-folder", {start: nn.parent});
+    if (!r.path) return;
+    nn.parent = r.path;
+  } else return;
+  const keep = $("newbody").scrollTop;
+  renderNew();
+  $("newbody").scrollTop = keep;
+  const box = focus && $("newbody").querySelector(`[data-nn="${focus}"]`);
+  if (box) box.focus();
+}));
+
+async function createNarrative() {
+  const at = NEW_STEPS.findIndex(([id]) => nnMissing(id));
+  if (at >= 0) {
+    toast(nnMissing(NEW_STEPS[at][0]));
+    nn.step = at;
+    return renderNew(true);
+  }
+  const genre = nnText("genre"), setting = nn.world === "original" ? "" : nnText("setting"), title = nnText("title"), has = nnText("has"), story = nnText("story"), themes = nnText("themes");
+  const content = Object.keys(CONTENT).map(id => `${CONTENT[id]}: ${nn.content.includes(id) ? "yes" : "no"}.`).join(" ")
+    + (nnText("also") ? " Also include: " + nnText("also").replace(/\.*$/, ".") : "");
+  const world = nn.world === "original" ? "Original: invent it."
+    : nn.world === "dnd" ? "Built on D&D." + (setting ? " Setting: " + setting : " No particular published setting.")
+    : nn.world === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
+    : "Built on an existing setting: " + setting;
+  const narration = nn.person === "second" ? "Second person (\"you\")." : "Third person limited.";
+  const r = await api("create", {name: title, parent: nnText("parent"), person: nn.person});
+  Object.assign(nn, blankNew(), {parent: nn.parent});   // the next one starts clean, in the same folder
+  openGame(r.path);
+  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+}
 $("addexisting").onclick = guard(async () => {
   const r = await api("pick-folder", {});
   if (!r.path) return;
@@ -1781,6 +1926,7 @@ function apply(s) {
   document.querySelector('[data-tab="gm"]').hidden = !play;
   if (!play && game.tab === "gm") setTab("sheet");
 
+  if (!play && s.busy) playWorldMusic(); else stopWorldMusic();   // the GM is building the world
   $("working").hidden = !s.busy;
   if (s.busy) {
     const t = s.elapsed;
@@ -1917,15 +2063,16 @@ function galleryHtml() {
 function renderStory() {
   const s = game.state, el = $("story");
   const text = game.texts.log || "";
-  const key = s.viewing + "|" + text;
+  const body = text.replace(/^\s*#\s+Session\s+\d+\s*/, "");
+  const setting = !body.trim() && !!s.open_session && s.busy;   // an open session with nothing in it yet, and the GM at work: it's writing the opening
+  const key = s.viewing + "|" + text + (body.trim() ? "" : "|" + setting);
   if (key === game.shownLog && el.querySelector(".page, .hint")) { if ($("beginplay")) $("beginplay").disabled = s.busy; return; }
   const sameSession = game.shownLog.startsWith(s.viewing + "|");
   game.shownLog = key;
-  const body = text.replace(/^\s*#\s+Session\s+\d+\s*/, "");
   if (!body.trim()) {
-    const open = !!s.open_session;   // an open session with nothing in it yet: the GM is about to open it, or was stopped
+    // Open, empty, and the GM idle: it was stopped before the opening, so Begin asks for it again.
     el.innerHTML = `<div class="hint"><svg><use href="#d20"/></svg>${s.sessions ? "This session hasn't begun." : "The world is ready."}<br>
-      ${open ? "Say what your character does, and the narrative starts." : `The GM sets the scene, and then it's your move.<br>
+      ${setting ? "The GM is setting the scene." : `The GM sets the scene, and then it's your move.<br>
       <button class="primary" id="beginplay"${s.busy ? " disabled" : ""}>Begin</button>`}</div>`;
     if ($("beginplay")) $("beginplay").onclick = guard(() => send("{new session}", true));
     game.shownParas = 0;

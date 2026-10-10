@@ -17,6 +17,7 @@ What's particular to this narrative's prose. It can override anything in the eng
 - **Nudity:** Unknown (described when it's there, or kept out of view; this is nudity outside sex scenes)
 - **Violence:** Unknown (graphic, or told without dwelling on the damage)
 - **Gore:** Unknown (described, or left out)
+- **Also included:** (other content the player asked for by name; shown plainly when the narrative goes there)
 - **Anything off the table:** (subjects the narrative never goes to)
 
 ## Art
