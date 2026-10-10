@@ -408,6 +408,13 @@ The whole narrative as one clean document: the sessions joined in order, with ch
 
 ### Getting the engine onto a machine
 
+#### Medium
+
+##### Choosing where the engine is installed
+The player chooses the folder the engine goes in, the way a game's installer asks where to install, and the engine runs from wherever that is. The scripts already find the engine from where they sit, so the folder can be anywhere. A narrative doesn't follow it: each one records the engine's full path when it's made (`"engine"` in `narrative.json`, and the paths written into its `CLAUDE.md`), so an engine that's moved or installed again somewhere else leaves its narratives pointing at the old place. The play window notices when it opens one and points it at the engine it's running from.
+- **Touches:** `engine/scaffold.py`, which writes the engine's path into a new narrative; `Templates/Narrative/CLAUDE.md`, which carries it; `engine/gui.py`, to repoint a narrative when it's opened. It builds on "An installer", which would do the asking.
+- **Open questions:** whether a narrative should record the engine's path at all, or be told it each time the play window starts the GM.
+
 #### Large
 
 ##### An installer
@@ -419,6 +426,17 @@ The play window already makes the same check every time it opens, and asks each 
 
 The installer doesn't move narratives. Getting one to another machine is the user's to do however they like (a flash drive, cloud storage), and "Add an existing folder" in the play window's Narratives list brings it in once it's there.
 - **Touches:** `Play.cmd`, which starts the play window now; `engine/gui.py`, which has to find the engine's rules, templates, and page from wherever it was installed; `engine/art.py`, which finds the `codex` program; `engine/saves.py`, which has to run the bundled Git; `VERSION`, which the installer would carry.
+
+### Making the engine public
+
+Not planned yet. These are what has to be done first when it is.
+
+#### Small
+
+##### A CLAUDE.md written for the user
+The engine's `CLAUDE.md` is written for its author: it names a folder on their machine (the Living World Engine it was forked from) and is mostly notes for working on the engine itself. Before the engine is public it's rewritten for someone who has just got it: what the engine is, how to open the play window and start a narrative, and nothing that's true on only one machine. The notes for working on the engine are kept, in a part of their own or in a doc it points to.
+- **Touches:** `CLAUDE.md`; `README.md`, which may take some of what comes out of it.
+- **Open questions:** whether the public repository starts from a fresh history, since every commit so far carries the author's name and email.
 
 ## Maybe
 
