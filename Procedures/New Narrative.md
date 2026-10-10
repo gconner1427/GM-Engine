@@ -14,7 +14,7 @@ The play window creates the folder and sends you the player's answers in its fir
 
 These are all you ask about the world. Ask only for the ones the first message didn't answer, in one round:
 
-1. **Genre and tone.** What kind of story, and how it should feel.
+1. **Genre and tone.** What kind of story, and how it should feel. The play window asks them as two steps and sends them as "Genre" and "Tone." The genre is always given. If the tone was left to you, choose one that suits the genre, and you don't say what you chose.
 2. **The world.** One of:
    - **Original:** you invent it.
    - **Built on D&D:** a world in that tradition. Ask which published setting, if they have one in mind; otherwise it's a world of your own with that game's peoples, magic, and monsters.
@@ -31,42 +31,70 @@ These are all you ask about the world. Ask only for the ones the first message d
 - The window can add one more, **Also include:** other content the player named in their own words (racism, slavery, drug use). It goes on the Style Guide's "Also included" line as they wrote it, and it's a yes like the others: the world can have it and the prose shows it plainly when the narrative goes there, without it having to be put in. Without the window, ask for it in the same round as the five.
 - Each line stands alone. Graphic violence without gore is a fight told in full with the wounds left undescribed; nudity without explicit sex is a body described at the bath and a fade when the scene turns to sex.
 
+**The size** is the player's too: **Small**, **Medium**, or **Large**. It says how much world they want and how long a narrative, and it decides how much you build (step 3, "How much to build"). The play window asks it as a step of its own and sends it as "Size." Without the window, ask in the same round, with Medium unless they say otherwise.
+- **Small:** one place and what's around it, and a short campaign: a handful of sessions, about five.
+- **Medium:** a region, and a full campaign: ten to twenty sessions.
+- **Large:** a wide world, and a long campaign: dozens of sessions.
+- **In a space opera** the three are counted in worlds, and the window names them that way after the size: Small is one world (a single planet or space station), Medium is one system (several planets and places in space), Large is a few systems. There's a fourth, **Galaxy**, offered only for a space opera: a whole galaxy, with many systems and a campaign that can run as long as the player likes. The window warns the player what a galaxy costs to build and makes them confirm it, so don't ask again. Without the window, offer Galaxy only for a space opera, and say first that it can take one to two hours to build and a great deal of usage.
+
 In the same round, give the other table settings with their defaults and let the player change any: past tense; **Heroic** stakes (Core Rules §7; the other choice is **Deadly**). Pictures are on unless they say otherwise. The narration's person (third or second) was chosen when the folder was made and is already on the Style Guide's POV line: don't ask again, and if the player wants the other one, change that line. These go in `Style Guide.md`, along with an **Art style** you choose to suit the genre and tone (Procedures/Art.md). Don't ask anything else about the world, however tempting. If the player volunteers more (a place they want in it, something they don't want), use it.
 
-Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**, with what they wanted in the world, the story, and the themes if they named any.
+Write the premise into the World Bible's "The premise," in the player's words, tagged **[Setup]**, with what they wanted in the world, the size, the story, and the themes if they named any.
 
 ## 3. Build the campaign and the world
 
 Now prepare it, in `GM Only/`, without a word to the player about what's in it. Build one region well, enough that it holds together and is worth exploring, and sketch what's beyond it in a line or two. Leave the rest Open and grow it as play goes there.
 
+**How much to build** is set by the size the player chose. Where the docs below give a count, it's this one:
+
+| | Small | Medium | Large |
+|---|---|---|---|
+| The campaign | about five sessions | ten to twenty | dozens |
+| The road's stages | two or three | three to five | five to seven |
+| The starting region | one place and what's around it: a town and its valley, a station, a single city district | a region | a region, with the two or three lands next to it sketched in a paragraph each |
+| Places | about six, two with full docs | a dozen or so, a few with full docs | about twenty, five or six with full docs |
+| Groups | two or three | three to six | five to eight |
+| Pressures | two or three | three to six | five to eight |
+| The campaign's clock | 4 steps | 6 steps | 8 steps |
+| Secrets of the world | two or three | a handful | a handful, and one for each neighboring land |
+| Name pools | 15 or more each | 30 or more each | 30 or more each, and a pool for each neighboring people |
+| Walks of life, homes, talents (step 4) | four to six, two to four, six to eight | six to ten, four to eight, eight to twelve | eight to twelve, six to ten, ten to fourteen |
+
+- **In a space opera,** the starting region is the size's reach, and the counts are the same. Small: one planet or station, and its places are its cities, decks, and wilds. Medium: one system, and its places are spread across its planets, moons, and stations, with travel times between them. Large: the starting system in full, and one or two more with their main worlds sketched in a paragraph each.
+- **A galaxy** is the Large column and more. The starting system is built in full. Five to eight more systems each get a paragraph, their main worlds and places in space in a line each, and one or two places with full docs. Across all of it: about forty places, ten or so with full docs; eight to twelve groups, several of them powers that span systems; six to ten pressures; a road of six to eight stages that crosses systems; an 8-step clock; a name pool for each people; and walks of life, homes, and talents as at Large. How ships cross between systems, how long it takes, and what it costs go in `Map & Travel.md`. Even here the far side of the galaxy is a line or two and Open: it's built when play goes there.
+- **A small world is a whole one, only close in.** Everything is still built (every doc below, every section), and built as well: it's the counts that shrink, and what's past the horizon gets a line. The goal is one that can be reached in a handful of sessions (clear the mine, find the missing girl, win the election), and nothing in the docs is put there for a session that won't be played. Don't build more than the size calls for because the genre seems to want it: the player chose Small to be playing sooner.
+- **A large world is still one region at a time.** Build the starting region in full and the lands next to it in outline, and put the road's later stages out there. They get their full docs when play comes near them, never now.
+- **The sessions are a measure, never a limit.** They say how big a goal to choose and how long its road should be. Once play starts the campaign takes as long as it takes (GM Rules, "The campaign").
+- Write the size in `Campaign.md`, "The size."
+
 **`GM Only/State/Campaign.md`, first.** Decide what this narrative is about before you build anything else, because everything else is built around it:
 - **The goal:** what the character is meant to do, in a line, and what would count as done. If the player named a story, this is it. If they didn't, choose one that suits the genre, the tone, and the themes, and that one person could plausibly see through. It needs an end: "survive" and "explore" aren't goals; "get the plague cure to the capital before the passes close" is.
 - **What's at stake** and **the opposition:** who wants what the goal is against, why, and what happens if nobody stops them. The opposition is a person or a group in the docs below, with reasons that make sense from where they stand.
-- **The road:** three to five stages between the start and the end, each something that has to be learned, won, reached, or decided. Milestones, never scenes. Write the first in full and the rest in a line each.
+- **The road:** the stages between the start and the end (three to five, at Medium), each something that has to be learned, won, reached, or decided. Milestones, never scenes. Write the first in full and the rest in a line each.
 - **How it could end:** two or three honest ways.
 - Leave **The hook** until the character is made (step 6), and **Where it stands** until play starts.
 
 Then the world, built so the campaign is in it and can be reached from the starting region:
 
-**`GM Only/World/World Bible.md`:** every section. For each law (magic, technology, gods), what's common knowledge and what's hidden. A handful of secrets of the world: things that are true and would change how a person saw it.
+**`GM Only/World/World Bible.md`:** every section. For each law (magic, technology, gods), what's common knowledge and what's hidden. The secrets of the world (a handful, at Medium): things that are true and would change how a person saw it.
 
-**`GM Only/World/Map & Travel.md` and `GM Only/Places/`:** the starting region. A dozen or so places with a reason to exist, a few with full docs, and what's hidden in the ones that hide something. Distances and travel times between them.
+**`GM Only/World/Map & Travel.md` and `GM Only/Places/`:** the starting region. Its places (a dozen or so, at Medium), each with a reason to exist, a few with full docs, and what's hidden in the ones that hide something. Distances and travel times between them.
 
 **`GM Only/World/Economy.md`:** currency, everyday prices, what work pays, who has money.
 
 **`GM Only/World/Timeline.md`:** the history that still matters, the public version and the true one where they differ.
 
-**`GM Only/Groups/`:** the three to six powers that matter in the region: what each wants, what it has, how it stands toward the others, what it's hiding. The campaign's opposition is one of them, or is behind one, and at least one other has a reason to want the goal reached.
+**`GM Only/Groups/`:** the powers that matter in the region (three to six, at Medium): what each wants, what it has, how it stands toward the others, what it's hiding. The campaign's opposition is one of them, or is behind one, and at least one other has a reason to want the goal reached.
 
 **`GM Only/Cast/`:** the people who run those groups and places, and anyone whose plans are in motion. Each one wants something for their own reasons. Give stat lines to those likely to need one. Among them: the opposition, and the people the first stage of the road runs through (who knows something, who needs help, who's in the way).
 
 **`GM Only/Bestiary.md`:** the world's common dangers.
 
-**`GM Only/State/Pressures.md`:** three to six things already in motion when the narrative starts, each driven by someone or something in the docs, with every field filled. One is the campaign's: what the opposition is doing, heading toward what's at stake, on a slow clock (8 steps) so there's a campaign's worth of time before it fills. The others exist because the world would have them, and they're where side quests come from: at least a couple should have nothing to do with the campaign, and at least a couple should be within reach of wherever the character is likely to start.
+**`GM Only/State/Pressures.md`:** the things already in motion when the narrative starts (three to six, at Medium), each driven by someone or something in the docs, with every field filled. One is the campaign's: what the opposition is doing, heading toward what's at stake, on a clock as long as the campaign (6 steps, at Medium) so there's a campaign's worth of time before it fills. The others exist because the world would have them, and they're where side quests come from: at least a couple should have nothing to do with the campaign, and at least a couple should be within reach of wherever the character is likely to start.
 
 **`GM Only/World/Rules Kit.md`:** the world in the rules. Skills (12 to 20, in the world's own words, covering the list in the kit template), common weapons and armor, one power entry for each law a person can use, and a starting handful of talents.
 
-**`GM Only/World/Names.md`:** pools of 30 or more for each people the opening is likely to meet (given names, and family names if the world uses them), drawn from sources that fit: real names from the real languages and periods the world leans on, or the source setting's own naming patterns. Leave out anything in `Writing/Banned Names.md`, and don't let two names in one pool start with the same three letters. From here on, every name comes from `gm name`.
+**`GM Only/World/Names.md`:** pools (of 30 or more, at Medium) for each people the opening is likely to meet (given names, and family names if the world uses them), drawn from sources that fit: real names from the real languages and periods the world leans on, or the source setting's own naming patterns. Leave out anything in `Writing/Banned Names.md`, and don't let two names in one pool start with the same three letters. From here on, every name comes from `gm name`.
 
 **How to build it well:**
 - **Start from the campaign.** A GM preparing a campaign knows what it's about before drawing the map. Put the goal's opposition and the road's first stage in the starting region or within a few days of it, and let the region's groups, people, and places take their shape from where they stand on it. Then build the rest, which has nothing to do with it.
@@ -135,7 +163,7 @@ Then write what a character here can be made from, as a section of the Character
 ```
 
 - **Peoples:** the peoples a character could be. Leave the heading out if there's only one.
-- **Walks of life:** six to ten lives someone in the starting region could have led, across its ranks and trades. Every one has to be a life the campaign could reach: before you list one, be sure you could write a hook for it. Each ends with `Skills:` and the two to four skills that life teaches, by their names under Skills; the creator marks those for the player.
+- **Walks of life:** six to ten lives (at Medium; the counts in this list follow the size, step 3) someone in the starting region could have led, across its ranks and trades. Every one has to be a life the campaign could reach: before you list one, be sure you could write a hook for it. Each ends with `Skills:` and the two to four skills that life teaches, by their names under Skills; the creator marks those for the player.
 - **Homes:** four to eight places in the starting region a person could come from.
 - **Skills:** every Rules Kit skill a starting character could have, with what it covers.
 - **Talents:** eight to twelve, from the Rules Kit or written in the shapes of Core Rules §17, spread across the walks of life and across kinds of character. A power a person could plausibly start with is one of these, described as the world understands it.

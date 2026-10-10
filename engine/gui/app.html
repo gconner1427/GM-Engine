@@ -667,11 +667,13 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .dialog textarea { min-height: 84px; resize: vertical; }
 /* a new narrative is asked for a step at a time, the way the character is made, and the steps all stand the same height so the window holds still */
 #newdialog .dialog { width: min(900px, 96vw); }
-#newdialog .mk-rail { padding: 0 0 12px; } #newdialog .mk-rail button { padding: 7px 4px; gap: 7px; }   /* ten steps, on one line */
+#newdialog .mk-rail { padding: 0 0 12px; } #newdialog .mk-rail button { padding: 7px 2px; gap: 7px; }   /* twelve steps, on one line */
 #newdialog .mk-body { height: min(520px, 62vh); padding: 22px 6px 8px; }
 #newdialog .mk-page { max-width: 700px; gap: 20px; }
 #newdialog .mk-nav { padding: 14px 0 0; background: none; }
 #newdialog .choice.two { grid-template-columns: 1fr 1fr; }
+.choice button span.warn { display: block; margin-top: 6px; color: var(--warn); }
+#suredialog { z-index: 45; } #suredialog .dialog { width: min(480px, 92vw); } #suredialog p { margin: 0; text-align: center; font: 16px/1.6 var(--serif); }
 #newdialog .field .browse { display: flex; gap: 8px; } #newdialog .field .browse input { flex: 1; min-width: 0; }
 .nn-leave { justify-self: center; padding: 10px 22px; }
 #newdialog .mk-sum > div { padding: 5px 0; cursor: pointer; transition: background .2s; } #newdialog .mk-sum > div:hover { background: #ffffff07; }
@@ -841,6 +843,14 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     <div class="mk-rail" id="newrail"></div>
     <div class="mk-body" id="newbody"></div>
     <div class="mk-nav" id="newnav"></div>
+  </div>
+</div>
+<div class="shade" id="suredialog" hidden>
+  <div class="dialog">
+    <div class="head">A Whole Galaxy</div>
+    <p>A whole galaxy can take 1 to 2 hours to build, and will use a lot of your usage.</p>
+    <p>Are you sure?</p>
+    <div class="row"><button data-close>Go back</button><button class="primary" data-sure>Yes, I am sure</button></div>
   </div>
 </div>
 
@@ -1675,12 +1685,24 @@ const WORLDS = {original: ["Original", "The GM invents it"], dnd: ["D&D", "A wor
 const SETTING_ASK = {dnd: ["A published setting", "optional", "The one you have in mind, if any"],
   other: ["Which setting", "and an era, if it matters", ""], isekai: ["How they cross over, or which world", "optional", "Summoned. Reborn. Pulled into a game."]};
 const PERSONS = {third: ["Third person", "Reads like a novel: “She draws her sword.”"], second: ["Second person", "Like a GM at the table: “You draw your sword.”"]};
-const NEW_STEPS = [["genre", "Genre"], ["world", "World"], ["has", "Includes"], ["story", "Story"], ["themes", "Themes"], ["content", "Content"],
+// How much world the GM builds and how long the campaign runs. A smaller one is built sooner.
+const SIZES = {small: ["Small", "One place and a short campaign: a handful of sessions. The quickest to build."],
+  medium: ["Medium", "A region and a full campaign: ten to twenty sessions."],
+  large: ["Large", "A wide world and a long campaign: dozens of sessions. The longest to build."]};
+// A space opera's sizes are counted in worlds, and it has a fourth: a galaxy, which is asked about twice before it's built.
+const SPACE_SIZES = {small: ["One world", "A single planet or space station, and a short campaign: a handful of sessions. The quickest to build."],
+  medium: ["One system", "A system with several planets and places in space, and a full campaign: ten to twenty sessions."],
+  large: ["A few systems", "A couple of systems, each with planets and places in space, and a long campaign: dozens of sessions."],
+  galaxy: ["A whole galaxy", "Many systems, many planets, and the places in space between them.", "Can take 1 to 2 hours to build, and will use a lot of usage."]};
+const SIZE_NAMES = {small: "Small", medium: "Medium", large: "Large", galaxy: "Galaxy"};
+const NEW_STEPS = [["genre", "Genre"], ["tone", "Tone"], ["world", "World"], ["has", "Includes"], ["size", "Size"], ["story", "Story"], ["themes", "Themes"], ["content", "Content"],
   ["person", "Narration"], ["title", "Title"], ["folder", "Folder"], ["review", "Review"]];
-const blankNew = () => ({step: 0, genre: "", world: "original", setting: "", has: "", story: "", themes: "", content: [], also: "", person: "third", title: "", parent: ""});
+const blankNew = () => ({step: 0, genre: "", tone: "", sure: false, world: "original", setting: "", has: "", size: "medium", story: "", themes: "", content: [], also: "", person: "third", title: "", parent: ""});
 const nn = blankNew();
 
 const nnText = key => nn[key].trim();
+const nnSizes = () => /space opera/i.test(nn.genre) ? SPACE_SIZES : SIZES;
+const nnSize = () => nn.size in nnSizes() ? nn.size : "large";   // a galaxy, in a genre that's no longer a space opera
 const nnList = key => nn[key].split(",").map(t => t.trim()).filter(Boolean);
 const nnInput = (key, ghost) => `<input data-nn="${key}" value="${esc(nn[key])}" placeholder="${esc(ghost || "")}">`;
 // A step's examples: each one fills the answer in. With add, it goes on the end of what's there, and a second click takes it off.
@@ -1691,9 +1713,14 @@ const nnCards = (attr, all, on, cls) => `<div class="choice ${cls}">${Object.ent
   `<button data-${attr}="${id}"${on(id) ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span></button>`).join("")}</div>`;
 
 const NEW_PAGES = {
-  genre: () => `<h2>Genre and tone</h2><p class="lede">What kind of story, and how it should feel.</p>
-    <div class="field">${nnInput("genre")}</div>
-    ${nnExamples("genre", ["Grim low fantasy", "Space opera with some humor", "A slow-burn western", "Gothic horror", "Swashbuckling adventure", "A cozy mystery"])}`,
+  genre: () => `<h2>Genre</h2><p class="lede">What kind of story it is. Pick one, or write your own.</p>
+    ${mkField("Pick one", "", `<div class="chips">${["High Fantasy", "Low Fantasy", "Sci-Fi", "Space Opera", "Slice of Life"].map(v => `<button data-eg="genre" data-v="${v}">${v}</button>`).join("")}</div>`)}
+    ${mkField("Something else", "", nnInput("genre", "A slow-burn western. Gothic horror. A cozy mystery."))}`,
+
+  tone: () => `<h2>Tone</h2><p class="lede">How it should feel. Pick any, or write your own.</p>
+    ${mkField("Pick any", "", `<div class="chips">${["Mature", "Dark", "Grim", "Comedy", "Light Hearted"].map(v => `<button data-eg="tone" data-v="${v}" data-add>${v}</button>`).join("")}</div>`)}
+    ${mkField("Something else", "", nnInput("tone", "Bittersweet. Pulpy. Tense."))}
+    ${nnLeave("tone")}`,
 
   world: () => {
     const ask = SETTING_ASK[nn.world];
@@ -1707,6 +1734,10 @@ const NEW_PAGES = {
     <div class="field">${nnInput("has")}</div>
     ${nnExamples("has", ["Adventurers", "Adventure guilds", "Kingdoms", "Empires", "Dungeons to explore", "Islands to explore"], true)}
     ${nnLeave("has")}`,
+
+  size: () => `<h2>The size</h2><p class="lede">How big the world is and how long the narrative runs. The GM builds only as much as the size needs, so a smaller one is ready sooner.</p>
+    <div class="choice ${nnSizes() === SIZES ? "three" : "two"}">${Object.entries(nnSizes()).map(([id, [name, hint, warn]]) =>
+      `<button data-size="${id}"${id === nnSize() ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span>${warn ? `<span class="warn">${esc(warn)}</span>` : ""}</button>`).join("")}</div>`,
 
   story: () => `<h2>The story</h2><p class="lede">What the narrative is about, in a line, if you have one in mind.</p>
     <div class="field"><textarea data-nn="story">${esc(nn.story)}</textarea></div>
@@ -1733,10 +1764,12 @@ const NEW_PAGES = {
 
   review: () => {
     const left = '<span class="left">Left to the GM</span>', setting = nnText("setting"), world = WORLDS[nn.world][0];
-    const rows = [["genre", "Genre and tone", esc(nnText("genre")) || '<span class="left">Not said yet</span>'],
+    const rows = [["genre", "Genre", esc(nnText("genre")) || '<span class="left">Not said yet</span>'],
+      ["tone", "Tone", esc(nnText("tone")) || left],
       ["world", "The world", esc(nn.world === "original" ? "Original: the GM invents it" : nn.world === "other" ? "Built on " + (setting || "…")
         : (nn.world === "dnd" ? "Built on " : "") + world + (setting ? ": " + setting : ""))],
       ["has", "In the world", esc(nnText("has")) || left],
+      ["size", "Size", esc(nnSizes()[nnSize()][0])],
       ["story", "The story", esc(nnText("story")) || left],
       ["themes", "Themes", esc(nnText("themes")) || left],
       ["content", "Content", esc(Object.keys(CONTENT).filter(id => nn.content.includes(id)).map(id => CONTENT[id]).concat(nnText("also") || []).join(", ")) || '<span class="left">Nothing explicit</span>'],
@@ -1750,7 +1783,7 @@ const NEW_PAGES = {
 };
 
 function nnMissing(id) {   // what a step still needs before the world can be built
-  if (id === "genre" && !nnText("genre")) return "Say what genre and tone you want, so the GM knows what to build.";
+  if (id === "genre" && !nnText("genre")) return "Say what genre you want, so the GM knows what to build.";
   if (id === "world" && nn.world === "other" && !nnText("setting")) return "Say which setting to build it on.";
   if (id === "folder" && !nnText("parent")) return "Choose the folder it's created in.";
 }
@@ -1778,9 +1811,26 @@ function renderNew(focus) {
 function nnGo(step) {   // going on past a step that needs an answer asks for it; going back, or anywhere by the rail, never does
   const missing = step === nn.step + 1 && nnMissing(NEW_STEPS[nn.step][0]);
   if (missing) return toast(missing);
+  if (step === nn.step + 1 && NEW_STEPS[nn.step][0] === "size" && nnSure(() => nnGo(step))) return;
   nn.step = step;
   renderNew(true);
 }
+
+let sureThen = null;
+function nnSure(then) {   // a galaxy is asked about once more before anything goes on; true while the question is up
+  if (nnSize() !== "galaxy" || nn.sure) return false;
+  sureThen = then;
+  $("suredialog").hidden = false;
+  return true;
+}
+$("suredialog").addEventListener("click", e => {
+  const yes = e.target.closest("[data-sure]");
+  if (!yes && !e.target.closest("[data-close]")) return;
+  $("suredialog").hidden = true;
+  if (!yes) return;
+  nn.sure = true;
+  sureThen();
+});
 
 $("newdialog").addEventListener("input", e => {
   const key = e.target.dataset.nn;
@@ -1812,6 +1862,7 @@ $("newdialog").addEventListener("click", guard(async e => {
     nn.world = el.dataset.world;
     focus = "setting";
   }
+  else if ((el = at("[data-size]"))) { nn.size = el.dataset.size; nn.sure = false; }
   else if ((el = at("[data-person]"))) nn.person = el.dataset.person;
   else if ((el = at("[data-content]"))) {
     const id = el.dataset.content, i = nn.content.indexOf(id);
@@ -1835,6 +1886,8 @@ async function createNarrative() {
     nn.step = at;
     return renderNew(true);
   }
+  if (nnSure(createNarrative)) return;
+  const tone = nnText("tone");
   const genre = nnText("genre"), setting = nn.world === "original" ? "" : nnText("setting"), title = nnText("title"), has = nnText("has"), story = nnText("story"), themes = nnText("themes");
   const content = Object.keys(CONTENT).map(id => `${CONTENT[id]}: ${nn.content.includes(id) ? "yes" : "no"}.`).join(" ")
     + (nnText("also") ? " Also include: " + nnText("also").replace(/\.*$/, ".") : "");
@@ -1842,11 +1895,12 @@ async function createNarrative() {
     : nn.world === "dnd" ? "Built on D&D." + (setting ? " Setting: " + setting : " No particular published setting.")
     : nn.world === "isekai" ? "Isekai: a person from our world ends up in another one." + (setting ? " The player adds: " + setting : " The crossing and the other world are yours to decide.")
     : "Built on an existing setting: " + setting;
+  const size = SIZE_NAMES[nnSize()] + (nnSizes() === SIZES ? "" : ` (${SPACE_SIZES[nnSize()][0].toLowerCase()})`);
   const narration = nn.person === "second" ? "Second person (\"you\")." : "Third person limited.";
   const r = await api("create", {name: title, parent: nnText("parent"), person: nn.person});
   Object.assign(nn, blankNew(), {parent: nn.parent});   // the next one starts clean, in the same folder
   openGame(r.path);
-  await send(`Set up this narrative.\n\nGenre and tone: ${genre}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+  await send(`Set up this narrative.\n\nGenre: ${genre}\nTone: ${tone || "none given; it's yours to decide."}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nSize: ${size}.\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
 }
 $("addexisting").onclick = guard(async () => {
   const r = await api("pick-folder", {});
@@ -3102,7 +3156,7 @@ $("flagopen").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("shopdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("suredialog").hidden = true; $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("shopdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");

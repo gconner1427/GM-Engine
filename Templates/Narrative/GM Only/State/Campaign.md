@@ -10,6 +10,12 @@ Tags as everywhere: **[Setup]** what the player gave, **[GM]** yours and not on 
 
 ---
 
+## The size
+
+Small, Medium, or Large (or, in a space opera, Galaxy), as the player chose, tagged **[Setup]**, with its reach if the player's message gave one (one world, one system, a few systems). It set how much world was built and how long a campaign this is: about five sessions, ten to twenty, or dozens (Procedures/New Narrative.md, step 3, "How much to build"). It's a measure for the goal and the road, never a count of sessions to hit.
+
+Unknown.
+
 ## The goal
 
 What the character is meant to do, in a line: bring down the dark lord, end the war, find the missing sister. Then what would count as done, plainly enough that you'll know it when it happens.
@@ -41,7 +47,7 @@ Unknown.
 
 ## The road
 
-Three to five stages between the hook and the end. Each is something that has to be learned, won, reached, or decided before the goal can be had, with where it is and who's in the way. They're milestones, never scenes: there are several ways through each, and the character may find one you didn't think of, skip one, or take them out of order. Write the next stage in full and the later ones in a line each, and fill each in as play comes near it.
+The stages between the hook and the end: two or three in a Small campaign, three to five in a Medium one, five to seven in a Large one, six to eight across a Galaxy. Each is something that has to be learned, won, reached, or decided before the goal can be had, with where it is and who's in the way. They're milestones, never scenes: there are several ways through each, and the character may find one you didn't think of, skip one, or take them out of order. Write the next stage in full and the later ones in a line each, and fill each in as play comes near it.
 
 1. Unknown.
 
