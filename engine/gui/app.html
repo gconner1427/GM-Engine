@@ -769,8 +769,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     <div id="nocodex" class="warnbox mild" hidden></div>
     <nav id="mainmenu">
       <button id="menucontinue" style="--n:0" hidden><span>Continue</span><small id="continuename"></small></button>
-      <button id="menunarratives" style="--n:1"><span>Narratives</span></button>
-      <button id="menunew" style="--n:2"><span>New Narrative</span></button>
+      <button id="menunew" style="--n:1"><span>New Narrative</span></button>
+      <button id="menunarratives" style="--n:2"><span>Narratives</span></button>
       <button id="menusettings" style="--n:3"><span>Settings</span></button>
       <button id="menuabout" style="--n:4"><span>About</span></button>
       <button id="menuexit" class="last" style="--n:5"><span>Exit Game</span></button>
@@ -1713,9 +1713,9 @@ const nnCards = (attr, all, on, cls) => `<div class="choice ${cls}">${Object.ent
   `<button data-${attr}="${id}"${on(id) ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span></button>`).join("")}</div>`;
 
 const NEW_PAGES = {
-  genre: () => `<h2>Genre</h2><p class="lede">What kind of story it is. Pick one, or write your own.</p>
-    ${mkField("Pick one", "", `<div class="chips">${["High Fantasy", "Low Fantasy", "Sci-Fi", "Space Opera", "Slice of Life"].map(v => `<button data-eg="genre" data-v="${v}">${v}</button>`).join("")}</div>`)}
-    ${mkField("Something else", "", nnInput("genre", "A slow-burn western. Gothic horror. A cozy mystery."))}`,
+  genre: () => `<h2>Genre</h2><p class="lede">What kind of story it is. Pick one or combine them, or write your own.</p>
+    ${mkField("Pick any", "", `<div class="chips">${["High Fantasy", "Low Fantasy", "Sci-Fi", "Space Opera", "Slice of Life"].map(v => `<button data-eg="genre" data-v="${v}" data-add>${v}</button>`).join("")}</div>`)}
+    ${mkField("Something else", "", nnInput("genre", "Cyberpunk. A slow-burn western. Gothic horror."))}`,
 
   tone: () => `<h2>Tone</h2><p class="lede">How it should feel. Pick any, or write your own.</p>
     ${mkField("Pick any", "", `<div class="chips">${["Mature", "Dark", "Grim", "Comedy", "Light Hearted"].map(v => `<button data-eg="tone" data-v="${v}" data-add>${v}</button>`).join("")}</div>`)}

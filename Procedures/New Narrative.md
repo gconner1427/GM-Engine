@@ -14,7 +14,7 @@ The play window creates the folder and sends you the player's answers in its fir
 
 These are all you ask about the world. Ask only for the ones the first message didn't answer, in one round:
 
-1. **Genre and tone.** What kind of story, and how it should feel. The play window asks them as two steps and sends them as "Genre" and "Tone." The genre is always given. If the tone was left to you, choose one that suits the genre, and you don't say what you chose.
+1. **Genre and tone.** What kind of story, and how it should feel. The play window asks them as two steps and sends them as "Genre" and "Tone." The genre is always given, and it can be more than one (High Fantasy and Slice of Life; Sci-Fi and Space Opera): build one narrative that is all of them, never a pick among them. Slice of life in a high fantasy world is a high fantasy world, built in full, with a campaign on the scale of a life in it (keep the inn open, win the apprenticeship) and not a dark lord. If the tone was left to you, choose one that suits the genre, and you don't say what you chose.
 2. **The world.** One of:
    - **Original:** you invent it.
    - **Built on D&D:** a world in that tradition. Ask which published setting, if they have one in mind; otherwise it's a world of your own with that game's peoples, magic, and monsters.
