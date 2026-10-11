@@ -39,6 +39,7 @@ from narrative import CONFIG, ENGINE, Narrative, field
 PAGE = Path(__file__).resolve().parent / "gui" / "app.html"
 ICON = PAGE.with_name("dice.ico")   # the d20: the window, the taskbar, the browser tab, the shortcut
 THREE = PAGE.with_name("three.min.js")   # three.js r160, kept here so the main menu's die needs no network
+FONTS = PAGE.with_name("fonts")   # Cinzel and Cormorant Garamond, the main menu's type, kept here for the same reason
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
@@ -46,6 +47,8 @@ PREFS = STORE / "prefs.json"      # the window's own: text size, whether the sid
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
+BACKDROP = ENGINE / "Art" / "Menu"   # "Menu Backdrop.png" (or .webp, .jpg): a painted vault behind the main menu, if there is one
+BACKDROP_KINDS = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg"}
 VERSION = ENGINE / "VERSION"   # one line, "Alpha 0.0.1": the corner of the main menu, and About
 MENU_TRACKS = ("1", "2")
 WORLD_BGM = "World Creation BGM 1.mp3"   # in the same folder: what plays while the GM builds a world
@@ -538,6 +541,16 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_media(TITLE.read_bytes(), "image/png")
             except OSError:
                 return self.send(404, {"error": "No title."})
+        if route == "/backdrop":  # the main menu's painted backdrop; without one the page draws its own vault
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            for ext, kind in BACKDROP_KINDS.items():
+                try:
+                    return self.send_media((BACKDROP / f"Menu Backdrop{ext}").read_bytes(), kind)
+                except OSError:
+                    pass
+            self.send_response(204)  # none painted yet, which is no error
+            return self.end_headers()
         if route == "/art":  # an <img> can't send a header, so the token rides in the address
             if one("t") != TOKEN:
                 return self.send(403, {"error": "Not allowed."})
@@ -561,6 +574,19 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_media(THREE.read_bytes(), "text/javascript")
             except OSError:
                 return self.send(404, {"error": "Not found"})
+        if route == "/font":  # the menu's type: public, like the library, and only what's in the fonts folder
+            try:
+                if one("f") not in {f.name for f in FONTS.glob("*.woff2")}:
+                    raise OSError
+                data = (FONTS / one("f")).read_bytes()
+            except OSError:
+                return self.send(404, {"error": "Not found"})
+            self.send_response(200)
+            self.send_header("Content-Type", "font/woff2")
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+            self.end_headers()
+            return self.wfile.write(data)
         if route not in ("/", "/index.html"):
             return self.send(404, {"error": "Not found"})
         html = read(PAGE).replace("__GM_TOKEN__", TOKEN)

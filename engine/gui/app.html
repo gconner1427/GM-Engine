@@ -13,6 +13,10 @@
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --sans: "Segoe UI", system-ui, sans-serif;
   --story-size: 18px; --side: 420px;
+  /* the main menu's own: obsidian and gold, and its two typefaces (engine/gui/fonts). Only the home screen uses them yet. */
+  --m-obsidian: #0b0907; --m-vault: #1d1409; --m-gold: var(--accent); --m-gold-hi: var(--accent-hi); --m-gold-deep: #7d5f2a; --m-ember: #e8c06a;
+  --m-ink: var(--ink); --m-dim: var(--dim); --m-faint: #8c8271;
+  --display: Cinzel, var(--serif); --text: "Cormorant Garamond", var(--serif);
   /* the house ornaments: a gold rule that fades at both ends, a bracket in each corner of a frame, and a film of grain */
   --rule: linear-gradient(90deg, transparent, var(--accent) 25%, var(--accent) 75%, transparent);
   --corner: linear-gradient(var(--accent), var(--accent));
@@ -116,69 +120,146 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
 /* ---- home: the title screen ---- */
-#home { position: relative; overflow: hidden; background: var(--bg); }
-#homebg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-#homedie { position: absolute; pointer-events: none; }
-#home::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, #12100ce6 0%, #12100c88 34%, transparent 62%), radial-gradient(120% 90% at 50% 50%, transparent 55%, #000a 100%); }
-/* One column, as wide as the title and centred on it: the title, its line, and every button share the axis that runs down
-   through the title's die. The die itself takes the middle of the room that's left (dieSpot). */
-.home-menu { --w: clamp(430px, 62vmin, 640px); --pad: clamp(20px, 5vw, 90px); position: relative; z-index: 1; box-sizing: content-box; height: 100%; width: var(--w);
-  display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 0 0 var(--pad); }
-.masthead { margin-bottom: clamp(22px, 4vmin, 40px); animation: menuin .8s cubic-bezier(.2, .8, .2, 1) both; }
-#home.waiting .masthead, #home.waiting #mainmenu button { animation: none; opacity: 0; }
-.masthead svg { width: 52px; height: 52px; color: var(--accent); stroke-width: 1.1; display: block; margin: 0 auto; }
-/* the title: struck gold with a bevel line through the middle, tall first letters, and a glint that crosses it now and then */
-.masthead h1 { font: 400 clamp(46px, 6.2vmin, 62px)/1 var(--serif); letter-spacing: .17em; text-transform: uppercase; margin: 16px auto 14px; white-space: nowrap;
-  display: flex; align-items: baseline; gap: .34em; width: max-content; padding-bottom: .06em; color: transparent; -webkit-background-clip: text; background-clip: text;
+/* A gold-and-obsidian d20 hangs in a dark vault, lit by its own light, and it is the menu's cursor. The room is a stack of
+   layers, back to front: the vault, shafts of light, the floor with its pool and ring, the die and its reflection, dust,
+   a scrim that keeps the menu readable, grain, and the menu itself. Every size is in --u, a 1920×1080 pixel scaled to fit. */
+@font-face { font-family: Cinzel; font-weight: 400; font-display: block; src: url("/font?f=cinzel-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: Cinzel; font-weight: 600; font-display: block; src: url("/font?f=cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: Cinzel; font-weight: 700; font-display: block; src: url("/font?f=cinzel-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-display: block; src: url("/font?f=cormorant-garamond-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-style: italic; font-display: block; src: url("/font?f=cormorant-garamond-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-display: block; src: url("/font?f=cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; font-display: block; src: url("/font?f=cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+#home { --u: min(100vw / 1920, 100vh / 1080); --dx: 66vw; --ease: cubic-bezier(.2, .8, .2, 1); position: relative; overflow: hidden; background: #000; }
+#home > .layer, #homebg, #homedie, #homeglass { position: absolute; pointer-events: none; }
+#vault { inset: calc(var(--u) * -12);   /* wider than the window by as far as it drifts */
+  background: radial-gradient(calc(var(--u) * 900) calc(var(--u) * 760) at calc(var(--dx) + var(--u) * 12) 46%, #3f2d13, #261a0b 40%, #0c0906 100%);
+  animation: roomin .6s ease-out backwards; }
+#backdropart { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; opacity: 0; transition: opacity .8s ease; -webkit-user-drag: none; }
+#vault.art #backdropart { opacity: 1; }
+/* the arch: a faint outline with the wall outside it darker than the niche, and pillars standing in the niche */
+#arch { left: var(--dx); top: calc(var(--u) * 36); width: calc(var(--u) * 1150); height: 130%; margin-left: calc(var(--u) * -575); overflow: hidden;
+  border: 1px solid #c9a25b10; border-bottom: 0; border-radius: calc(var(--u) * 575) calc(var(--u) * 575) 0 0 / calc(var(--u) * 270) calc(var(--u) * 270) 0 0;
+  box-shadow: 0 0 0 100vmax #00000047, 0 0 calc(var(--u) * 60) calc(var(--u) * 10) #0000004d, inset 0 0 calc(var(--u) * 140) #00000080;
+  transition: opacity .8s ease; animation: roomin .6s ease-out backwards; }
+#arch::before { content: ""; position: absolute; inset: 0; mix-blend-mode: multiply;
+  background: repeating-linear-gradient(90deg, #0000 0, #0000 calc(var(--u) * 96), #0000004d calc(var(--u) * 120), #00000026 calc(var(--u) * 168), #0000 calc(var(--u) * 192)); }
+#vault.art + #arch { opacity: 0; }
+#shafts { left: var(--dx); top: -8%; width: 0; height: 0; mix-blend-mode: screen; animation: roomin .9s ease-out .1s backwards; }
+#shafts i { position: absolute; top: 0; left: calc(var(--u) * var(--w) / -2); width: calc(var(--u) * var(--w)); height: 135vh; transform-origin: 50% 0; transform: rotate(var(--r)); opacity: var(--o);
+  background: linear-gradient(#ffe2a066, #e2b86a33 46%, transparent 86%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent); mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent);
+  animation: sway var(--t) ease-in-out infinite alternate, breathe calc(var(--t) * .7) ease-in-out infinite alternate; }
+@keyframes sway { from { transform: rotate(calc(var(--r) - .5deg)); } to { transform: rotate(calc(var(--r) + .5deg)); } }
+@keyframes breathe { from { opacity: calc(var(--o) * .85); } to { opacity: calc(var(--o) * 1.15); } }
+#floor { left: 0; right: 0; bottom: 0; height: 30%; background: linear-gradient(#0000, #070605cc 7%, #040302f2); animation: roomin .6s ease-out backwards; }
+#pool { left: var(--dx); top: 74%; width: calc(var(--u) * 1120); height: calc(var(--u) * 240); margin: calc(var(--u) * -120) 0 0 calc(var(--u) * -560); mix-blend-mode: screen;
+  background: radial-gradient(closest-side, #e8c06a55, #c9a25b22 45%, transparent 72%); animation: roomin .6s ease-out backwards; }
+/* the ring on the floor: the turning parts are drawn round and laid flat, so they turn in perspective */
+#ring { left: var(--dx); top: 74%; width: calc(var(--u) * 940); height: calc(var(--u) * 940); margin: calc(var(--u) * -470) 0 0 calc(var(--u) * -470); }
+#ring svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; stroke-linecap: butt; }
+#ring .rim { stroke-dasharray: 1; animation: draw .7s ease-out .15s backwards; }
+#ring .late { position: absolute; inset: 0; transform: scaleY(.24); animation: roomin .5s ease .85s backwards; }
+#ring .ticks { animation: turn 120s linear infinite; }
+#ring .dots { animation: turn 80s linear infinite reverse; }
+#ring::after { content: ""; position: absolute; inset: 38% 0; border: 1px solid var(--m-gold-hi); border-radius: 50%; opacity: 0; }
+#ring.wave::after { animation: wave .7s var(--ease); }
+@keyframes draw { from { stroke-dashoffset: 1; } }
+@keyframes turn { to { transform: rotate(360deg); } }
+@keyframes wave { from { opacity: .6; transform: none; } to { opacity: 0; transform: scale(1.25); } }
+@keyframes roomin { from { opacity: 0; } }
+#homeglass { opacity: .16; filter: blur(3px); transform: scaleY(-1);   /* the die again, upside down in the polished floor, fading as it goes */
+  -webkit-mask-image: linear-gradient(#0000 57.6%, #000 81.7%, #0000 81.8%); mask-image: linear-gradient(#0000 57.6%, #000 81.7%, #0000 81.8%); }
+#homebg { inset: 0; width: 100%; height: 100%; display: block; }
+#scrim { inset: 0; background: linear-gradient(90deg, #0b0907f2 0%, #0b0907c0 24%, #0b090700 46%), radial-gradient(120% 95% at 50% 50%, transparent 52%, #000d 100%); }
+#grain { inset: -180px; opacity: .07; mix-blend-mode: overlay; animation: grain .5s steps(1) infinite;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .85 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* the title: the painted one, or the typed one where the picture can't be had */
+.masthead { position: absolute; z-index: 2; left: calc(var(--u) * 96); top: calc(var(--u) * 92); width: calc(var(--u) * 640); aspect-ratio: 3 / 1; display: grid; align-items: center;
+  clip-path: inset(-30%); animation: wipe .9s var(--ease) .25s backwards; }
+@keyframes wipe { from { clip-path: inset(-30% 100% -30% -30%); } }
+.masthead h1 { font: 700 calc(var(--u) * 78)/1 var(--display); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 0 calc(var(--u) * 44); white-space: nowrap;
+  display: flex; align-items: baseline; gap: .3em; width: max-content; padding-bottom: .06em; color: transparent; -webkit-background-clip: text; background-clip: text;
   background-image: linear-gradient(105deg, transparent 42%, #fffbeecc 50%, transparent 58%),
     linear-gradient(#fff8e2 6%, #f0d9a8 30%, #c9a25b 50%, #7d5f2a 54%, #d9b771 72%, #9c7738 96%);
   background-size: 260% 100%, 100% 100%; background-position: 130% 0, 0 0; background-repeat: no-repeat;
   filter: drop-shadow(0 1px 0 #2a1f0c) drop-shadow(0 3px 2px #000c) drop-shadow(0 0 26px #c9a25b4d);
-  animation: glint 9s ease-in-out 1.6s infinite; }
-.masthead h1 b { font-weight: 400; font-size: 1.32em; letter-spacing: .08em; }
+  animation: glint 9s ease-in-out 1.2s infinite; }
+.masthead h1 b { font-weight: 700; font-size: 1.3em; }
 @keyframes glint { 0% { background-position: 130% 0, 0 0; } 22%, 100% { background-position: -70% 0, 0 0; } }
-@media (prefers-reduced-motion: reduce) { .masthead h1 { animation: none; } }
-/* the painted title, once it has loaded, stands in for the typed one, its die, and its rule. The picture has empty space above
-   and below the lettering, so it's pulled in by that much. */
-#titleart { position: relative; width: var(--w); aspect-ratio: 3 / 1; margin: calc(var(--w) * -.05) 0 calc(var(--w) * -.04); filter: drop-shadow(0 8px 16px #000b); user-select: none; }
+#titleart { position: absolute; inset: 0; filter: drop-shadow(0 8px 16px #000b); user-select: none; }
 #titleart img { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-user-drag: none; }
 #titleart i { position: absolute; inset: 0; mix-blend-mode: screen; -webkit-mask: var(--title) center / 100% 100% no-repeat; mask: var(--title) center / 100% 100% no-repeat;
-  background: linear-gradient(105deg, transparent 44%, #fff4d6b3 50%, transparent 56%) 130% 0 / 260% 100% no-repeat; animation: titleglint 9s ease-in-out 1.6s infinite; }
+  background: linear-gradient(105deg, transparent 44%, #fff4d6b3 50%, transparent 56%) 130% 0 / 260% 100% no-repeat; animation: titleglint 9s ease-in-out 1.2s infinite; }
 @keyframes titleglint { 0% { background-position: 130% 0; } 22%, 100% { background-position: -70% 0; } }
-@media (prefers-reduced-motion: reduce) { #titleart i { display: none; } }
-.masthead.art > svg, .masthead.art > h1, .masthead.art::after { display: none; }
-.masthead p { color: var(--dim); margin: 0; font: italic clamp(14px, 1.9vmin, 16px) var(--serif); letter-spacing: .6px; }
-.masthead::after { content: ""; display: block; width: 300px; height: 1px; margin: 22px auto 0; background: var(--rule); }
-#studiomark { position: absolute; z-index: 1; top: 22px; right: 26px; width: clamp(84px, 11vmin, 124px); opacity: .9; -webkit-user-drag: none; user-select: none;
-  animation: markin 1.2s ease .5s both; }
-#version { position: absolute; z-index: 1; right: 26px; bottom: 18px; color: var(--faint); font: 600 10.5px var(--sans); letter-spacing: 2px; text-transform: uppercase;
-  user-select: none; animation: markin 1.2s ease .5s both; }
-#home.waiting #studiomark, #home.waiting #version { animation: none; opacity: 0; }
-@keyframes markin { from { opacity: 0; } to { opacity: .9; } }
-#mainmenu { display: grid; gap: 2px; width: min(100%, 400px); }
-#mainmenu button { position: relative; background: none; border: none; border-radius: 0; width: 100%; padding: clamp(7px, 1.2vmin, 11px) 0;
-  font: 400 clamp(19px, 2.5vmin, 23px)/1.25 var(--serif); letter-spacing: 4px; text-indent: 4px; text-transform: uppercase; color: var(--ink);   /* the indent evens out the spacing after the last letter */
-  transition: color .2s, background .3s;
-  animation: menuin .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--n) * 80ms + .1s); }
-/* under the pointer a button lights along the line and a diamond comes in on each side of its name, as on the title's rule */
-#mainmenu button span { position: relative; display: inline-block; }
-#mainmenu button span::before, #mainmenu button span::after { content: ""; position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -4px; background: var(--accent);
-  opacity: 0; transform: rotate(45deg) scale(.4); transition: transform .25s cubic-bezier(.2, .8, .2, 1), opacity .2s, left .25s cubic-bezier(.2, .8, .2, 1), right .25s cubic-bezier(.2, .8, .2, 1);
-  box-shadow: 0 0 10px var(--accent); }
-#mainmenu button span::before { left: -44px; }
-#mainmenu button span::after { right: -40px; }
-#mainmenu button:hover, #mainmenu button:focus-visible { color: var(--accent-hi); outline: none;
-  background: linear-gradient(90deg, transparent, var(--accent-soft) 30%, var(--accent-soft) 70%, transparent); }
-#mainmenu button:hover span::before, #mainmenu button:focus-visible span::before { left: -30px; opacity: 1; transform: rotate(45deg); }
-#mainmenu button:hover span::after, #mainmenu button:focus-visible span::after { right: -26px; opacity: 1; transform: rotate(45deg); }
-#mainmenu button small { display: block; margin-top: 2px; font: italic 400 14px var(--serif); letter-spacing: .5px; text-indent: 0; text-transform: none; color: var(--dim);
+.masthead.art > h1 { display: none; }
+.tagline { position: absolute; z-index: 2; left: calc(var(--u) * 150); top: calc(var(--u) * 318); margin: 0; white-space: nowrap; color: var(--m-dim);
+  font: italic 500 max(15px, calc(var(--u) * 23))/1.2 var(--text); letter-spacing: .04em; animation: taglinein .5s var(--ease) .5s backwards; }
+@keyframes taglinein { from { opacity: 0; transform: translateY(calc(var(--u) * 12)); } }
+@media (max-height: 759px) { .tagline { display: none; } }
+
+/* the menu: names on the light, each with a diamond on a spine that carries the number of the die's face it owns */
+#mainmenu { --cell: max(calc(var(--u) * 40), 26px); --gem: max(calc(var(--u) * 26), 17px);
+  position: absolute; z-index: 2; left: calc(var(--u) * 150); top: calc(var(--u) * 440); width: max(calc(var(--u) * 520), 300px); display: flex; flex-direction: column; }
+#mainmenu .spine { position: absolute; left: calc(var(--cell) / 2 - .5px); top: 0; bottom: 0; width: 1px; transform-origin: 50% 0;
+  background: linear-gradient(transparent, #c9a25b55 7%, #c9a25b55 93%, transparent); animation: spinein .5s var(--ease) .45s backwards; }
+@keyframes spinein { from { transform: scaleY(0); } }
+/* the lit run of the spine, from its top down to the entry in focus: one bar, moved and stretched, never laid out again */
+#spinelit { position: absolute; left: calc(var(--cell) / 2 - .5px); top: 0; width: 1px; height: 100px; transform-origin: 50% 0; transform: scaleY(0); pointer-events: none;
+  background: var(--m-gold-hi); box-shadow: 0 0 8px 1px #e8c06acc; transition: transform .24s var(--ease); animation: roomin .4s ease .95s backwards; }
+#mainmenu button { position: relative; z-index: 0; display: grid; grid-template-columns: var(--cell) 1fr; column-gap: calc(var(--u) * 26); align-items: center; align-content: center;
+  flex: none; height: max(calc(var(--u) * 68), 30px); width: 100%; padding: 0; border: 0; border-radius: 0; background: none; text-align: left; outline: none;
+  animation: entryin .45s var(--ease) calc(.55s + var(--n, 0) * 70ms) backwards; }
+#mainmenu button.tall { height: max(calc(var(--u) * 92), 46px); }
+@keyframes entryin { from { opacity: 0; transform: translateX(calc(var(--u) * -16)); } }
+#mainmenu button::before { content: ""; position: absolute; z-index: -1; inset: 0; opacity: 0; transition: opacity .26s ease-out, filter .1s;
+  background: linear-gradient(90deg, #f0d9a8cc, transparent) top / 100% 1px no-repeat, linear-gradient(90deg, #f0d9a8cc, transparent) bottom / 100% 1px no-repeat,
+    linear-gradient(90deg, #c9a25b2e, #c9a25b12 55%, transparent); }
+#mainmenu .node { grid-row: 1 / span 2; justify-self: center; display: grid; place-items: center; width: var(--gem); height: var(--gem); transform: rotate(45deg);
+  border: 1px solid #c9a25b88; background: #12100c; transition: background .18s, border-color .18s, box-shadow .18s, transform .18s; }
+#mainmenu .node b { transform: rotate(-45deg); font: 600 max(calc(var(--u) * 11), 8px)/1 var(--display); letter-spacing: 0; color: #c9a25bcc; transition: color .18s; }
+#mainmenu .label { grid-column: 2; font: 600 max(15px, calc(var(--u) * 23))/1.1 var(--display); letter-spacing: .24em; text-transform: uppercase; white-space: nowrap; color: var(--m-ink);
+  transition: letter-spacing .18s ease-out, color .18s ease-out, text-shadow .18s ease-out; }
+#mainmenu small { grid-column: 2; margin-top: calc(var(--u) * 6); font: italic 500 max(13px, calc(var(--u) * 18))/1.15 var(--text); letter-spacing: .02em; text-transform: none; color: #cdbf9f;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#mainmenu #menucontinue:not(:hover, :focus-visible) { color: var(--accent); }   /* the way back in is the first thing offered */
-/* leaving stands apart, under a short rule of its own */
-#mainmenu button.last { color: var(--dim); margin-top: clamp(16px, 3vmin, 28px); }
-#mainmenu button.last::before { content: ""; position: absolute; left: 50%; top: calc(clamp(16px, 3vmin, 28px) / -2); width: 150px; height: 1px; margin-left: -75px; background: var(--rule); opacity: .55; }
-@keyframes menuin { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+#mainmenu small:empty { display: none; }
+/* in focus, from the pointer or the keys alike: the diamond fills, the name widens and lights, and a band of light lies along the row */
+#mainmenu button[aria-current] .node { background: var(--m-gold-hi); border-color: #fff3d0; box-shadow: 0 0 18px #e8c06a; }
+#mainmenu button[aria-current] .node b { color: #1a1408; }
+#mainmenu button[aria-current] .label { letter-spacing: .3em; color: var(--m-gold-hi); text-shadow: 0 0 18px #c9a25b88; }
+#mainmenu button[aria-current]::before { opacity: 1; }
+#mainmenu button:active .node { transform: rotate(45deg) scale(.92); }
+#mainmenu button:active .label { color: #fff3d0; }
+#mainmenu button:active::before { filter: brightness(1.2); }
+#menuexit { margin-top: calc(var(--u) * 22); }   /* leaving stands apart */
+#menuexit:not([aria-current]) .label { color: #b4aa94; }
+
+/* what's missing or signed out, above the hints */
+#homestatus { position: absolute; z-index: 2; left: calc(var(--u) * 96); bottom: calc(var(--u) * 58 + max(calc(var(--u) * 64), 44px)); max-width: max(calc(var(--u) * 560), 320px); display: grid; gap: calc(var(--u) * 8);
+  align-items: end; animation: roomin .5s ease 1.1s backwards; }
+#homestatus:has(> :not([hidden]) ~ :not([hidden])) { grid-template-columns: 1fr 1fr; max-width: max(calc(var(--u) * 1140), 640px); gap: calc(var(--u) * 20); }   /* two of them sit side by side, clear of the menu */
+#homestatus > div { position: relative; padding: calc(var(--u) * 5) calc(var(--u) * 12) calc(var(--u) * 5) max(calc(var(--u) * 28), 20px); border-left: 1px solid currentColor;
+  font: italic 500 max(13px, calc(var(--u) * 18))/1.3 var(--text); color: var(--m-dim); }
+#homestatus > div::before { content: ""; position: absolute; left: max(calc(var(--u) * 11), 8px); top: calc(var(--u) * 5 + .65em - 3px); width: 6px; height: 6px; background: currentColor; transform: rotate(45deg); }
+#homestatus #noclaude { color: var(--warn); background: #d98a5f10; }
+.homefoot { position: absolute; z-index: 2; left: calc(var(--u) * 96); right: calc(var(--u) * 56); bottom: calc(var(--u) * 44); display: flex; align-items: center; justify-content: space-between;
+  pointer-events: none; animation: roomin .5s ease 1.1s backwards; }
+.homefoot .hints { display: flex; align-items: center; gap: calc(var(--u) * 34); color: var(--m-faint); font: 600 max(10px, calc(var(--u) * 12))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+.homefoot .hints span { display: flex; align-items: center; gap: .55em; white-space: nowrap; }
+.homefoot kbd { display: inline-grid; place-items: center; min-width: 2.3em; height: 2.3em; padding: 0 .6em; border: 1px solid #5a4c33; border-bottom-width: 2px; border-radius: 3px; background: #12100c;
+  font: 600 max(9px, calc(var(--u) * 11))/1 var(--display); letter-spacing: .1em; text-indent: .1em; }
+.homefoot .right { display: flex; align-items: center; gap: calc(var(--u) * 26); }
+#version { color: var(--m-faint); font: 600 max(10px, calc(var(--u) * 11))/1 var(--display); letter-spacing: .3em; text-transform: uppercase; white-space: nowrap; user-select: none; }
+#studiomark { width: max(calc(var(--u) * 64), 44px); opacity: .85; -webkit-user-drag: none; user-select: none; }
+
+/* Until the intro clears, the room and the menu wait in the dark; the die and the dust are already there for the intro to hand over to.
+   A key or a click during the entrance finishes it at once (settled). */
+#home.waiting :is(#vault, #arch, #shafts, #floor, #pool, #ring, .masthead, .tagline, #mainmenu .spine, #spinelit, #mainmenu button, #homestatus, .homefoot) { animation: none !important; opacity: 0 !important; }
+#home.settled :is(#vault, #arch, #shafts, #floor, #pool, #ring .rim, #ring .late, .masthead, .tagline, #mainmenu .spine, #spinelit, #mainmenu button, #homestatus, .homefoot) { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  #home, #home *, #home *::before, #home *::after { animation: none !important; transition-duration: .1s !important; }
+  #titleart i { display: none; } }
 #list { max-height: 56vh; overflow: auto; padding-right: 4px; }
 .dialog .form { background: none; border: none; padding: 0; }
 .setting { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
@@ -754,28 +835,49 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 </div>
 
 <div id="home" class="view">
-  <canvas id="homebg"></canvas>
-  <canvas id="homedie"></canvas>
-  <img id="studiomark" alt="Gravelight Studios">
-  <span id="version">__GM_VERSION__</span>
-  <div class="home-menu">
-    <div class="masthead">
-      <svg><use href="#d20"/></svg>
-      <h1 aria-label="GM Engine"><span><b>G</b>M</span><span><b>E</b>ngine</span></h1>
-      <div id="titleart" hidden><img alt="GM Engine"><i></i></div>
-      <p>Solo narratives, run by a game master behind the page.</p>
-    </div>
-    <div id="noclaude" class="warnbox" hidden></div>
-    <div id="nocodex" class="warnbox mild" hidden></div>
-    <nav id="mainmenu">
-      <button id="menucontinue" style="--n:0" hidden><span>Continue</span><small id="continuename"></small></button>
-      <button id="menunew" style="--n:1"><span>New Narrative</span></button>
-      <button id="menunarratives" style="--n:2"><span>Narratives</span></button>
-      <button id="menusettings" style="--n:3"><span>Settings</span></button>
-      <button id="menuabout" style="--n:4"><span>About</span></button>
-      <button id="menuexit" class="last" style="--n:5"><span>Exit Game</span></button>
-    </nav>
+  <div id="vault" class="layer"><img id="backdropart" alt=""></div>
+  <div id="arch" class="layer"></div>
+  <div id="shafts" class="layer">
+    <i style="--r:-22deg;--w:110;--o:.12;--t:13s"></i><i style="--r:-12deg;--w:150;--o:.17;--t:17s"></i><i style="--r:-5deg;--w:200;--o:.26;--t:11s"></i>
+    <i style="--r:1deg;--w:190;--o:.34;--t:15s"></i><i style="--r:8deg;--w:160;--o:.22;--t:12s"></i><i style="--r:17deg;--w:120;--o:.15;--t:16s"></i>
+    <i style="--r:27deg;--w:90;--o:.12;--t:14s"></i>
   </div>
+  <div id="floor" class="layer"></div>
+  <div id="pool" class="layer"></div>
+  <div id="ring" class="layer" aria-hidden="true">
+    <div class="late"><svg class="ticks" viewBox="-500 -500 1000 1000"></svg>
+      <svg class="dots" viewBox="-500 -500 1000 1000"><circle r="418" stroke="#c9a25b66" stroke-width="2.5" stroke-dasharray="2.5 15"/></svg></div>
+    <svg viewBox="-500 -500 1000 1000">
+      <ellipse class="rim" rx="497" ry="119.3" pathLength="1" stroke="#c9a25b80" stroke-width="1.2"/>
+      <ellipse rx="470" ry="112.8" stroke="#c9a25b47" stroke-width="1"/>
+      <path fill="#f0d9a8" stroke="none" d="M497-9l9 9-9 9-9-9zM-497-9l9 9-9 9-9-9zM0 110.3l9 9-9 9-9-9zM0-128.3l9 9-9 9-9-9z"/>
+    </svg>
+  </div>
+  <canvas id="homeglass"></canvas>
+  <canvas id="homedie"></canvas>
+  <canvas id="homebg"></canvas>
+  <div id="scrim" class="layer"></div>
+  <div id="grain" class="layer"></div>
+  <div class="masthead">
+    <h1 aria-label="GM Engine"><span><b>G</b>M</span><span><b>E</b>ngine</span></h1>
+    <div id="titleart" hidden><img alt="GM Engine"><i></i></div>
+  </div>
+  <p class="tagline">Solo narratives, run by a game master behind the page.</p>
+  <nav id="mainmenu">
+    <i class="spine"></i><i id="spinelit"></i>
+    <button id="menucontinue" data-face="20" hidden><i class="node" aria-hidden="true"><b>20</b></i><span class="label">Continue</span><small id="continuename"></small></button>
+    <button id="menunew" data-face="17"><i class="node" aria-hidden="true"><b>17</b></i><span class="label">New Narrative</span><small id="newhint"></small></button>
+    <button id="menunarratives" data-face="12"><i class="node" aria-hidden="true"><b>12</b></i><span class="label">Narratives</span></button>
+    <button id="menusettings" data-face="8"><i class="node" aria-hidden="true"><b>8</b></i><span class="label">Settings</span></button>
+    <button id="menuabout" data-face="5"><i class="node" aria-hidden="true"><b>5</b></i><span class="label">About</span></button>
+    <button id="menuexit" data-face="1"><i class="node" aria-hidden="true"><b>1</b></i><span class="label">Exit Game</span></button>
+  </nav>
+  <div id="homestatus"><div id="noclaude" hidden></div><div id="nocodex" hidden></div></div>
+  <footer class="homefoot">
+    <div class="hints" id="menuhints"><!-- the keys; a gamepad's glyphs would take their place here -->
+      <span><kbd>↑</kbd><kbd>↓</kbd>Navigate</span><span><kbd>Enter</kbd>Select</span><span><kbd>Esc</kbd>Back</span></div>
+    <div class="right"><span id="version">__GM_VERSION__</span><img id="studiomark" alt="Gravelight Studios"></div>
+  </footer>
 </div>
 
 <div class="shade" id="narrativesdialog" hidden>
@@ -1266,7 +1368,9 @@ async function showHome() {
   stopWorldMusic();
   document.body.classList.remove("gmmode");
   $("game").hidden = true;
+  const back = $("home").hidden;   // come back from a narrative, not only told to look again
   $("home").hidden = false;
+  if (back && menu.live) enterHome();
   startBackdrop();
   const h = await api("home");
   if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
@@ -1275,10 +1379,15 @@ async function showHome() {
   if (!nn.parent) nn.parent = h.default_parent;
   const last = h.narratives.find(n => !n.missing);   // the list is kept most recently opened first
   $("menucontinue").hidden = !last;
-  if (last) {
-    $("continuename").textContent = last.character ? `${last.name} · ${last.character}` : last.name;
+  if (last) {   // the narrative, how far into it, and who is played: whichever of them there are
+    const hero = last.character ? last.character + (last.level ? `, Level ${last.level}` : "") : "";
+    $("continuename").textContent = [last.name, last.sessions ? `Session ${last.sessions}` : "", hero].filter(Boolean).join("  ·  ");
     $("menucontinue").onclick = guard(() => openGame(last.path));
   }
+  $("newhint").textContent = h.narratives.length ? "" : "Begin your first story";
+  layMenu();
+  focusEntry(back || !menu.items.includes(menu.on) ? menu.items[0] : menu.on, true);   // Continue, or New Narrative where there's nothing to continue
+  litSpine();
   const list = $("list");
   list.innerHTML = h.narratives.length ? "" : '<div class="empty">Nothing yet. Start one with New Narrative.</div>';
   for (const n of h.narratives) {
@@ -1448,14 +1557,17 @@ $("bgmchoice").onclick = e => {
   if (musicWanted) playMenuMusic();
 };
 
-// The home screen's backdrop: a d20 turning slowly in the dark, and embers rising past it.
+// ---- the home screen's room -------------------------------------------------------
+
+// A gold-and-obsidian d20 turning in a dark vault, lit by its own light, with dust rising through it. It is the menu's cursor
+// as well: every entry owns one of its faces, and the die turns to show the face of the entry in focus.
 const PHI = (1 + Math.sqrt(5)) / 2;
 const DIE = [];
 for (const a of [-1, 1]) for (const b of [-PHI, PHI]) DIE.push([0, a, b], [a, b, 0], [b, 0, a]);
 const EDGES = [];
 DIE.forEach((p, i) => DIE.forEach((q, j) => { if (i < j && Math.abs(Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) - 2) < .01) EDGES.push([i, j]); }));
 const EMBERS = Array.from({length: 46}, () => ({x: Math.random(), y: Math.random(), size: .8 + Math.random() * 1.8, speed: .012 + Math.random() * .03,
-                                                sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));
+                                                sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));   // the intro's; the home screen has dust of its own
 const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let backdropOn = false, veiled = !STILL, drawn = false;   // veiled: the splash and the intro are over it, so there is nothing to draw it for
 // How the die is turned is a 3×3 matrix in rows, in the canvas's own directions: x to the right, y down, z toward the eye.
@@ -1468,17 +1580,25 @@ function turnAbout([x, y, z], by) {   // by so many radians about a unit axis
 const turns = (a, b) => [0, 3, 6].flatMap(i => [0, 1, 2].map(j => a[i] * b[j] + a[i + 1] * b[j + 3] + a[i + 2] * b[j + 6]));   // b, then a
 const dieTilt = t => .42 + .16 * Math.sin(t * .11);   // it leans toward the eye, and nods a little
 
+// The die. turn is how it's turned, and spin how fast: an axis, as long as the radians it turns in a second. aim is the face it
+// is turning to show (0 when it's left to itself), input when the menu last asked for one, and loose the time until which a
+// push has it free of that. idle is how much of its slow turn it has, glow a burst of heat that cools at cool a second, heat
+// the whole of its heat (0 to 1), and awake how far its sway has come in since the intro handed it over.
+const die = {turn: turnAbout([0, 1, 0], 0), spin: [0, 0, 0], last: 0, x: 0, y: 0, r: 0, aim: 0, input: 0, loose: 0, idle: 1, glow: 0, cool: 4, heat: 0, awake: 0, posed: false};
+const warm = (to, cool) => { die.glow = Math.min(1, Math.max(die.glow, to)); die.cool = cool; };
+
 // Unannounced: clicking the die pushes it where it was clicked, so that side goes back and the far side comes round. Every
 // click adds to the spin, and it winds back down when left alone. A click dead centre turns it the way it idles.
-const die = {turn: turnAbout([0, 1, 0], 0), spin: [0, 0, 0], last: 0, x: 0, y: 0, r: 0};
 $("home").addEventListener("pointerdown", e => {
   const dx = e.clientX - die.x, dy = e.clientY - die.y, far = Math.hypot(dx, dy);
-  if (e.target.closest("button") || far > die.r) return;
+  if (e.target.closest("button") || far > die.r || STILL) return;
   const [ux, uy] = far > die.r * .08 ? [-dy / far, dx / far] : [0, 1], tilt = dieTilt(die.last);
   const push = [ux, uy * Math.cos(tilt), -uy * Math.sin(tilt)];   // the axis as the die has it, under its lean
   die.spin = die.spin.map((v, i) => v * 1.25 + push[i] * 2.5);
   const speed = Math.hypot(...die.spin);
   if (speed > 40) die.spin = die.spin.map(v => v * 40 / speed);
+  die.aim = 0;   // it's the player's now, until the menu wants it back
+  warm(.3, 3);
 });
 
 EDGES.forEach(e => { if (DIE[e[0]][1] > DIE[e[1]][1]) e.reverse(); });   // every edge runs top to bottom, and so does the list: the intro draws the die downward
@@ -1493,10 +1613,14 @@ function fit(cv, most) {   // a canvas sized to its box and wiped, with its cont
   return [c, w, h];
 }
 
-// Where the die lives on the home screen: in the middle of the room to the right of the menu's column, and no bigger than that room allows.
+// Where the die lives on the home screen, and how big: right of the menu's column, a little left of the middle of the room
+// that's left, and as large as the window's height or that room allows. It's the one place this is worked out: the intro
+// glides its die here, a click on the die is measured from here, and the room's light is hung over it. The last number is
+// the scale diePoints draws at; the die is hypot(1, PHI) of those from its middle to a corner.
 const dieSpot = (w, h) => {
-  const edge = Math.min(w * .6, document.querySelector(".home-menu").getBoundingClientRect().right);
-  return [(edge + w) / 2, h * .5, Math.min(w * .13, h * .13, (w - edge) * .2)];
+  const u = Math.min(w / 1920, h / 1080), edge = 200 * u + Math.max(520 * u, 300), small = w < 1000;   // the column's right side, and some air
+  const cx = small ? w * .72 : edge + (w - edge) * .46;
+  return [cx, h * .48, Math.min(h * (small ? .5 : .6), (w - edge) * .62, (w - cx) * 1.9) / 2 / Math.hypot(1, PHI)];
 };
 
 // tilt leans it further over, and twirl turns it about its own upright before anything else: the intro's tumble
@@ -1518,8 +1642,10 @@ function drawGlow(c, w, h, cx, cy, r, t, heat, strength) {
   c.fillRect(cx - r * 4.6, cy - r * 4.6, r * 9.2, r * 9.2);   // only as far as it reaches
 }
 
-// grow, when given, is how far along each edge has been drawn (0 to 1); bloom puts a soft halo on the lines.
-function drawDie(c, pts, heat, grow, bloom) {
+// The die as wire: the intro draws it this way, and so does the home screen on a machine that can't draw the solid one.
+// grow, when given, is how far along each edge has been drawn (0 to 1); bloom puts a soft halo on the lines; weight makes them
+// heavier and brighter, for the home screen, where the wire die has a whole room to stand out against.
+function drawDie(c, pts, heat, grow, bloom, weight = 1) {
   const dots = pts.map(() => grow ? 0 : 1);
   c.lineCap = "round";
   EDGES.forEach(([i, j], n) => {
@@ -1529,10 +1655,10 @@ function drawDie(c, pts, heat, grow, bloom) {
     if (p >= 1) dots[j] = 1;
     const near = ((pts[i][2] + pts[j][2]) / 2 + 1.9) / 3.8;   // 0 at the back, 1 at the front
     const x = pts[i][0] + (pts[j][0] - pts[i][0]) * p, y = pts[i][1] + (pts[j][1] - pts[i][1]) * p;
-    const color = `${201 + 35 * heat},${162 + 40 * heat},${91 + 50 * heat}`, alpha = Math.min(1, .08 + .5 * near + .35 * heat);
+    const color = `${201 + 35 * heat},${162 + 40 * heat},${91 + 50 * heat}`, alpha = Math.min(1, (.08 + .5 * near + .35 * heat) * (weight > 1 ? 1.7 : 1) + (weight > 1 ? .45 : 0));
     for (const halo of bloom ? [1, 0] : [0]) {
       c.strokeStyle = `rgba(${color},${halo ? alpha * .16 * bloom : alpha})`;
-      c.lineWidth = (.6 + near + heat * .6) * (halo ? 5 : 1);
+      c.lineWidth = (.6 + near + heat * .6) * (halo ? 5 : 1) * weight;
       c.beginPath();
       c.moveTo(pts[i][0], pts[i][1]);
       c.lineTo(x, y);
@@ -1549,89 +1675,10 @@ function drawDie(c, pts, heat, grow, bloom) {
     if (!dots[i]) return;
     c.fillStyle = `rgba(230,194,126,${(.15 + .6 * (p[2] + 1.9) / 3.8) * dots[i]})`;
     c.beginPath();
-    c.arc(p[0], p[1], 1.6, 0, 6.29);
+    c.arc(p[0], p[1], 1.6 * weight, 0, 6.29);
     c.fill();
   });
 }
-
-// The home screen's die as a solid thing, when three.js has loaded and the machine can draw it: dark faces with their numbers
-// struck in gold, held in the wire die's own pose, so the intro's drawing settles into it. Without it the wire die stays.
-const solid = (() => {
-  if (!window.THREE) return null;
-  try {
-    const cv = $("homedie"), REACH = 2.6;   // from the die's middle to the canvas's edge, in the die's own units
-    const renderer = new THREE.WebGLRenderer({canvas: cv, alpha: true, antialias: true});
-    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(2 * Math.atan(REACH / 5) * 180 / Math.PI, 1, 1, 10);
-    camera.position.z = 5;   // where diePoints looks from
-
-    const shape = new THREE.IcosahedronGeometry(Math.hypot(1, PHI), 0), at = shape.attributes.position, uv = shape.attributes.uv;
-    const middles = Array.from({length: 20}, (_, f) => [0, 1, 2].reduce((m, k) => m.add(new THREE.Vector3().fromBufferAttribute(at, f * 3 + k)), new THREE.Vector3()));
-    const numbers = [];   // as on a real d20, opposite faces add up to 21
-    let next = 1;
-    middles.forEach((m, f) => {
-      if (numbers[f]) return;
-      numbers[f] = next;
-      numbers[middles.findIndex(o => o.dot(m) < 0 && o.distanceTo(m.clone().negate()) < .01)] = 21 - next++;
-    });
-
-    // every face gets a square of one sheet, with its number sitting in the middle of the triangle cut from that square
-    const CELL = 256, sheet = document.createElement("canvas"), pen = sheet.getContext("2d");
-    sheet.width = CELL * 5; sheet.height = CELL * 4;
-    pen.fillStyle = "#231c13";
-    pen.fillRect(0, 0, sheet.width, sheet.height);
-    pen.fillStyle = "#e6c27e";
-    pen.font = `600 ${CELL * .36}px ${getComputedStyle(document.documentElement).getPropertyValue("--serif")}`;
-    pen.textAlign = "center"; pen.textBaseline = "middle";
-    numbers.forEach((n, f) => {
-      const col = f % 5, row = Math.floor(f / 5), x = (col + .5) * CELL, y = (row + 1) * CELL - CELL * .866 / 3;
-      pen.fillText(n, x, y);
-      if (n === 6 || n === 9) pen.fillRect(x - CELL * .08, y + CELL * .16, CELL * .16, CELL * .02);   // which way up
-      const low = 1 - (row + 1) / 4;
-      uv.setXY(f * 3, (col + .5) / 5, low + .866 / 4);
-      uv.setXY(f * 3 + 1, col / 5, low);
-      uv.setXY(f * 3 + 2, (col + 1) / 5, low);
-    });
-    const faces = new THREE.CanvasTexture(sheet);
-    faces.colorSpace = THREE.SRGBColorSpace;
-    faces.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
-    const skin = new THREE.MeshStandardMaterial({map: faces, emissive: 0xc9a25b, emissiveMap: faces, roughness: .42, metalness: .15, flatShading: true});
-    const wire = new THREE.LineBasicMaterial({transparent: true, opacity: .85});
-    const COOL = new THREE.Color(0xc9a25b), HOT = new THREE.Color(0xffe6b4);
-    const body = new THREE.Group();
-    body.add(new THREE.Mesh(shape, skin), new THREE.LineSegments(new THREE.EdgesGeometry(shape), wire));
-    body.children[1].scale.setScalar(1.003);   // the gold edges sit just proud of the faces
-    scene.add(body, new THREE.AmbientLight(0xffe8c8, .55));
-    for (const [color, power, x, y, z] of [[0xffdfa8, 2.6, -3, 4, 5], [0xc9a25b, 1.4, 4, -2, -3], [0x8fa6c8, .5, 4, 1, 3]]) {
-      const lamp = new THREE.DirectionalLight(color, power);
-      lamp.position.set(x, y, z);
-      scene.add(lamp);
-    }
-
-    const lean = new THREE.Quaternion(), ACROSS = new THREE.Vector3(1, 0, 0), frame = new THREE.Matrix4();
-    let size = 0;
-    return (cx, cy, r, t, m, heat) => {
-      const side = Math.round(REACH * 2 * r);
-      if (side !== size) {
-        size = side;
-        renderer.setPixelRatio(window.devicePixelRatio || 1);
-        renderer.setSize(side, side, false);
-        cv.style.width = cv.style.height = side + "px";
-      }
-      cv.style.left = cx - side / 2 + "px";
-      cv.style.top = cy - side / 2 + "px";
-      // diePoints' turn and tilt, mirrored, because the canvas's y points down and this one's points up
-      frame.set(m[0], -m[1], m[2], 0, -m[3], m[4], -m[5], 0, m[6], -m[7], m[8], 0, 0, 0, 0, 1);
-      body.quaternion.setFromRotationMatrix(frame).premultiply(lean.setFromAxisAngle(ACROSS, -dieTilt(t)));
-      body.position.y = -Math.sin(t * .4) * 6 / r;
-      skin.emissiveIntensity = .3 + 1.3 * heat;
-      wire.color.copy(COOL).lerp(HOT, heat);
-      renderer.render(scene, camera);
-    };
-  } catch (e) {
-    return null;
-  }
-})();
 
 function drawEmbers(c, w, h, t, strength) {
   for (const e of EMBERS) {
@@ -1645,33 +1692,662 @@ function drawEmbers(c, w, h, t, strength) {
   }
 }
 
-function drawBackdrop(ms) {
-  const [c, w, h] = fit($("homebg")), t = ms / 1000, [cx, cy, r] = dieSpot(w, h);
-  const dt = Math.min(.1, Math.max(0, t - die.last));
-  die.last = t;
-  const turn = [die.spin[0], die.spin[1] + .16, die.spin[2]], rate = Math.hypot(...turn);   // the idle turn, and whatever the clicks have added
-  if (rate * dt) die.turn = turns(turnAbout(turn.map(v => v / rate), rate * dt), die.turn);
-  die.spin = die.spin.map(v => v * Math.exp(-dt * .7));   // a click's push dies away
-  Object.assign(die, {x: cx, y: cy, r: r * 2.1});
-  const heat = Math.min(1, Math.hypot(...die.spin) / 14);
-  drawGlow(c, w, h, cx, cy, r, t, heat, 1);
-  if (solid) solid(cx, cy, r, t, die.turn, heat); else drawDie(c, diePoints(cx, cy, r, t, die.turn), heat);
-  drawEmbers(c, w, h, t, 1);
+// What the room is measured to: the window, the scale unit, and the die's place, read when the window changes and never in
+// a frame. px and py are where the pointer has drawn the eye (-1 to 1), eased toward tx and ty; coarse is how many things a
+// slow machine has had taken away.
+const stage = {w: 0, h: 0, u: 1, cx: 0, cy: 0, r: 0, fine: 1, stale: true, laid: 0, px: 0, py: 0, tx: 0, ty: 0, sx: 9, sy: 9, heat: -1,
+               coarse: 0, frames: 0, spent: 0, last: 0};
+addEventListener("pointermove", e => { stage.tx = e.clientX / innerWidth * 2 - 1; stage.ty = e.clientY / innerHeight * 2 - 1; });
+addEventListener("blur", () => stage.tx = stage.ty = 0);   // with the window out of use, the room settles back
+document.documentElement.addEventListener("pointerleave", () => stage.tx = stage.ty = 0);
+// the layers the pointer shifts, and by how many units at most: the further back, the less
+const DRIFT = [["vault", 6, ""], ["arch", 10, ""], ["shafts", 14, ""], ["homedie", 18, ""], ["homeglass", 18, " scaleY(-1)"]].map(([id, far, more]) => ({el: $(id), far, more}));
+const HEATED = [["pool", .7], ["ring", .72], ["shafts", .8]].map(([id, low]) => ({el: $(id), low}));   // what the die's heat brightens, and how bright each is cold
+$("ring").querySelector(".ticks").innerHTML = Array.from({length: 72}, (_, n) =>
+  `<line y1="-446" y2="${n % 6 ? -458 : -468}" stroke="${n % 6 ? "#7d5f2a" : "#c9a25b"}" stroke-width="${n % 6 ? 2 : 2.6}" transform="rotate(${n * 5})"/>`).join("");
+{   // a painted vault, if the engine has one: it comes up under the light, and without it the drawn vault stays
+  const plate = $("backdropart");
+  plate.onload = () => $("vault").classList.add("art");
+  plate.onerror = () => plate.remove();
+  plate.src = `/backdrop?t=${TOKEN}`;
 }
 
+function measure() {
+  const el = $("home"), w = el.clientWidth, h = el.clientHeight, [cx, cy, r] = dieSpot(w, h), bg = $("homebg");
+  Object.assign(stage, {w, h, u: Math.min(w / 1920, h / 1080), cx, cy, r, fine: Math.min(window.devicePixelRatio || 1, 1.5), stale: false, laid: stage.laid + 1, sx: 9});
+  Object.assign(die, {x: cx, y: cy, r: r * 2});
+  el.style.setProperty("--dx", cx + "px");
+  bg.width = Math.round(w * stage.fine);
+  bg.height = Math.round(h * stage.fine);
+  litSpine();
+}
+
+// Turning the die without making anything new each frame: a turn about an axis written into a matrix, and one matrix times another.
+const ROT = new Array(9).fill(0), WANT = new Array(9).fill(0);
+function rotInto(out, x, y, z, by) {
+  const c = Math.cos(by), s = Math.sin(by), k = 1 - c;
+  out[0] = c + x * x * k; out[1] = x * y * k - z * s; out[2] = x * z * k + y * s;
+  out[3] = y * x * k + z * s; out[4] = c + y * y * k; out[5] = y * z * k - x * s;
+  out[6] = z * x * k - y * s; out[7] = z * y * k + x * s; out[8] = c + z * z * k;
+}
+function mulInto(out, a, b) {   // b, then a; out may be either of them
+  const m0 = a[0] * b[0] + a[1] * b[3] + a[2] * b[6], m1 = a[0] * b[1] + a[1] * b[4] + a[2] * b[7], m2 = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
+  const m3 = a[3] * b[0] + a[4] * b[3] + a[5] * b[6], m4 = a[3] * b[1] + a[4] * b[4] + a[5] * b[7], m5 = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
+  const m6 = a[6] * b[0] + a[7] * b[3] + a[8] * b[6], m7 = a[6] * b[1] + a[7] * b[4] + a[8] * b[7], m8 = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+  out[0] = m0; out[1] = m1; out[2] = m2; out[3] = m3; out[4] = m4; out[5] = m5; out[6] = m6; out[7] = m7; out[8] = m8;
+}
+
+// The die's faces as three.js has them: the number each carries, where that number sits on the sheet they're painted from, and
+// how the die has to be turned to show any one of them.
+const d20 = window.THREE ? (() => {
+  const shape = new THREE.IcosahedronGeometry(Math.hypot(1, PHI), 0), at = shape.attributes.position, uv = shape.attributes.uv;
+  const corner = n => new THREE.Vector3().fromBufferAttribute(at, n);
+  const middles = Array.from({length: 20}, (_, f) => corner(f * 3).add(corner(f * 3 + 1)).add(corner(f * 3 + 2)).divideScalar(3));
+  const numbers = [];   // as on a real d20, opposite faces add up to 21
+  let next = 1;
+  middles.forEach((m, f) => {
+    if (numbers[f]) return;
+    numbers[f] = next;
+    numbers[middles.findIndex(o => o.distanceTo(m.clone().negate()) < .01)] = 21 - next++;
+  });
+  // every face gets a square of one sheet, five across and four down, with its number in the middle of the triangle cut from that square
+  numbers.forEach((n, f) => {
+    const col = f % 5, low = 1 - (Math.floor(f / 5) + 1) / 4;
+    uv.setXY(f * 3, (col + .5) / 5, low + .866 / 4);
+    uv.setXY(f * 3 + 1, col / 5, low);
+    uv.setXY(f * 3 + 2, (col + 1) / 5, low);
+  });
+  // Shown, a face looks a little up and to the right of the eye, its number upright but for a slight roll: a die that has just come to rest.
+  const toward = new THREE.Vector3(.2, .3, 1).normalize(), up = new THREE.Vector3(0, 1, 0).addScaledVector(toward, -toward.y).normalize().applyAxisAngle(toward, -.18);
+  const shown = new THREE.Matrix4().makeBasis(new THREE.Vector3().crossVectors(up, toward), up, toward), poses = {};
+  middles.forEach((m, f) => {
+    const out = m.clone().normalize(), top = corner(f * 3).sub(m).normalize();   // a face's first corner is the top of its number
+    const lies = new THREE.Matrix4().makeBasis(new THREE.Vector3().crossVectors(top, out), top, out);
+    poses[numbers[f]] = new THREE.Quaternion().setFromRotationMatrix(shown.clone().multiply(lies.transpose()));
+  });
+  const whole = new THREE.Matrix4(), lean = new THREE.Matrix4();
+  return {shape, numbers,
+    // the turn that shows a face, written into out, as the canvas has it (y down) and under the lean the die is drawn with
+    pose(n, tilt, out) {
+      const e = whole.makeRotationFromQuaternion(poses[n]).premultiply(lean.makeRotationX(tilt)).elements;
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) out[i * 3 + j] = (i === 1) !== (j === 1) ? -e[j * 4 + i] : e[j * 4 + i];
+    }};
+})() : null;
+
+// One short step of the die's turning. Aimed at a face, a spring carries it there: quick, and a touch past before it settles. Left
+// alone for four seconds, or pushed by a click, it goes back to its slow turn, with whatever spin it was given dying away.
+function turnStep(t, dt) {
+  const s = die.spin;
+  if (die.aim && t - die.input > 4) die.aim = 0;
+  die.idle = die.aim ? 0 : Math.min(1, die.idle + dt / 1.5);
+  if (die.aim && d20 && t >= die.loose) {
+    d20.pose(die.aim, dieTilt(t), WANT);
+    const m = die.turn;   // what's left to turn is WANT × turn's inverse: an axis, and an angle about it
+    let x = WANT[6] * m[3] + WANT[7] * m[4] + WANT[8] * m[5] - (WANT[3] * m[6] + WANT[4] * m[7] + WANT[5] * m[8]);
+    let y = WANT[0] * m[6] + WANT[1] * m[7] + WANT[2] * m[8] - (WANT[6] * m[0] + WANT[7] * m[1] + WANT[8] * m[2]);
+    let z = WANT[3] * m[0] + WANT[4] * m[1] + WANT[5] * m[2] - (WANT[0] * m[3] + WANT[1] * m[4] + WANT[2] * m[5]);
+    const trace = WANT[0] * m[0] + WANT[1] * m[1] + WANT[2] * m[2] + WANT[3] * m[3] + WANT[4] * m[4] + WANT[5] * m[5] + WANT[6] * m[6] + WANT[7] * m[7] + WANT[8] * m[8];
+    const angle = Math.acos(Math.min(1, Math.max(-1, (trace - 1) / 2))), size = Math.hypot(x, y, z);
+    if (size > 1e-6) { x *= angle / size; y *= angle / size; z *= angle / size; } else { x = z = 0; y = angle; }   // dead opposite, any way round will do
+    s[0] += (36 * x - 8.6 * s[0]) * dt;
+    s[1] += (36 * y - 8.6 * s[1]) * dt;
+    s[2] += (36 * z - 8.6 * s[2]) * dt;
+  } else {
+    const fade = Math.exp(-dt * .7);   // a push dies away
+    s[0] *= fade; s[1] *= fade; s[2] *= fade;
+  }
+  const x = s[0], y = s[1] + .16 * die.idle, z = s[2], rate = Math.hypot(x, y, z);
+  if (rate * dt) {
+    rotInto(ROT, x / rate, y / rate, z / rate, rate * dt);
+    mulInto(die.turn, ROT, die.turn);
+  }
+}
+// A frame's worth of turning, taken in sixtieths of a second, so a machine drawing two frames a second still rolls the die
+// to its face in the same seven tenths of one.
+function turnDie(t, dt) {
+  for (let left = dt; left > 1e-6; left -= 1 / 60) turnStep(t - left + Math.min(left, 1 / 60), Math.min(left, 1 / 60));
+}
+
+// ---- the die, solid ----
+// Built once, when three.js has loaded and the machine can draw it: obsidian faces with their numbers inlaid in gold, in a
+// frame of hammered gold, held in the wire die's own pose so the intro's drawing settles into it. It is drawn off to one
+// side first, so what is brightest in it can be blurred and laid back over it as a glow. Without it the wire die stays.
+let solid = null;
+function buildDie() {
+  const cv = $("homedie"), glass = $("homeglass"), REACH = 3;   // from the die's middle to the canvas's edge, in the die's own units: room for its glow
+  if (!d20 || !document.createElement("canvas").getContext("webgl2")) {   // asked first, so three.js isn't left to complain that it can't
+    cv.hidden = glass.hidden = true;
+    return null;
+  }
+  try {
+    const renderer = new THREE.WebGLRenderer({canvas: cv, alpha: true});
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = .8;
+    renderer.setClearColor(0, 0);
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(2 * Math.atan(REACH / 5) * 180 / Math.PI, 1, 1, 10);
+    camera.position.z = 5;   // where diePoints looks from
+    const made = [];   // everything to be let go of with the die
+    const keep = thing => { made.push(thing); return thing; };
+
+    // Metal and glass need something to reflect: a dark room with a few lit panels in it, drawn once and never seen itself.
+    const room = new THREE.Scene(), panel = keep(new THREE.PlaneGeometry(1, 1));
+    room.add(new THREE.Mesh(keep(new THREE.BoxGeometry(60, 60, 60)), keep(new THREE.MeshBasicMaterial({color: 0x040302, side: THREE.BackSide}))));
+    for (const [color, power, w, h, x, y, z] of [[0xffdfb0, 7, 14, 10, -10, 11, 9], [0xffb060, 5, 4, 18, 13, 1, 4], [0xe8a850, 2.2, 20, 3, 0, -11, 5],
+                                                 [0xc9803a, 1.4, 18, 10, 0, 3, -15]]) {   // every one of them warm: gold is the only light here
+      const lamp = new THREE.Mesh(panel, keep(new THREE.MeshBasicMaterial({color, side: THREE.DoubleSide})));
+      lamp.material.color.multiplyScalar(power);
+      lamp.scale.set(w, h, 1);
+      lamp.position.set(x, y, z);
+      lamp.lookAt(0, 0, 0);
+      room.add(lamp);
+    }
+    const mirror = new THREE.PMREMGenerator(renderer);
+    scene.environment = keep(mirror.fromScene(room, .03)).texture;
+    mirror.dispose();
+
+    // The faces are painted from three sheets: their colour, how rough and how much metal each spot is, and which way it
+    // faces, so the numbers are cut into the glass.
+    const CELL = 512, sheet = (cell, read) => { const s = document.createElement("canvas"); s.width = cell * 5; s.height = cell * 4; return s.getContext("2d", {willReadFrequently: !!read}); };
+    const inscribe = (pen, cell) => {
+      pen.font = `700 ${cell * .37}px ${getComputedStyle(document.documentElement).getPropertyValue("--display")}`;
+      pen.textAlign = "center";
+      d20.numbers.forEach((n, f) => {
+        const x = (f % 5 + .5) * cell, y = (Math.floor(f / 5) + 1) * cell - cell * .866 / 3, size = pen.measureText(n);
+        pen.fillText(n, x, y + (size.actualBoundingBoxAscent - size.actualBoundingBoxDescent) / 2);
+        if (n === 6 || n === 9) pen.fillRect(x - cell * .09, y + cell * .165, cell * .18, cell * .022);   // which way up
+      });
+    };
+    const paint = (cell, ground, ink) => { const pen = sheet(cell); pen.fillStyle = ground; pen.fillRect(0, 0, cell * 5, cell * 4); pen.fillStyle = ink; inscribe(pen, cell); return pen.canvas; };
+    const texture = (canvas, color) => {
+      const skin = keep(new THREE.CanvasTexture(canvas));
+      if (color) skin.colorSpace = THREE.SRGBColorSpace;
+      skin.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return skin;
+    };
+    const faces = texture(paint(CELL, "#0b0907", "#dcae58"), true);
+    const finish = texture(paint(CELL / 2, "rgb(0,56,0)", "rgb(0,77,255)"));   // green is roughness, blue is metal: glass, and gold
+    const cut = sheet(CELL, true), boxW = Math.round(CELL * .74), boxH = Math.round(CELL * .5), slopes = [];
+    cut.fillRect(0, 0, CELL * 5, CELL * 4);
+    cut.fillStyle = "#fff";
+    cut.filter = `blur(${CELL * .007}px)`;   // a soft edge is a sloped one
+    inscribe(cut, CELL);
+    cut.filter = "none";
+    for (let f = 0; f < 20; f++) {   // only around each number; the rest of a face is flat
+      const x0 = Math.round((f % 5 + .5) * CELL - boxW / 2), y0 = Math.round((Math.floor(f / 5) + 1) * CELL - CELL * .866 / 3 - boxH / 2);
+      const high = cut.getImageData(x0, y0, boxW, boxH).data, slope = new ImageData(boxW, boxH), out = slope.data;
+      for (let y = 0; y < boxH; y++) for (let x = 0; x < boxW; x++) {
+        const i = (y * boxW + x) * 4, across = (high[x < boxW - 1 ? i + 4 : i] - high[x ? i - 4 : i]) * 2.2, down = (high[y < boxH - 1 ? i + boxW * 4 : i] - high[y ? i - boxW * 4 : i]) * 2.2;
+        const long = Math.hypot(across, down, 255);
+        out[i] = 128 + 127 * across / long; out[i + 1] = 128 - 127 * down / long; out[i + 2] = 128 + 127 * 255 / long; out[i + 3] = 255;
+      }
+      slopes.push([slope, x0, y0]);
+    }
+    cut.fillStyle = "rgb(128,128,255)";
+    cut.fillRect(0, 0, CELL * 5, CELL * 4);
+    for (const [slope, x, y] of slopes) cut.putImageData(slope, x, y);
+    const dents = texture(cut.canvas);
+
+    // hammered gold: a tile of soft dabs, some raised and some sunk, that wraps at its edges
+    const dab = document.createElement("canvas").getContext("2d");
+    dab.canvas.width = dab.canvas.height = 256;
+    dab.fillStyle = "#808080";
+    dab.fillRect(0, 0, 256, 256);
+    for (let n = 0; n < 240; n++) {
+      const x = Math.random() * 256, y = Math.random() * 256, wide = 7 + Math.random() * 16, tone = Math.random() < .5 ? "255,255,255" : "0,0,0";
+      for (const [ox, oy] of [[0, 0], [256, 0], [-256, 0], [0, 256], [0, -256]]) {
+        const soft = dab.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, wide);
+        soft.addColorStop(0, `rgba(${tone},.3)`);
+        soft.addColorStop(1, `rgba(${tone},0)`);
+        dab.fillStyle = soft;
+        dab.fillRect(x + ox - wide, y + oy - wide, wide * 2, wide * 2);
+      }
+    }
+    const hammered = texture(dab.canvas);
+    hammered.wrapS = hammered.wrapT = THREE.RepeatWrapping;
+    hammered.repeat.set(3, 3);
+
+    const stone = keep(new THREE.MeshPhysicalMaterial({map: faces, emissive: 0xffc878, emissiveMap: faces, metalness: 1, metalnessMap: finish, roughness: 1, roughnessMap: finish,
+      normalMap: dents, specularIntensity: .16, envMapIntensity: 1.4, flatShading: true}));   // the glass gives back a sixth of what glass would: a face keeps a warm sheen and never flares, whatever it turns toward. The gold in it is untouched.
+    const gold = keep(new THREE.MeshPhysicalMaterial({color: 0xc8943f, metalness: 1, roughness: .36, bumpMap: hammered, bumpScale: .6, envMapIntensity: 1.25, flatShading: true}));
+    const COOL = new THREE.Color(0xc8943f), HOT = new THREE.Color(0xf0b85c);
+    // the frame: a six-sided bar along every edge, a flat of it facing out, and a faceted bead on every corner
+    const bars = new THREE.InstancedMesh(keep(new THREE.CylinderGeometry(.058, .058, 2, 6, 1, true, Math.PI / 6)), gold, EDGES.length);
+    const beads = new THREE.InstancedMesh(keep(new THREE.IcosahedronGeometry(.105, 1)), gold, DIE.length);
+    const corners = DIE.map(p => new THREE.Vector3(...p)), put = new THREE.Matrix4(), along = new THREE.Vector3(), out = new THREE.Vector3(), side = new THREE.Vector3();
+    EDGES.forEach(([i, j], n) => {
+      along.subVectors(corners[j], corners[i]).normalize();
+      out.addVectors(corners[i], corners[j]).multiplyScalar(.5);
+      bars.setMatrixAt(n, put.makeBasis(side.crossVectors(along, out).normalize(), along, side.clone().cross(along)).setPosition(out));
+    });
+    corners.forEach((p, n) => beads.setMatrixAt(n, put.makeTranslation(p.x, p.y, p.z)));
+    const body = new THREE.Group(), panes = new THREE.Mesh(d20.shape, stone);
+    panes.scale.setScalar(.975);   // the frame stands proud of the glass
+    body.add(panes, bars, beads);
+
+    const key = new THREE.DirectionalLight(0xffdfa8, 2.4), rim = new THREE.DirectionalLight(0xe8a850, 1.6), fill = new THREE.DirectionalLight(0xd9a45c, .4);
+    const under = new THREE.PointLight(0xffb450, 2.2);   // the floor's light, thrown back up onto the lower frame
+    rim.position.set(4, -2, -3);
+    fill.position.set(4, 1, 3);
+    under.position.set(0, -2.9, 1.4);
+    scene.add(body, key, rim, fill, under, new THREE.AmbientLight(0xffe8c8, .25));
+
+    // The glow. The die is drawn into a picture that can hold light brighter than white; what's brightest is taken out of it,
+    // blurred at three sizes, each half the last, and added back as the picture is put on the canvas.
+    const deep = renderer.capabilities.isWebGL2 && renderer.extensions.has("EXT_color_buffer_float") ? THREE.HalfFloatType : THREE.UnsignedByteType;
+    const target = samples => keep(new THREE.WebGLRenderTarget(8, 8, {type: deep, samples, depthBuffer: !!samples}));
+    const shot = target(4), blurs = [0, 1, 2].map(() => [target(0), target(0)]);
+    const pane = new THREE.Mesh(keep(new THREE.PlaneGeometry(2, 2))), flat = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    pane.frustumCulled = false;
+    const pass = (uniforms, fragmentShader) => keep(new THREE.ShaderMaterial({uniforms, fragmentShader, depthTest: false, depthWrite: false, blending: THREE.NoBlending,
+      vertexShader: "varying vec2 at; void main() { at = uv; gl_Position = vec4(position.xy, 0., 1.); }"}));
+    const bright = pass({src: {value: shot.texture}}, `uniform sampler2D src; varying vec2 at;
+      void main() {
+        vec3 c = texture2D(src, at).rgb;
+        float most = max(c.r, max(c.g, c.b)), knee = clamp(most - .7, 0., .6);   // above 1 it glows, coming on softly from .7, and no glint counts for more than 3
+        gl_FragColor = vec4(c * min(max(knee * knee / 1.2, most - 1.), 2.) / max(most, 1e-4), 1.);
+      }`);
+    const blur = pass({src: {value: null}, by: {value: new THREE.Vector2()}}, `uniform sampler2D src; uniform vec2 by; varying vec2 at;
+      void main() {
+        vec3 c = texture2D(src, at).rgb * .227027;
+        c += (texture2D(src, at + by).rgb + texture2D(src, at - by).rgb) * .1945946;
+        c += (texture2D(src, at + by * 2.).rgb + texture2D(src, at - by * 2.).rgb) * .1216216;
+        c += (texture2D(src, at + by * 3.).rgb + texture2D(src, at - by * 3.).rgb) * .054054;
+        c += (texture2D(src, at + by * 4.).rgb + texture2D(src, at - by * 4.).rgb) * .016216;
+        gl_FragColor = vec4(c, 1.);
+      }`);
+    // Where there's only glow, it's as see-through as it is faint, so the canvas lies over the room with no dark box round it.
+    const last = pass({src: {value: shot.texture}, glow1: {value: blurs[0][0].texture}, glow2: {value: blurs[1][0].texture}, glow3: {value: blurs[2][0].texture}, power: {value: .12}},
+      `uniform sampler2D src, glow1, glow2, glow3; uniform float power; varying vec2 at;
+      void main() {
+        vec4 body = texture2D(src, at);
+        vec3 glow = (texture2D(glow1, at).rgb + texture2D(glow2, at).rgb + texture2D(glow3, at).rgb) * power;
+        float cover = clamp(max(body.a, max(glow.r, max(glow.g, glow.b))), 0., 1.);
+        gl_FragColor = vec4((body.rgb + glow) / max(cover, 1e-4), cover);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+        gl_FragColor.rgb *= gl_FragColor.a;
+      }`);
+    const run = (material, into) => { pane.material = material; renderer.setRenderTarget(into); renderer.render(pane, flat); };
+
+    const pen = glass.getContext("2d"), turned = new THREE.Matrix4(), by = new THREE.Quaternion(), sway = new THREE.Euler(), ACROSS = new THREE.Vector3(1, 0, 0);
+    let laid = -1, px = 0, odd = false;
+    const lay = () => {   // the canvas, and every picture behind it, sized to the die: when the window changes, or the machine is found slow
+      const {cx, cy, r, coarse} = stage, across = Math.round(REACH * 2 * r), corner = Math.hypot(1, PHI) * r;
+      px = Math.max(16, Math.min(2048, Math.round(across * Math.min(window.devicePixelRatio || 1, coarse >= 3 ? 1 : 2))));
+      renderer.setSize(px, px, false);
+      shot.setSize(px, px);
+      blurs.forEach((pair, n) => pair.forEach(t => t.setSize(Math.max(4, px >> n + (coarse >= 2 ? 2 : 1)), Math.max(4, px >> n + (coarse >= 2 ? 2 : 1)))));
+      for (const c of [cv, glass]) Object.assign(c.style, {width: across + "px", height: across + "px", left: cx - across / 2 + "px"});
+      cv.style.top = cy - across / 2 + "px";
+      glass.style.top = cy + corner * 2 - across / 2 + "px";   // the same picture, turned over about the line the die's foot is on
+      glass.hidden = coarse >= 1;
+      glass.width = glass.height = px >> 1;
+    };
+    renderer.compile(scene, camera);   // now, under the splash, and not in the first frame the player sees
+
+    cv.addEventListener("webglcontextlost", e => {   // the machine took it back: the wire die takes over
+      e.preventDefault();
+      solid = null;
+      cv.hidden = glass.hidden = true;
+    });
+    return {
+      draw(t, heat) {
+        const m = die.turn, live = STILL ? 0 : die.awake, now = stage.laid * 8 + stage.coarse;
+        if (now !== laid) { laid = now; lay(); }
+        // diePoints' turn and tilt, mirrored, because the canvas's y points down and this one's points up; then the sway, and a lean toward the pointer
+        turned.set(m[0], -m[1], m[2], 0, -m[3], m[4], -m[5], 0, m[6], -m[7], m[8], 0, 0, 0, 0, 1);
+        body.quaternion.setFromRotationMatrix(turned).premultiply(by.setFromAxisAngle(ACROSS, -dieTilt(t)))
+          .premultiply(by.setFromEuler(sway.set((Math.sin(t * .31) * .052 + stage.py * .07) * live, (Math.cos(t * .23) * .052 + stage.px * .07) * live, 0)));
+        body.position.y = -Math.sin(t * .4) * 6 / stage.r;
+        key.position.set(-4 + Math.cos(t * .157) * 1.8, 5 + Math.sin(t * .157) * 1.4, 5);   // never quite still: the glints travel along the edges
+        stone.emissiveIntensity = .32 + 1.08 * heat;
+        gold.color.copy(COOL).lerp(HOT, heat * .45);   // warmer when hot, never white
+        last.uniforms.power.value = (.35 + .3 * heat) / 3;
+        renderer.setRenderTarget(shot);
+        renderer.render(scene, camera);
+        run(bright, blurs[0][0]);
+        blurs.forEach(([a, b], n) => {
+          blur.uniforms.src.value = (n ? blurs[n - 1][0] : a).texture;
+          blur.uniforms.by.value.set(1 / a.width, 0);
+          run(blur, b);
+          blur.uniforms.src.value = b.texture;
+          blur.uniforms.by.value.set(0, 1 / a.height);
+          run(blur, a);
+        });
+        run(last, null);
+        if (!glass.hidden && (odd = !odd)) {   // the reflection, every other frame and at half the size
+          pen.clearRect(0, 0, glass.width, glass.height);
+          pen.drawImage(cv, 0, 0, glass.width, glass.height);
+        }
+      },
+      dispose() {
+        for (const thing of made) thing.dispose();
+        scene.environment = null;
+        renderer.dispose();
+      }};
+  } catch (e) {
+    cv.hidden = glass.hidden = true;
+    return null;
+  }
+}
+
+// ---- dust ----
+// Motes rising through the light in three bands: far and small, nearer, and a few close to the lens and out of focus. Each is
+// one of two stamps painted once. While the die is hot, sparks come off it.
+const DUST = [[0, 110, .7, 2.5, .012, .04], [1, 54, 1.5, 4, .02, .06], [2, 12, 20, 60, .01, .03]].flatMap(([band, count, small, big, slow, fast]) =>
+  Array.from({length: count}, () => ({band, x: Math.random(), y: Math.random(), size: small + Math.random() * (big - small), speed: slow + Math.random() * (fast - slow),
+                                      sway: Math.random() * 6.28, glow: band === 2 ? .12 + Math.random() * .14 : .25 + Math.random() * .6})));
+DUST.sort(() => Math.random() - .5);   // mixed, so taking every other one away thins every band
+const SPARKS = Array.from({length: 24}, () => ({age: 1, life: 1, x: 0, y: 0, vx: 0, vy: 0, size: 1}));
+const stamp = (size, stops) => {
+  const pen = document.createElement("canvas").getContext("2d"), half = size / 2;
+  pen.canvas.width = pen.canvas.height = size;
+  const disc = pen.createRadialGradient(half, half, 0, half, half, half);
+  for (const [at, color] of stops) disc.addColorStop(at, color);
+  pen.fillStyle = disc;
+  pen.fillRect(0, 0, size, size);
+  return pen.canvas;
+};
+const MOTE = stamp(48, [[0, "rgba(255,238,196,1)"], [.16, "rgba(240,208,144,.85)"], [.4, "rgba(214,172,100,.2)"], [1, "rgba(201,162,91,0)"]]);
+const BOKEH = stamp(128, [[0, "rgba(214,176,108,.5)"], [.62, "rgba(218,180,112,.46)"], [.86, "rgba(226,190,124,.3)"], [1, "rgba(236,204,140,0)"]]);
+const DEPTH = [12, 24, 40];   // how far the pointer shifts each band
+
+function drawDust(c, t, dt, heat) {
+  const {w, h, u, cx, cy, r} = stage, thin = stage.coarse >= 4;
+  for (let n = 0; n < DUST.length; n++) {
+    const d = DUST[n];
+    if (thin && (d.band === 2 || n & 1)) continue;
+    const y = h + 40 - ((d.y + t * d.speed) % 1) * (h + 80);
+    const x = (d.x + (d.band === 2 ? t * d.speed * .5 : 0)) % 1 * (w + 80) - 40 + (d.band ? Math.sin(t * .5 + d.sway) * 22 : 0) - stage.px * DEPTH[d.band] * u;
+    let alpha = d.glow * (.7 + .3 * Math.sin(t * 2 + d.sway)) * Math.min(1, (h - y) / 120, (y + 40) / 200);
+    if (!d.band) alpha *= .3 + .7 * Math.max(0, 1 - Math.abs(x - cx) / (900 * u));   // the far ones catch the light only inside its cone
+    if (alpha <= 0) continue;
+    c.globalAlpha = alpha;
+    if (d.band === 2) c.drawImage(BOKEH, x - d.size * u, y - d.size * u, d.size * u * 2, d.size * u * 2);
+    else c.drawImage(MOTE, x - d.size * 3, y - d.size * 3, d.size * 6, d.size * 6);
+  }
+  let free = heat > .3 && dt ? 1 + Math.floor(Math.random() * 3) : 0;   // sparks leave the die's outline, a few a frame
+  c.globalCompositeOperation = "lighter";
+  c.strokeStyle = "rgb(246,214,150)";
+  c.lineCap = "round";
+  for (let n = 0; n < SPARKS.length; n++) {
+    const s = SPARKS[n];
+    if (s.age >= 1) {
+      if (!free) continue;
+      free--;
+      const a = Math.random() * 6.283, far = Math.hypot(1, PHI) * r * (.7 + Math.random() * .3);
+      s.age = 0; s.life = .6 + Math.random() * .8; s.size = .6 + Math.random() * 1.2;
+      s.x = cx + Math.cos(a) * far; s.y = cy + Math.sin(a) * far;
+      s.vx = Math.cos(a) * 60 + (Math.random() - .5) * 60; s.vy = Math.sin(a) * 40 - 50 - Math.random() * 70;
+    }
+    s.age += dt / s.life;
+    s.x += s.vx * dt; s.y += s.vy * dt;
+    s.vy -= 30 * dt;   // they rise
+    c.globalAlpha = Math.max(0, 1 - s.age) ** 2;
+    c.lineWidth = s.size;
+    c.beginPath();
+    c.moveTo(s.x - s.vx * .05, s.y - s.vy * .05);
+    c.lineTo(s.x, s.y);
+    c.stroke();
+  }
+  c.globalCompositeOperation = "source-over";
+  c.globalAlpha = 1;
+}
+
+// One frame of the room: the die turned and drawn, the layers shifted for the pointer, the light raised by the die's heat, the dust.
+function drawBackdrop(ms) {
+  if (stage.stale) measure();
+  const t = ms / 1000, dt = Math.min(.5, Math.max(0, t - die.last)), c = $("homebg").getContext("2d");   // longer than half a second was a pause, not a frame
+  die.last = t;
+  if (!STILL) {
+    turnDie(t, dt);
+    die.awake = Math.min(1, die.awake + dt / 2);
+    stage.px += (stage.tx - stage.px) * .06;
+    stage.py += (stage.ty - stage.py) * .06;
+    if (Math.abs(stage.px - stage.sx) + Math.abs(stage.py - stage.sy) > .002) {   // written only while it moves
+      stage.sx = stage.px; stage.sy = stage.py;
+      for (let n = 0; n < DRIFT.length; n++) {
+        const layer = DRIFT[n];
+        layer.el.style.transform = `translate3d(${(-stage.px * layer.far * stage.u).toFixed(2)}px, ${(-stage.py * layer.far * stage.u).toFixed(2)}px, 0)${layer.more}`;
+      }
+    }
+  }
+  die.glow *= Math.exp(-dt * die.cool);
+  const heat = die.heat = Math.min(1, Math.hypot(die.spin[0], die.spin[1], die.spin[2]) / 14 + die.glow);
+  if (Math.abs(heat - stage.heat) > .01) {
+    stage.heat = heat;
+    for (let n = 0; n < HEATED.length; n++) HEATED[n].el.style.opacity = (HEATED[n].low + (1 - HEATED[n].low) * heat).toFixed(2);
+  }
+  c.setTransform(stage.fine, 0, 0, stage.fine, 0, 0);
+  c.clearRect(0, 0, stage.w, stage.h);
+  if (solid) solid.draw(t, heat);
+  else {
+    drawGlow(c, stage.w, stage.h, stage.cx, stage.cy, stage.r * 1.4, t, heat, 1.5);
+    drawDie(c, diePoints(stage.cx, stage.cy, stage.r, t, die.turn), heat, null, 1.6, 3.6);
+  }
+  drawDust(c, t, dt, heat);
+}
+
+// The room is drawn only while it can be seen: not under a narrative, and not with the window put away. A machine that can't
+// keep up (ninety frames averaging over 22 ms) has one thing taken away, then the next, and never gets them back: the
+// reflection, half the glow's detail, the die's finest pixels, and last some of the dust.
 function startBackdrop() {
   if (STILL) return drawBackdrop(0);
   if (backdropOn) return;
   backdropOn = true;
   const frame = ms => {
-    if ($("home").hidden) { backdropOn = false; return; }
-    if (!veiled || !drawn) drawBackdrop(ms);   // once even so, so the first frame the player sees isn't the one that sets everything up
-    drawn = true;
+    if ($("home").hidden || document.hidden) { backdropOn = false; return; }
+    if (veiled) die.input = ms / 1000;   // it holds its face until the menu is there to be used
+    if (!veiled || !drawn) {   // once even so, so the first frame the player sees isn't the one that sets everything up
+      const took = ms - stage.last;
+      stage.last = ms;
+      if (!veiled && took > 0 && took < 200) {   // a pause is no measure of the machine, and one stumble isn't much of one
+        stage.spent += Math.min(took, 50);
+        if (++stage.frames === 90) {
+          if (stage.spent / 90 > 22 && stage.coarse < 4) stage.coarse++;
+          stage.frames = stage.spent = 0;
+        }
+      }
+      drawBackdrop(ms);
+      drawn = true;
+    }
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
 }
-addEventListener("resize", () => { if (STILL && !$("home").hidden) drawBackdrop(0); });
+addEventListener("resize", () => { stage.stale = true; if (STILL && !$("home").hidden) drawBackdrop(0); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && !$("home").hidden) startBackdrop(); });
+
+// The menu's type has to be there before the menu is, and before the die's numbers are cut in it; the splash waits for both.
+const menuType = ["600 20px Cinzel", "700 20px Cinzel", "italic 500 20px 'Cormorant Garamond'"];
+const typeReady = Promise.race([Promise.all(menuType.map(face => document.fonts.load(face))), new Promise(done => setTimeout(done, 2500))]).catch(() => {});
+let titleIn;
+const titleReady = Promise.race([new Promise(done => titleIn = done), new Promise(done => setTimeout(done, 4000))]);   // the title's picture, or word that there isn't one
+const dieReady = typeReady.then(() => {
+  solid = buildDie();
+  drawn = false;   // a frame of it under the splash, so nothing is being set up when the intro hands over
+  if (!$("home").hidden) STILL ? drawBackdrop(0) : startBackdrop();
+}).catch(() => {});
+
+// ---- the menu's sounds ----
+// Made here for now, out of noise and a tone: a tick as the focus moves, a clack when an entry is chosen (a die thrown and
+// landing), and a softer one for stepping back. A recorded sound put in SFX_FILES under a cue's name plays in its place.
+// They follow the Settings volume, and are quiet next to the music.
+const sfxGain = audio.createGain(), SFX_FILES = {}, hiss = audio.createBuffer(1, Math.ceil(audio.sampleRate * .2), audio.sampleRate);
+sfxGain.connect(audio.destination);
+hiss.getChannelData(0).forEach((_, n, all) => all[n] = Math.random() * 2 - 1);
+function fading(at, secs, loud) {
+  const g = audio.createGain();
+  g.gain.setValueAtTime(loud, at);
+  g.gain.exponentialRampToValueAtTime(.0001, at + secs);
+  g.connect(sfxGain);
+  return g;
+}
+function noise(at, secs, kind, pitch, q, loud) {
+  const src = audio.createBufferSource(), filter = audio.createBiquadFilter();
+  src.buffer = hiss;
+  filter.type = kind; filter.frequency.value = pitch; filter.Q.value = q;
+  src.connect(filter).connect(fading(at, secs, loud));
+  src.start(at, Math.random() * .1, secs + .02);
+}
+function tone(at, secs, pitch, loud) {
+  const osc = audio.createOscillator();
+  osc.frequency.value = pitch;
+  osc.connect(fading(at, secs, loud));
+  osc.start(at);
+  osc.stop(at + secs + .02);
+}
+const SFX = {
+  tick(now, step) {   // a semitone higher for every entry down the list
+    const up = 2 ** (step / 12);
+    noise(now, .018, "bandpass", 3200 * up, 4, .04);
+    tone(now, .06, 1320 * up, .02);
+  },
+  clack(now) {
+    noise(now, .025, "lowpass", 1800, 1, .08);
+    noise(now + .055, .025, "lowpass", 1800, 1, .06);
+    tone(now, .09, 110, .1);
+  },
+  back(now) { noise(now, .03, "lowpass", 1100, 1, .045); }};
+function sfx(name, step) {
+  if (audio.state !== "running") return;   // not before the first click or key has let any sound through
+  sfxGain.gain.value = musicVolume();
+  if (!SFX_FILES[name]) return SFX[name](audio.currentTime, step || 0);
+  const src = audio.createBufferSource();
+  src.buffer = SFX_FILES[name];
+  src.connect(sfxGain);
+  src.start();
+}
+
+// ---- the main menu ----
+// One focus, which the pointer and the keys both move (and a gamepad could): it lights an entry, runs the light down the spine
+// to it, ticks, and turns the die to the face the entry owns. on is the entry in focus; live, that the intro is over; entering,
+// that the menu is still coming in; armed, that the focus has been moved since; held, a chosen entry waiting out the die's roll.
+const menu = {items: [], on: null, live: false, entering: false, armed: false, timer: 0, held: null, passing: false, went: 0};
+const LEAVES = ["menucontinue", "menunew"];   // these leave the home screen, so the die gets a moment to roll first
+const menuOpen = () => menu.live && !$("home").hidden && !document.querySelector(".shade:not([hidden]), #farewell:not([hidden])");
+
+function layMenu() {   // which entries there are: Continue comes and goes. The first of them is the tall one when it has a second line.
+  menu.items = [...$("mainmenu").querySelectorAll("button:not([hidden])")];
+  for (const b of $("mainmenu").querySelectorAll("button")) {
+    const n = menu.items.indexOf(b);
+    b.style.setProperty("--n", Math.max(0, n));
+    b.classList.toggle("tall", n === 0 && !!b.querySelector("small")?.textContent);
+  }
+}
+
+function litSpine() {   // from the spine's top down to the entry in focus; Exit, past the gap, has a short run of its own
+  const b = menu.on;
+  if (!b || b.hidden) return;
+  const to = b.offsetTop + b.offsetHeight / 2, from = b.id === "menuexit" ? b.offsetTop - parseFloat(getComputedStyle(b).marginTop) : 0;
+  $("spinelit").style.transform = `translateY(${from}px) scaleY(${(to - from) / 100})`;
+}
+
+function focusEntry(b, quiet) {
+  if (!b) return;
+  const moved = b !== menu.on;
+  if (moved) {
+    if (menu.on) menu.on.removeAttribute("aria-current");
+    b.setAttribute("aria-current", "true");
+    menu.on = b;
+    litSpine();
+    if ($("mainmenu").contains(document.activeElement) && document.activeElement !== b) b.focus({preventScroll: true});   // Enter acts on the one that's lit
+  }
+  die.aim = +b.dataset.face;
+  die.input = performance.now() / 1000;
+  if (d20 && (veiled || STILL && !die.posed)) {   // nothing rolls where nothing can be seen to: the die is simply found showing the first entry's face
+    d20.pose(die.aim, dieTilt(die.last), die.turn);
+    die.posed = true;
+    if (STILL && !$("home").hidden) drawBackdrop(0);
+  }
+  if (moved && !quiet) {
+    warm(Math.min(1, die.glow + .5), 4);
+    sfx("tick", menu.items.indexOf(b));
+  }
+}
+
+function rollDie() {   // an entry was chosen: the die is thrown, the ring on the floor sends out a ripple, and it lands back on its face
+  sfx("clack");
+  if (STILL) return;
+  const way = Math.random() < .5 ? -1 : 1, now = performance.now() / 1000;
+  die.spin[0] -= 7 + Math.random() * 3; die.spin[1] += way * (6 + Math.random() * 3); die.spin[2] += way * 2;
+  const speed = Math.hypot(...die.spin);
+  if (speed > 40) die.spin = die.spin.map(v => v * 40 / speed);
+  die.loose = now + .55;
+  die.input = now;
+  warm(1, 2.8);
+  $("ring").classList.remove("wave");
+  void $("ring").offsetWidth;   // so the ripple starts over
+  $("ring").classList.add("wave");
+}
+
+function enterHome() {   // the room and the menu come in (the stylesheet does it); until they have, a key or a click brings them in at once
+  $("home").classList.remove("settled");
+  clearTimeout(menu.timer);
+  Object.assign(menu, {live: true, armed: false, entering: !STILL, timer: setTimeout(() => menu.entering = false, 1300)});
+  die.input = performance.now() / 1000;
+  if (!STILL) warm(.6, 3);   // a flush of light over the handing-over
+}
+function settleHome() {
+  if (!menu.entering) return;
+  menu.entering = false;
+  $("home").classList.add("settled");
+}
+introDone.then(enterHome);
+
+$("mainmenu").addEventListener("pointermove", e => {   // not pointerenter: an entry sliding in under a still pointer doesn't take the focus
+  const b = e.target.closest("button");
+  if (!b || !menuOpen() || menu.entering) return;
+  menu.armed = true;
+  focusEntry(b);
+});
+$("mainmenu").addEventListener("focusin", e => {   // Tab reaches every entry, and the focus goes with it
+  const b = e.target.closest("button");
+  if (b && menu.live) { menu.armed = true; focusEntry(b); }
+});
+addEventListener("pointerdown", () => { if (!$("home").hidden) settleHome(); }, true);
+addEventListener("keydown", e => {
+  if (menu.held) { if (!e.repeat) menu.held(); return; }
+  if (e.key === "Escape" && menu.live && !$("home").hidden && HOME_DIALOGS.some(id => !$(id).hidden)) return sfx("back");
+  if (!menuOpen() || e.ctrlKey || e.altKey || e.metaKey) return;
+  if (menu.entering) return settleHome();
+  const step = {ArrowUp: -1, w: -1, W: -1, ArrowDown: 1, s: 1, S: 1}[e.key], count = menu.items.length, at = Math.max(0, menu.items.indexOf(menu.on));
+  if (step || e.key === "Home" || e.key === "End") {
+    e.preventDefault();
+    // the first press only takes hold of the entry already lit
+    const to = menu.items[e.key === "Home" ? 0 : e.key === "End" ? count - 1 : menu.armed ? (at + step + count) % count : at];
+    menu.armed = true;
+    to.focus({preventScroll: true});
+    focusEntry(to);
+  } else if ((e.key === "Enter" || e.key === " ") && !e.repeat && document.activeElement !== menu.on && menu.on) {
+    e.preventDefault();   // with the keyboard's focus nowhere, the lit entry is still the one chosen
+    menu.on.click();
+  }
+}, true);
+// Choosing an entry rolls the die. A window opens over the roll at once; an entry that leaves the home screen waits for it,
+// about a third of a second, unless a key or a click says not to.
+$("mainmenu").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b || menu.passing) return;
+  if (menu.held || performance.now() - menu.went < 400) return e.stopPropagation();   // the second click of a double one
+  settleHome();
+  focusEntry(b, true);
+  rollDie();
+  if (STILL || !LEAVES.includes(b.id)) return;
+  e.stopPropagation();
+  const go = () => {
+    clearTimeout(wait);
+    removeEventListener("pointerdown", go, true);
+    menu.held = null;
+    menu.went = performance.now();
+    menu.passing = true;
+    b.click();
+    menu.passing = false;
+  };
+  const wait = setTimeout(go, 320);
+  menu.held = go;
+  addEventListener("pointerdown", go, true);
+}, true);
 
 // ---- a new narrative: a step at a time, one question to a step, and a look at all of it before the world is built ----
 
@@ -3177,11 +3853,11 @@ const splashed = new Promise(done => {
     gone = true;
     removeEventListener("keydown", leave);
     el.classList.add("dark");
-    setTimeout(() => {
+    setTimeout(() => Promise.all([dieReady, titleReady]).then(() => {   // by now the menu's type and title are in and its die is made, so none of them arrives in front of the player
       el.classList.add("fading");
       done();
       setTimeout(() => el.remove(), 800);
-    }, 900);   // the fade, and a beat of black
+    }), 900);   // the fade, and a beat of black
   };
   el.addEventListener("pointerdown", leave);
   addEventListener("keydown", leave);
@@ -3197,7 +3873,8 @@ const splashed = new Promise(done => {
   $("studiomark").src = document.querySelector(".about .credit img").src = logo;   // and it sits small in the corner of the main menu
   const art = $("titleart"), title = `/title?t=${TOKEN}`;   // the main menu's title; without the picture, the typed one stays
   art.style.setProperty("--title", `url("${title}")`);
-  art.firstElementChild.onload = () => { art.hidden = false; art.parentNode.classList.add("art"); };
+  art.firstElementChild.onload = () => { art.hidden = false; art.parentNode.classList.add("art"); titleIn(); };
+  art.firstElementChild.onerror = titleIn;
   art.firstElementChild.src = title;
 });
 

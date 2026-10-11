@@ -218,9 +218,9 @@ The page's text comes in more than a dozen sizes a half-pixel or a pixel apart (
 #### Small
 
 ##### Sounds in play
-Only the main menu and the world's building have sound. Play gets a few quiet ones: a page turning when a beat arrives, a click on the menus, and a chime for a new level. They have a volume of their own in Settings, apart from the music's.
+Only the main menu (its music, and a tick and a clack as its entries are moved through and chosen) and the world's building have sound. Play gets a few quiet ones: a page turning when a beat arrives, a click on the menus, and a chime for a new level. They have a volume of their own in Settings, apart from the music's.
 - **Touches:** the audio code in `engine/gui/app.html`, which plays the menu's music and the build's now; Settings.
-- **Open questions:** whether the sounds are recorded files or made by the page.
+- **Open questions:** whether the sounds are recorded files or made by the page, as the main menu's are for now (`SFX` in `engine/gui/app.html`, where a recorded file can take a made one's place).
 
 #### Medium
 
@@ -234,7 +234,7 @@ A light, paper-coloured version of the story column for reading in a bright room
 #### Small
 
 ##### Fuller Narratives and Load lists
-A row in the Narratives list, a save in the Load list, and the main menu's Continue each show the character's portrait, their level, the session reached, and when it was last played, so a narrative can be recognised at a glance.
+A row in the Narratives list and a save in the Load list each show the character's portrait, their level, the session reached, and when it was last played, so a narrative can be recognised at a glance. The main menu's Continue already names the narrative, the session, the character and their level; it gets the portrait.
 - **Touches:** `.slot` and the two lists in `engine/gui/app.html`; `engine/gui.py`, for what it sends about each narrative; `engine/saves.py`, whose saves already carry the session, the character's name, and the level.
 
 ## More of a game
