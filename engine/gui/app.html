@@ -56,18 +56,23 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
 
 /* ---- splash: the studio's logo, before the intro ---- */
-#splash { position: fixed; inset: 0; z-index: 101; display: grid; place-items: center; overflow: hidden; user-select: none; background: #000; transition: opacity .75s ease; }
+#splash { --in: 1.2s; --shine: .9s; --shine-at: 1.1s; --life: 3.4s; --out: .4s; --lift: .25s;   /* the long one's timings; the short one has its own */
+  position: fixed; inset: 0; z-index: 101; display: grid; place-items: center; overflow: hidden; user-select: none; background: #000; transition: opacity var(--lift) ease; }
+#splash.short { --in: .8s; --shine: .6s; --shine-at: .6s; --life: 2.2s; }
 #splash.fading { opacity: 0; pointer-events: none; }
-#splash .logo { position: relative; width: min(66vmin, 600px); aspect-ratio: 1; transition: opacity .7s ease, filter .7s ease; }
+#splash.warming { opacity: .999; }   /* still black to the eye, but no longer hiding the room from the machine, which then gets it ready (warmUp) */
+#splash .logo { position: relative; width: min(66vmin, 600px); aspect-ratio: 1; transition: opacity var(--out) ease, filter var(--out) ease; }
 #splash.dark .logo { opacity: 0; filter: blur(6px) brightness(1.4); }
 #splash img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; -webkit-user-drag: none; }
 #splash .halo { position: absolute; inset: -40%; opacity: 0; background: radial-gradient(closest-side, #ffcf7a3d, #c8862a1a 45%, transparent 72%); }
 #splash .shine { position: absolute; inset: 0; mix-blend-mode: screen; -webkit-mask: var(--logo) center / 100% 100% no-repeat; mask: var(--logo) center / 100% 100% no-repeat;
   background: linear-gradient(105deg, transparent 42%, #fff4d6cc 50%, transparent 58%) 100% 0 / 300% 100% no-repeat; }
-#splash.on .logo { animation: logodrift 5s ease-out forwards; }   /* it never quite stops moving */
-#splash.on img { animation: logoin 1.7s cubic-bezier(.2, .8, .2, 1) forwards; }
-#splash.on .halo { animation: halo 5s ease-out forwards; }
-#splash.on .shine { animation: shine 1.5s cubic-bezier(.4, 0, .2, 1) 1.5s forwards; }
+#splash .embers i { position: absolute; left: var(--x); top: var(--y); width: max(2.6%, 9px); aspect-ratio: 1; margin: -1.3% 0 0 -1.3%; opacity: 0; background: center / 100% 100% no-repeat; }   /* the dust's own mote, rising out of the cracks */
+#splash.on .logo { animation: logodrift calc(var(--life) + 1s) ease-out forwards; }   /* it never quite stops moving */
+#splash.on img { animation: logoin var(--in) cubic-bezier(.2, .8, .2, 1) forwards; }
+#splash.on .halo { animation: halo var(--life) ease-out forwards; }   /* the crystal pulses once as the mark arrives */
+#splash.on .shine { animation: shine var(--shine) cubic-bezier(.4, 0, .2, 1) var(--shine-at) forwards; }
+#splash.on .embers i { animation: ember var(--t) ease-out calc(var(--shine-at) + var(--d)) forwards; }
 @keyframes logodrift { from { transform: scale(.97); } to { transform: scale(1.035); } }
 @keyframes logoin {
   0% { opacity: 0; transform: scale(.9); filter: blur(14px) brightness(2.4); }
@@ -75,54 +80,38 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
   100% { opacity: 1; transform: none; filter: none; } }
 @keyframes halo {
   0% { opacity: 0; transform: scale(.55); }
-  30% { opacity: 1; transform: scale(1); }
-  100% { opacity: .65; transform: scale(1.1); } }
+  18% { opacity: 1; transform: scale(1.05); }
+  45% { opacity: .6; transform: scale(1); }
+  100% { opacity: .55; transform: scale(1.08); } }
 @keyframes shine { to { background-position: 0 0; } }
+@keyframes ember { 0% { opacity: 0; transform: scale(.5); } 25% { opacity: var(--a); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
 @keyframes logostill { to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  #splash.on .logo, #splash.on .halo, #splash.on .shine { animation: none; }
+  #splash.on .logo, #splash.on .halo, #splash.on .shine, #splash.on .embers i { animation: none; }
   #splash.on img { animation: logostill 1s ease forwards; } }
 
-/* ---- intro: plays once when the window opens ---- */
-#intro:not(.go) * { animation-play-state: paused !important; }   /* it waits for the splash */
-#intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; user-select: none; background: #0b0906; transition: opacity .75s ease; }
-#intro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
-#intro.fading { opacity: 0; pointer-events: none; }
-#introcv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-#intro .stage { position: absolute; left: 0; right: 0; top: calc(40% + 27vmin); text-align: center; transition: opacity .45s ease; will-change: transform; }
-#intro.leaving .stage { opacity: 0; }
-#intro .matte { position: absolute; left: 0; right: 0; height: 9vh; background: #000; z-index: 2; transition: transform .9s cubic-bezier(.6, 0, .3, 1); }   /* the picture's black bars */
+/* ---- intro: the home screen's own room, performed ---- */
+/* Nothing of the picture is here: the vault, the light, the die and the title are the home screen's, moved by the director in
+   the script. This lies over them while it plays: the black bars, the lens (grain, and a vignette that opens as the camera
+   pulls back), and the line that says a key skips it. It takes every click meanwhile, so none of them reaches the menu. */
+#intro { --u: min(100vw / 1920, 100vh / 1080); position: fixed; inset: 0; z-index: 100; overflow: hidden; user-select: none; }
+#intro .lens { position: absolute; inset: 0; pointer-events: none; }
+#intro .lens::after { content: ""; position: absolute; inset: 0; background: radial-gradient(110% 85% at 50% 45%, transparent 45%, #000c 100%); }
+#intro .matte { position: absolute; left: 0; right: 0; height: 9vh; background: #000; will-change: transform; }   /* the picture's black bars */
 #intro .matte.top { top: 0; } #intro .matte.bottom { bottom: 0; }
-#intro:not(.go) .matte.top, #intro.leaving .matte.top { transform: translateY(-101%); }
-#intro:not(.go) .matte.bottom, #intro.leaving .matte.bottom { transform: translateY(101%); }
+#intro .skip { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; text-align: center; opacity: 0; color: var(--m-faint);
+  font: 600 max(9px, calc(var(--u) * 11))/1 var(--display); letter-spacing: .3em; text-indent: .3em; text-transform: uppercase; }
 #intro .grain { position: absolute; inset: -180px; pointer-events: none; opacity: .1; will-change: transform; animation: grain .5s steps(1) infinite;   /* bigger than the window, and shifted about */
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .85 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @keyframes grain { 0% { transform: none; } 20% { transform: translate(-70px, 110px); } 40% { transform: translate(130px, -40px); }
   60% { transform: translate(-160px, -90px); } 80% { transform: translate(50px, 170px); } }
-#intro h1 { font: 400 clamp(34px, 5.4vmin, 58px) var(--serif); text-transform: uppercase; margin: 0; white-space: nowrap; letter-spacing: .3em; padding-left: .3em; }
-#intro h1 span { display: inline-block; opacity: 0;   /* each letter comes up out of a blur, and later a light crosses the word */
-  animation: letter 1.5s cubic-bezier(.2, .8, .2, 1) calc(2.25s + var(--i) * 75ms) forwards, letterflare 1s ease-in-out calc(4.7s + var(--i) * 95ms),
-    gather 3.6s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
-@keyframes gather { from { translate: calc(var(--k) * .22em) 0; } to { translate: 0 0; } }   /* the word starts spread wide and draws together; --k is how far a letter sits from the middle */
-@keyframes letterflare { 50% { color: #fff; text-shadow: 0 0 14px #ffe9b8, 0 0 46px #e6c27e; } }
-#intro h1 .gap { width: .45em; }
-@keyframes letter {
-  0% { opacity: 0; transform: translateY(.42em) scale(1.08); filter: blur(10px); color: #fff3d6; text-shadow: 0 0 30px #ffdf9c; }
-  45% { opacity: 1; transform: none; filter: none; color: #fff3d6; text-shadow: 0 0 26px #e6c27ecc; }
-  100% { opacity: 1; transform: none; filter: none; color: var(--ink); text-shadow: 0 0 34px #c9a25b44; } }
-#intro .line { position: relative; height: 1px; width: min(340px, 60vw); margin: 2.4vmin auto 2vmin;
-  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent); transform: scaleX(0); animation: line 1.3s cubic-bezier(.2, .8, .2, 1) 3.05s forwards; }
-#intro .line i { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -4px 0 0 -4px; background: #f0d49a; transform: rotate(45deg);
-  box-shadow: 0 0 12px 2px #e6c27eaa; }
-@keyframes line { to { transform: scaleX(1); } }
-#intro p { color: var(--dim); margin: 0; font: italic clamp(14px, 2vmin, 18px) var(--serif); letter-spacing: .04em; opacity: 0; animation: rise 1.4s ease 3.5s forwards; }
-@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 
 /* ---- home: the title screen ---- */
 /* A gold-and-obsidian d20 hangs in a dark vault, lit by its own light, and it is the menu's cursor. The room is a stack of
    layers, back to front: the vault, shafts of light, the floor with its pool and ring, the die and its reflection, dust,
-   a scrim that keeps the menu readable, grain, and the menu itself. Every size is in --u, a 1920×1080 pixel scaled to fit. */
+   a scrim that keeps the menu readable, grain, and the menu itself. Everything behind the scrim is in #scene, which is what
+   the intro's camera moves; the menu is outside it and never does. Every size is in --u, a 1920×1080 pixel scaled to fit. */
 @font-face { font-family: Cinzel; font-weight: 400; font-display: block; src: url("/font?f=cinzel-latin-400-normal.woff2") format("woff2"); }
 @font-face { font-family: Cinzel; font-weight: 600; font-display: block; src: url("/font?f=cinzel-latin-600-normal.woff2") format("woff2"); }
 @font-face { font-family: Cinzel; font-weight: 700; font-display: block; src: url("/font?f=cinzel-latin-700-normal.woff2") format("woff2"); }
@@ -131,7 +120,8 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 @font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-display: block; src: url("/font?f=cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
 @font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; font-display: block; src: url("/font?f=cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
 #home { --u: min(100vw / 1920, 100vh / 1080); --dx: 66vw; --ease: cubic-bezier(.2, .8, .2, 1); position: relative; overflow: hidden; background: #000; }
-#home > .layer, #homebg, #homedie, #homeglass { position: absolute; pointer-events: none; }
+#scene { position: absolute; inset: 0; pointer-events: none; }
+#home .layer, #homebg, #homedie, #homeglass { position: absolute; pointer-events: none; }
 #vault { inset: calc(var(--u) * -12);   /* wider than the window by as far as it drifts */
   background: radial-gradient(calc(var(--u) * 900) calc(var(--u) * 760) at calc(var(--dx) + var(--u) * 12) 46%, #3f2d13, #261a0b 40%, #0c0906 100%);
   animation: roomin .6s ease-out backwards; }
@@ -148,7 +138,10 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 #shafts { left: var(--dx); top: -8%; width: 0; height: 0; mix-blend-mode: screen; animation: roomin .9s ease-out .1s backwards; }
 #shafts i { position: absolute; top: 0; left: calc(var(--u) * var(--w) / -2); width: calc(var(--u) * var(--w)); height: 135vh; transform-origin: 50% 0; transform: rotate(var(--r)); opacity: var(--o);
   background: linear-gradient(#ffe2a066, #e2b86a33 46%, transparent 86%);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent); mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent);
+  /* soft at the sides; and cut off below --rv of its length, which the intro raises to pour the light down from the top */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent), linear-gradient(#000 calc(var(--rv, 2) * 100% - 22%), transparent calc(var(--rv, 2) * 100%));
+  mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent), linear-gradient(#000 calc(var(--rv, 2) * 100% - 22%), transparent calc(var(--rv, 2) * 100%));
+  -webkit-mask-composite: source-in; mask-composite: intersect;
   animation: sway var(--t) ease-in-out infinite alternate, breathe calc(var(--t) * .7) ease-in-out infinite alternate; }
 @keyframes sway { from { transform: rotate(calc(var(--r) - .5deg)); } to { transform: rotate(calc(var(--r) + .5deg)); } }
 @keyframes breathe { from { opacity: calc(var(--o) * .85); } to { opacity: calc(var(--o) * 1.15); } }
@@ -160,7 +153,10 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 #ring svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; stroke-linecap: butt; }
 #ring .rim { stroke-dasharray: 1; animation: draw .7s ease-out .15s backwards; }
 #ring .late { position: absolute; inset: 0; transform: scaleY(.24); animation: roomin .5s ease .85s backwards; }
-#ring .ticks { animation: turn 120s linear infinite; }
+#ring .ticks { position: absolute; inset: 0; animation: turn 120s linear infinite; }
+/* the ticks again, alight: the intro shows a run of them, eighty degrees long, and takes it once round the ring */
+#ring .lit { opacity: 0; -webkit-mask-image: conic-gradient(from calc(var(--ig, 0) * 360deg - 80deg), transparent, #000 80deg, transparent 80.5deg);
+  mask-image: conic-gradient(from calc(var(--ig, 0) * 360deg - 80deg), transparent, #000 80deg, transparent 80.5deg); }
 #ring .dots { animation: turn 80s linear infinite reverse; }
 #ring::after { content: ""; position: absolute; inset: 38% 0; border: 1px solid var(--m-gold-hi); border-radius: 50%; opacity: 0; }
 #ring.wave::after { animation: wave .7s var(--ease); }
@@ -171,6 +167,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 #homeglass { opacity: .16; filter: blur(3px); transform: scaleY(-1);   /* the die again, upside down in the polished floor, fading as it goes */
   -webkit-mask-image: linear-gradient(#0000 57.6%, #000 81.7%, #0000 81.8%); mask-image: linear-gradient(#0000 57.6%, #000 81.7%, #0000 81.8%); }
 #homebg { inset: 0; width: 100%; height: 100%; display: block; }
+#grade { inset: -5%; background: #0a1220; opacity: 0; }   /* the intro's cold, over the room and never over the menu */
 #scrim { inset: 0; background: linear-gradient(90deg, #0b0907f2 0%, #0b0907c0 24%, #0b090700 46%), radial-gradient(120% 95% at 50% 50%, transparent 52%, #000d 100%); }
 #grain { inset: -180px; opacity: .07; mix-blend-mode: overlay; animation: grain .5s steps(1) infinite;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .85 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
@@ -253,9 +250,14 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 #version { color: var(--m-faint); font: 600 max(10px, calc(var(--u) * 11))/1 var(--display); letter-spacing: .3em; text-transform: uppercase; white-space: nowrap; user-select: none; }
 #studiomark { width: max(calc(var(--u) * 64), 44px); opacity: .85; -webkit-user-drag: none; user-select: none; }
 
-/* Until the intro clears, the room and the menu wait in the dark; the die and the dust are already there for the intro to hand over to.
-   A key or a click during the entrance finishes it at once (settled). */
-#home.waiting :is(#vault, #arch, #shafts, #floor, #pool, #ring, .masthead, .tagline, #mainmenu .spine, #spinelit, #mainmenu button, #homestatus, .homefoot) { animation: none !important; opacity: 0 !important; }
+/* While the intro plays, the room, the title and the tagline are the director's, so their own entrances stand down (staged),
+   the title's glint waits for the title (titled), and the menu waits in the dark for its turn (nomenu), when it comes in the
+   way it always does. A key or a click during the entrance finishes it at once (settled). */
+#home.staged :is(#vault, #arch, #shafts, #floor, #pool, #ring .rim, #ring .late, .masthead, .tagline) { animation: none !important; }
+#home.staged:not(.titled) :is(.masthead h1, #titleart i) { animation: none !important; }
+#home.staged #scene { will-change: transform; }   /* what the director moves or fades every frame is kept on a layer of its own, so nothing is painted again */
+#home.staged :is(#pool, .tagline) { will-change: opacity, transform; }
+#home.nomenu :is(#mainmenu .spine, #spinelit, #mainmenu button, #homestatus, .homefoot) { animation: none !important; opacity: 0 !important; }
 #home.settled :is(#vault, #arch, #shafts, #floor, #pool, #ring .rim, #ring .late, .masthead, .tagline, #mainmenu .spine, #spinelit, #mainmenu button, #homestatus, .homefoot) { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   #home, #home *, #home *::before, #home *::after { animation: none !important; transition-duration: .1s !important; }
@@ -821,41 +823,38 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   <symbol id="g-thing" viewBox="0 0 20 20"><path d="M10 2.500 16.500 6v8L10 17.500 3.500 14V6zM3.500 6 10 9.500 16.500 6M10 9.500v8"/></symbol>
 </svg>
 
-<div id="splash"><div class="logo"><i class="halo"></i><img alt="Gravelight Studios"><i class="shine"></i></div></div>
+<div id="splash"><div class="logo"><i class="halo"></i><img alt="Gravelight Studios"><i class="shine"></i><div class="embers"></div></div></div>
 
 <div id="intro">
-  <canvas id="introcv"></canvas>
-  <div class="stage">
-    <h1><span style="--i:0;--k:-4">G</span><span style="--i:1;--k:-3">M</span><span class="gap"></span><span style="--i:2;--k:-1">E</span><span style="--i:3;--k:0">n</span><span style="--i:4;--k:1">g</span><span style="--i:5;--k:2">i</span><span style="--i:6;--k:3">n</span><span style="--i:7;--k:4">e</span></h1>
-    <div class="line"><i></i></div>
-    <p>Solo narratives, run by a game master behind the page.</p>
-  </div>
-  <div class="grain"></div>
-  <div class="matte top"></div><div class="matte bottom"></div>
+  <div class="lens"><div class="grain"></div></div>
+  <div class="matte top"></div><div class="matte bottom"><span class="skip">Press any key to skip</span></div>
 </div>
 
 <div id="home" class="view">
-  <div id="vault" class="layer"><img id="backdropart" alt=""></div>
-  <div id="arch" class="layer"></div>
-  <div id="shafts" class="layer">
-    <i style="--r:-22deg;--w:110;--o:.12;--t:13s"></i><i style="--r:-12deg;--w:150;--o:.17;--t:17s"></i><i style="--r:-5deg;--w:200;--o:.26;--t:11s"></i>
-    <i style="--r:1deg;--w:190;--o:.34;--t:15s"></i><i style="--r:8deg;--w:160;--o:.22;--t:12s"></i><i style="--r:17deg;--w:120;--o:.15;--t:16s"></i>
-    <i style="--r:27deg;--w:90;--o:.12;--t:14s"></i>
+  <div id="scene">
+    <div id="vault" class="layer"><img id="backdropart" alt=""></div>
+    <div id="arch" class="layer"></div>
+    <div id="shafts" class="layer">
+      <i style="--r:-22deg;--w:110;--o:.12;--t:13s"></i><i style="--r:-12deg;--w:150;--o:.17;--t:17s"></i><i style="--r:-5deg;--w:200;--o:.26;--t:11s"></i>
+      <i style="--r:1deg;--w:190;--o:.34;--t:15s"></i><i style="--r:8deg;--w:160;--o:.22;--t:12s"></i><i style="--r:17deg;--w:120;--o:.15;--t:16s"></i>
+      <i style="--r:27deg;--w:90;--o:.12;--t:14s"></i>
+    </div>
+    <div id="floor" class="layer"></div>
+    <div id="pool" class="layer"></div>
+    <div id="ring" class="layer" aria-hidden="true">
+      <div class="late"><div class="ticks"><svg viewBox="-500 -500 1000 1000"></svg><svg class="lit" viewBox="-500 -500 1000 1000"></svg></div>
+        <svg class="dots" viewBox="-500 -500 1000 1000"><circle r="418" stroke="#c9a25b66" stroke-width="2.5" stroke-dasharray="2.5 15"/></svg></div>
+      <svg viewBox="-500 -500 1000 1000">
+        <ellipse class="rim" rx="497" ry="119.3" pathLength="1" stroke="#c9a25b80" stroke-width="1.2"/>
+        <ellipse rx="470" ry="112.8" stroke="#c9a25b47" stroke-width="1"/>
+        <path fill="#f0d9a8" stroke="none" d="M497-9l9 9-9 9-9-9zM-497-9l9 9-9 9-9-9zM0 110.3l9 9-9 9-9-9zM0-128.3l9 9-9 9-9-9z"/>
+      </svg>
+    </div>
+    <canvas id="homeglass"></canvas>
+    <canvas id="homedie"></canvas>
+    <canvas id="homebg"></canvas>
+    <div id="grade" class="layer"></div>
   </div>
-  <div id="floor" class="layer"></div>
-  <div id="pool" class="layer"></div>
-  <div id="ring" class="layer" aria-hidden="true">
-    <div class="late"><svg class="ticks" viewBox="-500 -500 1000 1000"></svg>
-      <svg class="dots" viewBox="-500 -500 1000 1000"><circle r="418" stroke="#c9a25b66" stroke-width="2.5" stroke-dasharray="2.5 15"/></svg></div>
-    <svg viewBox="-500 -500 1000 1000">
-      <ellipse class="rim" rx="497" ry="119.3" pathLength="1" stroke="#c9a25b80" stroke-width="1.2"/>
-      <ellipse rx="470" ry="112.8" stroke="#c9a25b47" stroke-width="1"/>
-      <path fill="#f0d9a8" stroke="none" d="M497-9l9 9-9 9-9-9zM-497-9l9 9-9 9-9-9zM0 110.3l9 9-9 9-9-9zM0-128.3l9 9-9 9-9-9z"/>
-    </svg>
-  </div>
-  <canvas id="homeglass"></canvas>
-  <canvas id="homedie"></canvas>
-  <canvas id="homebg"></canvas>
   <div id="scrim" class="layer"></div>
   <div id="grain" class="layer"></div>
   <div class="masthead">
@@ -926,6 +925,10 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
     <div class="setting">
       <label for="volume">Music Volume</label>
       <div class="slider"><input id="volume" type="range" min="0" max="100" step="1"><span id="volumenum"></span></div>
+    </div>
+    <div class="setting">
+      <span>Intro</span>
+      <div class="seg" id="introchoice"><button data-intro="auto" title="The whole of it the first time the window opens, and a short one after that">Auto</button><button data-intro="full" title="The whole of it, every time">Full</button><button data-intro="short" title="A short one, every time">Short</button><button data-intro="off" title="Straight to the main menu">Off</button></div>
     </div>
     <div class="setting">
       <span>Fullscreen</span>
@@ -1100,7 +1103,8 @@ const START = __GM_START__;
 const $ = id => document.getElementById(id);
 const WORKING = ["The GM considers", "Dice roll behind the screen", "The world answers", "The page is being written"];
 const ABOUT = ["Who they are", "What they want", "Voice", "Emotional rules", "Background and know-how", "People", "Changed by"];
-let prefs = {size: 18, wide: false, bgm: 2, volume: 60, fullscreen: false, model: ""};   // model "" is Claude Code's own choice
+// model "" is Claude Code's own choice. What was saved comes with the page, so it knows how to open before it has asked for anything.
+let prefs = Object.assign({size: 18, wide: false, bgm: 2, volume: 60, fullscreen: false, model: "", intro: "auto", introSeen: false}, __GM_PREFS__);
 const musicVolume = () => Math.min(100, Math.max(0, +prefs.volume || 0)) / 100;
 const bgmChoice = () => [0, 1, 2].includes(prefs.bgm) ? prefs.bgm : 2;   // 0 is off
 
@@ -1129,6 +1133,7 @@ function applyPrefs(save) {
   $("volume").value = $("volumenum").textContent = Math.round(musicVolume() * 100);
   $("volume").style.setProperty("--at", musicVolume() * 100 + "%");
   for (const b of $("fullscreenchoice").children) b.classList.toggle("on", (b.dataset.full === "1") === !!prefs.fullscreen);
+  for (const b of $("introchoice").children) b.classList.toggle("on", b.dataset.intro === (prefs.intro || "auto"));
   for (const b of $("modelchoice").children) b.classList.toggle("on", b.dataset.model === (prefs.model || ""));
   if (save) api("prefs", {prefs}).catch(() => {});
 }
@@ -1373,8 +1378,8 @@ async function showHome() {
   if (back && menu.live) enterHome();
   startBackdrop();
   const h = await api("home");
-  if (h.prefs) { Object.assign(prefs, h.prefs); applyPrefs(); }
-  introDone.then(() => { if (!game) playMenuMusic(); });   // the splash and the intro play in silence
+  if (h.prefs) { Object.assign(prefs, h.prefs, prefs.introSeen ? {introSeen: true} : {}); applyPrefs(); }   // seen, if the intro got that far while this was being asked
+  introDone.then(() => { if (!game && !musicWanted) playMenuMusic(); });   // when the window opens, the intro has started it already, as the die lands
   checkPrograms(h);
   if (!nn.parent) nn.parent = h.default_parent;
   const last = h.narratives.find(n => !n.missing);   // the list is kept most recently opened first
@@ -1434,7 +1439,7 @@ musicGain.connect(audio.destination);
 const tracks = {};
 let musicSource = null, musicTrack = 0, musicWanted = false;
 let introOver;
-const introDone = new Promise(done => introOver = done);   // settled when the intro clears and the menu comes in
+const introDone = new Promise(done => introOver = done);   // settled when the intro is over and the menu can be used
 
 function loadTrack(n) {
   return tracks[n] = tracks[n] || fetch(`/bgm?n=${n}&t=${TOKEN}`).then(r => {
@@ -1459,7 +1464,7 @@ function fadeMusic(to, secs, from, gain = musicGain) {
   g.linearRampToValueAtTime(to, now + secs);
 }
 
-async function playMenuMusic() {
+async function playMenuMusic(fade = .8) {   // fade is how long it takes to come up: the intro brings it in slowly
   musicWanted = true;
   audio.resume().catch(() => {});   // a browser tab may hold it until the first click or key
   const track = bgmChoice();
@@ -1476,8 +1481,8 @@ async function playMenuMusic() {
     [musicSource.loopStart, musicSource.loopEnd] = loopPoints(buf);
     musicSource.connect(musicGain);
     musicSource.start(0, musicSource.loopStart);
-    if (musicWanted) fadeMusic(musicVolume(), .8, 0);
-  } else if (track) fadeMusic(musicVolume(), .8);
+    if (musicWanted) fadeMusic(musicVolume(), fade, 0);
+  } else if (track) fadeMusic(musicVolume(), fade);
 }
 
 function stopMenuMusic() {
@@ -1485,8 +1490,8 @@ function stopMenuMusic() {
   fadeMusic(0, .6);
   setTimeout(restAudio, 700);
 }
-const restAudio = () => { if (!musicWanted && !worldWanted && !worldSource) audio.suspend(); };   // nothing is playing or on its way out
-for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => { if ((musicWanted || worldWanted) && audio.state === "suspended") audio.resume(); });
+const restAudio = () => { if (!musicWanted && !worldWanted && !worldSource && !intro.sound) audio.suspend(); };   // nothing is playing or on its way out
+for (const ev of ["pointerdown", "keydown"]) addEventListener(ev, () => { if ((musicWanted || worldWanted || intro.sound) && audio.state === "suspended") audio.resume(); });
 
 // The music while the GM builds a world: a track and a gain of its own, so it can come in while the menu's goes out.
 // It loops for as long as the build takes, and when the GM is done it fades away and only then stops.
@@ -1556,6 +1561,12 @@ $("bgmchoice").onclick = e => {
   applyPrefs(true);
   if (musicWanted) playMenuMusic();
 };
+$("introchoice").onclick = e => {   // how the window opens, from the next time on
+  const b = e.target.closest("button");
+  if (!b) return;
+  prefs.intro = b.dataset.intro;
+  applyPrefs(true);
+};
 
 // ---- the home screen's room -------------------------------------------------------
 
@@ -1566,10 +1577,8 @@ const DIE = [];
 for (const a of [-1, 1]) for (const b of [-PHI, PHI]) DIE.push([0, a, b], [a, b, 0], [b, 0, a]);
 const EDGES = [];
 DIE.forEach((p, i) => DIE.forEach((q, j) => { if (i < j && Math.abs(Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) - 2) < .01) EDGES.push([i, j]); }));
-const EMBERS = Array.from({length: 46}, () => ({x: Math.random(), y: Math.random(), size: .8 + Math.random() * 1.8, speed: .012 + Math.random() * .03,
-                                                sway: Math.random() * 6.28, glow: .2 + Math.random() * .6}));   // the intro's; the home screen has dust of its own
 const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let backdropOn = false, veiled = !STILL, drawn = false;   // veiled: the splash and the intro are over it, so there is nothing to draw it for
+let backdropOn = false, veiled = !STILL && !START, drawn = false;   // veiled: the splash is over it, so there is nothing to draw it for
 // How the die is turned is a 3×3 matrix in rows, in the canvas's own directions: x to the right, y down, z toward the eye.
 function turnAbout([x, y, z], by) {   // by so many radians about a unit axis
   const c = Math.cos(by), s = Math.sin(by), k = 1 - c;
@@ -1583,8 +1592,10 @@ const dieTilt = t => .42 + .16 * Math.sin(t * .11);   // it leans toward the eye
 // The die. turn is how it's turned, and spin how fast: an axis, as long as the radians it turns in a second. aim is the face it
 // is turning to show (0 when it's left to itself), input when the menu last asked for one, and loose the time until which a
 // push has it free of that. idle is how much of its slow turn it has, glow a burst of heat that cools at cool a second, heat
-// the whole of its heat (0 to 1), and awake how far its sway has come in since the intro handed it over.
-const die = {turn: turnAbout([0, 1, 0], 0), spin: [0, 0, 0], last: 0, x: 0, y: 0, r: 0, aim: 0, input: 0, loose: 0, idle: 1, glow: 0, cool: 4, heat: 0, awake: 0, posed: false};
+// the whole of its heat (0 to 1), and awake how far its sway has come in since the intro ended. lift is how far above its place
+// it is, in pixels, and show how much of it there is to see (0 to 1): the intro's, and 0 and 1 the rest of the time.
+const die = {turn: turnAbout([0, 1, 0], 0), spin: [0, 0, 0], last: 0, x: 0, y: 0, r: 0, aim: 0, input: 0, loose: 0, idle: 1, glow: 0, cool: 4, heat: 0, awake: 0, posed: false,
+             lift: 0, show: 1};
 const warm = (to, cool) => { die.glow = Math.min(1, Math.max(die.glow, to)); die.cool = cool; };
 
 // Unannounced: clicking the die pushes it where it was clicked, so that side goes back and the far side comes round. Every
@@ -1601,21 +1612,9 @@ $("home").addEventListener("pointerdown", e => {
   warm(.3, 3);
 });
 
-EDGES.forEach(e => { if (DIE[e[0]][1] > DIE[e[1]][1]) e.reverse(); });   // every edge runs top to bottom, and so does the list: the intro draws the die downward
-EDGES.sort((a, b) => DIE[a[0]][1] + DIE[a[1]][1] - DIE[b[0]][1] - DIE[b[1]][1]);
-
-function fit(cv, most) {   // a canvas sized to its box and wiped, with its context in CSS pixels; most caps how fine its own pixels are
-  const ratio = Math.min(window.devicePixelRatio || 1, most || 9), w = cv.clientWidth, h = cv.clientHeight;
-  if (cv.width !== Math.round(w * ratio) || cv.height !== Math.round(h * ratio)) { cv.width = Math.round(w * ratio); cv.height = Math.round(h * ratio); }
-  const c = cv.getContext("2d");
-  c.setTransform(ratio, 0, 0, ratio, 0, 0);
-  c.clearRect(0, 0, w, h);
-  return [c, w, h];
-}
-
 // Where the die lives on the home screen, and how big: right of the menu's column, a little left of the middle of the room
 // that's left, and as large as the window's height or that room allows. It's the one place this is worked out: the intro
-// glides its die here, a click on the die is measured from here, and the room's light is hung over it. The last number is
+// drops the die here, a click on the die is measured from here, and the room's light is hung over it. The last number is
 // the scale diePoints draws at; the die is hypot(1, PHI) of those from its middle to a corner.
 const dieSpot = (w, h) => {
   const u = Math.min(w / 1920, h / 1080), edge = 200 * u + Math.max(520 * u, 300), small = w < 1000;   // the column's right side, and some air
@@ -1623,9 +1622,8 @@ const dieSpot = (w, h) => {
   return [cx, h * .48, Math.min(h * (small ? .5 : .6), (w - edge) * .62, (w - cx) * 1.9) / 2 / Math.hypot(1, PHI)];
 };
 
-// tilt leans it further over, and twirl turns it about its own upright before anything else: the intro's tumble
-function diePoints(cx, cy, r, t, turn, tilt, twirl) {
-  const m = turns(turnAbout([1, 0, 0], dieTilt(t) + (tilt || 0)), twirl ? turns(turn, turnAbout([0, 1, 0], twirl)) : turn);
+function diePoints(cx, cy, r, t, turn) {
+  const m = turns(turnAbout([1, 0, 0], dieTilt(t)), turn);
   return DIE.map(([x, y, z]) => {
     const z2 = m[6] * x + m[7] * y + m[8] * z, k = 5 / (5 - z2);
     return [cx + (m[0] * x + m[1] * y + m[2] * z) * k * r, cy + (m[3] * x + m[4] * y + m[5] * z) * k * r + Math.sin(t * .4) * 6, z2];
@@ -1642,81 +1640,63 @@ function drawGlow(c, w, h, cx, cy, r, t, heat, strength) {
   c.fillRect(cx - r * 4.6, cy - r * 4.6, r * 9.2, r * 9.2);   // only as far as it reaches
 }
 
-// The die as wire: the intro draws it this way, and so does the home screen on a machine that can't draw the solid one.
-// grow, when given, is how far along each edge has been drawn (0 to 1); bloom puts a soft halo on the lines; weight makes them
-// heavier and brighter, for the home screen, where the wire die has a whole room to stand out against.
-function drawDie(c, pts, heat, grow, bloom, weight = 1) {
-  const dots = pts.map(() => grow ? 0 : 1);
+// The die as wire: how the home screen draws it on a machine that can't draw the solid one. bloom puts a soft halo on the
+// lines; weight makes them heavier and brighter, since the wire die has a whole room to stand out against.
+function drawDie(c, pts, heat, bloom, weight = 1) {
   c.lineCap = "round";
-  EDGES.forEach(([i, j], n) => {
-    const p = grow ? grow[n] : 1;
-    if (p <= 0) return;
-    dots[i] = Math.max(dots[i], Math.min(1, p * 4));
-    if (p >= 1) dots[j] = 1;
+  EDGES.forEach(([i, j]) => {
     const near = ((pts[i][2] + pts[j][2]) / 2 + 1.9) / 3.8;   // 0 at the back, 1 at the front
-    const x = pts[i][0] + (pts[j][0] - pts[i][0]) * p, y = pts[i][1] + (pts[j][1] - pts[i][1]) * p;
     const color = `${201 + 35 * heat},${162 + 40 * heat},${91 + 50 * heat}`, alpha = Math.min(1, (.08 + .5 * near + .35 * heat) * (weight > 1 ? 1.7 : 1) + (weight > 1 ? .45 : 0));
     for (const halo of bloom ? [1, 0] : [0]) {
       c.strokeStyle = `rgba(${color},${halo ? alpha * .16 * bloom : alpha})`;
       c.lineWidth = (.6 + near + heat * .6) * (halo ? 5 : 1) * weight;
       c.beginPath();
       c.moveTo(pts[i][0], pts[i][1]);
-      c.lineTo(x, y);
+      c.lineTo(pts[j][0], pts[j][1]);
       c.stroke();
     }
-    if (p < 1) {   // the bright point doing the drawing
-      c.fillStyle = "rgba(255,236,190,.95)";
-      c.beginPath(); c.arc(x, y, 1.8, 0, 6.29); c.fill();
-      c.fillStyle = "rgba(236,204,140,.22)";
-      c.beginPath(); c.arc(x, y, 7, 0, 6.29); c.fill();
-    }
   });
-  pts.forEach((p, i) => {
-    if (!dots[i]) return;
-    c.fillStyle = `rgba(230,194,126,${(.15 + .6 * (p[2] + 1.9) / 3.8) * dots[i]})`;
+  for (const p of pts) {
+    c.fillStyle = `rgba(230,194,126,${.15 + .6 * (p[2] + 1.9) / 3.8})`;
     c.beginPath();
     c.arc(p[0], p[1], 1.6 * weight, 0, 6.29);
     c.fill();
-  });
-}
-
-function drawEmbers(c, w, h, t, strength) {
-  for (const e of EMBERS) {
-    const y = h - (((1 - e.y) + t * e.speed) % 1) * (h + 20) + 10, x = e.x * w + Math.sin(t * .5 + e.sway) * 22;
-    const fade = Math.min(1, (h - y) / 120, y / 200) * e.glow * (.7 + .3 * Math.sin(t * 2 + e.sway)) * strength;
-    if (fade <= 0) continue;
-    c.fillStyle = `rgba(201,162,91,${fade * .18})`;
-    c.beginPath(); c.arc(x, y, e.size * 3.2, 0, 6.29); c.fill();
-    c.fillStyle = `rgba(236,204,140,${fade})`;
-    c.beginPath(); c.arc(x, y, e.size, 0, 6.29); c.fill();
   }
 }
 
 // What the room is measured to: the window, the scale unit, and the die's place, read when the window changes and never in
 // a frame. px and py are where the pointer has drawn the eye (-1 to 1), eased toward tx and ty; coarse is how many things a
 // slow machine has had taken away.
-const stage = {w: 0, h: 0, u: 1, cx: 0, cy: 0, r: 0, fine: 1, stale: true, laid: 0, px: 0, py: 0, tx: 0, ty: 0, sx: 9, sy: 9, heat: -1,
+const stage = {w: 0, h: 0, u: 1, cx: 0, cy: 0, r: 0, fine: 1, stale: true, laid: 0, px: 0, py: 0, tx: 0, ty: 0, sx: 9, sy: 9, heat: -1, lift: 0, show: 1,
                coarse: 0, frames: 0, spent: 0, last: 0};
 addEventListener("pointermove", e => { stage.tx = e.clientX / innerWidth * 2 - 1; stage.ty = e.clientY / innerHeight * 2 - 1; });
 addEventListener("blur", () => stage.tx = stage.ty = 0);   // with the window out of use, the room settles back
 document.documentElement.addEventListener("pointerleave", () => stage.tx = stage.ty = 0);
-// the layers the pointer shifts, and by how many units at most: the further back, the less
-const DRIFT = [["vault", 6, ""], ["arch", 10, ""], ["shafts", 14, ""], ["homedie", 18, ""], ["homeglass", 18, " scaleY(-1)"]].map(([id, far, more]) => ({el: $(id), far, more}));
-const HEATED = [["pool", .7], ["ring", .72], ["shafts", .8]].map(([id, low]) => ({el: $(id), low}));   // what the die's heat brightens, and how bright each is cold
-$("ring").querySelector(".ticks").innerHTML = Array.from({length: 72}, (_, n) =>
-  `<line y1="-446" y2="${n % 6 ? -458 : -468}" stroke="${n % 6 ? "#7d5f2a" : "#c9a25b"}" stroke-width="${n % 6 ? 2 : 2.6}" transform="rotate(${n * 5})"/>`).join("");
-{   // a painted vault, if the engine has one: it comes up under the light, and without it the drawn vault stays
+// the layers the pointer shifts, and by how many units at most: the further back, the less. The die's two also go up and down
+// with its lift, the reflection the other way.
+const DRIFT = [["vault", 6, "", 0], ["arch", 10, "", 0], ["shafts", 14, "", 0], ["homedie", 18, "", 1], ["homeglass", 18, " scaleY(-1)", -1]]
+  .map(([id, far, more, lifts]) => ({el: $(id), far, more, lifts}));
+// What the die's heat brightens, how bright each is cold, and which of the intro's numbers brings it up out of the dark. The ring
+// is done a part at a time: faded as one thing, its dotted circle is painted afresh every few frames, and the picture stumbles.
+const HEATED = [["#pool", .7, "pool"], ["#ring .dots", .72, "ring"], ["#ring .ticks", .72, "ring"], ["#ring > svg", .72, "ring"], ["#shafts", .8, ""]]
+  .map(([which, low, by]) => ({el: document.querySelector(which), low, by}));
+for (const [ticks, plain] of [[$("ring").querySelector(".ticks svg:not(.lit)"), true], [$("ring").querySelector(".lit"), false]]) ticks.innerHTML = Array.from({length: 72}, (_, n) =>
+  `<line y1="-446" y2="${n % 6 ? -458 : -468}" stroke="${!plain ? "#fff3d0" : n % 6 ? "#7d5f2a" : "#c9a25b"}" stroke-width="${(n % 6 ? 2 : 2.6) * (plain ? 1 : 2)}" transform="rotate(${n * 5})"/>`).join("");
+// A painted vault, if the engine has one: it comes up under the light, and without it the drawn vault stays. The splash waits
+// for it to be decoded, so the intro's first picture doesn't arrive late.
+const backdropReady = new Promise(done => {
   const plate = $("backdropart");
-  plate.onload = () => $("vault").classList.add("art");
-  plate.onerror = () => plate.remove();
+  plate.onload = () => plate.decode().catch(() => {}).then(() => { $("vault").classList.add("art"); done(); });
+  plate.onerror = () => { plate.remove(); done(); };
   plate.src = `/backdrop?t=${TOKEN}`;
-}
+});
 
 function measure() {
   const el = $("home"), w = el.clientWidth, h = el.clientHeight, [cx, cy, r] = dieSpot(w, h), bg = $("homebg");
   Object.assign(stage, {w, h, u: Math.min(w / 1920, h / 1080), cx, cy, r, fine: Math.min(window.devicePixelRatio || 1, 1.5), stale: false, laid: stage.laid + 1, sx: 9});
   Object.assign(die, {x: cx, y: cy, r: r * 2});
   el.style.setProperty("--dx", cx + "px");
+  $("scene").style.transformOrigin = `${cx}px ${cy}px`;   // the intro's camera closes in on the die's place
   bg.width = Math.round(w * stage.fine);
   bg.height = Math.round(h * stage.fine);
   litSpine();
@@ -1810,7 +1790,7 @@ function turnDie(t, dt) {
 
 // ---- the die, solid ----
 // Built once, when three.js has loaded and the machine can draw it: obsidian faces with their numbers inlaid in gold, in a
-// frame of hammered gold, held in the wire die's own pose so the intro's drawing settles into it. It is drawn off to one
+// frame of hammered gold, held in the wire die's own pose, so either can stand in for the other. It is drawn off to one
 // side first, so what is brightest in it can be blurred and laid back over it as a glow. Without it the wire die stays.
 let solid = null;
 function buildDie() {
@@ -1991,6 +1971,7 @@ function buildDie() {
       cv.hidden = glass.hidden = true;
     });
     return {
+      reach: REACH,
       draw(t, heat) {
         const m = die.turn, live = STILL ? 0 : die.awake, now = stage.laid * 8 + stage.coarse;
         if (now !== laid) { laid = now; lay(); }
@@ -2052,8 +2033,8 @@ const MOTE = stamp(48, [[0, "rgba(255,238,196,1)"], [.16, "rgba(240,208,144,.85)
 const BOKEH = stamp(128, [[0, "rgba(214,176,108,.5)"], [.62, "rgba(218,180,112,.46)"], [.86, "rgba(226,190,124,.3)"], [1, "rgba(236,204,140,0)"]]);
 const DEPTH = [12, 24, 40];   // how far the pointer shifts each band
 
-function drawDust(c, t, dt, heat) {
-  const {w, h, u, cx, cy, r} = stage, thin = stage.coarse >= 4;
+function drawDust(c, t, dt, heat, strength) {   // strength: how much of the dust the light has found (the intro starts in the dark)
+  const {w, h, u, cx, r} = stage, cy = stage.cy - die.lift, thin = stage.coarse >= 4;
   for (let n = 0; n < DUST.length; n++) {
     const d = DUST[n];
     if (thin && (d.band === 2 || n & 1)) continue;
@@ -2061,6 +2042,7 @@ function drawDust(c, t, dt, heat) {
     const x = (d.x + (d.band === 2 ? t * d.speed * .5 : 0)) % 1 * (w + 80) - 40 + (d.band ? Math.sin(t * .5 + d.sway) * 22 : 0) - stage.px * DEPTH[d.band] * u;
     let alpha = d.glow * (.7 + .3 * Math.sin(t * 2 + d.sway)) * Math.min(1, (h - y) / 120, (y + 40) / 200);
     if (!d.band) alpha *= .3 + .7 * Math.max(0, 1 - Math.abs(x - cx) / (900 * u));   // the far ones catch the light only inside its cone
+    alpha *= strength;
     if (alpha <= 0) continue;
     c.globalAlpha = alpha;
     if (d.band === 2) c.drawImage(BOKEH, x - d.size * u, y - d.size * u, d.size * u * 2, d.size * u * 2);
@@ -2094,38 +2076,470 @@ function drawDust(c, t, dt, heat) {
   c.globalAlpha = 1;
 }
 
-// One frame of the room: the die turned and drawn, the layers shifted for the pointer, the light raised by the die's heat, the dust.
+// ---- the intro ----
+// The intro is not a film of its own: it is this room, performed. The vault comes up out of black, cold; the light pours down
+// from the oculus and warms it; the die is thrown into the light, strikes the floor, bounces twice and comes to rest showing
+// the face of the menu's first entry; the title is drawn, the camera pulls back, the bars lift, and the menu comes in the way
+// it always does. Its last frame is the home screen, so nothing is handed over. One director works out a handful of numbers
+// for each frame from the time alone, and the room's own layers wear them.
+//
+// How the window opens: the whole intro the first time and a short one after that, or what Settings says; nothing at all when
+// it opens straight into a narrative; and only the studio's mark, held still, for someone who has asked for less motion.
+// Opened with ?introAt=3.2, the page holds that one frame of it, for looking at (&cut=short for the short one).
+const ASKED = new URLSearchParams(location.search), SCRUB = ASKED.has("introAt") ? Math.max(0, parseFloat(ASKED.get("introAt")) || 0) : null;
+const OPENING = START ? "none" : STILL ? "still" : SCRUB !== null ? (ASKED.get("cut") === "short" ? "short" : "full")
+  : ["full", "short", "off"].includes(prefs.intro) ? prefs.intro : prefs.introSeen ? "short" : "full";
+
+// When each thing happens, in seconds from the first black. vault and shaft are when each starts and is done; cast and hit,
+// when the die is thrown and when it strikes; hops, how long each bounce is in the air; pull, the camera's pull back, from
+// push times closer; live, when it's over and the menu is the player's.
+const CUTS = {
+  full: {push: 1.18, vault: [.6, 1.4], shaft: [1.6, 2.6], cast: 2.4, hit: 3.1, hops: [.35, .3], title: 4.3, tag: 4.9, pull: [4.6, 6], bars: 5.1, menu: 5.2, live: 6.4, hint: 1.5},
+  short: {push: 1.08, vault: [.1, .4], shaft: [.3, .85], cast: .5, hit: 1, hops: [.3, .25], title: 1.8, tag: 2.2, pull: [1.9, 2.8], bars: 1.9, menu: 2.4, live: 3.6, hint: .8}};
+
+const clamp = u => Math.min(1, Math.max(0, u));
+const bezier = (x1, y1, x2, y2) => u => {   // a stylesheet's cubic-bezier: found by halving, which is plenty for a frame
+  let low = 0, high = 1, s = u;
+  for (let n = 0; n < 16; n++) {
+    s = (low + high) / 2;
+    if (3 * (1 - s) * (1 - s) * s * x1 + 3 * (1 - s) * s * s * x2 + s * s * s < u) low = s; else high = s;
+  }
+  return 3 * (1 - s) * (1 - s) * s * y1 + 3 * (1 - s) * s * s * y2 + s * s * s;
+};
+// arrive is for what comes in, and camera for the camera and the bars; in is a fall
+const EASE = {line: u => u, in: u => u * u, out: u => 1 - (1 - u) ** 2, smooth: u => u * u * (3 - 2 * u), arrive: bezier(.2, .8, .2, 1), camera: bezier(.6, 0, .3, 1)};
+const at = (t, from, to, ease) => EASE[ease](clamp((t - from) / (to - from)));   // how far along, 0 to 1
+
+// The score: for each number the director gives out, its keyframes in order, each [from, to, value at from, value at to, easing].
+// Before its first keyframe a number has that one's starting value, and after one ends it stays where that one left it.
+const score = k => ({
+  zoom: [[k.pull[0], k.pull[1], k.push, 1, "camera"]],
+  vault: [[k.vault[0], k.vault[1], 0, .25, "out"], [k.shaft[0], k.shaft[1], .25, .6, "smooth"], [k.hit, k.hit + .12, .6, 1, "out"]],
+  grade: [[k.vault[0], k.vault[0] + .2, 0, .4, "line"], [k.shaft[0], k.hit + .3, .4, 0, "smooth"]],   // cold dark, into gold light
+  shaft: [[k.shaft[0], k.shaft[1], 0, 1, "smooth"]],
+  pool: [[k.shaft[0] + .2, Math.min(k.shaft[1] + .2, k.hit), 0, 1, "smooth"]],
+  ring: [[k.shaft[0] + .2, Math.min(k.shaft[1] + .2, k.hit), 0, .5, "smooth"], [k.hit, k.hit + .6, .5, 1, "out"]],
+  ignite: [[k.hit, k.hit + .6, 0, 1, "line"]],
+  title: [[k.title, k.title + 1, 0, 1, "arrive"]],
+  tag: [[k.tag, k.tag + .5, 0, 1, "arrive"]],
+  scrim: [[k.title - .5, k.title + .5, 0, 1, "smooth"]],   // the menu's side of the room darkens only when there is a title to read on it
+  bars: [[k.bars, k.bars + .9, 1, 0, "camera"]],
+  lens: [[k.vault[0], k.vault[1], 0, 1, "line"], [k.pull[0], k.pull[1], 1, 0, "smooth"]],   // no grain on the black: black is black
+  hint: [[k.hint, k.hint + .5, 0, 1, "line"], [k.bars - .4, k.bars, 1, 0, "line"]]});
+function track(keys, t) {
+  let v = keys[0][2];
+  for (let n = 0; n < keys.length && t >= keys[n][0]; n++) v = keys[n][2] + (keys[n][3] - keys[n][2]) * at(t, keys[n][0], keys[n][1], keys[n][4]);
+  return v;
+}
+
+// cut is the timings in use, and nothing once the intro is over; T is its time now, began when it started (nothing until the
+// splash has gone), fixed a time it is being held at, skipped when a key cut it short. thrown is how far the die has got: not
+// yet thrown, in the air, or left to the menu. lean is how much a slow machine has had taken away. take is this frame's
+// numbers; from and end, what a skip glides between. sound keeps the page's sound awake from the splash on.
+const intro = {cut: CUTS[OPENING] || null, score: null, T: 0, began: null, fixed: null, skipped: null, hid: 0, thrown: 0, next: 0, lean: 0, frames: 0, spent: 0,
+               take: {}, from: null, end: null, cues: null, sparks: null, room: null, els: null, letters: null, typed: -1, sound: !START && OPENING !== "off"};
+if (intro.cut) {
+  const k = intro.cut, home = $("home");
+  intro.score = score(k);
+  intro.els = {scene: $("scene"), vault: $("vault"), shafts: $("shafts"), grade: $("grade"), lit: $("ring").querySelector(".lit"), title: document.querySelector(".masthead"),
+               tag: document.querySelector(".tagline"), scrim: $("scrim"), lens: $("intro").querySelector(".lens"), hint: $("intro").querySelector(".skip"),
+               top: $("intro").querySelector(".matte.top"), bottom: $("intro").querySelector(".matte.bottom")};
+  intro.end = Object.assign(direct(k.live, {}), {burst: 0});
+  // the strike's sparks: which way each leaves the floor (mostly up), how fast, how long it lasts, how thick it is
+  intro.sparks = Array.from({length: 60}, () => { const a = Math.PI * (1.04 + Math.random() * .92); return {x: Math.cos(a), y: Math.sin(a), v: 140 + Math.random() * 560, life: .6 + Math.random() * .8, size: .6 + Math.random() * 1.5}; });
+  // What is due, and when. A sound that has been missed by a quarter of a second isn't played late; the rest always happens.
+  intro.cues = [
+    [0, () => intro.room = sfx("room", k.hit + 3), true],
+    [k.shaft[0], () => sfx("shaft", k.shaft[1] - k.shaft[0]), true],
+    [k.cast, () => sfx("spin", k.hit - k.cast), true],
+    [k.hit, () => { warm(1, 6); $("ring").classList.add("wave"); sfx("impact"); if (!game) playMenuMusic(3); }],   // the one loud beat, and the music comes in on it
+    [k.hit + k.hops[0], () => sfx("bounce", 0), true],
+    [k.hit + k.hops[0] + k.hops[1], () => sfx("bounce", 1), true],
+    [k.title, () => { home.classList.add("titled"); sfx("settle"); }],
+    [k.menu, () => { home.classList.remove("nomenu"); enterHome(); hurry(); }]];
+  // The whole intro counts as seen once three seconds of it have played: someone who skipped it by reflex gets it again.
+  if (OPENING === "full" && SCRUB === null) intro.cues.push([3, () => { prefs.introSeen = true; applyPrefs(true); }]);
+  intro.cues.sort((a, b) => a[0] - b[0]);
+  home.classList.add("staged", "nomenu");
+} else {
+  for (const el of [$("intro"), $("grade"), $("ring").querySelector(".lit")]) el.remove();
+}
+
+// How far above its place the die is, in pixels: out of sight over the window until it's thrown, falling faster all the way
+// down, and then two bounces, the second well under half the height of the first.
+function liftAt(T) {
+  const k = intro.cut;
+  if (T < k.hit) return (stage.cy + 3.2 * stage.r) * (1 - at(T, k.cast, k.hit, "in"));
+  let from = k.hit, high = .09 * stage.h;
+  for (const air of k.hops) {
+    if (T < from + air) return high * 4 * (T - from) / air * (1 - (T - from) / air);
+    from += air;
+    high *= .39;
+  }
+  return 0;
+}
+
+// One frame's numbers, from the time alone. since is how long ago the die struck the floor; flash, streak and shake are the
+// strike's light and its jolt, and burst how much of its sparks there is; trail is how many afterimages follow the die down.
+function direct(T, out) {
+  const k = intro.cut, since = T - k.hit;
+  for (const name in intro.score) out[name] = track(intro.score[name], T);
+  out.since = since;
+  out.dust = clamp(out.vault * 4);
+  out.flash = since < 0 ? 0 : since < .12 ? 1 : Math.exp((.12 - since) * 9);
+  out.streak = since < 0 || since > .6 ? 0 : (1 - since / .6) ** 2;
+  out.shake = since < 0 || since > .35 ? 0 : (1 - since / .35) ** 2;
+  out.burst = since < 0 ? 0 : 1;
+  out.trail = since > -.45 && since < 0 ? 4 : 0;   // only once it's near enough to be seen
+  out.lift = liftAt(T);
+  out.show = 1;
+  return out;
+}
+
+// The die's part: thrown spinning about one axis, knocked onto another by the floor and slowing through the bounces, and at
+// the second landing left to the menu's own spring, which turns it to show the first entry's face: the same turn the home
+// screen gives it, so it comes to rest exactly as the menu would have it.
+const TOSS = [.8, .27, .53], KNOCK = [-.62, .7, .35];
+function act(T) {
+  const k = intro.cut, rest = k.hit + k.hops[0] + k.hops[1];
+  if (T < k.cast || intro.thrown > 1) return;
+  if (!intro.thrown) {
+    intro.thrown = 1;
+    rotInto(die.turn, .36, .48, .8, 2.2);
+    die.aim = 0;
+  }
+  const axis = T < k.hit ? TOSS : KNOCK, rate = T < k.hit ? 14 : 10 * .2 ** clamp((T - k.hit) / (rest - k.hit));
+  for (let n = 0; n < 3; n++) die.spin[n] = axis[n] * rate;
+  if (T >= rest) rests();
+}
+function rests() {
+  intro.thrown = 2;
+  die.aim = +(menu.on || $("menunew")).dataset.face;   // 20 with something to continue, and 17 without
+  die.input = die.last;
+}
+
+// To a time, from nothing: the die is thrown again and its turning worked through a sixtieth of a second at a step, so any
+// frame can be had on its own, and held. The warm-up under the splash uses it, and so does introAt.
+function seek(T) {
+  intro.fixed = intro.T = T;
+  intro.thrown = 0;
+  die.spin = [0, 0, 0];
+  die.aim = 0;
+  die.input = die.last = performance.now() / 1000;
+  for (let s = intro.cut.cast; s < T; s += 1 / 60) { act(s); turnStep(die.last, 1 / 60); }
+  die.glow = T >= intro.cut.hit ? Math.exp((intro.cut.hit - T) * 6) : 0;
+}
+
+// The numbers, worn: each goes onto the layer it's for, and only when it has changed. The camera is one transform on the
+// scene, about the die's place, and the menu is outside it. A machine that can't keep up loses the die's trail first, then half
+// the sparks, then the streak, and last the jolt; never the light, and the time it all takes stays the same.
+const worn = {};
+function wear(key, el, prop, value) {
+  if (worn[key] === value) return;
+  worn[key] = value;
+  if (prop[0] === "-") el.style.setProperty(prop, value); else el.style[prop] = value;
+}
+function dress(s) {
+  const el = intro.els, u = stage.u, jolt = intro.lean < 4 ? s.shake * 8 * u : 0;
+  wear("camera", el.scene, "transform", s.zoom === 1 && !jolt ? "" :
+    `translate(${(jolt * Math.sin(s.since * 71)).toFixed(2)}px, ${(jolt * .7 * Math.cos(s.since * 53)).toFixed(2)}px) scale(${s.zoom.toFixed(4)})`);
+  wear("vault", el.vault, "opacity", s.vault.toFixed(3));
+  wear("shaft", el.shafts, "--rv", (s.shaft * 1.22).toFixed(3));
+  wear("grade", el.grade, "opacity", s.grade.toFixed(3));
+  wear("lit", el.lit, "opacity", s.ignite > 0 && s.ignite < 1 ? Math.min(1, 5 * (1 - s.ignite)).toFixed(2) : "0");
+  wear("run", el.lit, "--ig", s.ignite.toFixed(3));
+  wear("title", el.title, "clipPath", `inset(-30% ${titleEdge(s.title)}% -30% -30%)`);
+  wear("tag", el.tag, "opacity", s.tag.toFixed(3));
+  wear("rise", el.tag, "transform", `translateY(${((1 - s.tag) * 12 * u).toFixed(2)}px)`);
+  wear("scrim", el.scrim, "opacity", s.scrim.toFixed(3));
+  wear("top", el.top, "transform", `translateY(${(s.bars * 101 - 101).toFixed(2)}%)`);
+  wear("bottom", el.bottom, "transform", `translateY(${(101 - s.bars * 101).toFixed(2)}%)`);
+  wear("lens", el.lens, "opacity", s.lens.toFixed(3));
+  wear("hint", el.hint, "opacity", s.hint.toFixed(3));
+  die.lift = s.lift;
+  die.show = s.show;
+}
+
+// How much of the title's right side is still cut off, in hundredths of its width. The painted title is wiped across. The typed
+// one, which stands in when the picture can't be had, comes a letter at a time, sixty milliseconds apart: the cut steps from
+// the end of one letter to the end of the next.
+function titleEdge(p) {
+  const el = intro.els.title;
+  if (el.classList.contains("art")) return (100 - 130 * p).toFixed(2);
+  if (intro.typed !== stage.laid) {   // where each letter ends: read once, and again when the window changes
+    const box = el.getBoundingClientRect(), walk = document.createTreeWalker(el.querySelector("h1"), NodeFilter.SHOW_TEXT), range = document.createRange();
+    intro.typed = stage.laid;
+    intro.letters = [];
+    for (let node; node = walk.nextNode();) for (let n = 0; n < node.length; n++) {
+      range.setStart(node, n);
+      range.setEnd(node, n + 1);
+      intro.letters.push((100 - (range.getBoundingClientRect().right - box.left + stage.u * 4) / box.width * 100).toFixed(2));
+    }
+  }
+  const got = intro.skipped !== null ? Math.ceil(p * intro.letters.length) : Math.floor((intro.T - intro.cut.title) / .06) + 1;
+  return got < 1 ? "100.00" : got >= intro.letters.length ? "-30.00" : intro.letters[got - 1];
+}
+
+// The menu's own entrance, played just fast enough to be over when the intro is, so the intro's last frame has nothing still
+// arriving in it.
+const entrance = () => $("home").getAnimations({subtree: true}).filter(a => ["spinein", "entryin", "roomin"].includes(a.animationName));
+const rush = coming => Math.max(1, Math.max(0, ...coming.map(a => a.effect.getComputedTiming().endTime)) / ((intro.cut.live - intro.cut.menu) * 1000));
+function hurry() {
+  const coming = entrance(), rate = rush(coming);
+  for (const a of coming) a.playbackRate = rate;
+}
+
+// A frame of it: what time it is, whatever is due by then, the die's part, and the numbers. After a skip the numbers glide,
+// for four tenths of a second, from where they were to where the intro ends. Gives back the numbers, or nothing once it's over.
+function introFrame(ms) {
+  const k = intro.cut, s = intro.take, running = intro.fixed === null && intro.began !== null;
+  const T = intro.T = intro.fixed !== null ? intro.fixed : running ? Math.max(0, (ms - intro.began) / 1000) : 0;
+  if (running && intro.skipped === null) {
+    for (; intro.next < intro.cues.length && intro.cues[intro.next][0] <= T; intro.next++) {
+      const [due, run, sound] = intro.cues[intro.next];
+      if (!sound || T - due < .25) run();
+    }
+    act(T);
+    if (T >= k.live) return endIntro();
+  } else if (running && T >= intro.skipped + .4) return endIntro();
+  if (intro.skipped === null) direct(T, s);
+  else {
+    const g = at(T, intro.skipped, intro.skipped + .4, "camera");
+    for (const name in intro.end) s[name] = intro.from[name] + (intro.end[name] - intro.from[name]) * g;
+    s.since = intro.from.since + T - intro.skipped;   // what's left of the strike keeps moving while it fades
+    s.trail = 0;
+  }
+  dress(s);
+  return s;
+}
+
+// The die where it just was, each one fainter: the solid die's own picture laid down again, or the wire one drawn again.
+function drawTrail(c, s, t) {
+  if (intro.lean || !s.trail) return;
+  const {cx, cy, r, u} = stage, half = solid ? solid.reach * r : 0;
+  c.globalCompositeOperation = "lighter";
+  for (let n = s.trail; n >= 1; n--) {
+    const up = liftAt(intro.T - n * .02);
+    c.globalAlpha = .3 * (1 - n / 5) * s.show;
+    if (solid) c.drawImage($("homedie"), cx - half - stage.px * 18 * u, cy - up - half - stage.py * 18 * u, half * 2, half * 2);
+    else drawDie(c, diePoints(cx, cy - up, r, t, die.turn), 0, 0, 3.6);
+  }
+  c.globalCompositeOperation = "source-over";
+  c.globalAlpha = 1;
+}
+
+// The strike, drawn over the room: for a moment the shaft is brighter and the whole picture a little washed (one flash, a
+// tenth of full white at most), a bloom stands where the die hit, a streak of light lies across the window, and sparks leave
+// the floor. All of it is worked out from the time since, so it is the same at any frame rate.
+function drawStrike(c, s) {
+  const {w, h, u, cx, cy, r} = stage, since = s.since, foot = cy + Math.hypot(1, PHI) * r * .82;
+  if (since < 0 || since > 1.5 || s.burst <= 0) return;
+  const light = (x, y, wide, tall, stops) => {   // a soft ellipse of it
+    c.save();
+    c.translate(x, y);
+    c.scale(1, tall / wide);
+    const soft = c.createRadialGradient(0, 0, 0, 0, 0, wide);
+    for (const [stop, color] of stops) soft.addColorStop(stop, color);
+    c.fillStyle = soft;
+    c.fillRect(-wide, -wide, wide * 2, wide * 2);
+    c.restore();
+  };
+  c.globalCompositeOperation = "lighter";
+  if (s.flash > .004) {
+    c.globalAlpha = s.flash * s.burst;
+    c.fillStyle = "rgba(255,238,205,.1)";
+    c.fillRect(-w * .2, -h * .2, w * 1.4, h * 1.4);
+    light(cx, foot - h * .5, r * 1.7, h * .62, [[0, "rgba(255,226,160,.3)"], [1, "rgba(255,226,160,0)"]]);
+    light(cx, foot, r * 4.5, r * 4.5, [[0, "rgba(255,232,176,.5)"], [.35, "rgba(214,170,96,.16)"], [1, "rgba(0,0,0,0)"]]);
+  }
+  if (s.streak > .004 && intro.lean < 3) {
+    c.globalAlpha = s.streak * s.burst;
+    light(cx, cy + r * .5, w * .8, 9 * u, [[0, "rgba(255,240,205,.95)"], [.3, "rgba(255,226,165,.4)"], [1, "rgba(255,220,150,0)"]]);
+  }
+  c.strokeStyle = "rgb(246,214,150)";
+  c.lineCap = "round";
+  for (let n = 0; n < intro.sparks.length; n += intro.lean >= 2 ? 2 : 1) {
+    const p = intro.sparks[n], age = since / p.life;
+    if (age >= 1) continue;
+    const was = Math.max(0, since - .05), far = p.v * u * (1 - Math.exp(-2.6 * since)) / 2.6, near = p.v * u * (1 - Math.exp(-2.6 * was)) / 2.6;
+    c.globalAlpha = (1 - age) ** 2 * s.burst;
+    c.lineWidth = p.size;
+    c.beginPath();
+    c.moveTo(cx + p.x * near, foot + p.y * near * .75 + 90 * u * was * was);
+    c.lineTo(cx + p.x * far, foot + p.y * far * .75 + 90 * u * since * since);   // they fall back
+    c.stroke();
+  }
+  c.globalCompositeOperation = "source-over";
+  c.globalAlpha = 1;
+}
+
+// The end of it, whenever it comes: the title and the menu in, and the die given to the menu's spring or, if it was never
+// thrown, simply found on its face.
+function compose() {
+  const flying = intro.thrown;
+  $("home").classList.add("titled");
+  $("home").classList.remove("nomenu");
+  if (!menu.live) enterHome();
+  settleHome();
+  if (flying < 2) {
+    rests();
+    if (!flying && d20) d20.pose(die.aim, dieTilt(die.last), die.turn);
+    const speed = Math.hypot(...die.spin), most = flying ? 4 : 0;   // a tumble is slowed to something the spring can catch
+    if (speed > most) die.spin = die.spin.map(v => v * most / speed);
+  }
+  if (!game && !musicWanted) playMenuMusic(1.5);
+}
+
+function skipIntro() {   // a key or a click: straight to the home screen, with a glide and no jump
+  if (intro.began === null || intro.skipped !== null || intro.fixed !== null) return;
+  const unseen = !intro.thrown;
+  intro.skipped = intro.T;
+  intro.from = Object.assign(direct(intro.T, {}), {ignite: 1}, unseen ? {lift: 0, show: 0} : {});   // a die not yet thrown is faded in where it will rest
+  compose();
+  if (intro.room) fadeMusic(0, 1.2, undefined, intro.room);
+}
+const idleKey = e => ["F11", "F12", "Shift", "Control", "Alt", "Meta"].includes(e.key);   // these keep their own meaning, and skip nothing
+function skipKey(e) {
+  if (idleKey(e)) return;
+  e.preventDefault();   // it is never also something chosen
+  if (!e.repeat) skipIntro();
+}
+
+function startIntro() {
+  if (SCRUB !== null) return;
+  if (intro.fixed !== null) { seek(0); intro.fixed = null; }   // the warming was cut short
+  veiled = false;
+  intro.began = performance.now();
+  addEventListener("keydown", skipKey, true);
+  $("intro").addEventListener("pointerdown", skipIntro);
+  startBackdrop();
+}
+
+// Everything the intro put on the room comes off, and everything it made is let go: what is left is the home screen as it
+// always is. The die's sway starts from nothing.
+function endIntro() {
+  const el = intro.els, home = $("home");
+  compose();
+  if (!STILL) home.classList.add("settled");
+  home.classList.remove("staged", "titled");
+  for (const [node, prop] of [[el.scene, "transform"], [el.vault, "opacity"], [el.shafts, "--rv"], [el.title, "clip-path"], [el.tag, "opacity"], [el.tag, "transform"],
+                              [el.scrim, "opacity"], [$("homedie"), "opacity"], [$("homeglass"), "opacity"]]) node.style.removeProperty(prop);
+  for (const node of [$("intro"), el.grade, el.lit]) node.remove();
+  for (const key in worn) delete worn[key];
+  removeEventListener("keydown", skipKey, true);
+  Object.assign(die, {lift: 0, show: 1, awake: 0, input: die.last});
+  Object.assign(stage, {sx: 9, heat: -1});   // so the layers the intro held are written afresh
+  Object.assign(intro, {cut: null, score: null, began: null, fixed: null, skipped: null, take: {}, from: null, end: null, cues: null, sparks: null, room: null, els: null,
+                        letters: null, sound: false});
+  rumble = null;
+  delete window.introAt;
+  introOver();
+  return null;
+}
+
+// With the window put away the intro waits; if it's away for more than a second, the intro is simply over when it comes back.
+document.addEventListener("visibilitychange", () => {
+  if (intro.began === null) return;
+  if (document.hidden) intro.hid = performance.now();
+  else if (intro.hid) {
+    const away = performance.now() - intro.hid;
+    intro.hid = 0;
+    if (away > 1000) endIntro(); else intro.began += away;
+  }
+});
+
+// In the beat of black after the studio's mark, the room is put through the intro's heaviest moments: the die coming down with
+// its trail, the strike, and the title up. The splash stops hiding it from the machine for those few frames, so the painting is
+// loaded, every layer is laid out and every shader compiled there, where a stumble can't be seen, and not at the strike. Then
+// the room is put back in the dark.
+function warmUp() {
+  const k = intro.cut, cover = $("splash");
+  if (!k || SCRUB !== null || intro.began !== null || $("home").hidden || document.hidden) return;
+  rumble = rumble || brown();
+  const moments = [k.hit - .03, k.hit + .04, k.title + 1.2, 0];
+  cover.classList.add("warming");
+  return Promise.race([new Promise(done => setTimeout(done, 1000)), new Promise(done => {
+    const next = () => {
+      if (!intro.cut || intro.began !== null) return done();
+      seek(moments.shift());
+      drawBackdrop(performance.now());
+      if (moments.length) return requestAnimationFrame(() => requestAnimationFrame(next));   // each is given a frame on the screen
+      intro.fixed = null;
+      requestAnimationFrame(done);
+    };
+    next();
+  })]).then(() => cover.classList.remove("warming"));
+}
+
+// For looking at one frame: introAt(3.2) holds the intro there, with nothing else running, and introAt() lets it go to its
+// end, which is the home screen. Opening the page with ?introAt=3.2 does the first. Nothing in the page calls it otherwise.
+if (intro.cut) window.introAt = T => {
+  const k = intro.cut, home = $("home"), held = home.getAnimations({subtree: true});
+  if (!k) return;
+  if (!(T >= 0)) {
+    for (const a of held) if (a.playState === "paused") a.play();
+    return endIntro();
+  }
+  $("splash")?.remove();
+  Object.assign(intro, {began: null, skipped: null});
+  veiled = false;
+  seek(T);
+  home.classList.toggle("titled", T >= k.title);
+  home.classList.toggle("nomenu", T < k.menu);
+  $("ring").classList.toggle("wave", T >= k.hit && T < k.hit + .7);
+  if (T >= k.menu && !menu.live) enterHome();
+  die.glow = T >= k.menu ? .6 * Math.exp((k.menu - T) * 3) : T >= k.hit ? Math.exp((k.hit - T) * 6) : 0;   // the strike's heat, and the menu's flush of it
+  const fast = rush(entrance());
+  for (const a of home.getAnimations({subtree: true})) {   // what the stylesheet animates is put at the same moment
+    const name = a.animationName, from = name === "wave" ? k.hit : /glint/.test(name) ? k.title : ["spinein", "entryin", "roomin"].includes(name) ? k.menu : null;
+    if (from === null) continue;
+    a.pause();
+    a.currentTime = (T - from) * 1000 * (from === k.menu ? fast : 1);
+  }
+  startBackdrop();
+};
+
+// One frame of the room: the die turned and drawn, the layers shifted for the pointer, the light raised by the die's heat, the
+// dust; and, while the intro plays, all of it as the director has it.
 function drawBackdrop(ms) {
   if (stage.stale) measure();
-  const t = ms / 1000, dt = Math.min(.5, Math.max(0, t - die.last)), c = $("homebg").getContext("2d");   // longer than half a second was a pause, not a frame
+  const held = intro.fixed !== null, t = ms / 1000, dt = held ? 0 : Math.min(.5, Math.max(0, t - die.last)), c = $("homebg").getContext("2d");   // longer than half a second was a pause, not a frame
   die.last = t;
+  const shot = intro.cut ? introFrame(ms) : null;
   if (!STILL) {
     turnDie(t, dt);
-    die.awake = Math.min(1, die.awake + dt / 2);
+    if (!shot) die.awake = Math.min(1, die.awake + dt / 1.5);
     stage.px += (stage.tx - stage.px) * .06;
     stage.py += (stage.ty - stage.py) * .06;
-    if (Math.abs(stage.px - stage.sx) + Math.abs(stage.py - stage.sy) > .002) {   // written only while it moves
-      stage.sx = stage.px; stage.sy = stage.py;
+    if (Math.abs(stage.px - stage.sx) + Math.abs(stage.py - stage.sy) > .002 || die.lift !== stage.lift || die.show !== stage.show) {   // written only while it moves
+      Object.assign(stage, {sx: stage.px, sy: stage.py, lift: die.lift, show: die.show});
       for (let n = 0; n < DRIFT.length; n++) {
         const layer = DRIFT[n];
-        layer.el.style.transform = `translate3d(${(-stage.px * layer.far * stage.u).toFixed(2)}px, ${(-stage.py * layer.far * stage.u).toFixed(2)}px, 0)${layer.more}`;
+        layer.el.style.transform = `translate3d(${(-stage.px * layer.far * stage.u).toFixed(2)}px, ${(-stage.py * layer.far * stage.u - layer.lifts * die.lift).toFixed(2)}px, 0)${layer.more}`;
       }
+      // in the air, the die's reflection goes down as it goes up, and dims; a die being faded in is faded in the floor too
+      $("homedie").style.opacity = die.show < 1 ? die.show.toFixed(3) : "";
+      $("homeglass").style.opacity = die.lift || die.show < 1 ? (.16 * die.show * Math.max(0, 1 - die.lift / (stage.h * .1))).toFixed(3) : "";
     }
   }
   die.glow *= Math.exp(-dt * die.cool);
   const heat = die.heat = Math.min(1, Math.hypot(die.spin[0], die.spin[1], die.spin[2]) / 14 + die.glow);
-  if (Math.abs(heat - stage.heat) > .01) {
+  if (shot || Math.abs(heat - stage.heat) > .01) {
     stage.heat = heat;
-    for (let n = 0; n < HEATED.length; n++) HEATED[n].el.style.opacity = (HEATED[n].low + (1 - HEATED[n].low) * heat).toFixed(2);
+    for (let n = 0; n < HEATED.length; n++) HEATED[n].el.style.opacity = ((HEATED[n].low + (1 - HEATED[n].low) * heat) * (shot && HEATED[n].by ? shot[HEATED[n].by] : 1)).toFixed(3);
   }
   c.setTransform(stage.fine, 0, 0, stage.fine, 0, 0);
   c.clearRect(0, 0, stage.w, stage.h);
   if (solid) solid.draw(t, heat);
   else {
-    drawGlow(c, stage.w, stage.h, stage.cx, stage.cy, stage.r * 1.4, t, heat, 1.5);
-    drawDie(c, diePoints(stage.cx, stage.cy, stage.r, t, die.turn), heat, null, 1.6, 3.6);
+    c.globalAlpha = die.show;
+    drawGlow(c, stage.w, stage.h, stage.cx, stage.cy - die.lift, stage.r * 1.4, t, heat, 1.5 * Math.max(0, 1 - die.lift / stage.h));
+    drawDie(c, diePoints(stage.cx, stage.cy - die.lift, stage.r, t, die.turn), heat, 1.6, 3.6);
+    c.globalAlpha = 1;
   }
-  drawDust(c, t, dt, heat);
+  if (shot) drawTrail(c, shot, t);
+  drawDust(c, t, dt, shot ? 0 : heat, shot ? shot.dust : 1);   // the die's own sparks wait until the intro's are done
+  if (shot) drawStrike(c, shot);
 }
 
 // The room is drawn only while it can be seen: not under a narrative, and not with the window put away. A machine that can't
@@ -2147,6 +2561,13 @@ function startBackdrop() {
           if (stage.spent / 90 > 22 && stage.coarse < 4) stage.coarse++;
           stage.frames = stage.spent = 0;
         }
+        if (intro.began !== null) {   // the intro is the heaviest thing here: twenty slow frames, and it gives something up (see dress)
+          intro.spent += Math.min(took, 50);
+          if (++intro.frames === 20) {
+            if (intro.spent / 20 > 22 && intro.lean < 4) intro.lean++;
+            intro.frames = intro.spent = 0;
+          }
+        }
       }
       drawBackdrop(ms);
       drawn = true;
@@ -2165,37 +2586,59 @@ let titleIn;
 const titleReady = Promise.race([new Promise(done => titleIn = done), new Promise(done => setTimeout(done, 4000))]);   // the title's picture, or word that there isn't one
 const dieReady = typeReady.then(() => {
   solid = buildDie();
-  drawn = false;   // a frame of it under the splash, so nothing is being set up when the intro hands over
+  drawn = false;   // a frame of it under the splash, so nothing is being set up in front of the player
   if (!$("home").hidden) STILL ? drawBackdrop(0) : startBackdrop();
 }).catch(() => {});
+// What the splash waits for, and never past four seconds: the die made, the title and the painted vault in, and the menu's
+// music loaded. Whatever is late is done without.
+const sceneReady = Promise.race([
+  Promise.all([dieReady, titleReady, backdropReady, !START && bgmChoice() ? loadTrack(bgmChoice()).catch(() => {}) : null]).catch(() => {}),
+  new Promise(done => setTimeout(done, 4000))]);
 
-// ---- the menu's sounds ----
-// Made here for now, out of noise and a tone: a tick as the focus moves, a clack when an entry is chosen (a die thrown and
-// landing), and a softer one for stepping back. A recorded sound put in SFX_FILES under a cue's name plays in its place.
-// They follow the Settings volume, and are quiet next to the music.
-const sfxGain = audio.createGain(), SFX_FILES = {}, hiss = audio.createBuffer(1, Math.ceil(audio.sampleRate * .2), audio.sampleRate);
+// ---- the window's sounds ----
+// Made here for now, out of noise and tones. The menu's: a tick as the focus moves, a clack when an entry is chosen (a die
+// thrown and landing), and a softer one for stepping back. The opening's: the studio's sting under its mark, the room's tone,
+// the light arriving, the die's fall, its strike and two bounces, and a shimmer as the title is drawn. A recorded sound put
+// in SFX_FILES under a cue's name plays in its place. They follow the Settings volume, and are quiet next to the music: at
+// full volume the strike, the loudest of them, peaks under -12 dBFS.
+const sfxGain = audio.createGain(), SFX_FILES = {}, hiss = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);   // a second of noise: the longest cue made of it is the light's
 sfxGain.connect(audio.destination);
 hiss.getChannelData(0).forEach((_, n, all) => all[n] = Math.random() * 2 - 1);
-function fading(at, secs, loud) {
+let rumble = null;   // the room's tone, made for the intro and let go after it
+function brown() {   // ten seconds of brown noise: every sample a small step from the last
+  const buf = audio.createBuffer(1, audio.sampleRate * 10, audio.sampleRate), all = buf.getChannelData(0);
+  let last = 0;
+  for (let n = 0; n < all.length; n++) all[n] = (last = (last + .02 * (Math.random() * 2 - 1)) / 1.02) * 3.5;
+  return buf;
+}
+function fading(at, secs, loud, rise) {   // dying away over secs; with rise, swelling up for that long first
   const g = audio.createGain();
-  g.gain.setValueAtTime(loud, at);
+  g.gain.setValueAtTime(rise ? .0001 : loud, at);
+  if (rise) g.gain.exponentialRampToValueAtTime(loud, at + rise);
   g.gain.exponentialRampToValueAtTime(.0001, at + secs);
   g.connect(sfxGain);
   return g;
 }
-function noise(at, secs, kind, pitch, q, loud) {
+function noise(at, secs, kind, pitch, q, loud, rise) {
   const src = audio.createBufferSource(), filter = audio.createBiquadFilter();
   src.buffer = hiss;
   filter.type = kind; filter.frequency.value = pitch; filter.Q.value = q;
-  src.connect(filter).connect(fading(at, secs, loud));
+  src.connect(filter).connect(fading(at, secs, loud, rise));
   src.start(at, Math.random() * .1, secs + .02);
+  return filter.frequency;   // for a cue that moves it
 }
-function tone(at, secs, pitch, loud) {
+function tone(at, secs, pitch, loud, rise) {
   const osc = audio.createOscillator();
   osc.frequency.value = pitch;
-  osc.connect(fading(at, secs, loud));
+  osc.connect(fading(at, secs, loud, rise));
   osc.start(at);
   osc.stop(at + secs + .02);
+  return osc.frequency;
+}
+function knock(now, loud) {   // a die on stone
+  noise(now, .025, "lowpass", 1800, 1, .08 * loud);
+  noise(now + .055, .025, "lowpass", 1800, 1, .06 * loud);
+  tone(now, .09, 110, .1 * loud);
 }
 const SFX = {
   tick(now, step) {   // a semitone higher for every entry down the list
@@ -2203,16 +2646,53 @@ const SFX = {
     noise(now, .018, "bandpass", 3200 * up, 4, .04);
     tone(now, .06, 1320 * up, .02);
   },
-  clack(now) {
-    noise(now, .025, "lowpass", 1800, 1, .08);
-    noise(now + .055, .025, "lowpass", 1800, 1, .06);
-    tone(now, .09, 110, .1);
+  clack(now) { knock(now, 1); },
+  back(now) { noise(now, .03, "lowpass", 1100, 1, .045); },
+  sting(now, glint) {   // the studio's: a low swell, and a chime as the glint crosses the mark
+    tone(now, 3.2, 55, .063, 1.4);
+    tone(now, 3.2, 110, .063, 1.4);
+    for (const [pitch, loud] of [[1320, .025], [1760, .015], [2640, .01]]) tone(now + glint, 2.2, pitch, loud);
   },
-  back(now) { noise(now, .03, "lowpass", 1100, 1, .045); }};
+  room(now, life) {   // a low drone under the whole of the intro: in over 1.2 s, and out over 3 once the music is up
+    const src = audio.createBufferSource(), low = audio.createBiquadFilter(), g = audio.createGain();
+    src.buffer = rumble = rumble || brown();
+    low.type = "lowpass"; low.frequency.value = 180;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(.02, now + 1.2);
+    g.gain.setValueAtTime(.02, now + life);
+    g.gain.linearRampToValueAtTime(0, now + life + 3);
+    src.connect(low).connect(g).connect(sfxGain);
+    src.start(now);
+    src.stop(now + life + 3.1);
+    return g;   // so a skip can take it out sooner
+  },
+  shaft(now, secs) {   // the light arriving: a breath of noise that climbs two octaves
+    const long = Math.min(.85, secs), pitch = noise(now, long, "bandpass", 400, 1.4, .063, long * .4);
+    pitch.setValueAtTime(400, now);
+    pitch.exponentialRampToValueAtTime(1600, now + long);
+  },
+  spin(now, fall) {   // six ticks closing up, from nine a second to forty, the last just before the die lands
+    for (let n = 0, when = now + Math.max(0, fall - .34); n < 6; when += .111 * .689 ** n++) noise(when, .012, "lowpass", 2400, 1, .032);
+  },
+  impact(now) {   // the die's own clack, a boom under it, and a crystal ringing after
+    knock(now, .7);
+    tone(now, .4, 48, .11);
+    noise(now, .06, "lowpass", 1200, 1, .05);
+    tone(now, 1.8, 1320, .03);
+    tone(now, 1.8, 1980, .02);
+  },
+  bounce(now, which) { knock(now, which ? .25 : .5); },   // the clack again, 6 dB down and then 12
+  settle(now) {   // a shimmer as the title is drawn: two tones three hertz apart, rising two octaves
+    for (const off of [0, 3]) {
+      const pitch = tone(now, .6, 600 + off, .0125, .25);
+      pitch.setValueAtTime(600 + off, now);
+      pitch.exponentialRampToValueAtTime(2400 + off, now + .6);
+    }
+  }};
 function sfx(name, step) {
   if (audio.state !== "running") return;   // not before the first click or key has let any sound through
   sfxGain.gain.value = musicVolume();
-  if (!SFX_FILES[name]) return SFX[name](audio.currentTime, step || 0);
+  if (!SFX_FILES[name]) return SFX[name](audio.currentTime, step || 0);   // what a cue gives back is its own to be stopped by
   const src = audio.createBufferSource();
   src.buffer = SFX_FILES[name];
   src.connect(sfxGain);
@@ -2221,7 +2701,7 @@ function sfx(name, step) {
 
 // ---- the main menu ----
 // One focus, which the pointer and the keys both move (and a gamepad could): it lights an entry, runs the light down the spine
-// to it, ticks, and turns the die to the face the entry owns. on is the entry in focus; live, that the intro is over; entering,
+// to it, ticks, and turns the die to the face the entry owns. on is the entry in focus; live, that the menu has come in; entering,
 // that the menu is still coming in; armed, that the focus has been moved since; held, a chosen entry waiting out the die's roll.
 const menu = {items: [], on: null, live: false, entering: false, armed: false, timer: 0, held: null, passing: false, went: 0};
 const LEAVES = ["menucontinue", "menunew"];   // these leave the home screen, so the die gets a moment to roll first
@@ -2293,8 +2773,6 @@ function settleHome() {
   menu.entering = false;
   $("home").classList.add("settled");
 }
-introDone.then(enterHome);
-
 $("mainmenu").addEventListener("pointermove", e => {   // not pointerenter: an entry sliding in under a still pointer doesn't take the focus
   const b = e.target.closest("button");
   if (!b || !menuOpen() || menu.entering) return;
@@ -2307,6 +2785,7 @@ $("mainmenu").addEventListener("focusin", e => {   // Tab reaches every entry, a
 });
 addEventListener("pointerdown", () => { if (!$("home").hidden) settleHome(); }, true);
 addEventListener("keydown", e => {
+  if (intro.cut) return;   // a key during the intro skips it, and does nothing else
   if (menu.held) { if (!e.repeat) menu.held(); return; }
   if (e.key === "Escape" && menu.live && !$("home").hidden && HOME_DIALOGS.some(id => !$(id).hidden)) return sfx("back");
   if (!menuOpen() || e.ctrlKey || e.altKey || e.metaKey) return;
@@ -3843,32 +4322,12 @@ $("flagsend").onclick = guard(async () => {
 
 // ---- the splash -----------------------------------------------------------------
 
-// The studio's logo comes up out of the dark, a glint crosses it, and it fades to black; the intro comes up out of the black.
-// A click or a key skips it.
+// The studio's mark comes up out of the dark with a swell of light behind its crystal, a glint crosses it while embers rise
+// from its cracks, and it fades to black; the intro comes up out of that black. It is 3.8 seconds the first time and 2.2 after,
+// and a click or a key fades it at once. While it is up the room is made ready under it (sceneReady, and then warmUp). With the intro turned
+// off there is no mark, only the black, which lifts off the main menu as soon as the room is ready.
 const splashed = new Promise(done => {
   const el = $("splash"), img = el.querySelector("img"), logo = `/logo?t=${TOKEN}`;
-  let gone = false;
-  const leave = () => {
-    if (gone) return;
-    gone = true;
-    removeEventListener("keydown", leave);
-    el.classList.add("dark");
-    setTimeout(() => Promise.all([dieReady, titleReady]).then(() => {   // by now the menu's type and title are in and its die is made, so none of them arrives in front of the player
-      el.classList.add("fading");
-      done();
-      setTimeout(() => el.remove(), 800);
-    }), 900);   // the fade, and a beat of black
-  };
-  el.addEventListener("pointerdown", leave);
-  addEventListener("keydown", leave);
-  el.style.setProperty("--logo", `url("${logo}")`);   // the glint is cut to the logo's own shape
-  img.onload = () => setTimeout(() => {   // a moment of black first, so the window has settled before anything moves
-    if (gone) return;
-    el.classList.add("on");
-    setTimeout(leave, 4300);
-  }, 900);
-  img.onerror = leave;   // no logo, no splash
-  img.src = logo;
   $("studiomark").onerror = e => e.target.remove();
   $("studiomark").src = document.querySelector(".about .credit img").src = logo;   // and it sits small in the corner of the main menu
   const art = $("titleart"), title = `/title?t=${TOKEN}`;   // the main menu's title; without the picture, the typed one stays
@@ -3876,210 +4335,57 @@ const splashed = new Promise(done => {
   art.firstElementChild.onload = () => { art.hidden = false; art.parentNode.classList.add("art"); titleIn(); };
   art.firstElementChild.onerror = titleIn;
   art.firstElementChild.src = title;
+  if (OPENING === "none" || SCRUB !== null) { el.remove(); return done(); }
+  const lift = secs => sceneReady.then(() => {   // the black comes off the room, once the room is there
+    el.style.setProperty("--lift", secs + "s");
+    el.classList.add("fading");
+    done();
+    setTimeout(() => el.remove(), secs * 1000 + 100);
+  });
+  if (OPENING === "off") return lift(.6);
+  const short = OPENING === "short";
+  let gone = false;
+  const leave = fast => {
+    if (gone) return;
+    gone = true;
+    removeEventListener("keydown", skip, true);
+    if (STILL) return lift(.4);   // nothing fades to black: the mark gives way to the main menu
+    if (fast) el.style.setProperty("--out", ".3s");
+    el.classList.add("dark");
+    setTimeout(() => {   // the mark has faded: a beat of black, in which the room is warmed
+      const beat = new Promise(over => setTimeout(over, fast ? 0 : short ? 200 : 400));
+      sceneReady.then(warmUp).then(() => beat).then(() => lift(.25));
+    }, fast ? 300 : 400);
+  };
+  const skip = e => { if (!e.repeat && !idleKey(e)) leave(true); };
+  el.addEventListener("pointerdown", skip);
+  addEventListener("keydown", skip, true);
+  el.classList.toggle("short", short);
+  el.style.setProperty("--logo", `url("${logo}")`);   // the glint is cut to the logo's own shape
+  const mote = MOTE.toDataURL(), any = (low, high) => (low + Math.random() * (high - low)).toFixed(2);   // the embers: where the mark's cracks are, in hundredths of it
+  el.querySelector(".embers").innerHTML = [[40, 26], [51, 13], [59, 26], [36, 37], [61, 37], [50, 37], [40, 51], [56, 51], [37, 57], [50, 57], [30, 45], [69, 48]].map(([x, y]) =>
+    `<i style="--x:${x}%;--y:${y}%;--dx:${any(-160, 160)}%;--dy:${any(-650, -280)}%;--a:${any(.5, 1)};--t:${any(1, 1.6)}s;--d:${any(0, .8)}s;background-image:url(${mote})"></i>`).join("");
+  audio.resume().catch(() => {});   // a browser tab may hold the sound until the first click or key; everything plays without it
+  img.onload = () => setTimeout(() => {   // a moment of black first, the first time
+    if (gone) return;
+    el.classList.add("on");
+    sfx("sting", short ? .6 : 1.1);
+    setTimeout(leave, STILL ? 2200 : short ? 1600 : 2600);
+  }, short ? 0 : 400);
+  img.onerror = () => leave(true);   // no logo, no splash
+  img.src = logo;
 });
 
-// ---- the intro ------------------------------------------------------------------
-
-// A short film. Black bars close in, the die is rolled into being with its own afterimages trailing it, and it lands: the
-// picture jolts, light breaks out behind it, and the wire fills in as a solid thing. The title comes up under it while the
-// camera creeps closer. On the way out the die glides to its place on the home screen, in the pose the backdrop has it in,
-// so the one fades into the other unnoticed.
-(() => {
-  const el = $("intro");
-  if (STILL) { splashed.then(introOver); return el.remove(); }
-  $("home").classList.add("waiting");   // the menu holds its entrance until the intro clears
-  const cv = $("introcv"), stage = el.querySelector(".stage"), LAND = 2.1, HOLD = 7;
-  const clamp = u => Math.min(1, Math.max(0, u)), ease = u => 1 - (1 - u) ** 3, smooth = u => u * u * (3 - 2 * u);
-  const mix = (a, b, u) => a + (b - a) * u, rand = Math.random;
-  const sparks = Array.from({length: 90}, () => ({a: rand() * 6.283, v: 90 + rand() * 420, life: .7 + rand() * 1.5, size: .6 + rand() * 1.5}));
-  // The shafts of light and the out-of-focus motes are painted once each and stamped down after that.
-  const painted = (size, paint) => { const sheet = document.createElement("canvas"); sheet.width = sheet.height = size; paint(sheet.getContext("2d"), size / 2); return sheet; };
-  const shafts = painted(720, (pen, half) => {
-    const fade = pen.createRadialGradient(half, half, half * .05, half, half, half);
-    fade.addColorStop(0, "rgba(255,226,165,1)");
-    fade.addColorStop(.3, "rgba(255,226,165,.55)");
-    fade.addColorStop(1, "rgba(255,226,165,0)");
-    pen.fillStyle = fade;
-    const rays = Array.from({length: 30}, (_, n) => ({a: n / 30 * 6.283 + rand() * .2, wide: .006 + rand() * .026}));
-    for (const [spread, alpha] of [[2.6, .5], [1, .6]]) {   // each shaft twice, a wide faint one under a narrow one, so its sides are soft
-      pen.globalAlpha = alpha;
-      pen.beginPath();
-      for (const ray of rays) {
-        pen.moveTo(half, half);
-        pen.lineTo(half + Math.cos(ray.a - ray.wide * spread) * half, half + Math.sin(ray.a - ray.wide * spread) * half);
-        pen.lineTo(half + Math.cos(ray.a + ray.wide * spread) * half, half + Math.sin(ray.a + ray.wide * spread) * half);
-        pen.closePath();
-      }
-      pen.fill();
-    }
-  });
-  const mote = painted(128, (pen, half) => {
-    const disc = pen.createRadialGradient(half, half, 0, half, half, half);
-    disc.addColorStop(0, "rgba(214,176,108,.58)");
-    disc.addColorStop(.8, "rgba(214,176,108,.58)");
-    disc.addColorStop(.93, "rgba(236,204,140,1)");
-    disc.addColorStop(1, "rgba(236,204,140,0)");
-    pen.fillStyle = disc;
-    pen.fillRect(0, 0, half * 2, half * 2);
-  });
-  const bokeh = Array.from({length: 10}, () => ({x: rand(), y: rand(), rad: 16 + rand() * 54, a: .02 + rand() * .045, drift: (rand() - .5) * .012, sway: rand() * 6.28}));
-
-  // the twenty faces, each wound so its front is the outside, and the two faces every edge lies between
-  const FACES = [];
-  const touch = (i, j) => Math.abs(Math.hypot(DIE[i][0] - DIE[j][0], DIE[i][1] - DIE[j][1], DIE[i][2] - DIE[j][2]) - 2) < .01;
-  for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) for (let k = j + 1; k < 12; k++) {
-    if (!touch(i, j) || !touch(j, k) || !touch(i, k)) continue;
-    const [a, b, d] = [DIE[i], DIE[j], DIE[k]], u = b.map((v, n) => v - a[n]), v = d.map((x, n) => x - a[n]);
-    const out = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
-    FACES.push(out[0] * (a[0] + b[0] + d[0]) + out[1] * (a[1] + b[1] + d[1]) + out[2] * (a[2] + b[2] + d[2]) > 0 ? [i, j, k] : [i, k, j]);
-  }
-  const between = EDGES.map(([i, j]) => FACES.flatMap((f, n) => f.includes(i) && f.includes(j) ? [n] : []));
-  let began = null, leftAt = null, glide = false, over = false, fine = 1.5, slow = 0, last = 0, top = null, seen = "";
-
-  const leave = () => {
-    if (leftAt !== null) return;
-    leftAt = performance.now();
-    veiled = false;   // the home screen is about to show through
-    glide = !$("home").hidden;
-    removeEventListener("keydown", leave);
-    el.classList.add("leaving");
-    setTimeout(() => {
-      el.classList.add("fading");
-      $("home").classList.remove("waiting");
-      introOver();
-      setTimeout(() => { over = true; el.remove(); }, 800);
-    }, glide ? 950 : 0);
-  };
-  const frame = ms => {
-    if (over) return;
-    if (began === null) began = ms;
-    if (last && ms - last > 26 && ms - last < 200) slow++; else slow = Math.max(0, slow - .25);   // a machine that can't keep up gets a coarser picture
-    if (slow > 12 && fine > 1) { fine = 1; slow = 0; }
-    last = ms;
-    const [c, w, h] = fit(cv, fine), t = ms / 1000, lt = (ms - began) / 1000;
-    if (lt > HOLD) leave();
-    const out = leftAt === null ? 0 : Math.max(0, ms - leftAt) / 1000, g = glide ? smooth(clamp(out / .9)) : 0;
-    const tumbleAt = at => (1 - ease(clamp(at / LAND))) * (1 - g);
-    const [hx, hy, hr] = dieSpot(w, h), settle = ease(clamp(lt / LAND)), tumble = tumbleAt(lt);
-    const cx = mix(w / 2, hx, g), cy = mix(h * .4, hy, g), r = mix(Math.min(w, h) * .115 * (.55 + .45 * settle), hr, g);
-    const since = lt - LAND, flash = since > 0 ? Math.exp(-since * 2.4) * (1 - g) : 0;
-
-    // the camera: a slow push in, and a jolt when the die lands. Both are gone by the time the die reaches home.
-    const zoom = mix(1 + .07 * clamp(lt / HOLD), 1, g), jolt = since > 0 ? 8 * Math.exp(-since * 7) * (1 - g) : 0;
-    const jx = jolt * Math.sin(since * 71), jy = jolt * Math.cos(since * 53);
-    if (seen !== w + "x" + h) { seen = w + "x" + h; top = stage.offsetTop; stage.style.transformOrigin = `50% ${h / 2 - top}px`; }
-    stage.style.transform = `translate(${jx.toFixed(2)}px, ${jy.toFixed(2)}px) scale(${zoom.toFixed(4)})`;
-    c.translate(w / 2 + jx, h / 2 + jy);
-    c.scale(zoom, zoom);
-    c.translate(-w / 2, -h / 2);
-
-    drawGlow(c, w, h, cx, cy, r, t, flash, mix(clamp(lt / 1.2), 1, g));
-
-    if (since > 0) {   // shafts of light behind the die, strong at the landing and faint after
-      const power = (.14 * Math.exp(-since * 1.3) + .022) * clamp(since * 10) * (1 - g), reach = r * 10;
-      c.save();
-      c.translate(cx, cy);
-      c.rotate(t * .03);
-      c.globalAlpha = power;
-      c.drawImage(shafts, -reach, -reach, reach * 2, reach * 2);
-      c.restore();
-    }
-
-    const haze = clamp(lt / 2.5) * (1 - g), depth = 1 + (zoom - 1) * 5;   // out-of-focus motes close to the lens; they pass faster
-    if (haze > 0) for (const b of bokeh) {
-      const x = w / 2 + ((((b.x + t * b.drift) % 1) + 1) % 1 - .5) * w * 1.2 * depth, y = h / 2 + (b.y - .5 + Math.sin(t * .2 + b.sway) * .02) * h * depth;
-      c.globalAlpha = b.a * haze * 1.7;
-      c.drawImage(mote, x - b.rad, y - b.rad, b.rad * 2, b.rad * 2);
-    }
-    c.globalAlpha = 1;
-    drawEmbers(c, w, h, t, mix(clamp(lt / 1.8), 1, g));
-
-    if (since > 0 && since < 1.4) {   // the landing: a bloom, a streak of light, a ring going out
-      const bloom = c.createRadialGradient(cx, cy, 0, cx, cy, r * 4.5);
-      bloom.addColorStop(0, `rgba(255,232,176,${.5 * flash})`);
-      bloom.addColorStop(.35, `rgba(214,170,96,${.16 * flash})`);
-      bloom.addColorStop(1, "rgba(0,0,0,0)");
-      c.fillStyle = bloom;
-      c.fillRect(cx - r * 4.5, cy - r * 4.5, r * 9, r * 9);
-      c.save();
-      c.translate(cx, cy);
-      c.scale(1, .022);
-      const streak = c.createRadialGradient(0, 0, 0, 0, 0, r * (5 + 6 * flash));
-      streak.addColorStop(0, `rgba(255,240,205,${.9 * flash})`);
-      streak.addColorStop(1, "rgba(255,220,150,0)");
-      c.fillStyle = streak;
-      c.beginPath(); c.arc(0, 0, r * 11, 0, 6.29); c.fill();
-      c.restore();
-      const u = since / 1.4;
-      c.strokeStyle = `rgba(230,194,126,${.55 * (1 - u) ** 2 * (1 - g)})`;
-      c.lineWidth = 1.2;
-      c.beginPath(); c.arc(cx, cy, r * (1.9 + 6 * ease(u)), 0, 6.29); c.stroke();
-    }
-
-    const hurry = leftAt === null ? 0 : out / .35;   // skipped mid-drawing: finish the die on the way out
-    const grow = lt > LAND || hurry >= 1 ? null : EDGES.map((_, n) => Math.max(hurry, smooth(clamp((lt - .25 - n * .038) / .5))));
-    const trail = leftAt === null ? clamp((LAND - lt) / .5) : 0;   // where the die just was, while it tumbles
-    if (trail > 0) for (let k = 4; k >= 1; k--) {
-      const was = tumbleAt(lt - k * .02);
-      c.globalAlpha = trail * .32 * (1 - k / 5);
-      drawDie(c, diePoints(cx, cy, r, t, die.turn, 2.4 * was, 7.5 * was), 0, grow, 0);
-    }
-    c.globalAlpha = 1;
-    const pts = diePoints(cx, cy, r, t, die.turn, 2.4 * tumble, 7.5 * tumble);
-    drawDie(c, pts, flash, grow, 1 - g);
-
-    // Landed, the wire fills in: dark faces lit from up and to the left, with the edges nearest the eye drawn back over them.
-    // Where the home screen's die is the wire one, they thin out again on the way there.
-    const firm = clamp(since / .45) * (solid ? 1 : 1 - g);
-    if (firm > 0) {
-      const bob = Math.sin(t * .4) * 6;
-      const front = FACES.map(([i, j, k]) => (pts[j][0] - pts[i][0]) * (pts[k][1] - pts[i][1]) - (pts[j][1] - pts[i][1]) * (pts[k][0] - pts[i][0]) > 0);
-      FACES.forEach((face, n) => {
-        if (!front[n]) return;
-        let nx = 0, ny = 0, nz = 0;
-        for (const v of face) { const p = pts[v], s = (5 - p[2]) / (5 * r); nx += (p[0] - cx) * s; ny += (p[1] - cy - bob) * s; nz += p[2]; }
-        const lit = Math.max(0, (nx * -.45 + ny * -.65 + nz * .61) / Math.hypot(nx, ny, nz));
-        const shade = Math.min(1, .02 + .15 * lit * lit + .13 * lit ** 14 + .45 * flash);
-        c.fillStyle = `rgba(${mix(35, 236, shade)},${mix(28, 204, shade)},${mix(19, 140, shade)},${.94 * firm})`;
-        c.beginPath();
-        face.forEach((v, m) => m ? c.lineTo(pts[v][0], pts[v][1]) : c.moveTo(pts[v][0], pts[v][1]));
-        c.closePath();
-        c.fill();
-      });
-      c.strokeStyle = `rgba(${201 + 54 * flash},${162 + 68 * flash},${91 + 89 * flash},${.85 * firm})`;
-      c.lineWidth = 1.2 + flash;
-      c.lineJoin = "round";
-      c.beginPath();
-      EDGES.forEach(([i, j], n) => {
-        if (!between[n].some(f => front[f])) return;
-        c.moveTo(pts[i][0], pts[i][1]);
-        c.lineTo(pts[j][0], pts[j][1]);
-      });
-      c.stroke();
-    }
-
-    if (since > 0) for (const s of sparks) {
-      const age = since / s.life;
-      if (age >= 1) continue;
-      const at = d => { const far = s.v * (1 - Math.exp(-2.6 * d)) / 2.6; return [w / 2 + Math.cos(s.a) * far, h * .4 + Math.sin(s.a) * far - 16 * d * d]; };
-      const [x, y] = at(since), [px, py] = at(Math.max(0, since - .05));
-      c.strokeStyle = `rgba(246,214,150,${(1 - age) ** 2 * (1 - g)})`;
-      c.lineWidth = s.size;
-      c.beginPath(); c.moveTo(px, py); c.lineTo(x, y); c.stroke();
-    }
-    if (since > 0 && since < .7) {   // for an instant the whole picture is washed out
-      c.fillStyle = `rgba(255,238,205,${.3 * Math.exp(-since * 8) * (1 - g)})`;
-      c.fillRect(-w, -h, w * 3, h * 3);
-    }
-    requestAnimationFrame(frame);
-  };
-  splashed.then(() => {
-    el.classList.add("go");
-    el.addEventListener("pointerdown", leave);
-    addEventListener("keydown", leave);
-    requestAnimationFrame(frame);
-  });
-})();
+// Past the splash: the intro, or straight to the main menu as it stands.
+splashed.then(() => {
+  if (intro.cut) return startIntro();
+  veiled = intro.sound = false;
+  enterHome();
+  settleHome();
+  introOver();
+  if (!$("home").hidden) STILL ? drawBackdrop(0) : startBackdrop();
+});
+if (SCRUB !== null && intro.cut) sceneReady.then(() => introAt(SCRUB));
 
 setInterval(() => api("ping").catch(() => {}), 5000);
 guard(async () => {

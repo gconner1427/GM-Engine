@@ -43,7 +43,7 @@ FONTS = PAGE.with_name("fonts")   # Cinzel and Cormorant Garamond, the main menu
 STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
-PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen, the GM's model
+PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen, the GM's model, the intro
 MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
@@ -596,6 +596,7 @@ class Handler(BaseHTTPRequestHandler):
             version = ""
         html = html.replace("__GM_VERSION__", version.replace("&", "&amp;").replace("<", "&lt;"))
         html = html.replace("__GM_START__", json.dumps(getattr(self.server, "start", None)).replace("<", "\\u003c"))
+        html = html.replace("__GM_PREFS__", json.dumps(read_json(PREFS, {})).replace("<", "\\u003c"))   # with the page, so it knows which intro to open with
         self.send(200, html.encode("utf-8"), "text/html")
 
     def do_POST(self):
@@ -632,7 +633,10 @@ class Handler(BaseHTTPRequestHandler):
                                "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
                                "volume": min(100, max(0, int(data["prefs"].get("volume", 60)))),
                                "fullscreen": bool(data["prefs"].get("fullscreen")),
-                               "model": data["prefs"].get("model") if data["prefs"].get("model") in MODELS else ""})
+                               "model": data["prefs"].get("model") if data["prefs"].get("model") in MODELS else "",
+                               # auto is the whole intro the first time and a short one after; introSeen, that it has been seen
+                               "intro": data["prefs"].get("intro") if data["prefs"].get("intro") in ("full", "short", "off") else "auto",
+                               "introSeen": bool(data["prefs"].get("introSeen"))})
             return {"ok": True, "desktop": set_fullscreen(self.server, bool(data["prefs"].get("fullscreen")))}
         if route == "/api/pick-folder":
             return {"path": pick_folder(data.get("start"))}

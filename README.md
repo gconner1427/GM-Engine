@@ -47,6 +47,8 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 
 The window hands what you type to Claude Code, the same GM that runs in VS Code, using the copy the VS Code extension installed and your existing sign-in. VS Code doesn't need to be open. Every time the window opens, it looks for Claude Code and for Codex and says so if either is missing or isn't signed in: without Claude Code there is no GM, and without Codex the game plays but no pictures are painted. The window never shows rolls, rulings, or anything in `GM Only/`.
 
+The first time the window opens, it plays the studio's mark and a short film of the main menu's room coming to life: a die thrown into a shaft of light, about ten seconds in all. After that it plays a shorter one, about six seconds. Any key or a click skips it. **Intro** in Settings chooses which: Auto (the whole of it once, then the short one), Full, Short, or Off, which opens straight on the main menu. Opening the window straight into a narrative plays none of it.
+
 **GM Model** in Settings chooses which Claude model runs the GM: Default (whichever Claude Code uses on your plan), Opus, or Sonnet. Opus is the strongest writer and uses the most of your plan; Sonnet uses less, for making a plan last. It can be changed at any time, and the GM's next message is written by the one chosen. Pictures aren't affected.
 
 "Start a fresh GM conversation" in the ⋯ menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
