@@ -53,7 +53,7 @@ Take the one that gives them the most to do and would honestly reach them here a
 
 Every message from the user that isn't in braces is their character acting.
 
-**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop. An action that ends in `{push}` is the character pushing (Core Rules §5): the first roll they make for it has Edge, and 2 Strain comes off the sheet. `{push}` is never part of what the character does or says. An action that ends in `{trade ...}` is a trade made on the shop screen ("A shop," below).
+**1. Read it.** What did the user say the character does, says, and intends? That, exactly, is what the character does (GM Rules, "The player's character is the player's"). If it can't be done as stated, say so in braces and stop. An action that ends in `{push}` is the character pushing (Core Rules §5): the first roll they make for it has Edge, and 2 Strain comes off the sheet. If that was their last 2, the roll still has its Edge, and they are spent from their next roll on. `{push}` is never part of what the character does or says. An action that ends in `{trade ...}` is a trade made on the shop screen ("A shop," below).
 
 **2. If no session is open,** open one and commit its opening beat before this one ("Opening a session," above).
 
