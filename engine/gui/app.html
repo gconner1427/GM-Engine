@@ -17,6 +17,11 @@
   --m-obsidian: #0b0907; --m-vault: #1d1409; --m-gold: var(--accent); --m-gold-hi: var(--accent-hi); --m-gold-deep: #7d5f2a; --m-ember: #e8c06a;
   --m-ink: var(--ink); --m-dim: var(--dim); --m-faint: #8c8271;
   --display: Cinzel, var(--serif); --text: "Cormorant Garamond", var(--serif);
+  /* the plate's: the frame the menu's windows open in. Nothing dimmer than --p-faint carries meaning on it. */
+  --p-fill-top: rgba(26,20,12,.95); --p-fill-bot: rgba(13,10,7,.97); --p-edge: #5a4c33; --p-hair: #c9a25b2a;
+  --p-gold: var(--m-gold); --p-gold-hi: var(--m-gold-hi); --p-gold-deep: var(--m-gold-deep); --p-gold-low: #a98a4a;   /* low: the deep gold, where it has to be read */
+  --p-row-focus: linear-gradient(90deg, #c9a25b24, #c9a25b08 70%, transparent); --p-well: #0b0907; --p-control-edge: #4a3f2c;
+  --p-faint: var(--m-faint); --p-bad: #c0584c; --p-warn: #d98a5f; --p-arrive: cubic-bezier(.2, .8, .2, 1);
   /* the house ornaments: a gold rule that fades at both ends, a bracket in each corner of a frame, and a film of grain */
   --rule: linear-gradient(90deg, transparent, var(--accent) 25%, var(--accent) 75%, transparent);
   --corner: linear-gradient(var(--accent), var(--accent));
@@ -262,18 +267,15 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 @media (prefers-reduced-motion: reduce) {
   #home, #home *, #home *::before, #home *::after { animation: none !important; transition-duration: .1s !important; }
   #titleart i { display: none; } }
-#list { max-height: 56vh; overflow: auto; padding-right: 4px; }
+/* with one of the menu's windows open (the plate, below): the menu and the title step aside, the scrim that kept the menu
+   readable lifts off the die, which has gone to the left, and the grain lies over the plate as well */
+.masthead, .tagline, #mainmenu, #homestatus, .homefoot, #scrim { transition: opacity .22s ease-out, transform .22s ease-out, visibility 0s; }
+#home.sheeted :is(.masthead, .tagline, #mainmenu, #homestatus, .homefoot) { opacity: 0; transform: translateX(calc(var(--u) * -40)); visibility: hidden; pointer-events: none;
+  transition: opacity .24s ease-in, transform .24s ease-in, visibility 0s .24s; }
+#home.sheeted #scrim { opacity: 0; }
+#home.sheeted #grain { z-index: 41; opacity: .05; }
+#home.jumping :is(#homedie, #homeglass, #homebg, #ring, #pool) { opacity: 0 !important; }   /* for less motion, the die is taken to the stage unseen */
 .dialog .form { background: none; border: none; padding: 0; }
-.setting { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
-.setting > span, .setting > label { font: 400 16px var(--serif); letter-spacing: .4px; }
-.setting .seg button { padding: 8px 16px; }
-.slider { display: flex; align-items: center; gap: 14px; }
-.slider span { width: 30px; text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; }
-input[type=range] { -webkit-appearance: none; appearance: none; width: 220px; height: 3px; padding: 0; border: none; border-radius: 0; cursor: pointer; box-shadow: none;
-  background: linear-gradient(90deg, var(--accent) var(--at, 60%), var(--line) var(--at, 60%)); }
-input[type=range]:focus { box-shadow: none; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; transform: rotate(45deg); background: var(--accent-hi);
-  border: 1px solid var(--accent-ink); box-shadow: 0 0 10px #c9a25baa; }
 #farewell { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; text-align: center; background: var(--bg);
   color: var(--dim); font: italic 18px/1.7 var(--serif); animation: fadein .5s; }
 #farewell svg { width: 48px; height: 48px; color: var(--accent); stroke-width: 1.1; display: block; margin: 0 auto 14px; }
@@ -748,32 +750,300 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .dialog blockquote { margin: 0; padding: 6px 16px; border-left: 1px solid var(--accent); color: var(--dim); font: italic 16px/1.6 var(--serif);
   max-height: 180px; overflow: auto; }
 .dialog textarea { min-height: 84px; resize: vertical; }
-/* a new narrative is asked for a step at a time, the way the character is made, and the steps all stand the same height so the window holds still */
-#newdialog .dialog { width: min(900px, 96vw); }
-#newdialog .mk-rail { padding: 0 0 12px; } #newdialog .mk-rail button { padding: 7px 2px; gap: 7px; }   /* twelve steps, on one line */
-#newdialog .mk-body { height: min(520px, 62vh); padding: 22px 6px 8px; }
-#newdialog .mk-page { max-width: 700px; gap: 20px; }
-#newdialog .mk-nav { padding: 14px 0 0; background: none; }
-#newdialog .choice.two { grid-template-columns: 1fr 1fr; }
-.choice button span.warn { display: block; margin-top: 6px; color: var(--warn); }
-#suredialog { z-index: 45; } #suredialog .dialog { width: min(480px, 92vw); } #suredialog p { margin: 0; text-align: center; font: 16px/1.6 var(--serif); }
-#newdialog .field .browse { display: flex; gap: 8px; } #newdialog .field .browse input { flex: 1; min-width: 0; }
-.nn-leave { justify-self: center; padding: 10px 22px; }
-#newdialog .mk-sum > div { padding: 5px 0; cursor: pointer; transition: background .2s; } #newdialog .mk-sum > div:hover { background: #ffffff07; }
-#newdialog .mk-sum .left { color: var(--faint); font-style: italic; }
-#newdialog .note { margin: 0; text-align: center; color: var(--faint); font: italic 13.5px/1.5 var(--serif); }
 .dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .dialog .row button { padding: 10px 20px; }
 .dialog.wide { width: min(700px, 94vw); }
-.about { max-height: 62vh; overflow: auto; padding-right: 10px; font: 16px/1.65 var(--serif); }
-.about p { margin: 0 0 6px; color: var(--dim); }
-.about .lede { color: var(--ink); font-size: 18px; }
-.about h3 { margin: 20px 0 6px; color: var(--accent); }
-.about ul { margin: 0; padding-left: 20px; color: var(--dim); }
-.about li { margin-bottom: 4px; }
-.about b { color: var(--ink); font-weight: 600; }
-.about .credit { display: flex; align-items: center; gap: 14px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line-soft); font-style: italic; }
-.about .credit img { width: 56px; height: 56px; }
+
+/* ---- the plate ---- */
+/* The frame the main menu's windows open in: Settings, Narratives, New Narrative and About now, and every later window after
+   them. The menu steps aside, the die glides to a stage on the left with the window's name under it (the script moves it:
+   dieSpot), and an obsidian slab, the plate, rises on the right. The room stays in sight behind a scrim; nothing is blurred.
+   A window is a .sheet holding a .plate: a head (eyebrow, title, rule), a body, and a foot (the keys, then what can be done).
+   The parts are defined once, here: the row and its bar, tablets, the slider, chips, cards, the field, buttons, key hints, and
+   the scrollbar. Sizes are in --u, as the home screen's are, and no text is smaller than 13px. */
+#sheetscrim, #sheetstage, .sheet { --u: min(100vw / 1920, 100vh / 1080); }
+#sheetscrim { position: fixed; inset: 0; z-index: 39; opacity: 0; visibility: hidden; transition: opacity .22s ease, visibility 0s .22s;   /* lighter round the die, dark where the plate sits */
+  background: radial-gradient(calc(var(--u) * 1300) 80% at calc(50vw - var(--u) * 550) 46%, #0000 0, #0007 70%),
+    linear-gradient(90deg, #0009 0, #0000 calc(50vw - var(--u) * 560), #0000 calc(50vw - var(--u) * 400), #000a calc(50vw + var(--u) * 200)); }
+#sheetscrim.on { opacity: 1; visibility: visible; transition: opacity .24s ease-out; }
+#sheetscrim.adrift { background: #000000d1; }   /* over a narrative, where there is no room to show */
+#sheetstage { position: fixed; z-index: 40; left: calc(50vw - var(--u) * 550); top: calc(46vh + var(--u) * 300); width: calc(var(--u) * 600); margin-left: calc(var(--u) * -300);
+  text-align: center; pointer-events: none; opacity: 0; transform: translateY(calc(var(--u) * 10)); transition: opacity .2s ease, transform .2s ease; }
+#sheetstage.on { opacity: 1; transform: none; transition: opacity .4s ease .25s, transform .4s var(--p-arrive) .25s; }
+#sheetstage b { display: block; font: 600 max(15px, calc(var(--u) * 30))/1.1 var(--display); letter-spacing: .34em; text-indent: .34em; text-transform: uppercase; white-space: nowrap;
+  color: var(--p-gold-hi); text-shadow: 0 0 calc(var(--u) * 24) #c9a25b77; }
+#sheetstage i { display: block; margin-top: calc(var(--u) * 18); font: italic 500 max(14px, calc(var(--u) * 22))/1.2 var(--text); color: var(--m-dim); }
+
+.sheet { position: fixed; inset: 0; z-index: 40; pointer-events: none; }   /* a click beside the plate does nothing */
+.sheet[hidden] { display: block !important; visibility: hidden; transition: visibility 0s .22s; }   /* laid out but unseen, so it can sink as well as rise */
+.plate { position: absolute; left: calc(50vw - var(--u) * 230); width: calc(var(--u) * 1080); top: calc(var(--u) * 70); bottom: calc(var(--u) * 70); pointer-events: auto;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; border: 1px solid var(--p-edge); background: linear-gradient(var(--p-fill-top), var(--p-fill-bot));
+  box-shadow: inset 0 1px 0 #f0d9a830, inset 0 0 0 calc(var(--u) * 7) #0e0b07, inset 0 0 0 calc(var(--u) * 7 + 1px) var(--p-hair),
+    inset 0 calc(var(--u) * 80) calc(var(--u) * 120) calc(var(--u) * -60) #c9a25b14, 0 calc(var(--u) * 40) calc(var(--u) * 120) #000c;
+  color: var(--ink); font: 400 max(15px, calc(var(--u) * 24))/1.45 var(--text); transition: transform .38s var(--p-arrive) .12s, opacity .3s ease .12s; }
+.sheet[hidden] .plate { opacity: 0; transform: translateY(calc(var(--u) * 24)) scale(.985); transition: transform .22s ease-in, opacity .22s ease-in; }
+.sheet.adrift .plate { left: calc(50vw - var(--u) * 540); }
+.plate::before { content: ""; position: absolute; inset: calc(var(--u) * 14); pointer-events: none; --c: linear-gradient(var(--p-gold), var(--p-gold)); --l: calc(var(--u) * 22);   /* a bracket in each corner */
+  background: var(--c) left top / var(--l) 1px no-repeat, var(--c) left top / 1px var(--l) no-repeat, var(--c) right top / var(--l) 1px no-repeat, var(--c) right top / 1px var(--l) no-repeat,
+    var(--c) left bottom / var(--l) 1px no-repeat, var(--c) left bottom / 1px var(--l) no-repeat, var(--c) right bottom / var(--l) 1px no-repeat, var(--c) right bottom / 1px var(--l) no-repeat; }
+.plate > * { min-width: 0; }
+.plate ::-webkit-scrollbar { width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); }
+.plate ::-webkit-scrollbar-thumb { background: #c9a25b55; border: 0; }
+.plate ::-webkit-scrollbar-thumb:hover { background: #c9a25b99; }
+.plate :is(button, [tabindex]):focus-visible { outline: 2px solid var(--p-gold); outline-offset: calc(var(--u) * 3); }
+.plate-head { padding: calc(var(--u) * 40) calc(var(--u) * 64) 0; }
+.eyebrow { display: flex; align-items: center; gap: calc(var(--u) * 13); color: var(--p-gold); white-space: nowrap; overflow: hidden;
+  font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .34em; text-transform: uppercase; }
+.eyebrow i, .plate-head .rule::before { flex: none; width: max(5px, calc(var(--u) * 7)); height: max(5px, calc(var(--u) * 7)); transform: rotate(45deg); background: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 10) #e8c06a; }
+.plate-head h1 { margin: calc(var(--u) * 16) 0 0; font: 600 max(22px, calc(var(--u) * 46))/1.1 var(--display); letter-spacing: .16em; text-transform: uppercase; white-space: nowrap;
+  text-shadow: 0 0 calc(var(--u) * 30) #c9a25b55; }
+.plate-head .rule { position: relative; height: 1px; margin-top: calc(var(--u) * 24); }
+.plate-head .rule::before { content: ""; position: absolute; left: 0; top: 50%; translate: -50% -50%; }
+.plate-head .rule::after { content: ""; position: absolute; inset: 0; transform-origin: 0 50%; background: linear-gradient(90deg, var(--p-gold), #c9a25b33 62%, transparent); }
+.plate-body { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 8) calc(var(--u) * 64) calc(var(--u) * 20); }
+.plate-foot { display: flex; align-items: center; gap: calc(var(--u) * 14); min-height: max(54px, calc(var(--u) * 104)); padding: 0 calc(var(--u) * 64); border-top: 1px solid #c9a25b22;
+  background: linear-gradient(#0000, #0006); }
+.plate-foot p { margin: 0; font: italic 500 max(15px, calc(var(--u) * 23))/1.2 var(--text); color: var(--dim); }
+/* the keys: a hint that doesn't fit beside the buttons goes to a second line, which is never seen */
+.keys { flex: 1 1 0; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; column-gap: calc(var(--u) * 34); height: max(30px, calc(var(--u) * 34)); overflow: hidden;
+  color: var(--p-faint); font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+.keys span { display: flex; align-items: center; gap: .6em; height: 100%; white-space: nowrap; }
+.keys kbd { display: inline-grid; place-items: center; min-width: 2.4em; height: 2.2em; padding: 0 .6em; border: 1px solid #5a4c33; border-radius: max(2px, calc(var(--u) * 3));
+  font: 600 max(13px, calc(var(--u) * 12))/1 var(--display); letter-spacing: .08em; }
+.keys kbd + kbd { margin-left: -.3em; }
+
+/* buttons: outlined, the one that goes on in gold, and the one that only says */
+.pbtn { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: .8em; height: max(34px, calc(var(--u) * 58)); padding: 0 calc(var(--u) * 34); border: 1px solid var(--p-edge); border-radius: 0;
+  background: #ffffff05; color: var(--ink); white-space: nowrap; font: 600 max(13px, calc(var(--u) * 15))/1 var(--display); letter-spacing: .26em; text-indent: .26em; text-transform: uppercase;
+  transition: border-color .16s, background .16s, color .16s, box-shadow .16s; }
+.pbtn.primary { background: linear-gradient(#c9a25b44, #c9a25b18); border-color: var(--p-gold); color: var(--p-gold-hi); box-shadow: inset 0 0 0 1px #0007, 0 0 calc(var(--u) * 22) #c9a25b2e; }
+.pbtn.primary:hover:not(:disabled) { background: linear-gradient(#ecd08e, #b98f48); color: #1a1408; }
+.pbtn.quiet { padding: 0 calc(var(--u) * 16); border-color: transparent; background: none; color: var(--dim); }
+.pbtn.danger { border-color: var(--p-bad); color: #e6aaa2; } .pbtn.danger:hover { background: #c0584c26; border-color: #dd7a6e; color: #f3c6c0; }
+.pbtn.big { height: max(40px, calc(var(--u) * 68)); }
+.pbtn svg { flex: none; width: 1.5em; height: 1.5em; stroke-width: 1.2; }
+.pbtn:disabled { opacity: .4; }
+
+/* a row: what it is on the left and its control on the right. The one in focus is lit, with a bar of gold at its left that
+   slides from row to row (.rowbar, one to a list, moved by the script). A list of narratives and the steps use the same bar. */
+.sect { display: flex; align-items: center; gap: calc(var(--u) * 20); margin: calc(var(--u) * 28) 0 calc(var(--u) * 4); color: var(--p-gold);
+  font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .34em; text-transform: uppercase; }
+.sect::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #c9a25b40, #c9a25b0a); }
+.prow { display: flex; align-items: center; gap: calc(var(--u) * 24); min-height: max(56px, calc(var(--u) * 92)); padding: calc(var(--u) * 6) calc(var(--u) * 24) calc(var(--u) * 6) calc(var(--u) * 28);
+  border-bottom: 1px solid #ffffff0a; transition: background .14s; }
+.plate .prow:focus-visible, .plate .arch-col:focus-visible, .plate .about:focus-visible { outline: none; }   /* the bar says where the focus is */
+.prow .what { flex: 1; min-width: 0; }
+.prow .what b { display: block; font: 500 max(17px, calc(var(--u) * 28))/1.15 var(--text); letter-spacing: .01em; color: #e3dac6; transition: color .14s; }
+.prow .what span { display: block; margin-top: calc(var(--u) * 5); font: italic 400 max(14px, calc(var(--u) * 20))/1.2 var(--text); color: var(--p-faint); }
+.prow.at, .arch-item.at, #addexisting.at { background: var(--p-row-focus); }
+.prow.at .what b { color: var(--p-gold-hi); }
+.rowbar { position: absolute; left: calc(var(--u) * 8); top: 0; width: max(2px, calc(var(--u) * 3)); height: 0; opacity: 0; pointer-events: none; background: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 14) #e8c06a;
+  transition: transform .14s ease-out, opacity .14s; }
+
+#settingsbar { left: calc(var(--u) * 64); }
+
+/* tablets: one of a few, each a tablet of its own. What is chosen is gold; its fill and glow are a layer that fades in. */
+.tablets { flex: none; display: flex; gap: calc(var(--u) * 8); }
+.tablets button, #newdialog .chips button, #newdialog .choice button { position: relative; z-index: 0; border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
+  transition: border-color .16s, color .16s; }
+.tablets button::before, #newdialog .chips button::before, #newdialog .choice button::before { content: ""; position: absolute; z-index: -1; inset: -1px; opacity: 0; transition: opacity .16s; }
+.tablets button.on::before, #newdialog .chips button.on::before, #newdialog .choice button.on::before { opacity: 1; }
+.tablets button { height: max(32px, calc(var(--u) * 52)); min-width: calc(var(--u) * 104); padding: 0 calc(var(--u) * 20); color: var(--dim);
+  font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .18em; text-indent: .18em; text-transform: uppercase; white-space: nowrap; }
+.tablets button::before { border: 1px solid #f0d9a8; background: linear-gradient(#ecd08e, #b98f48); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b66, inset 0 1px 0 #fff6; }
+.tablets button:hover { border-color: var(--p-gold); color: var(--p-gold-hi); }
+.tablets button.on { color: #1a1408; }
+.prow:focus-visible .tablets button.on { outline: 2px solid var(--p-gold); outline-offset: calc(var(--u) * 3); }
+.flash::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--p-gold-hi); pointer-events: none; animation: flash .22s ease-out forwards; }   /* once, round what was just chosen */
+@keyframes flash { from { opacity: .5; } to { opacity: 0; transform: scale(1.07, 1.2); } }
+
+/* the slider: drawn here, and worked by a range input lying unseen over the whole strip */
+.pslider { flex: none; display: flex; align-items: center; gap: calc(var(--u) * 22); }
+.pslider .strip { --th: max(13px, calc(var(--u) * 20)); --at: .6; --x: calc(var(--th) / 2 + (100% - var(--th)) * var(--at)); position: relative; width: max(170px, calc(var(--u) * 330)); height: max(30px, calc(var(--u) * 44)); }
+.pslider .track { position: absolute; left: 0; right: 0; top: 50%; height: max(4px, calc(var(--u) * 6)); translate: 0 -50%; border: 1px solid var(--p-control-edge); background: var(--p-well); }
+.pslider .fill { position: absolute; left: 0; top: 50%; width: var(--x); height: max(4px, calc(var(--u) * 6)); translate: 0 -50%; background: linear-gradient(90deg, #7d5f2a, #e8c06a); box-shadow: 0 0 calc(var(--u) * 12) #c9a25b88; }
+.pslider .thumb { position: absolute; left: var(--x); top: 50%; width: var(--th); height: var(--th); translate: -50% -50%; rotate: 45deg; background: linear-gradient(135deg, #fff3d0, #c9a25b);
+  box-shadow: 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 calc(var(--u) * 16) calc(var(--u) * 3) #e8c06a; }
+.pslider input { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+.pslider input::-webkit-slider-thumb { -webkit-appearance: none; width: var(--th); height: max(30px, calc(var(--u) * 44)); }
+.pslider output { width: calc(var(--u) * 46); min-width: 2.2em; text-align: right; color: var(--p-gold-hi); font: 600 max(14px, calc(var(--u) * 20))/1 var(--display); font-variant-numeric: tabular-nums; }
+
+/* what comes in with the plate: the rule draws itself, and up to eight things in the body rise one after another */
+.sheet.arriving .plate-head .rule::after { animation: ruledraw .5s var(--p-arrive) .15s backwards; }
+.sheet.arriving .rise { animation: rise .32s var(--p-arrive) calc(.2s + var(--n, 0) * 40ms) backwards; }
+@keyframes ruledraw { from { transform: scaleX(0); } }
+@keyframes rise { from { opacity: 0; transform: translateY(calc(var(--u) * 10)); } }
+body.lean .sheet.arriving .rise, body.lean .flash::after, body.lean .need { animation: none !important; }   /* a machine that can't keep up goes without the flourishes */
+
+/* -- narratives: the archive, a list on the left and the one in focus on the right -- */
+#archive { display: grid; grid-template-columns: calc(var(--u) * 470) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 0; margin-top: calc(var(--u) * 8); overflow: hidden; }
+.arch-col { position: relative; min-height: 0; overflow: auto; padding-left: calc(var(--u) * 36); border-right: 1px solid #c9a25b22; }
+.arch-item { display: grid; grid-template-columns: max(44px, calc(var(--u) * 76)) minmax(0, 1fr); column-gap: calc(var(--u) * 26); align-items: center; height: max(80px, calc(var(--u) * 124));
+  padding: 0 calc(var(--u) * 24) 0 calc(var(--u) * 22); border-bottom: 1px solid #ffffff0a; cursor: pointer; transition: background .14s; }
+.sigil { position: relative; display: grid; place-items: center; aspect-ratio: 1; color: var(--p-gold); }   /* a d20, with the character's level on it */
+.sigil svg { position: absolute; inset: 0; width: 100%; height: 100%; stroke-width: 1; }
+.sigil b { position: relative; font: 600 max(13px, calc(var(--u) * 22))/1 var(--display); color: var(--p-gold-hi); }
+.arch-item .what > * { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arch-item .what b { font: 500 max(17px, calc(var(--u) * 27))/1.2 var(--text); color: #e3dac6; }
+.arch-item .what em { margin-top: calc(var(--u) * 7); font: 600 max(13px, calc(var(--u) * 12.5))/1.2 var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--p-gold); }
+.arch-item .what i { margin-top: calc(var(--u) * 7); font: italic 400 max(14px, calc(var(--u) * 19))/1.2 var(--text); color: var(--p-faint); }
+.arch-item.at .what b { color: var(--p-gold-hi); }
+.arch-item.none .sigil { color: #c9a25b80; } .arch-item.none .sigil b { color: var(--p-faint); }
+.arch-item.gone .sigil { color: #c0584c99; } .arch-item.gone .what em { color: #dd7a6e; }
+#addexisting { display: flex; align-items: center; height: max(48px, calc(var(--u) * 84)); padding: 0 calc(var(--u) * 22); border-bottom: 1px solid #ffffff0a; cursor: pointer; color: var(--dim);
+  font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .24em; text-transform: uppercase; white-space: nowrap; transition: background .14s, color .14s; }
+#addexisting.at { color: var(--p-gold-hi); }
+.arch-detail { min-height: 0; overflow: auto; display: flex; flex-direction: column; padding: calc(var(--u) * 44) calc(var(--u) * 64) calc(var(--u) * 30) calc(var(--u) * 56); }
+.arch-detail > * { flex: none; }   /* in a short window the pane scrolls; nothing in it is squeezed */
+.arch-detail.swap > :not(.acts) { animation: swap .14s ease-out; }
+@keyframes swap { from { opacity: 0; } }
+.arch-detail h2 { margin: 0; font: 600 max(20px, calc(var(--u) * 40))/1.18 var(--display); letter-spacing: .1em; overflow-wrap: anywhere; text-shadow: 0 0 calc(var(--u) * 26) #c9a25b44;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.arch-detail .who { margin: calc(var(--u) * 14) 0 0; font: italic 500 max(16px, calc(var(--u) * 26))/1.2 var(--text); color: var(--p-gold); overflow-wrap: anywhere; }
+.arch-detail .state { margin: calc(var(--u) * 26) 0 0; font: italic 500 max(15px, calc(var(--u) * 24))/1.4 var(--text); color: var(--dim); }
+.arch-detail .state.bad { color: #dd7a6e; }
+.plaques { display: flex; gap: calc(var(--u) * 14); margin-top: calc(var(--u) * 34); }
+.plaques > div { flex: 1 1 0; min-width: 0; min-height: calc(var(--u) * 110); padding: calc(var(--u) * 22) calc(var(--u) * 20); border: 1px solid #3a3022; background: linear-gradient(#ffffff08, #0000); }
+.plaques span, .where span { display: block; font: 600 max(13px, calc(var(--u) * 12))/1.3 var(--display); letter-spacing: .28em; text-transform: uppercase; color: var(--p-faint); }
+.plaques b { display: block; margin-top: calc(var(--u) * 14); font: 600 max(18px, calc(var(--u) * 34))/1.1 var(--display); color: var(--p-gold-hi); }
+.plaques > .soft { flex-grow: 1.35; }   /* words, where the others hold a number */
+.plaques .soft span { letter-spacing: .14em; }
+.plaques .soft b { font: 500 max(16px, calc(var(--u) * 25))/1.3 var(--text); color: var(--ink); }
+.where { margin-top: calc(var(--u) * 34); }
+.where i { display: block; margin-top: calc(var(--u) * 10); font: italic 400 max(14px, calc(var(--u) * 18))/1.3 var(--text); color: var(--p-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arch-detail .acts { margin-top: auto; padding-top: calc(var(--u) * 24); display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 10); }
+.arch-detail .acts p { flex-basis: 100%; margin: 0; font: italic 500 max(15px, calc(var(--u) * 23))/1.3 var(--text); color: var(--ink); }
+.arch-empty { display: none; }
+#archive.empty { grid-template-columns: minmax(0, 1fr); place-items: center; } #archive.empty > :not(.arch-empty) { display: none; }
+#archive.empty .arch-empty { display: grid; justify-items: center; gap: calc(var(--u) * 14); text-align: center; }
+.arch-empty svg { width: max(110px, calc(var(--u) * 180)); height: max(110px, calc(var(--u) * 180)); margin-bottom: calc(var(--u) * 12); color: #c9a25b66; stroke-width: .6; }
+.arch-empty b { font: 600 max(17px, calc(var(--u) * 28))/1.2 var(--display); letter-spacing: .1em; }
+.arch-empty i { font: italic 500 max(15px, calc(var(--u) * 24))/1.3 var(--text); color: var(--dim); }
+.arch-empty .pbtn { margin-top: calc(var(--u) * 22); }
+
+/* -- a new narrative: the steps down the left, with what was answered beside each, and one question to a page -- */
+#newsplit { display: grid; grid-template-columns: max(236px, calc(var(--u) * 300)) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 0; margin-top: calc(var(--u) * 8); overflow: hidden; }
+.rail { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 14) 0 calc(var(--u) * 16) calc(var(--u) * 40); border-right: 1px solid #c9a25b22; }
+.rail::before { content: ""; position: absolute; left: calc(var(--u) * 48); top: var(--t0, 0); width: 1px; height: calc(var(--t1, 0px) - var(--t0, 0px)); pointer-events: none;   /* the thread the steps hang on, brighter down to this one */
+  background: linear-gradient(#c9a25b88 var(--lit, 0px), #c9a25b33 var(--lit, 0px)); }
+#newrail { position: static; margin: 0; padding: 0; list-style: none; }
+#newrail .chap { margin: calc(var(--u) * 16) 0 calc(var(--u) * 6); padding-left: calc(var(--u) * 30); color: var(--p-gold-low); white-space: nowrap;
+  font: 600 max(13px, calc(var(--u) * 12))/1.2 var(--display); letter-spacing: .22em; text-transform: uppercase; }
+#newrail .chap:first-of-type { margin-top: calc(var(--u) * 6); }
+#newrail .gap { height: calc(var(--u) * 12); }
+#newrail button { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; column-gap: calc(var(--u) * 17); width: 100%; height: max(24px, calc(var(--u) * 42)); padding: 0 calc(var(--u) * 14) 0 calc(var(--u) * 3);
+  border: 0; border-radius: 0; background: none; text-align: left; text-transform: none; letter-spacing: 0; color: var(--p-faint); font: 500 max(15px, calc(var(--u) * 22))/1 var(--text); }
+#newrail button i { width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); transform: rotate(45deg); border: 1px solid var(--p-faint); background: #120e09; transition: background .2s, border-color .2s; }
+#newrail button span { white-space: nowrap; transition: color .16s; }
+#newrail button em { justify-self: end; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: italic 400 max(13px, calc(var(--u) * 17))/1.3 var(--text); color: var(--p-faint); }
+#newrail button.done { color: var(--dim); } #newrail button.done i { background: var(--p-gold-deep); border-color: var(--p-gold-deep); }
+#newrail button:hover span, #newrail button.on span { color: var(--p-gold-hi); }
+#newrail button.on i { background: var(--p-gold-hi); border-color: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 14) #e8c06a, 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 0 max(3px, calc(var(--u) * 4)) #c9a25b66; }
+.rail .rowbar { transition: transform .2s ease, opacity .14s; }
+#newbody { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 30) calc(var(--u) * 64) calc(var(--u) * 20) calc(var(--u) * 56); outline: none; }
+.nn-page { display: grid; gap: calc(var(--u) * 26); }
+.nn-page > * { min-width: 0; }
+.nn-page.fwd { --from: calc(var(--u) * 28); animation: pagein .32s var(--p-arrive) .1s backwards; } .nn-page.rev { --from: calc(var(--u) * -28); animation: pagein .32s var(--p-arrive) .1s backwards; }
+.nn-page.leaving { position: absolute; left: calc(var(--u) * 56); right: calc(var(--u) * 64); top: calc(var(--u) * 30); pointer-events: none; animation: pageout .12s ease-in forwards; }
+@keyframes pagein { from { opacity: 0; transform: translateX(var(--from)); } }
+@keyframes pageout { to { opacity: 0; } }
+body.lean .nn-page { --from: 0px; }
+.nn-page > h2 { margin: 0; font: 600 max(22px, calc(var(--u) * 46))/1.1 var(--display); letter-spacing: .14em; text-shadow: 0 0 calc(var(--u) * 30) #c9a25b55; }
+.nn-page > .lede { margin: calc(var(--u) * -4) 0 0; font: italic 500 max(16px, calc(var(--u) * 25))/1.45 var(--text); color: var(--dim); }
+#newdialog .field { display: grid; gap: calc(var(--u) * 12); }
+#newdialog .field > label { display: flex; align-items: center; gap: calc(var(--u) * 10); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .3em; text-transform: uppercase; }
+#newdialog .field > label::before, .nn-leave.left::before, #newdialog .choice .warn::before { content: ""; flex: none; width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); transform: rotate(45deg); background: currentColor; }
+#newdialog .field > label span { font: italic 400 max(14px, calc(var(--u) * 19))/1 var(--text); letter-spacing: .02em; text-transform: none; color: var(--p-faint); }
+#newdialog :is(input, textarea) { width: 100%; height: max(44px, calc(var(--u) * 68)); padding: 0 calc(var(--u) * 24); border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
+  box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a; color: var(--ink); caret-color: var(--p-gold-hi); font: 400 max(16px, calc(var(--u) * 25))/1.35 var(--text); }
+#newdialog textarea { height: max(110px, calc(var(--u) * 160)); padding: calc(var(--u) * 16) calc(var(--u) * 24); resize: none; }
+#newdialog :is(input, textarea)::placeholder { font-style: italic; color: var(--p-faint); }
+#newdialog :is(input, textarea):focus { border-color: var(--p-gold); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a, 0 0 0 1px #c9a25b33, 0 0 calc(var(--u) * 26) #c9a25b2a; }
+#newdialog .need { border-color: var(--p-bad) !important; animation: needs .28s linear; }   /* the answer a step can't go on without */
+@keyframes needs { 0%, 100% { transform: none; } 17%, 50%, 83% { transform: translateX(calc(var(--u) * -6)); } 33%, 67% { transform: translateX(calc(var(--u) * 6)); } }
+#newdialog .field .browse { display: flex; gap: calc(var(--u) * 12); } #newdialog .field .browse input { flex: 1; min-width: 0; }
+#newdialog .field .browse .pbtn { height: max(44px, calc(var(--u) * 68)); }
+#newdialog .chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 12); }
+#newdialog .chips button { height: max(36px, calc(var(--u) * 56)); padding: 0 calc(var(--u) * 26); color: var(--ink); white-space: nowrap; font: 500 max(15px, calc(var(--u) * 24))/1 var(--text); letter-spacing: .01em; text-transform: none; }
+#newdialog .chips button::before, #newdialog .choice button::before { border: 1px solid var(--p-gold-hi); background: linear-gradient(#c9a25b38, #c9a25b12); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b44; }
+#newdialog :is(.chips, .choice) button:hover { border-color: var(--p-gold); }
+#newdialog .chips button.on, #newdialog .choice button.on b { color: var(--p-gold-hi); }
+#newdialog .choice { display: grid; gap: calc(var(--u) * 16); }
+#newdialog .choice.two { grid-template-columns: 1fr 1fr; } #newdialog .choice.three { grid-template-columns: repeat(3, 1fr); }
+#newdialog .choice button { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; min-height: calc(var(--u) * 150); padding: calc(var(--u) * 26) calc(var(--u) * 22) calc(var(--u) * 24);
+  text-align: left; text-transform: none; letter-spacing: 0; color: var(--ink); background: linear-gradient(#ffffff07, #0000 60%), var(--p-well); }
+#newdialog .choice.tall button { min-height: calc(var(--u) * 250); }
+#newdialog .choice button b { display: block; padding-right: calc(var(--u) * 22); font: 600 max(13px, calc(var(--u) * 19))/1.35 var(--display); letter-spacing: .12em; }
+#newdialog .choice button span { display: block; margin-top: calc(var(--u) * 14); font: 400 max(14px, calc(var(--u) * 21))/1.4 var(--text); color: var(--dim); }
+#newdialog .choice button .warn { display: flex; align-items: baseline; gap: .7em; margin-top: calc(var(--u) * 16); color: var(--p-warn); font: 600 max(13px, calc(var(--u) * 12.5))/1.4 var(--display); letter-spacing: .14em; text-transform: uppercase; }
+#newdialog .choice .warn::before { translate: 0 -.1em; }
+#newdialog .choice button .gem { position: absolute; right: calc(var(--u) * 16); top: calc(var(--u) * 16); width: max(7px, calc(var(--u) * 11)); height: max(7px, calc(var(--u) * 11)); transform: rotate(45deg) scale(0);   /* chosen is said by more than colour */
+  background: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 12) #e8c06a; transition: transform .16s var(--p-arrive); }
+#newdialog .choice button.on .gem { transform: rotate(45deg); }
+.nn-leave { justify-self: start; display: inline-flex; align-items: center; gap: calc(var(--u) * 12); height: max(30px, calc(var(--u) * 44)); padding: 0 calc(var(--u) * 6) 0 0; border: 0; border-radius: 0; background: none; color: var(--dim);
+  font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .24em; text-transform: uppercase; }
+.nn-leave svg { width: max(15px, calc(var(--u) * 20)); height: max(15px, calc(var(--u) * 20)); color: var(--p-gold); stroke-width: 2; }
+.nn-leave.left { color: var(--p-gold-hi); } .nn-leave.left svg { display: none; }
+.nn-leave.left::before { width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); margin: 0 calc(var(--u) * 5); box-shadow: 0 0 calc(var(--u) * 10) #e8c06a; }
+.nn-sum { display: grid; margin-top: calc(var(--u) * -8); }   /* the dossier: everything chosen, each line a way back to its step */
+.nn-sum button { display: grid; grid-template-columns: max(132px, calc(var(--u) * 150)) minmax(0, 1fr) auto; column-gap: calc(var(--u) * 18); align-items: baseline; padding: calc(var(--u) * 5) calc(var(--u) * 12); border: 0; border-bottom: 1px solid #ffffff0a;
+  border-radius: 0; background: none; text-align: left; text-transform: none; letter-spacing: 0; color: var(--ink); transition: background .14s; }
+.nn-sum button:hover, .nn-sum button:focus-visible { background: var(--p-row-focus); }
+.nn-sum .k, .nn-sum .chg { font: 600 max(13px, calc(var(--u) * 13))/1.3 var(--display); letter-spacing: .28em; text-transform: uppercase; color: var(--p-gold-low); }
+.nn-sum .v { font: 500 max(15px, calc(var(--u) * 23))/1.25 var(--text); overflow-wrap: anywhere; }
+.nn-sum .left { font-style: italic; font-weight: 400; color: var(--p-faint); }
+.nn-sum .k { letter-spacing: .2em; white-space: nowrap; }
+.nn-sum .chg { letter-spacing: .2em; color: var(--p-gold); opacity: 0; transition: opacity .14s; } .nn-sum button:hover .chg, .nn-sum button:focus-visible .chg { opacity: 1; }
+.nn-page .note { margin: 0; font: italic 400 max(14px, calc(var(--u) * 20))/1.45 var(--text); color: var(--p-faint); }
+.nn-busy { display: flex; align-items: center; gap: calc(var(--u) * 14); }   /* the folder being made, before the window turns to the narrative */
+.nn-busy svg { width: max(20px, calc(var(--u) * 28)); height: max(20px, calc(var(--u) * 28)); flex: none; color: var(--p-gold); animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); }
+
+/* -- the small plate: a question asked over a window, which dims behind it -- */
+#suredialog { z-index: 45; pointer-events: auto; }
+#suredialog::before { content: ""; position: absolute; left: calc(50vw - var(--u) * 230); width: calc(var(--u) * 1080); top: calc(var(--u) * 70); bottom: calc(var(--u) * 70); background: #000000ad; transition: opacity .24s; }
+#suredialog[hidden]::before { opacity: 0; }
+#suredialog .plate { left: calc(50vw + var(--u) * 310); width: max(calc(var(--u) * 640), 400px); max-width: calc(100vw - 48px); top: 50%; bottom: auto; translate: -50% -50%; transition-delay: 0s; }
+#suredialog .plate-head { padding: calc(var(--u) * 40) calc(var(--u) * 48) 0; }
+#suredialog .plate-head h1 { margin: 0; font-size: max(18px, calc(var(--u) * 32)); }
+#suredialog .plate-body { padding: calc(var(--u) * 26) calc(var(--u) * 48) calc(var(--u) * 30); }
+#suredialog .plate-body p { margin: 0 0 calc(var(--u) * 10); }
+#suredialog .plate-foot { justify-content: flex-end; padding: 0 calc(var(--u) * 48); }
+
+/* -- about: its words as they were, in the plate's type -- */
+.about { padding: calc(var(--u) * 26) calc(var(--u) * 64) calc(var(--u) * 30); outline: none; }
+.about p { margin: 0 0 calc(var(--u) * 8); color: var(--dim); }
+.about .lede { color: var(--ink); font-size: max(17px, calc(var(--u) * 27)); }
+.about h3 { margin: calc(var(--u) * 30) 0 calc(var(--u) * 10); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 14))/1.2 var(--display); letter-spacing: .34em; }
+.about ul { margin: 0; padding-left: 1.1em; color: var(--dim); }
+.about li { margin-bottom: calc(var(--u) * 6); }
+.about b { color: var(--ink); font-weight: 500; }
+.about .credit { display: flex; align-items: center; gap: calc(var(--u) * 18); margin: calc(var(--u) * 34) 0 0; padding-top: calc(var(--u) * 22); border-top: 1px solid #c9a25b22; font-style: italic; }
+.about .credit img { width: max(48px, calc(var(--u) * 64)); height: max(48px, calc(var(--u) * 64)); }
+
+/* A window too narrow for the stage: the die stays where it was, behind a darker scrim, and the plate takes the window. Under
+   1280 across, the steps fold into a line of twelve diamonds over the page. */
+@media (max-width: 1099px), (max-aspect-ratio: 4 / 3) {
+  #sheetscrim { background: #000000c4; }
+  #sheetstage { display: none; }
+  .plate, .sheet.adrift .plate, #suredialog::before { left: 24px; right: 24px; top: 24px; bottom: 24px; width: auto; }
+  #suredialog .plate { left: 50%; right: auto; top: 50%; bottom: auto; }
+  #archive { grid-template-columns: minmax(0, 42%) minmax(0, 1fr); } }
+@media (max-height: 820px) {
+  .rail { padding-top: calc(var(--u) * 6); padding-bottom: calc(var(--u) * 6); }
+  #newrail button { height: max(23px, calc(var(--u) * 34)); }
+  #newrail .chap { margin: calc(var(--u) * 9) 0 calc(var(--u) * 2); }
+  #newrail .chap:first-of-type { margin-top: calc(var(--u) * 2); }
+  #newrail .gap { height: calc(var(--u) * 6); } }
+@media (max-width: 1279px) {
+  #newsplit { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .rail { overflow: visible; padding: calc(var(--u) * 16) calc(var(--u) * 64) 0 calc(var(--u) * 56); border-right: 0; }
+  .rail::before, .rail .rowbar, #newrail .chap, #newrail .gap, #newrail button span, #newrail button em { display: none; }
+  #newrail { display: flex; flex-wrap: wrap; align-items: center; }
+  #newrail button { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .plate, .sheet[hidden] .plate, #sheetstage, #sheetstage.on { transform: none; transition: opacity .12s ease; }
+  #sheetscrim, #sheetscrim.on { transition: opacity .12s ease, visibility 0s; }
+  .sheet *, .sheet *::before, .sheet *::after { animation: none !important; transition-duration: .1s !important; } }
 .savewhere { color: var(--accent); font: italic 15px var(--serif); text-align: center; }
 #savelist { max-height: 56vh; overflow: auto; padding-right: 4px; }
 #savelist .slot { padding: 12px 16px; margin-bottom: 8px; }
@@ -879,20 +1149,31 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   </footer>
 </div>
 
-<div class="shade" id="narrativesdialog" hidden>
-  <div class="dialog wide">
-    <div class="head">Narratives</div>
-    <div id="list"></div>
-    <div class="row" style="justify-content:space-between">
-      <button id="addexisting" class="quiet" title="A narrative folder made earlier, or on another computer">Add an existing folder…</button>
-      <button data-close>Close</button>
+<div id="sheetscrim"></div>
+<div id="sheetstage" aria-hidden="true"><b id="stagename"></b><i id="stagecap"></i></div>
+<div class="sheet" id="narrativesdialog" role="dialog" aria-modal="true" aria-labelledby="narrativestitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><div class="eyebrow"><i></i>Your archive</div><h1 id="narrativestitle">Narratives</h1><div class="rule"></div></div>
+    <div class="plate-body" id="archive">
+      <div class="arch-col" id="archcol" role="listbox" tabindex="0" aria-label="Narratives">
+        <i class="rowbar" id="archbar"></i>
+        <div id="list"></div>
+        <div id="addexisting" role="option" title="A narrative folder made earlier, or on another computer">+ Add an existing folder…</div>
+      </div>
+      <div class="arch-detail" id="archdetail"></div>
+      <div class="arch-empty">
+        <svg viewBox="0 0 48 48"><use href="#d20"/></svg>
+        <b>Nothing in the archive yet</b><i>Start your first story.</i>
+        <button class="pbtn primary" id="archnew">New Narrative</button>
+      </div>
     </div>
+    <div class="plate-foot"><div class="keys" id="archkeys"></div><button class="pbtn" data-close>Close</button></div>
   </div>
 </div>
-<div class="shade" id="aboutdialog" hidden>
-  <div class="dialog wide">
-    <div class="head">About GM Engine</div>
-    <div class="about">
+<div class="sheet" id="aboutdialog" role="dialog" aria-modal="true" aria-labelledby="abouttitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><div class="eyebrow"><i></i>The engine</div><h1 id="abouttitle">About</h1><div class="rule"></div></div>
+    <div class="plate-body about" tabindex="-1">
       <p class="lede">GM Engine is a game master for solo role-playing. You play one character; the GM plays everyone and everything else, and writes what happens as a story.</p>
       <h3 class="caps">How you play</h3>
       <p>You say what kind of story you want, and you make one character. From then on you say only what that character does. The GM answers with what happens next, in prose that reads like a novel: no hit points, no damage numbers, and no dice rolls on the page.</p>
@@ -912,50 +1193,60 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
       <p>The GM is Claude, run through Claude Code with your own sign-in. Pictures are painted by Codex, if you have it installed and signed in. Each narrative lives in a folder of its own, and you can run as many as you like.</p>
       <p class="credit"><img alt=""><span>GM Engine __GM_VERSION__ is made by Gravelight Studios.</span></p>
     </div>
-    <div class="row"><button data-close>Close</button></div>
+    <div class="plate-foot"><div class="keys" data-keys="back"></div><button class="pbtn" data-close>Close</button></div>
   </div>
 </div>
-<div class="shade" id="settingsdialog" hidden>
-  <div class="dialog">
-    <div class="head">Settings</div>
-    <div class="setting">
-      <span>Choose Menu BGM</span>
-      <div class="seg" id="bgmchoice"><button data-bgm="1">Track 1</button><button data-bgm="2">Track 2</button><button data-bgm="0">Off</button></div>
+<div class="sheet" id="settingsdialog" role="dialog" aria-modal="true" aria-labelledby="settingstitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><div class="eyebrow"><i></i>Preferences</div><h1 id="settingstitle">Settings</h1><div class="rule"></div></div>
+    <div class="plate-body" id="settingsbody">
+      <i class="rowbar" id="settingsbar"></i>
+      <h2 class="sect rise">Audio</h2>
+      <div class="prow rise" tabindex="0" role="group" aria-label="Menu music">
+        <div class="what"><b>Menu music</b><span>The track that plays on the title screen.</span></div>
+        <div class="tablets" id="bgmchoice" role="radiogroup" aria-label="Menu music"><button role="radio" tabindex="-1" data-bgm="1">Track 1</button><button role="radio" tabindex="-1" data-bgm="2">Track 2</button><button role="radio" tabindex="-1" data-bgm="0">Off</button></div>
+      </div>
+      <div class="prow rise" tabindex="0" role="group" aria-label="Music volume">
+        <div class="what"><b>Music volume</b><span>Music and effects together.</span></div>
+        <div class="pslider"><div class="strip"><i class="track"></i><i class="fill"></i><i class="thumb"></i><input id="volume" type="range" min="0" max="100" step="1" tabindex="-1" aria-label="Music volume"></div><output id="volumenum"></output></div>
+      </div>
+      <h2 class="sect rise">Display</h2>
+      <div class="prow rise" tabindex="0" role="group" aria-label="Intro">
+        <div class="what"><b>Intro</b><span>The whole of it the first time, then a short one.</span></div>
+        <div class="tablets" id="introchoice" role="radiogroup" aria-label="Intro"><button role="radio" tabindex="-1" data-intro="auto" title="The whole of it the first time the window opens, and a short one after that">Auto</button><button role="radio" tabindex="-1" data-intro="full" title="The whole of it, every time">Full</button><button role="radio" tabindex="-1" data-intro="short" title="A short one, every time">Short</button><button role="radio" tabindex="-1" data-intro="off" title="Straight to the main menu">Off</button></div>
+      </div>
+      <div class="prow rise" tabindex="0" role="group" aria-label="Fullscreen">
+        <div class="what"><b>Fullscreen</b></div>
+        <div class="tablets" id="fullscreenchoice" role="radiogroup" aria-label="Fullscreen"><button role="radio" tabindex="-1" data-full="1">On</button><button role="radio" tabindex="-1" data-full="0">Off</button></div>
+      </div>
+      <h2 class="sect rise">Game Master</h2>
+      <div class="prow rise" tabindex="0" role="group" aria-label="Model">
+        <div class="what"><b>Model</b><span>Opus writes best and uses the most of your plan.</span></div>
+        <div class="tablets" id="modelchoice" role="radiogroup" aria-label="Model"><button role="radio" tabindex="-1" data-model="" title="Whichever model Claude Code uses on your plan">Default</button><button role="radio" tabindex="-1" data-model="opus" title="The strongest writer and rules-keeper. Uses the most of your Claude plan.">Opus</button><button role="radio" tabindex="-1" data-model="sonnet" title="Lighter on your Claude plan, for making it last">Sonnet</button></div>
+      </div>
     </div>
-    <div class="setting">
-      <label for="volume">Music Volume</label>
-      <div class="slider"><input id="volume" type="range" min="0" max="100" step="1"><span id="volumenum"></span></div>
-    </div>
-    <div class="setting">
-      <span>Intro</span>
-      <div class="seg" id="introchoice"><button data-intro="auto" title="The whole of it the first time the window opens, and a short one after that">Auto</button><button data-intro="full" title="The whole of it, every time">Full</button><button data-intro="short" title="A short one, every time">Short</button><button data-intro="off" title="Straight to the main menu">Off</button></div>
-    </div>
-    <div class="setting">
-      <span>Fullscreen</span>
-      <div class="seg" id="fullscreenchoice"><button data-full="1">On</button><button data-full="0">Off</button></div>
-    </div>
-    <div class="setting">
-      <span>GM Model</span>
-      <div class="seg" id="modelchoice"><button data-model="" title="Whichever model Claude Code uses on your plan">Default</button><button data-model="opus" title="The strongest writer and rules-keeper. Uses the most of your Claude plan.">Opus</button><button data-model="sonnet" title="Lighter on your Claude plan, for making it last">Sonnet</button></div>
-    </div>
-    <div class="row"><button data-close>Close</button></div>
+    <div class="plate-foot"><div class="keys" data-keys="choose,change,back"></div><button class="pbtn quiet" id="settingsdefaults">Restore defaults</button><button class="pbtn primary" data-close>Done</button></div>
   </div>
 </div>
 <div id="farewell" hidden><div><svg><use href="#d20"/></svg>The game has closed.<br>You can close this tab.</div></div>
-<div class="shade" id="newdialog" hidden>
-  <div class="dialog">
-    <div class="head">New Narrative</div>
-    <div class="mk-rail" id="newrail"></div>
-    <div class="mk-body" id="newbody"></div>
-    <div class="mk-nav" id="newnav"></div>
+<div class="sheet" id="newdialog" role="dialog" aria-modal="true" aria-labelledby="newtitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><div class="eyebrow"><i></i><span id="neweyebrow"></span></div><h1 id="newtitle">New Narrative</h1><div class="rule"></div></div>
+    <div class="plate-body" id="newsplit">
+      <nav class="rail" aria-label="The steps"><i class="rowbar" id="railbar"></i><ol id="newrail"></ol></nav>
+      <div id="newbody" tabindex="-1"></div>
+    </div>
+    <div class="plate-foot" id="newnav"></div>
   </div>
 </div>
-<div class="shade" id="suredialog" hidden>
-  <div class="dialog">
-    <div class="head">A Whole Galaxy</div>
-    <p>A whole galaxy can take 1 to 2 hours to build, and will use a lot of your usage.</p>
-    <p>Are you sure?</p>
-    <div class="row"><button data-close>Go back</button><button class="primary" data-sure>Yes, I am sure</button></div>
+<div class="sheet" id="suredialog" role="alertdialog" aria-modal="true" aria-labelledby="suretitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><h1 id="suretitle">A Whole Galaxy</h1><div class="rule"></div></div>
+    <div class="plate-body">
+      <p>A whole galaxy can take 1 to 2 hours to build, and will use a lot of your usage.</p>
+      <p>Are you sure?</p>
+    </div>
+    <div class="plate-foot"><button class="pbtn quiet" data-close>Go back</button><button class="pbtn primary" data-sure>Yes, I am sure</button></div>
   </div>
 </div>
 
@@ -1129,12 +1420,16 @@ const guard = fn => async (...args) => { try { await fn(...args); } catch (e) { 
 function applyPrefs(save) {
   document.documentElement.style.setProperty("--story-size", prefs.size + "px");
   $("body").classList.toggle("wide", !!prefs.wide);
-  for (const b of $("bgmchoice").children) b.classList.toggle("on", +b.dataset.bgm === bgmChoice());
-  $("volume").value = $("volumenum").textContent = Math.round(musicVolume() * 100);
-  $("volume").style.setProperty("--at", musicVolume() * 100 + "%");
-  for (const b of $("fullscreenchoice").children) b.classList.toggle("on", (b.dataset.full === "1") === !!prefs.fullscreen);
-  for (const b of $("introchoice").children) b.classList.toggle("on", b.dataset.intro === (prefs.intro || "auto"));
-  for (const b of $("modelchoice").children) b.classList.toggle("on", b.dataset.model === (prefs.model || ""));
+  for (const [id, key, want] of [["bgmchoice", "bgm", bgmChoice()], ["fullscreenchoice", "full", prefs.fullscreen ? 1 : 0], ["introchoice", "intro", prefs.intro || "auto"], ["modelchoice", "model", prefs.model || ""]])
+    for (const b of $(id).children) {
+      const on = b.dataset[key] === String(want);
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-checked", on);
+    }
+  const volume = Math.round(musicVolume() * 100);
+  $("volume").value = $("volumenum").textContent = volume;
+  $("volume").setAttribute("aria-valuetext", volume + " percent");
+  $("volume").parentNode.style.setProperty("--at", volume / 100);
   if (save) api("prefs", {prefs}).catch(() => {});
 }
 
@@ -1393,36 +1688,19 @@ async function showHome() {
   layMenu();
   focusEntry(back || !menu.items.includes(menu.on) ? menu.items[0] : menu.on, true);   // Continue, or New Narrative where there's nothing to continue
   litSpine();
-  const list = $("list");
-  list.innerHTML = h.narratives.length ? "" : '<div class="empty">Nothing yet. Start one with New Narrative.</div>';
-  for (const n of h.narratives) {
-    const slot = document.createElement("div");
-    slot.className = "slot";
-    const hero = n.character ? `${esc(n.character)}${n.level ? " · Level " + esc(n.level) : ""}` : "";
-    const state = n.missing ? "The folder is gone." : !n.set_up ? "Not set up yet"
-      : n.sessions ? `Session ${n.sessions}${n.played ? " · last played " + when(n.played) : ""}` : "Ready to begin";
-    slot.innerHTML = `<div class="what"><div class="name">${esc(n.name)}</div>${hero ? `<div class="lead">${hero}</div>` : ""}
-      <div class="meta" title="${esc(n.path)}">${state}</div></div>`;
-    const open = document.createElement("button");
-    open.className = "primary";
-    open.textContent = !n.set_up ? "Set up" : n.sessions ? "Continue" : "Begin";
-    open.disabled = n.missing;
-    open.onclick = guard(() => openGame(n.path));
-    const drop = document.createElement("button");
-    drop.className = "quiet";
-    drop.textContent = "Remove";
-    drop.title = "Take it off this list. The folder isn't touched.";
-    drop.onclick = guard(async () => { await api("forget", {path: n.path}); showHome(); });
-    slot.append(open, drop);
-    list.append(slot);
-  }
+  const had = archive.items[archive.on];   // the archive keeps its place, by the folder
+  archive.items = h.narratives;
+  archive.on = Math.max(0, h.narratives.findIndex(n => had && n.path === had.path));
+  drawArchive();
+  if (sheets.on) showStage();   // the die is the open window's, not the menu's
 }
 
 const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog", "aboutdialog"];
 const closeHomeDialogs = () => HOME_DIALOGS.forEach(id => $(id).hidden = true);
 for (const id of HOME_DIALOGS) $(id).addEventListener("click", e => { if (e.target.closest("[data-close]")) $(id).hidden = true; });
+const openNew = () => { nnAsk = false; $("newdialog").hidden = false; renderNew(true); };
 $("menunarratives").onclick = () => $("narrativesdialog").hidden = false;
-$("menunew").onclick = () => { $("newdialog").hidden = false; renderNew(true); };
+$("menunew").onclick = openNew;
 $("menusettings").onclick = () => $("settingsdialog").hidden = false;
 $("menuabout").onclick = () => { $("aboutdialog").hidden = false; document.querySelector(".about").scrollTop = 0; };
 $("menuexit").onclick = guard(async () => {
@@ -1528,9 +1806,11 @@ function stopWorldMusic() {
   }, WORLD_FADE * 1000 + 100);
 }
 
+let volumeTicked = 0;
 $("volume").oninput = () => {
   prefs.volume = +$("volume").value;
   applyPrefs();
+  if (performance.now() - volumeTicked > 80) { volumeTicked = performance.now(); sfx("tick", prefs.volume / 100 * 12); }   // so the level can be heard as it's set
   if (musicWanted && musicSource) fadeMusic(musicVolume(), .05);
   if (worldWanted && worldSource) fadeMusic(musicVolume(), .05, undefined, worldGain);
 };
@@ -1548,6 +1828,10 @@ $("fullscreenchoice").onclick = e => {
   if (b) setFullscreen(b.dataset.full === "1");
 };
 addEventListener("keydown", e => { if (e.key === "F11") { e.preventDefault(); setFullscreen(!prefs.fullscreen); } });
+document.addEventListener("fullscreenchange", () => {   // a browser tab can leave fullscreen by itself (Esc); Settings says what the window is
+  const on = !!document.fullscreenElement;
+  if (on !== !!prefs.fullscreen) { prefs.fullscreen = on; applyPrefs(true); }
+});
 $("modelchoice").onclick = e => {   // the GM's next message is written by the one chosen
   const b = e.target.closest("button");
   if (!b) return;
@@ -1616,8 +1900,13 @@ $("home").addEventListener("pointerdown", e => {
 // that's left, and as large as the window's height or that room allows. It's the one place this is worked out: the intro
 // drops the die here, a click on the die is measured from here, and the room's light is hung over it. The last number is
 // the scale diePoints draws at; the die is hypot(1, PHI) of those from its middle to a corner.
-const dieSpot = (w, h) => {
+//
+// With one of the menu's windows open (stage.mode is "sheet"), its place is the stage on the left of the plate: 300 units into
+// a composition 1700 wide in the middle of the window, a little above half way down, and 460 across. A window too narrow
+// for a stage leaves it where it was.
+const dieSpot = (w, h, mode = stage.mode) => {
   const u = Math.min(w / 1920, h / 1080), edge = 200 * u + Math.max(520 * u, 300), small = w < 1000;   // the column's right side, and some air
+  if (mode === "sheet" && w >= 1100 && w / h > 4 / 3) return [(w - 1700 * u) / 2 + 300 * u, h * .46, Math.min(460 * u, h * .46) / 2 / Math.hypot(1, PHI)];
   const cx = small ? w * .72 : edge + (w - edge) * .46;
   return [cx, h * .48, Math.min(h * (small ? .5 : .6), (w - edge) * .62, (w - cx) * 1.9) / 2 / Math.hypot(1, PHI)];
 };
@@ -1668,14 +1957,47 @@ function drawDie(c, pts, heat, bloom, weight = 1) {
 // a frame. px and py are where the pointer has drawn the eye (-1 to 1), eased toward tx and ty; coarse is how many things a
 // slow machine has had taken away.
 const stage = {w: 0, h: 0, u: 1, cx: 0, cy: 0, r: 0, fine: 1, stale: true, laid: 0, px: 0, py: 0, tx: 0, ty: 0, sx: 9, sy: 9, heat: -1, lift: 0, show: 1,
-               coarse: 0, frames: 0, spent: 0, last: 0};
+               coarse: 0, frames: 0, spent: 0, last: 0, mode: "home", to: [0, 0, 1]};
+// The room is laid out with the die at home (cx, cy, r, which never move); spot is where the die is now, and how big. It
+// follows stage.to, the place for the mode the stage is in, on a spring with no overshoot (moveSpot), and the die's two
+// canvases, the ring, the pool and the light are shifted and scaled to it. on is which of the menu's windows is open, top the
+// one the keys go to (a question asked over it, or itself), and adrift, that it's open over a narrative, where there is no room.
+const spot = {x: 0, y: 0, r: 1, vx: 0, vy: 0, vr: 0, wx: NaN};
+const sheets = {on: null, top: null, adrift: false, timer: 0};
+const snapSpot = () => Object.assign(spot, {x: stage.to[0], y: stage.to[1], r: stage.to[2], vx: 0, vy: 0, vr: 0});
+function moveSpot(dt) {   // one frame of the spring: 7 radians a second, critically damped, so about six tenths of a second
+  const to = stage.to;
+  if (STILL || Math.abs(spot.x - to[0]) + Math.abs(spot.y - to[1]) + Math.abs(spot.r - to[2]) + Math.abs(spot.vx) + Math.abs(spot.vy) + Math.abs(spot.vr) < .5) return snapSpot();
+  const fade = Math.exp(-7 * dt);
+  let far = spot.x - to[0], push = (spot.vx + 7 * far) * dt;
+  spot.x = to[0] + (far + push) * fade; spot.vx = (spot.vx - 7 * push) * fade;
+  far = spot.y - to[1]; push = (spot.vy + 7 * far) * dt;
+  spot.y = to[1] + (far + push) * fade; spot.vy = (spot.vy - 7 * push) * fade;
+  far = spot.r - to[2]; push = (spot.vr + 7 * far) * dt;
+  spot.r = to[2] + (far + push) * fade; spot.vr = (spot.vr - 7 * push) * fade;
+}
+function setStage(mode) {   // the die is sent to the stage, or home
+  if (stage.mode === mode) return;
+  stage.mode = mode;
+  if (stage.stale) return;   // it's placed when the room is next measured
+  stage.to = dieSpot(stage.w, stage.h);
+  if ($("home").hidden) return snapSpot();
+  if (!STILL) return;
+  $("home").classList.add("jumping");   // for less motion it isn't seen to travel: out, moved, and in again
+  setTimeout(() => { drawBackdrop(0); $("home").classList.remove("jumping"); }, 120);
+}
 addEventListener("pointermove", e => { stage.tx = e.clientX / innerWidth * 2 - 1; stage.ty = e.clientY / innerHeight * 2 - 1; });
 addEventListener("blur", () => stage.tx = stage.ty = 0);   // with the window out of use, the room settles back
 document.documentElement.addEventListener("pointerleave", () => stage.tx = stage.ty = 0);
 // the layers the pointer shifts, and by how many units at most: the further back, the less. The die's two also go up and down
 // with its lift, the reflection the other way.
-const DRIFT = [["vault", 6, "", 0], ["arch", 10, "", 0], ["shafts", 14, "", 0], ["homedie", 18, "", 1], ["homeglass", 18, " scaleY(-1)", -1]]
-  .map(([id, far, more, lifts]) => ({el: $(id), far, more, lifts}));
+// The last four go with the die when it leaves its place: across and down by as far as it has gone, and scaled about it,
+// each from as far under the die's middle as it lies (the reflection two corners down, the ring and pool on the floor). The
+// light only goes across.
+const onFloor = () => stage.h * .74 - stage.cy;
+const DRIFT = [["vault", 6, 0, 0], ["arch", 10, 0, 0], ["shafts", 14, 0, 1], ["homedie", 18, 1, 2, () => 0], ["homeglass", 18, -1, 2, () => 2 * Math.hypot(1, PHI) * stage.r],
+               ["ring", 0, 0, 2, onFloor], ["pool", 0, 0, 2, onFloor]]
+  .map(([id, far, lifts, goes, under]) => ({el: $(id), far, lifts, goes, under}));
 // What the die's heat brightens, how bright each is cold, and which of the intro's numbers brings it up out of the dark. The ring
 // is done a part at a time: faded as one thing, its dotted circle is painted afresh every few frames, and the picture stumbles.
 const HEATED = [["#pool", .7, "pool"], ["#ring .dots", .72, "ring"], ["#ring .ticks", .72, "ring"], ["#ring > svg", .72, "ring"], ["#shafts", .8, ""]]
@@ -1692,8 +2014,9 @@ const backdropReady = new Promise(done => {
 });
 
 function measure() {
-  const el = $("home"), w = el.clientWidth, h = el.clientHeight, [cx, cy, r] = dieSpot(w, h), bg = $("homebg");
-  Object.assign(stage, {w, h, u: Math.min(w / 1920, h / 1080), cx, cy, r, fine: Math.min(window.devicePixelRatio || 1, 1.5), stale: false, laid: stage.laid + 1, sx: 9});
+  const el = $("home"), w = el.clientWidth, h = el.clientHeight, [cx, cy, r] = dieSpot(w, h, "home"), bg = $("homebg");
+  Object.assign(stage, {w, h, u: Math.min(w / 1920, h / 1080), cx, cy, r, fine: Math.min(window.devicePixelRatio || 1, 1.5), stale: false, laid: stage.laid + 1, sx: 9, to: dieSpot(w, h)});
+  snapSpot();
   Object.assign(die, {x: cx, y: cy, r: r * 2});
   el.style.setProperty("--dx", cx + "px");
   $("scene").style.transformOrigin = `${cx}px ${cy}px`;   // the intro's camera closes in on the die's place
@@ -1758,7 +2081,7 @@ const d20 = window.THREE ? (() => {
 // alone for four seconds, or pushed by a click, it goes back to its slow turn, with whatever spin it was given dying away.
 function turnStep(t, dt) {
   const s = die.spin;
-  if (die.aim && t - die.input > 4) die.aim = 0;
+  if (die.aim && !sheets.on && t - die.input > 4) die.aim = 0;   // under an open window it holds the window's face
   die.idle = die.aim ? 0 : Math.min(1, die.idle + dt / 1.5);
   if (die.aim && d20 && t >= die.loose) {
     d20.pose(die.aim, dieTilt(t), WANT);
@@ -2034,7 +2357,7 @@ const BOKEH = stamp(128, [[0, "rgba(214,176,108,.5)"], [.62, "rgba(218,180,112,.
 const DEPTH = [12, 24, 40];   // how far the pointer shifts each band
 
 function drawDust(c, t, dt, heat, strength) {   // strength: how much of the dust the light has found (the intro starts in the dark)
-  const {w, h, u, cx, r} = stage, cy = stage.cy - die.lift, thin = stage.coarse >= 4;
+  const {w, h, u} = stage, cx = spot.x, r = spot.r, cy = spot.y - die.lift, thin = stage.coarse >= 4;
   for (let n = 0; n < DUST.length; n++) {
     const d = DUST[n];
     if (thin && (d.band === 2 || n & 1)) continue;
@@ -2085,9 +2408,11 @@ function drawDust(c, t, dt, heat, strength) {   // strength: how much of the dus
 //
 // How the window opens: the whole intro the first time and a short one after that, or what Settings says; nothing at all when
 // it opens straight into a narrative; and only the studio's mark, held still, for someone who has asked for less motion.
-// Opened with ?introAt=3.2, the page holds that one frame of it, for looking at (&cut=short for the short one).
+// Opened with ?introAt=3.2, the page holds that one frame of it, for looking at (&cut=short for the short one). Opened with
+// ?sheet=settings (or narratives, new, about; &step=5 for a new narrative's step), it skips the intro and opens that window.
+// Neither is for the player: nothing in the page or the engine asks for them.
 const ASKED = new URLSearchParams(location.search), SCRUB = ASKED.has("introAt") ? Math.max(0, parseFloat(ASKED.get("introAt")) || 0) : null;
-const OPENING = START ? "none" : STILL ? "still" : SCRUB !== null ? (ASKED.get("cut") === "short" ? "short" : "full")
+const OPENING = START ? "none" : STILL ? "still" : ASKED.has("sheet") ? "off" : SCRUB !== null ? (ASKED.get("cut") === "short" ? "short" : "full")
   : ["full", "short", "off"].includes(prefs.intro) ? prefs.intro : prefs.introSeen ? "short" : "full";
 
 // When each thing happens, in seconds from the first black. vault and shaft are when each starts and is done; cast and hit,
@@ -2511,16 +2836,20 @@ function drawBackdrop(ms) {
     if (!shot) die.awake = Math.min(1, die.awake + dt / 1.5);
     stage.px += (stage.tx - stage.px) * .06;
     stage.py += (stage.ty - stage.py) * .06;
-    if (Math.abs(stage.px - stage.sx) + Math.abs(stage.py - stage.sy) > .002 || die.lift !== stage.lift || die.show !== stage.show) {   // written only while it moves
-      Object.assign(stage, {sx: stage.px, sy: stage.py, lift: die.lift, show: die.show});
-      for (let n = 0; n < DRIFT.length; n++) {
-        const layer = DRIFT[n];
-        layer.el.style.transform = `translate3d(${(-stage.px * layer.far * stage.u).toFixed(2)}px, ${(-stage.py * layer.far * stage.u - layer.lifts * die.lift).toFixed(2)}px, 0)${layer.more}`;
-      }
-      // in the air, the die's reflection goes down as it goes up, and dims; a die being faded in is faded in the floor too
-      $("homedie").style.opacity = die.show < 1 ? die.show.toFixed(3) : "";
-      $("homeglass").style.opacity = die.lift || die.show < 1 ? (.16 * die.show * Math.max(0, 1 - die.lift / (stage.h * .1))).toFixed(3) : "";
+  }
+  moveSpot(dt);
+  if (Math.abs(stage.px - stage.sx) + Math.abs(stage.py - stage.sy) > .002 || die.lift !== stage.lift || die.show !== stage.show || spot.x !== spot.wx) {   // written only while it moves
+    Object.assign(stage, {sx: stage.px, sy: stage.py, lift: die.lift, show: die.show});
+    spot.wx = spot.x;
+    const ox = spot.x - stage.cx, oy = spot.y - stage.cy, k = spot.r / stage.r, home = !ox && !oy && k === 1;
+    for (let n = 0; n < DRIFT.length; n++) {
+      const layer = DRIFT[n], goes = layer.goes;
+      const x = -stage.px * layer.far * stage.u + (goes ? ox : 0), y = -stage.py * layer.far * stage.u - layer.lifts * die.lift + (goes === 2 ? oy + layer.under() * (k - 1) : 0);
+      layer.el.style.transform = !layer.far && home ? "" : `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)${goes === 2 ? ` scale(${k.toFixed(4)}${layer.lifts < 0 ? `, ${(-k).toFixed(4)}` : ""})` : ""}`;
     }
+    // in the air, the die's reflection goes down as it goes up, and dims; a die being faded in is faded in the floor too
+    $("homedie").style.opacity = die.show < 1 ? die.show.toFixed(3) : "";
+    $("homeglass").style.opacity = die.lift || die.show < 1 ? (.16 * die.show * Math.max(0, 1 - die.lift / (stage.h * .1))).toFixed(3) : "";
   }
   die.glow *= Math.exp(-dt * die.cool);
   const heat = die.heat = Math.min(1, Math.hypot(die.spin[0], die.spin[1], die.spin[2]) / 14 + die.glow);
@@ -2533,8 +2862,8 @@ function drawBackdrop(ms) {
   if (solid) solid.draw(t, heat);
   else {
     c.globalAlpha = die.show;
-    drawGlow(c, stage.w, stage.h, stage.cx, stage.cy - die.lift, stage.r * 1.4, t, heat, 1.5 * Math.max(0, 1 - die.lift / stage.h));
-    drawDie(c, diePoints(stage.cx, stage.cy - die.lift, stage.r, t, die.turn), heat, 1.6, 3.6);
+    drawGlow(c, stage.w, stage.h, spot.x, spot.y - die.lift, spot.r * 1.4, t, heat, 1.5 * Math.max(0, 1 - die.lift / stage.h));
+    drawDie(c, diePoints(spot.x, spot.y - die.lift, spot.r, t, die.turn), heat, 1.6, 3.6);
     c.globalAlpha = 1;
   }
   if (shot) drawTrail(c, shot, t);
@@ -2648,6 +2977,10 @@ const SFX = {
   },
   clack(now) { knock(now, 1); },
   back(now) { noise(now, .03, "lowpass", 1100, 1, .045); },
+  deny(now) {   // back's low cousin: something is still needed
+    noise(now, .05, "lowpass", 600, 1, .05);
+    tone(now, .1, 82, .04);
+  },
   sting(now, glint) {   // the studio's: a low swell, and a chime as the glint crosses the mark
     tone(now, 3.2, 55, .063, 1.4);
     tone(now, 3.2, 110, .063, 1.4);
@@ -2705,7 +3038,7 @@ function sfx(name, step) {
 // that the menu is still coming in; armed, that the focus has been moved since; held, a chosen entry waiting out the die's roll.
 const menu = {items: [], on: null, live: false, entering: false, armed: false, timer: 0, held: null, passing: false, went: 0};
 const LEAVES = ["menucontinue", "menunew"];   // these leave the home screen, so the die gets a moment to roll first
-const menuOpen = () => menu.live && !$("home").hidden && !document.querySelector(".shade:not([hidden]), #farewell:not([hidden])");
+const menuOpen = () => menu.live && !$("home").hidden && !sheets.on && !document.querySelector(".shade:not([hidden]), .sheet:not([hidden]), #farewell:not([hidden])");
 
 function layMenu() {   // which entries there are: Continue comes and goes. The first of them is the tall one when it has a second line.
   menu.items = [...$("mainmenu").querySelectorAll("button:not([hidden])")];
@@ -2787,7 +3120,6 @@ addEventListener("pointerdown", () => { if (!$("home").hidden) settleHome(); }, 
 addEventListener("keydown", e => {
   if (intro.cut) return;   // a key during the intro skips it, and does nothing else
   if (menu.held) { if (!e.repeat) menu.held(); return; }
-  if (e.key === "Escape" && menu.live && !$("home").hidden && HOME_DIALOGS.some(id => !$(id).hidden)) return sfx("back");
   if (!menuOpen() || e.ctrlKey || e.altKey || e.metaKey) return;
   if (menu.entering) return settleHome();
   const step = {ArrowUp: -1, w: -1, W: -1, ArrowDown: 1, s: 1, S: 1}[e.key], count = menu.items.length, at = Math.max(0, menu.items.indexOf(menu.on));
@@ -2828,6 +3160,278 @@ $("mainmenu").addEventListener("click", e => {
   addEventListener("pointerdown", go, true);
 }, true);
 
+// ---- the plate: the windows the main menu opens ----
+// Settings, Narratives, New Narrative and About each open in a .sheet (the stylesheet's "the plate"). A window is opened and
+// closed by its hidden attribute, as it always was, from wherever that is done; watching the attribute, syncSheets does the
+// rest: the menu steps aside, the die goes to the stage and turns to the window's face, the window's name goes under it, the
+// keys are kept inside the window, and all of it is put back when the window closes. A later window needs only its markup
+// and a line here: its name, the line under it, and the face the die shows.
+const SHEETS = {
+  settingsdialog: {name: "Settings", says: "Tune the room.", face: 8},
+  narrativesdialog: {name: "Narratives", says: "Pick up where you left off.", face: 12},
+  newdialog: {name: "New Narrative", says: () => NEW_SAYS[NEW_STEPS[nn.step][0]], face: () => nn.step === NEW_STEPS.length - 1 ? 20 : nn.step + 1},   // it starts on a 1 and ends on a natural 20
+  aboutdialog: {name: "About", says: "What this is.", face: 5}};
+// The keys a window answers to, by what they do. A gamepad's glyphs would be put in here.
+const KEYS = {choose: [["↑", "↓"], "Choose"], change: [["←", "→"], "Change"], open: [["Enter"], "Continue"], next: [["Enter"], "Next"], back: [["Esc"], "Back"]};
+const keyHints = (...acts) => acts.filter(Boolean).map(a => `<span>${KEYS[a][0].map(k => `<kbd>${k}</kbd>`).join("")}${KEYS[a][1]}</span>`).join("");
+for (const el of document.querySelectorAll("[data-keys]")) el.innerHTML = keyHints(...el.dataset.keys.split(","));
+const plain = () => STILL || document.body.classList.contains("lean");   // no flourishes: less motion was asked for, or the machine can't keep up
+const tabStops = el => [...el.querySelectorAll("button, input, textarea, [tabindex]")].filter(n => n.tabIndex >= 0 && !n.disabled && n.offsetParent && !n.closest("[inert]"));
+
+function moveBar(bar, el) {   // a list's bar of gold, slid to the row in focus
+  const pad = Math.min(10 * Math.min(innerWidth / 1920, innerHeight / 1080), el.offsetHeight * .2);
+  bar.style.height = el.offsetHeight - pad * 2 + "px";
+  bar.style.transform = `translateY(${el.offsetTop + pad}px)`;
+  bar.style.opacity = 1;
+}
+function flash(el) {   // a ring of light, once, round what was just chosen
+  if (!el || plain()) return;
+  el.classList.remove("flash");
+  void el.offsetWidth;
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 260);
+}
+function rove(root) {   // one tab stop to a group of chips or cards: the one that's chosen, or the first. The arrows move inside it.
+  for (const group of root.querySelectorAll(".chips, .choice")) {
+    const all = [...group.querySelectorAll("button")], stop = all.find(b => b.classList.contains("on")) || all[0];
+    for (const b of all) b.tabIndex = b === stop ? 0 : -1;
+  }
+}
+function aimDie(face) {
+  die.aim = face;
+  die.input = performance.now() / 1000;
+  if (!d20 || !STILL) return;
+  d20.pose(face, dieTilt(die.last), die.turn);   // for less motion it doesn't roll: it is found showing the face
+  if (!$("home").hidden && !veiled) drawBackdrop(0);
+}
+function showStage() {   // the open window's name under the die, and its face on it
+  const s = SHEETS[sheets.on];
+  if (!s) return;
+  $("stagename").textContent = s.name;
+  $("stagecap").textContent = typeof s.says === "function" ? s.says() : s.says;
+  aimDie(typeof s.face === "function" ? s.face() : s.face);
+}
+
+function syncSheets() {
+  const on = HOME_DIALOGS.find(id => !$(id).hidden) || null, top = on && !$("suredialog").hidden ? "suredialog" : on, was = sheets.on, wasTop = sheets.top;
+  if (on === was && top === wasTop) return;
+  const home = !$("home").hidden;
+  if (!was) sheets.adrift = !home;
+  Object.assign(sheets, {on, top});
+  $("home").classList.toggle("sheeted", !!on);
+  $("sheetscrim").classList.toggle("on", !!on);
+  $("sheetstage").classList.toggle("on", !!on && !sheets.adrift);
+  if (on) {
+    for (const el of [$("sheetscrim"), $(on), $("suredialog")]) el.classList.toggle("adrift", sheets.adrift);
+    if (on !== was) {   // a window has opened: it rises, and what's in it comes in after it
+      const el = $(on), plate = el.querySelector(".plate");
+      document.body.classList.toggle("lean", stage.coarse > 0);
+      el.classList.remove("arriving");
+      void el.offsetWidth;
+      el.classList.add("arriving");
+      plate.style.willChange = "transform, opacity";   // a layer of its own only while it moves
+      clearTimeout(sheets.timer);
+      sheets.timer = setTimeout(() => { el.classList.remove("arriving"); plate.style.willChange = ""; }, 800);
+      if (!was) sfx("settle");
+    }
+    showStage();
+    if (top === "suredialog") $("suredialog").querySelector("[data-close]").focus();   // the safe answer is the one in hand
+    else if (wasTop === "suredialog") $("newnav").querySelector(".primary")?.focus();
+    else if (on === "settingsdialog") { applyPrefs(); const first = settingRows()[0]; atSetting(first, true); first.focus({preventScroll: true}); $("settingsbody").scrollTop = 0; }
+    else if (on === "narrativesdialog") { drawArchive(); (archive.items.length ? $("archcol") : $("archnew")).focus({preventScroll: true}); }
+    else if (on === "aboutdialog") document.querySelector(".about").focus({preventScroll: true});
+    if (on !== was) [...$(on).querySelectorAll(".rise")].forEach((n, i) => n.style.setProperty("--n", Math.min(i, 7)));   // up to eight, one after another
+  } else {
+    $("suredialog").hidden = true;
+    if (home) {   // back to the menu: the die turns to the entry that opened the window, and the keys are the menu's again
+      sfx("back");
+      if (menu.on) { aimDie(+menu.on.dataset.face); menu.on.focus({preventScroll: true}); }
+    } else if (sheets.adrift) { sfx("back"); $("more").focus(); }   // Settings, over a narrative. (Otherwise the window has left for a narrative.)
+  }
+  setStage(on && !sheets.adrift ? "sheet" : "home");
+}
+for (const id of [...HOME_DIALOGS, "suredialog"]) new MutationObserver(syncSheets).observe($(id), {attributes: true, attributeFilter: ["hidden"]});
+
+// Esc steps back out of whatever is innermost: a question, then a step of a new narrative, then the window. True if it did.
+function sheetBack() {
+  if (!sheets.on) return false;
+  if (sheets.top === "suredialog") $("suredialog").hidden = true;
+  else if (sheets.on === "narrativesdialog" && archive.asking) askRemove(false);
+  else if (sheets.on === "newdialog") nnBack();
+  else $(sheets.on).hidden = true;
+  return true;
+}
+addEventListener("keydown", e => {   // Tab goes round inside the open window, and never out of it
+  if (e.key !== "Tab" || !sheets.top) return;
+  const el = $(sheets.top), stops = tabStops(el), at = stops.indexOf(document.activeElement);
+  if (!stops.length) return e.preventDefault();
+  if (el.contains(document.activeElement) && (e.shiftKey ? at !== 0 : at !== stops.length - 1)) return;
+  e.preventDefault();
+  stops[e.shiftKey ? stops.length - 1 : 0].focus();
+});
+addEventListener("focusin", e => {   // and a focus that has got out some other way is brought back in
+  if (sheets.top && !$(sheets.top).contains(e.target) && !e.target.closest("#toast")) (tabStops($(sheets.top))[0] || document.body).focus();
+});
+addEventListener("resize", () => {   // the bars are placed by measuring
+  if (sheets.on === "settingsdialog") { const row = $("settingsbody").querySelector(".prow.at"); if (row) moveBar($("settingsbar"), row); }
+  if (sheets.on === "narrativesdialog") pickArchive(archive.on, true);
+  if (sheets.on === "newdialog") placeRail();
+});
+
+// -- settings: rows, each with one control. Up and down move between the rows, and left and right change the one in focus. --
+const settingRows = () => [...$("settingsbody").querySelectorAll(".prow")];
+function atSetting(row, quiet) {
+  const rows = settingRows(), moved = !row.classList.contains("at");
+  for (const r of rows) r.classList.toggle("at", r === row);
+  moveBar($("settingsbar"), row);
+  if (moved && !quiet) sfx("tick", rows.indexOf(row));
+}
+$("settingsbody").addEventListener("focusin", e => { const row = e.target.closest(".prow"); if (row) atSetting(row); });
+$("settingsbody").addEventListener("pointermove", e => {   // the pointer over a row is the focus on it
+  const row = e.target.closest(".prow");
+  if (row && !row.contains(document.activeElement)) row.focus({preventScroll: true});
+});
+$("settingsbody").addEventListener("keydown", e => {
+  const row = e.target.closest(".prow"), rows = settingRows(), key = e.key;
+  if (!row || e.ctrlKey || e.altKey || e.metaKey) return;
+  if (key === "ArrowUp" || key === "ArrowDown") {
+    e.preventDefault();
+    return rows[rows.indexOf(row) + (key === "ArrowUp" ? -1 : 1)]?.focus();
+  }
+  const slider = row.querySelector("input[type=range]"), way = {ArrowLeft: -1, ArrowRight: 1}[key];
+  if (slider && (way || key === "Home" || key === "End")) {   // by fives, by ones with Shift, and straight to either end
+    e.preventDefault();
+    const to = key === "Home" ? 0 : key === "End" ? 100 : Math.min(100, Math.max(0, +slider.value + way * (e.shiftKey ? 1 : 5)));
+    if (to === +slider.value) return;
+    slider.value = to;
+    slider.oninput();
+    slider.onchange();
+  } else if (way) {   // the tablet before or after the one chosen; it doesn't go round
+    e.preventDefault();
+    const all = [...row.querySelectorAll(".tablets button")];
+    all[all.findIndex(b => b.classList.contains("on")) + way]?.click();
+  }
+});
+$("settingsbody").addEventListener("click", e => {   // before the tablet's own handler has chosen it
+  const b = e.target.closest(".tablets button");
+  if (!b || b.classList.contains("on")) return;
+  sfx("clack");
+  flash(b);
+}, true);
+$("settingsdefaults").onclick = () => {   // nothing is asked first: each is one click to put back
+  const full = prefs.fullscreen;
+  Object.assign(prefs, {bgm: 2, volume: 60, intro: "auto", model: ""});
+  applyPrefs(true);
+  if (musicWanted) playMenuMusic();
+  if (worldWanted && worldSource) fadeMusic(musicVolume(), .05, undefined, worldGain);
+  if (full) setFullscreen(false);
+  sfx("clack");
+};
+
+// -- narratives: the archive. on is the row in focus (the last row adds a folder), and asking, that Remove is being asked about. --
+const archive = {items: [], on: 0, asking: false};
+const SIGIL = '<svg viewBox="0 0 48 48"><path d="M24 3 42.2 13.5v21L24 45 5.8 34.5v-21Z"/><path opacity=".4" d="M24 12.5 35 31.5H13ZM24 3v9.5M5.8 13.5 24 12.5l18.2 1M13 31.5 5.8 13.5M35 31.5l7.2-18M13 31.5 5.8 34.5M35 31.5l7.2 3M13 31.5 24 45l11-13.500"/></svg>';
+const levelOf = n => (String(n.level).match(/\d+/) || [""])[0];
+const capital = s => s.charAt(0).toUpperCase() + s.slice(1);
+const opens = n => !n.set_up ? "Set up" : n.sessions ? "Continue" : "Begin";
+
+function drawArchive() {
+  const all = archive.items;
+  $("archive").classList.toggle("empty", !all.length);
+  $("archkeys").innerHTML = keyHints(...(all.length ? ["choose", "open", "back"] : ["back"]));
+  $("list").innerHTML = all.map((n, i) => {
+    const hero = n.missing ? "Folder missing" : n.character ? esc(n.character) : n.set_up ? "No character yet" : "Not set up yet";
+    const meta = n.missing ? "It may have been moved or deleted" : n.sessions ? `Session ${n.sessions}${n.played ? " · last played " + when(n.played) : ""}` : n.set_up ? "Ready to begin" : "Character not made";
+    return `<div class="arch-item rise${n.missing ? " gone" : n.character ? "" : " none"}" role="option" id="arch${i}" data-n="${i}">
+      <span class="sigil">${SIGIL}<b>${!n.missing && levelOf(n) || "–"}</b></span>
+      <span class="what"><b title="${esc(n.name)}">${esc(n.name)}</b><em>${hero}</em><i>${meta}</i></span></div>`;
+  }).join("");
+  $("addexisting").dataset.n = all.length;
+  pickArchive(archive.on, true);
+}
+
+function pickArchive(i, quiet) {
+  const all = archive.items, rows = [...$("list").children, $("addexisting")], col = $("archcol");
+  i = Math.min(Math.max(0, i), all.length);
+  const moved = i !== archive.on, row = rows[i], air = 24 * Math.min(innerWidth / 1920, innerHeight / 1080);
+  Object.assign(archive, {on: i, asking: false});
+  rows.forEach((r, n) => { r.classList.toggle("at", n === i); r.setAttribute("aria-selected", n === i); });
+  col.setAttribute("aria-activedescendant", row.id);
+  moveBar($("archbar"), row);
+  if (row.offsetTop - air < col.scrollTop) col.scrollTop = row.offsetTop - air;   // always in sight, with some air round it
+  else if (row.offsetTop + row.offsetHeight + air > col.scrollTop + col.clientHeight) col.scrollTop = row.offsetTop + row.offsetHeight + air - col.clientHeight;
+  drawDetail(moved);
+  if (moved && !quiet) sfx("tick", i);
+}
+
+function drawDetail(swap) {
+  const n = archive.items[archive.on], pane = $("archdetail");
+  if (!n) pane.innerHTML = `<h2>Add a folder</h2><p class="state">A narrative folder made earlier, or on another computer, can be put on this list.</p>
+    <div class="acts"><button class="pbtn primary big" data-add>Choose a folder…</button></div>`;
+  else {
+    const plaques = [n.sessions ? `<div><span>Session</span><b>${n.sessions}</b></div>` : "", !n.missing && levelOf(n) ? `<div><span>Level</span><b>${levelOf(n)}</b></div>` : "",
+      n.played ? `<div class="soft"><span>Last played</span><b>${capital(when(n.played))}</b></div>` : ""].join("");
+    pane.innerHTML = `<h2 title="${esc(n.name)}">${esc(n.name)}</h2>
+      ${n.character && !n.missing ? `<p class="who">${esc(n.character)}${levelOf(n) ? ", Level " + levelOf(n) : ""}</p>` : ""}
+      ${n.missing ? '<p class="state bad">Folder missing. It may have been moved or deleted.</p>' : plaques ? `<div class="plaques">${plaques}</div>`
+        : `<p class="state">${n.set_up ? "Ready to begin." : "Not set up yet: the world and the character are still to be made."}</p>`}
+      <div class="where"><span>Folder</span><i title="${esc(n.path)}"></i></div>
+      <div class="acts"></div>`;
+    midPath(pane.querySelector(".where i"), n.path);
+    askRemove(archive.asking);
+  }
+  if (!swap || plain()) return;
+  pane.classList.remove("swap");
+  void pane.offsetWidth;
+  pane.classList.add("swap");
+}
+
+function midPath(el, path) {   // a path too long for its line loses its middle: the drive and the last folders stay
+  const parts = path.split(/[\\/]/), slash = path.includes("\\") ? "\\" : "/";
+  el.textContent = path;
+  for (let skip = 1; el.scrollWidth > el.clientWidth && skip < parts.length - 1; skip++) el.textContent = [parts[0], "…", ...parts.slice(skip + 1)].join(slash);
+}
+
+function askRemove(asking) {   // what can be done with the one in focus; Remove asks first, in place, and Keep is the answer in hand
+  const n = archive.items[archive.on], acts = $("archdetail").querySelector(".acts"), held = acts.contains(document.activeElement);
+  archive.asking = asking;
+  acts.innerHTML = asking ? `<p>Remove from this list? The folder isn't touched.</p><button class="pbtn danger" data-forget>Remove</button><button class="pbtn" data-keep>Keep</button>`
+    : `${n.missing ? "" : `<button class="pbtn primary big" data-open>▸ ${opens(n)}</button>`}<button class="pbtn quiet" data-drop>Remove from list</button>`;
+  if (asking) acts.querySelector("[data-keep]").focus();
+  else if (held) acts.querySelector("[data-drop]").focus();
+}
+
+function openArchive() {   // the primary thing to do with the row in focus
+  const n = archive.items[archive.on];
+  if (!n) return $("addexisting").click();
+  if (n.missing) return toast("The folder is gone.");
+  sfx("clack");
+  openGame(n.path);
+}
+$("archcol").addEventListener("pointermove", e => { const row = e.target.closest("[data-n]"); if (row && +row.dataset.n !== archive.on) pickArchive(+row.dataset.n); });
+$("archcol").addEventListener("pointerdown", e => { const row = e.target.closest("[data-n]"); if (row) pickArchive(+row.dataset.n); });
+$("archcol").addEventListener("dblclick", guard(e => { if (e.target.closest(".arch-item")) openArchive(); }));
+$("archcol").addEventListener("keydown", guard(e => {
+  const to = {ArrowUp: archive.on - 1, ArrowDown: archive.on + 1, Home: 0, End: archive.items.length}[e.key];
+  if (to === undefined && e.key !== "Enter" || e.ctrlKey || e.altKey || e.metaKey) return;
+  e.preventDefault();
+  if (e.key === "Enter") { if (!e.repeat) openArchive(); } else pickArchive(to);
+}));
+$("archdetail").addEventListener("click", guard(async e => {
+  const n = archive.items[archive.on], at = sel => e.target.closest(sel);
+  if (at("[data-add]")) return $("addexisting").click();
+  if (!n) return;
+  if (at("[data-open]")) return openArchive();
+  if (at("[data-drop]")) return askRemove(true);
+  if (at("[data-keep]")) { askRemove(false); return $("archdetail").querySelector("[data-drop]").focus(); }
+  if (!at("[data-forget]")) return;
+  await api("forget", {path: n.path});
+  archive.asking = false;
+  await showHome();
+  (archive.items.length ? $("archcol") : $("archnew")).focus({preventScroll: true});
+}));
+$("archnew").onclick = () => { $("narrativesdialog").hidden = true; focusEntry($("menunew"), true); openNew(); };
+
 // ---- a new narrative: a step at a time, one question to a step, and a look at all of it before the world is built ----
 
 // The content the player wants on the page: any number of these, and whatever isn't picked is left out.
@@ -2852,7 +3456,15 @@ const SPACE_SIZES = {small: ["One world", "A single planet or space station, and
 const SIZE_NAMES = {small: "Small", medium: "Medium", large: "Large", galaxy: "Galaxy"};
 const NEW_STEPS = [["genre", "Genre"], ["tone", "Tone"], ["world", "World"], ["has", "Includes"], ["size", "Size"], ["story", "Story"], ["themes", "Themes"], ["content", "Content"],
   ["person", "Narration"], ["title", "Title"], ["folder", "Folder"], ["review", "Review"]];
-const blankNew = () => ({step: 0, genre: "", tone: "", sure: false, world: "original", setting: "", has: "", size: "medium", story: "", themes: "", content: [], also: "", person: "third", title: "", parent: ""});
+// The steps as the window lists them: in four chapters, with Review after them; what two of them are called there; and the
+// line under the die at each.
+const NEW_CHAPTERS = [["The kind of story", ["genre", "tone"]], ["The world", ["world", "has", "size"]], ["The story", ["story", "themes"]], ["The telling", ["content", "person", "title", "folder"]]];
+const RAIL_NAMES = {world: "The world", has: "In the world"};
+const NEW_SAYS = {genre: "Say what story you want.", tone: "And how it should feel.", world: "Where it happens.", has: "What the world holds.", size: "How big, and how long.",
+  story: "What it's about.", themes: "What it keeps coming back to.", content: "What goes on the page.", person: "How it's told.", title: "What it's called.", folder: "Where it's kept.",
+  review: "The die is cast."};
+// far is the furthest step reached, and left, the answers handed to the GM by name
+const blankNew = () => ({step: 0, far: 0, left: [], genre: "", tone: "", sure: false, world: "original", setting: "", has: "", size: "medium", story: "", themes: "", content: [], also: "", person: "third", title: "", parent: ""});
 const nn = blankNew();
 
 const nnText = key => nn[key].trim();
@@ -2863,9 +3475,18 @@ const nnInput = (key, ghost) => `<input data-nn="${key}" value="${esc(nn[key])}"
 // A step's examples: each one fills the answer in. With add, it goes on the end of what's there, and a second click takes it off.
 const nnExamples = (key, list, add) => mkField(add ? "Pick any" : "For example", "", `<div class="chips">${list.map(v =>
   `<button data-eg="${key}" data-v="${esc(v)}"${add ? " data-add" : ""}>${esc(v)}</button>`).join("")}</div>`);
-const nnLeave = key => `<button class="nn-leave" data-leave="${key}">Leave it to the GM</button>`;
-const nnCards = (attr, all, on, cls) => `<div class="choice ${cls}">${Object.entries(all).map(([id, [name, hint]]) =>
-  `<button data-${attr}="${id}"${on(id) ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span></button>`).join("")}</div>`;
+// Leaving an answer to the GM goes on to the next step; back on the step it says so, and pressing it again takes that back.
+const nnLeft = key => nn.left.includes(key) && !nnText(key);
+const nnLeave = key => `<button class="nn-leave${nnLeft(key) ? " left" : ""}" data-leave="${key}" aria-pressed="${nnLeft(key)}"><svg><use href="#d20"/></svg>${nnLeft(key) ? "Left to the GM" : "Leave it to the GM"}</button>`;
+const nnCards = (attr, all, on, cls) => `<div class="choice ${cls}">${Object.entries(all).map(([id, [name, hint, warn]]) =>
+  `<button data-${attr}="${id}" aria-pressed="${!!on(id)}"${on(id) ? ' class="on"' : ""}><i class="gem"></i><b>${esc(name)}</b><span>${esc(hint)}</span>${warn ? `<span class="warn">${esc(warn)}</span>` : ""}</button>`).join("")}</div>`;
+// What a step was answered with, in a word or two, for beside its name in the list of steps. GM: it was left to the GM.
+function nnAnswer(id) {
+  const more = nn.content.length + (nnText("also") ? 1 : 0);
+  return {genre: nnText("genre"), tone: nnText("tone") || "GM", world: nn.world !== "original" && nnText("setting") || WORLDS[nn.world][0], has: nnText("has") || "GM", size: nnSizes()[nnSize()][0],
+    story: nnText("story") || "GM", themes: nnText("themes") || "GM", content: more ? more + " chosen" : "None", person: nn.person === "second" ? "Second" : "Third", title: nnText("title") || "GM",
+    folder: nnText("parent").split(/[\\/]/).filter(Boolean).pop() || ""}[id] || "";
+}
 
 const NEW_PAGES = {
   genre: () => `<h2>Genre</h2><p class="lede">What kind of story it is. Pick one or combine them, or write your own.</p>
@@ -2891,8 +3512,7 @@ const NEW_PAGES = {
     ${nnLeave("has")}`,
 
   size: () => `<h2>The size</h2><p class="lede">How big the world is and how long the narrative runs. The GM builds only as much as the size needs, so a smaller one is ready sooner.</p>
-    <div class="choice ${nnSizes() === SIZES ? "three" : "two"}">${Object.entries(nnSizes()).map(([id, [name, hint, warn]]) =>
-      `<button data-size="${id}"${id === nnSize() ? ' class="on"' : ""}><b>${esc(name)}</b><span>${esc(hint)}</span>${warn ? `<span class="warn">${esc(warn)}</span>` : ""}</button>`).join("")}</div>`,
+    ${nnCards("size", nnSizes(), id => id === nnSize(), nnSizes() === SIZES ? "three tall" : "two")}`,
 
   story: () => `<h2>The story</h2><p class="lede">What the narrative is about, in a line, if you have one in mind.</p>
     <div class="field"><textarea data-nn="story">${esc(nn.story)}</textarea></div>
@@ -2915,7 +3535,7 @@ const NEW_PAGES = {
     ${nnLeave("title")}`,
 
   folder: () => `<h2>The folder</h2><p class="lede">Where the narrative is kept. It gets a folder of its own inside this one.</p>
-    <div class="field"><div class="browse">${nnInput("parent")}<button data-browse>Browse…</button></div></div>`,
+    <div class="field"><div class="browse">${nnInput("parent")}<button class="pbtn" data-browse>Browse…</button></div></div>`,
 
   review: () => {
     const left = '<span class="left">Left to the GM</span>', setting = nnText("setting"), world = WORLDS[nn.world][0];
@@ -2932,7 +3552,7 @@ const NEW_PAGES = {
       ["title", "Title", esc(nnText("title")) || left],
       ["folder", "Folder", esc(nnText("parent"))]];
     return `<h2>Review</h2><p class="lede">Everything you chose. Go back to any step to change it.</p>
-      <div class="mk-sum">${rows.map(([id, label, text]) => `<div data-step="${NEW_STEPS.findIndex(s => s[0] === id)}" title="Change this"><span class="caps">${label}</span><span>${text}</span></div>`).join("")}</div>
+      <div class="nn-sum">${rows.map(([id, label, text]) => `<button data-step="${NEW_STEPS.findIndex(s => s[0] === id)}"><span class="k">${label}</span><span class="v">${text}</span><span class="chg">Change</span></button>`).join("")}</div>
       <p class="note">The GM builds the world from this and keeps it to itself. You'll learn what your character would know, make your character, and discover the rest by playing.</p>`;
   },
 };
@@ -2948,27 +3568,98 @@ function nnMark() {   // light the examples that are in the answer as it stands
     b.classList.toggle("on", "add" in b.dataset ? nnList(b.dataset.eg).some(t => same(t, b.dataset.v)) : same(nn[b.dataset.eg], b.dataset.v));
 }
 
+// What the window is showing: the step last drawn, whether Cancel is being asked about, and whether the folder is being made.
+let nnShown = -1, nnAsk = false, nnBusy = false;
+
 function renderNew(focus) {
   nn.step = Math.min(Math.max(0, nn.step), NEW_STEPS.length - 1);
-  const [id] = NEW_STEPS[nn.step], next = NEW_STEPS[nn.step + 1];
-  $("newrail").innerHTML = NEW_STEPS.map(([, title], n) => `<button data-step="${n}" class="${n === nn.step ? "on" : n < nn.step ? "done" : ""}"><i></i>${title}</button>`).join("");
-  $("newbody").innerHTML = `<div class="mk-page">${NEW_PAGES[id]()}</div>`;
-  $("newnav").innerHTML = `<button class="quiet" data-close>Cancel</button><span class="gap"></span>
-    <button data-go="-1"${nn.step ? "" : " disabled"}>Back</button>
-    ${next ? `<button class="primary" data-go="1">Next: ${next[1]}</button>` : `<button class="primary" data-create>Create the world</button>`}`;
-  if (!focus) $("newbody").querySelector(".mk-page").style.animation = "none";   // only a new step arrives
-  else $("newbody").scrollTop = 0;
+  nn.far = Math.max(nn.far, nn.step);
+  const [id] = NEW_STEPS[nn.step], body = $("newbody"), old = body.querySelector(".nn-page:not(.leaving)");
+  const way = focus === true && old ? Math.sign(nn.step - nnShown) : 0;   // only a new step arrives, from the side it lies on
+  nnShown = nn.step;
+  $("neweyebrow").textContent = `Step ${nn.step + 1} of ${NEW_STEPS.length} · ${(NEW_CHAPTERS.find(c => c[1].includes(id)) || ["Review"])[0]}`;
+  const step = n => {
+    const [key, title] = NEW_STEPS[n], cls = n === nn.step ? "on" : n <= nn.far ? "done" : "", said = cls === "done" ? nnAnswer(key) : "", name = RAIL_NAMES[key] || title;
+    return `<li><button data-step="${n}" class="${cls}" tabindex="${n === nn.step ? 0 : -1}"${n === nn.step ? ' aria-current="step"' : ""} aria-label="${esc(name + (said ? ", " + said : ""))}"><i></i><span>${name}</span><em>${esc(said)}</em></button></li>`;
+  };
+  let n = 0;
+  $("newrail").innerHTML = NEW_CHAPTERS.map(([name, ids]) => `<li class="chap" aria-hidden="true">${name}</li>` + ids.map(() => step(n++)).join("")).join("") + '<li class="gap" aria-hidden="true"></li>' + step(n);
+  for (const gone of body.querySelectorAll(".nn-page")) gone.remove();
+  body.innerHTML = `<div class="nn-page${way > 0 ? " fwd" : way < 0 ? " rev" : ""}">${NEW_PAGES[id]()}</div>`;
+  if (way && !plain()) {   // the page before fades out under the one coming in
+    old.className = "nn-page leaving";
+    old.inert = true;
+    body.append(old);
+    setTimeout(() => old.remove(), 140);
+  }
+  nnNav();
   nnMark();
-  const box = focus && $("newbody").querySelector(focus === true ? "[data-nn]" : `[data-nn="${focus}"]`);
+  rove(body);
+  placeRail();
+  if (sheets.on === "newdialog") showStage();   // the die turns to the step's number
+  if (!focus) return;
+  if (focus === true) body.scrollTop = 0;
+  // A step that opens on its answer's box has the caret put in it. One that opens on things to pick is left alone: typing finds the box.
+  const first = body.querySelector(".nn-page :is(input, textarea, button)"), box = focus === true ? first && first.matches("input, textarea") && first : body.querySelector(`[data-nn="${focus}"]`);
   if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+  else body.focus({preventScroll: true});
 }
 
-function nnGo(step) {   // going on past a step that needs an answer asks for it; going back, or anywhere by the rail, never does
+function placeRail() {   // the thread through the steps' diamonds, lit down to this one, and the bar beside it
+  const rail = $("newrail").parentNode, gems = [...$("newrail").querySelectorAll("button i")], mid = g => g.offsetTop + g.offsetHeight / 2, on = gems[nn.step];
+  if (!on || !on.offsetParent) return;
+  rail.style.setProperty("--t0", mid(gems[0]) + "px");
+  rail.style.setProperty("--t1", mid(gems[gems.length - 1]) + "px");
+  rail.style.setProperty("--lit", mid(on) - mid(gems[0]) + "px");
+  moveBar($("railbar"), on.parentNode);
+  const row = on.parentNode, air = row.offsetHeight;   // this step always in sight, with a row of air; the list and nothing else is scrolled
+  if (row.offsetTop - air < rail.scrollTop) rail.scrollTop = row.offsetTop - air;
+  else if (row.offsetTop + row.offsetHeight + air > rail.scrollTop + rail.clientHeight) rail.scrollTop = row.offsetTop + row.offsetHeight + air - rail.clientHeight;
+}
+
+function nnNav() {   // the foot of the window: where to go from this step, or a question, or word that the folder is being made
+  const next = NEW_STEPS[nn.step + 1];
+  $("newnav").innerHTML = nnBusy ? '<p class="nn-busy"><svg><use href="#d20"/></svg>Making the narrative’s folder…</p>'
+    : nnAsk ? '<p>Discard this setup?</p><div class="keys"></div><button class="pbtn danger" data-discard>Discard</button><button class="pbtn primary" data-keepgoing>Keep going</button>'
+    : `<button class="pbtn quiet" data-cancel>Cancel</button><div class="keys">${keyHints(next && "next", "back")}</div>
+      <button class="pbtn" data-go="-1"${nn.step ? "" : " disabled"}>◂ Back</button>
+      ${next ? `<button class="pbtn primary" data-go="1">Next: ${next[1]} ▸</button>` : '<button class="pbtn primary big" data-create><svg><use href="#d20"/></svg>Begin building</button>'}`;
+}
+
+function nnNeed() {   // the answer this step can't go on without: its box shakes, and is edged in red until it's written in
+  const box = $("newbody").querySelector("[data-nn]");
+  sfx("deny");
+  if (!box) return;
+  box.classList.remove("need");
+  void box.offsetWidth;
+  box.classList.add("need");
+  box.focus();
+}
+
+function nnGo(step) {   // going on past a step that needs an answer asks for it; going back, or anywhere by the list of steps, never does
+  if (step < 0 || step >= NEW_STEPS.length || step === nn.step) return;
   const missing = step === nn.step + 1 && nnMissing(NEW_STEPS[nn.step][0]);
-  if (missing) return toast(missing);
+  if (missing) { nnNeed(); return toast(missing); }
   if (step === nn.step + 1 && NEW_STEPS[nn.step][0] === "size" && nnSure(() => nnGo(step))) return;
+  sfx(step > nn.step ? "clack" : "back");
   nn.step = step;
   renderNew(true);
+}
+
+// Cancel throws the answers away, so it asks first if there are any. Esc goes back a step, and on the first step is Cancel.
+const nnDirty = () => JSON.stringify({...nn, step: 0, far: 0, left: [], sure: false, parent: ""}) !== JSON.stringify({...blankNew(), parent: ""});
+function nnCancel() {
+  if (!nnDirty()) return $("newdialog").hidden = true;
+  nnAsk = true;
+  nnNav();
+  $("newnav").querySelector("[data-keepgoing]").focus();
+}
+function nnBack() {
+  if (nnBusy) return;
+  if (!nnAsk) return nn.step ? nnGo(nn.step - 1) : nnCancel();
+  nnAsk = false;
+  nnNav();
+  $("newnav").querySelector(".primary").focus();
 }
 
 let sureThen = null;
@@ -2991,27 +3682,61 @@ $("newdialog").addEventListener("input", e => {
   const key = e.target.dataset.nn;
   if (!key) return;
   nn[key] = e.target.value;
+  e.target.classList.remove("need");
+  const leave = $("newbody").querySelector(`[data-leave="${key}"]`);
+  if (leave && leave.classList.contains("left")) leave.outerHTML = nnLeave(key);   // an answer written in is no longer left to the GM
   nnMark();
 });
-$("newdialog").addEventListener("keydown", e => {   // Enter in a one-line answer goes on to the next step
-  if (e.key !== "Enter" || !e.target.matches("input[data-nn]") || nn.step >= NEW_STEPS.length - 1) return;
-  e.preventDefault();
-  nnGo(nn.step + 1);
+$("newdialog").addEventListener("keydown", e => {
+  const t = e.target, key = e.key, back = key === "ArrowLeft" || key === "ArrowUp";
+  if (nnBusy || nnAsk || e.ctrlKey || e.metaKey) return;
+  if (e.altKey ? key === "ArrowLeft" || key === "ArrowRight" : key === "PageUp" || key === "PageDown") {   // from step to step, wherever the focus is
+    e.preventDefault();
+    return nnGo(nn.step + (key === "ArrowLeft" || key === "PageUp" ? -1 : 1));
+  }
+  if (e.altKey) return;
+  if (key === "Enter" && t.matches("input[data-nn]") && nn.step < NEW_STEPS.length - 1) {   // Enter in a one-line answer goes on to the next step
+    e.preventDefault();
+    return nnGo(nn.step + 1);
+  }
+  const group = t.matches("button") && t.closest(".chips, .choice, .nn-sum, #newrail");
+  if (group && (back || key === "ArrowRight" || key === "ArrowDown")) {   // the arrows move among a group's choices
+    e.preventDefault();
+    const all = [...group.querySelectorAll("button")];
+    return all[all.indexOf(t) + (back ? -1 : 1)]?.focus();
+  }
+  if (key.length === 1 && !t.matches("input, textarea") && !(key === " " && t.matches("button"))) {   // typing anywhere else is typing the answer
+    const box = $("newbody").querySelector("[data-nn]");
+    if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+  }
 });
 $("newdialog").addEventListener("click", guard(async e => {
-  const at = sel => e.target.closest(sel);
+  const at = sel => e.target.closest(sel), body = $("newbody");
   let el, focus = false;
+  if (nnBusy) return;
+  if (at("[data-cancel]")) return nnCancel();
+  if (at("[data-keepgoing]")) return nnBack();
+  if (at("[data-discard]")) {
+    Object.assign(nn, blankNew(), {parent: nn.parent});
+    nnAsk = false;
+    return $("newdialog").hidden = true;
+  }
   if ((el = at("[data-step]"))) return nnGo(+el.dataset.step);
   if ((el = at("[data-go]"))) return nnGo(nn.step + +el.dataset.go);
   if (at("[data-create]")) return createNarrative();
-  if ((el = at("[data-leave]"))) { nn[el.dataset.leave] = ""; return nnGo(nn.step + 1); }
+  if ((el = at("[data-leave]"))) {
+    const key = el.dataset.leave;
+    if (nnLeft(key)) { nn.left = nn.left.filter(k => k !== key); return renderNew(key); }   // taken back: the answer is the player's to give again
+    nn[key] = "";
+    nn.left.push(key);
+    return nnGo(nn.step + 1);
+  }
   if ((el = at("[data-eg]"))) {
     const key = el.dataset.eg, v = el.dataset.v;
     if ("add" in el.dataset) {
       const had = nnList(key), rest = had.filter(t => !same(t, v));
       nn[key] = (rest.length < had.length ? rest : had.concat(v)).join(", ");
     } else nn[key] = same(nn[key], v) ? "" : v;
-    focus = key;
   } else if ((el = at("[data-world]"))) {
     if (nn.world !== el.dataset.world) nn.setting = "";   // what was said of one kind of world doesn't carry to another
     nn.world = el.dataset.world;
@@ -3026,12 +3751,14 @@ $("newdialog").addEventListener("click", guard(async e => {
     const r = await api("pick-folder", {start: nn.parent});
     if (!r.path) return;
     nn.parent = r.path;
+    focus = "parent";
   } else return;
-  const keep = $("newbody").scrollTop;
+  const keep = body.scrollTop, mark = JSON.stringify(el ? el.dataset : 0);
   renderNew();
-  $("newbody").scrollTop = keep;
-  const box = focus && $("newbody").querySelector(`[data-nn="${focus}"]`);
-  if (box) box.focus();
+  body.scrollTop = keep;
+  const again = [...body.querySelectorAll("button")].find(b => JSON.stringify(b.dataset) === mark);   // the same choice, in the page as it is now
+  ((focus && body.querySelector(`[data-nn="${focus}"]`)) || again)?.focus();
+  if (again) { sfx("clack"); if (again.classList.contains("on")) flash(again); }
 }));
 
 async function createNarrative() {
@@ -3039,7 +3766,8 @@ async function createNarrative() {
   if (at >= 0) {
     toast(nnMissing(NEW_STEPS[at][0]));
     nn.step = at;
-    return renderNew(true);
+    renderNew(true);
+    return nnNeed();
   }
   if (nnSure(createNarrative)) return;
   const tone = nnText("tone");
@@ -3052,7 +3780,10 @@ async function createNarrative() {
     : "Built on an existing setting: " + setting;
   const size = SIZE_NAMES[nnSize()] + (nnSizes() === SIZES ? "" : ` (${SPACE_SIZES[nnSize()][0].toLowerCase()})`);
   const narration = nn.person === "second" ? "Second person (\"you\")." : "Third person limited.";
-  const r = await api("create", {name: title, parent: nnText("parent"), person: nn.person});
+  sfx("clack");
+  nnBusy = true;
+  nnNav();
+  const r = await api("create", {name: title, parent: nnText("parent"), person: nn.person}).finally(() => nnBusy = false).catch(e => { nnNav(); throw e; });
   Object.assign(nn, blankNew(), {parent: nn.parent});   // the next one starts clean, in the same folder
   openGame(r.path);
   await send(`Set up this narrative.\n\nGenre: ${genre}\nTone: ${tone || "none given; it's yours to decide."}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nSize: ${size}.\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
@@ -4272,7 +5003,7 @@ $("loadbtn").onclick = guard(async () => {
   $("loaddialog").hidden = false;
 });
 $("loadclose").onclick = () => $("loaddialog").hidden = true;
-for (const id of ["savedialog", "loaddialog", "leveldialog", "meantdialog", "shopdialog", ...HOME_DIALOGS]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
+for (const id of ["savedialog", "loaddialog", "leveldialog", "meantdialog", "shopdialog"]) $(id).addEventListener("mousedown", e => { if (e.target === $(id)) $(id).hidden = true; });
 
 // ---- flagging a passage ---------------------------------------------------------
 
@@ -4311,7 +5042,7 @@ $("flagopen").onclick = () => {
 };
 $("flagcancel").onclick = () => $("flagdialog").hidden = true;
 $("flagdialog").addEventListener("mousedown", e => { if (e.target === $("flagdialog")) $("flagdialog").hidden = true; });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("suredialog").hidden = true; $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("shopdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; closeHomeDialogs(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("flagdialog").hidden = true; $("lightbox").hidden = true; $("savedialog").hidden = true; $("loaddialog").hidden = true; $("leveldialog").hidden = true; $("meantdialog").hidden = true; $("shopdialog").hidden = true; $("flag").hidden = true; $("moreitems").hidden = true; sheetBack(); } });
 $("flagsend").onclick = guard(async () => {
   const note = $("flagnote").value.trim();
   if (!note) return toast("Say what's wrong with it, so the GM knows what to change.");
@@ -4393,6 +5124,11 @@ guard(async () => {
   if (h.prefs) Object.assign(prefs, h.prefs);
   applyPrefs();
   if (START) { openGame(START); checkPrograms(h, true); } else await showHome();
+  const asked = ASKED.get("sheet") + "dialog";
+  if (!START && HOME_DIALOGS.includes(asked)) introDone.then(() => {
+    nn.step = (parseInt(ASKED.get("step")) || 1) - 1;
+    asked === "newdialog" ? openNew() : $(asked).hidden = false;
+  });
 })();
 </script>
 </body>
