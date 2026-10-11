@@ -644,6 +644,7 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/prefs":
             bgm = str(data["prefs"].get("bgm", 2))
             write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
+                               "face": "book" if data["prefs"].get("face") == "book" else "garamond",   # the story's typeface
                                "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
                                "volume": min(100, max(0, int(data["prefs"].get("volume", 60)))),
                                "fullscreen": bool(data["prefs"].get("fullscreen")),

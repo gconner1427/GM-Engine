@@ -38,10 +38,10 @@ For a launcher with the dice icon, run `gm shortcut` once: it makes `Play` (a sh
 - **Push** (under the message box) is for when your character gives an action everything they have. Switch it on before you send: it costs 2 Strain and gives them a better chance on that action's first roll. If nothing needed rolling, nothing is spent. It switches itself off after each action.
 - **Undo** and **I meant…** (shown while a session is open) take back the last beat. Undo removes it and everything it changed; press it twice to confirm. "I meant…" is for when the GM misread you: it shows what you wrote, you correct it, and the beat is played again from that.
 - **In a shop,** a button with the shop's name appears above the message box. It opens the shop: what's for sale and for how much, what the keeper would buy from you and what they'd pay, and your money. Click things into your basket on the Buy and Sell tabs, see what it comes to and what you'd have left, and press **Make the trade**. The GM plays the trade as a short beat and settles your money and your gear. To haggle, ask for something that isn't on the shelf, or steal, type it as your character as usual. The button goes when your character leaves.
-- **When a session ends,** a card shows the session as your character would tell it, which of the four marks it earned and why, and how far that puts you toward the next level. "How the last session ended" in the ⋯ menu shows it again.
+- **When a session ends,** a card shows the session as your character would tell it, which of the four marks it earned and why, and how far that puts you toward the next level. "How the last session ended" in the Menu shows it again.
 - **A new level** opens its own screen after that card, at the end of the session that earned it: place your three skill ranks, pick a talent or an attribute when the level gives one, and confirm. "Later" puts it off, and a button on the Character tab brings it back.
 - **The side panel** shows your character as a game sheet (health, strain and marks as bars, attributes and defenses as tiles, skills with rank pips), the Inventory (their money as counted coins, and what they wear, hold and carry as item slots, each with a picture for its kind and a count; click one to read the rest of what's known about it), the Journal (the goal your character is working toward, and what they know about the world, its people and its places), and your conversation with the GM. When the sheet changes, the bars slide and show the change.
-- **The top bar** has the button that ends or starts a session, a button to hide the side panel for reading, and the ⋯ menu, where Save game, Load game, and the text size are.
+- **The top bar** has **Menu** (Esc opens it too), where Save game, Load game, Settings, the main menu, and Exit are; the list of sessions, to reread one; End session; and a button to hide the side panel for reading. Between sessions, Begin is above the message box. The text size and the story's typeface are in Settings, under Reading.
 - **To flag a passage,** select it in the narrative and press "Flag this passage," then say what's wrong with it. Or press "Add to 'To the GM'" to quote it in the message box, switched to speak to the GM, and write the correction there; select and add more passages to send several at once.
 - **During setup** the main column is your conversation with the GM: it tells you what your character would know about the world and helps you make them, and the Character tab fills in as you go.
 
@@ -51,7 +51,7 @@ The first time the window opens, it plays the studio's mark and a short film of 
 
 **GM Model** in Settings chooses which Claude model runs the GM: Default (whichever Claude Code uses on your plan), Opus, or Sonnet. Opus is the strongest writer and uses the most of your plan; Sonnet uses less, for making a plan last. It can be changed at any time, and the GM's next message is written by the one chosen. Pictures aren't affected.
 
-"Start a fresh GM conversation" in the ⋯ menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
+"Fresh GM conversation" in the Menu is for when the GM seems confused or slow after a very long sitting: nothing in the narrative changes, and the GM rereads its notes on the next message.
 
 ### Pictures
 
@@ -69,7 +69,7 @@ The files are in the narrative's `Art/` folder.
 
 A narrative has saved games, kept in its own folder on your computer. Nothing is uploaded.
 
-- **Save game** (in the ⋯ menu) saves the game exactly as it stands. Give the save a name if you like.
+- **Save game** (in the Menu, or Ctrl+S) saves the game exactly as it stands. Give the save a name if you like.
 - **Load game** lists your saves like save slots: the session each was made in, your character's name and level, and when. Pick one and the whole narrative goes back to that point: the story, your sheet, the Journal, the pictures, and everything the GM tracks behind the scenes.
 - The game also saves itself at the end of every session, and again just before any load, so loading never loses anything. You can always load your way back.
 - After a load, the GM starts from its notes as they were at that save and remembers nothing that came after.
