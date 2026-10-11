@@ -22,6 +22,7 @@
   --p-gold: var(--m-gold); --p-gold-hi: var(--m-gold-hi); --p-gold-deep: var(--m-gold-deep); --p-gold-low: #a98a4a;   /* low: the deep gold, where it has to be read */
   --p-row-focus: linear-gradient(90deg, #c9a25b24, #c9a25b08 70%, transparent); --p-well: #0b0907; --p-control-edge: #4a3f2c;
   --p-faint: var(--m-faint); --p-bad: #c0584c; --p-warn: #d98a5f; --p-arrive: cubic-bezier(.2, .8, .2, 1);
+  --p-sealed: #6f6757;   /* out of reach for now: a step sealed until the world is ready, a number already placed. Each says so another way too */
   /* the house ornaments: a gold rule that fades at both ends, a bracket in each corner of a frame, and a film of grain */
   --rule: linear-gradient(90deg, transparent, var(--accent) 25%, var(--accent) 75%, transparent);
   --corner: linear-gradient(var(--accent), var(--accent));
@@ -57,6 +58,9 @@ select option { background: var(--raised); color: var(--ink); }
 svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .view { height: 100%; animation: fadein .35s ease; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+/* black over everything: between the room and the game screen, and while the room is made ready behind a window opened straight into a narrative */
+#veil { position: fixed; inset: 0; z-index: 48; background: #000; opacity: 0; visibility: hidden; transition: opacity var(--t, .4s) ease, visibility 0s var(--t, .4s); }
+#veil.on { opacity: 1; visibility: visible; transition: opacity var(--t, .4s) ease; }
 [hidden] { display: none !important; }
 .caps { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
 
@@ -678,47 +682,6 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .tally .short, .tally .short span:last-child { color: var(--bad); }
 .tally .empty { display: block; padding: 4px 2px; }
 
-/* ---- making the character: a step at a time, in place of the story ---- */
-.main.making .composer { display: none; }
-#story.making { display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; padding: 0; -webkit-mask-image: none; mask-image: none; }
-.mk-rail { display: flex; flex-wrap: wrap; justify-content: center; padding: 16px 12px 12px; border-bottom: 1px solid var(--line-soft); }
-.mk-rail button { display: inline-flex; align-items: center; gap: 9px; background: none; border: none; color: var(--faint); padding: 7px 8px;
-  font: 400 11.5px var(--serif); letter-spacing: 1.3px; white-space: nowrap; }
-.mk-rail button i { flex: none; width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid var(--edge); transition: background .2s, box-shadow .2s; }
-.mk-rail button:hover { color: var(--dim); }
-.mk-rail button.done i { background: var(--edge); }
-.mk-rail button.on { color: var(--accent-hi); text-shadow: 0 0 18px #c9a25b66; }
-.mk-rail button.on i { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 9px #c9a25b99; }
-.mk-body { overflow: auto; padding: 36px 40px 30px; }
-.mk-page { max-width: 780px; margin: 0 auto; display: grid; gap: 24px; animation: arrive .35s ease-out; }
-.mk-page > * { min-width: 0; }
-.mk-page > h2 { margin: 0; text-align: center; font: 400 25px var(--serif); letter-spacing: 6px; padding-left: 6px; text-transform: uppercase; text-shadow: 0 0 26px #c9a25b55; }
-.mk-page > .lede { margin: -14px 0 4px; text-align: center; color: var(--dim); font: italic 16px/1.6 var(--serif); }
-.mk-page .block { margin-top: 0; }
-.mk-page .md { font: 17px/1.7 var(--serif); color: #ddd3bf; }
-.mk-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-.field { display: grid; gap: 9px; }
-.field > label { display: flex; align-items: baseline; gap: 10px; color: var(--dim); font: 600 10px var(--sans); text-transform: uppercase; letter-spacing: 1.8px; }
-.field > label span { color: var(--faint); font: italic 13.5px var(--serif); letter-spacing: .2px; text-transform: none; }
-.field input, .field textarea { width: 100%; font: 16px/1.5 var(--serif); }
-.field textarea { min-height: 88px; resize: vertical; }
-.chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chips button { padding: 9px 16px; background: var(--well); font: 400 15px var(--serif); letter-spacing: .3px; text-transform: none; }
-.chips button.on { border-color: var(--accent); color: var(--accent-hi); background: linear-gradient(#c9a25b2b, #c9a25b0f); box-shadow: 0 0 16px #c9a25b1a; }
-.choice.three { grid-template-columns: repeat(3, 1fr); }
-.choice button b em { float: right; margin-left: 10px; font-style: normal; color: var(--accent-hi); }
-.mk-sum > div { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
-.mk-sum .caps { color: var(--faint); font-size: 9.5px; letter-spacing: 2px; padding-top: 5px; }
-.mk-sum span + span { font: 16px/1.55 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; }
-.mk-nav { display: flex; align-items: center; gap: 10px; padding: 14px 28px 18px; background: linear-gradient(#18150fd9, #0f0d0a); border-top: 1px solid var(--line-soft); }
-.mk-nav .gap { flex: 1; }
-.mk-early { margin: 0; padding: 12px 18px; border: 1px solid var(--line-soft); border-left: 2px solid var(--accent); border-radius: 2px; background: #c9a25b0d; color: var(--dim); font: italic 15px/1.6 var(--serif); }
-.mk-build { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ink); font: italic 15px var(--serif); }   /* what the GM is building, while the player waits */
-.mk-build svg { width: 24px; height: 24px; flex: none; color: var(--accent); animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); filter: drop-shadow(0 0 8px #c9a25b88); }
-.mk-build .clock { font: 13px var(--sans); font-variant-numeric: tabular-nums; color: var(--faint); letter-spacing: 1px; }
-.mk-nav button { padding: 12px 24px; letter-spacing: 2.4px; }
-#tomake { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 16px; z-index: 5; white-space: nowrap; box-shadow: 0 0 0 1px #000, 0 8px 22px #000b; }
-
 #flag { position: fixed; z-index: 30; display: flex; gap: 6px; }
 #flag button { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; background: linear-gradient(#3b301c, #2a2214); box-shadow: 0 0 0 1px #000, 0 8px 22px #000c; }
 #flag button:hover { background: linear-gradient(#e2c07e, #b98f48); }
@@ -760,7 +723,8 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
    dieSpot), and an obsidian slab, the plate, rises on the right. The room stays in sight behind a scrim; nothing is blurred.
    A window is a .sheet holding a .plate: a head (eyebrow, title, rule), a body, and a foot (the keys, then what can be done).
    The parts are defined once, here: the row and its bar, tablets, the slider, chips, cards, the field, buttons, key hints, and
-   the scrollbar. Sizes are in --u, as the home screen's are, and no text is smaller than 13px. */
+   the scrollbar; and the steps down a window's left with a page beside them ("a new narrative"), which the character creator
+   uses too. Sizes are in --u, as the home screen's are, and no text is smaller than 13px. */
 #sheetscrim, #sheetstage, .sheet { --u: min(100vw / 1920, 100vh / 1080); }
 #sheetscrim { position: fixed; inset: 0; z-index: 39; opacity: 0; visibility: hidden; transition: opacity .22s ease, visibility 0s .22s;   /* lighter round the die, dark where the plate sits */
   background: radial-gradient(calc(var(--u) * 1300) 80% at calc(50vw - var(--u) * 550) 46%, #0000 0, #0007 70%),
@@ -807,6 +771,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 /* the keys: a hint that doesn't fit beside the buttons goes to a second line, which is never seen */
 .keys { flex: 1 1 0; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; column-gap: calc(var(--u) * 34); height: max(30px, calc(var(--u) * 34)); overflow: hidden;
   color: var(--p-faint); font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+.keys::before { content: ""; flex: none; width: 0; height: 100%; margin-right: calc(var(--u) * -34); }   /* so the first hint can go to the second line as well */
 .keys span { display: flex; align-items: center; gap: .6em; height: 100%; white-space: nowrap; }
 .keys kbd { display: inline-grid; place-items: center; min-width: 2.4em; height: 2.2em; padding: 0 .6em; border: 1px solid #5a4c33; border-radius: max(2px, calc(var(--u) * 3));
   font: 600 max(13px, calc(var(--u) * 12))/1 var(--display); letter-spacing: .08em; }
@@ -818,7 +783,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
   transition: border-color .16s, background .16s, color .16s, box-shadow .16s; }
 .pbtn.primary { background: linear-gradient(#c9a25b44, #c9a25b18); border-color: var(--p-gold); color: var(--p-gold-hi); box-shadow: inset 0 0 0 1px #0007, 0 0 calc(var(--u) * 22) #c9a25b2e; }
 .pbtn.primary:hover:not(:disabled) { background: linear-gradient(#ecd08e, #b98f48); color: #1a1408; }
-.pbtn.quiet { padding: 0 calc(var(--u) * 16); border-color: transparent; background: none; color: var(--dim); }
+.pbtn.quiet { padding: 0 calc(var(--u) * 16); border-color: transparent; background: none; color: var(--dim); } .pbtn.quiet:hover:not(:disabled) { color: var(--p-gold-hi); }
 .pbtn.danger { border-color: var(--p-bad); color: #e6aaa2; } .pbtn.danger:hover { background: #c0584c26; border-color: #dd7a6e; color: #f3c6c0; }
 .pbtn.big { height: max(40px, calc(var(--u) * 68)); }
 .pbtn svg { flex: none; width: 1.5em; height: 1.5em; stroke-width: 1.2; }
@@ -831,7 +796,7 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 .sect::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #c9a25b40, #c9a25b0a); }
 .prow { display: flex; align-items: center; gap: calc(var(--u) * 24); min-height: max(56px, calc(var(--u) * 92)); padding: calc(var(--u) * 6) calc(var(--u) * 24) calc(var(--u) * 6) calc(var(--u) * 28);
   border-bottom: 1px solid #ffffff0a; transition: background .14s; }
-.plate .prow:focus-visible, .plate .arch-col:focus-visible, .plate .about:focus-visible { outline: none; }   /* the bar says where the focus is */
+.plate .prow:focus-visible, .plate .arch-col:focus-visible, .plate .about:focus-visible, .plate .pagebody:focus-visible { outline: none; }   /* the bar says where the focus is */
 .prow .what { flex: 1; min-width: 0; }
 .prow .what b { display: block; font: 500 max(17px, calc(var(--u) * 28))/1.15 var(--text); letter-spacing: .01em; color: #e3dac6; transition: color .14s; }
 .prow .what span { display: block; margin-top: calc(var(--u) * 5); font: italic 400 max(14px, calc(var(--u) * 20))/1.2 var(--text); color: var(--p-faint); }
@@ -844,10 +809,10 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
 
 /* tablets: one of a few, each a tablet of its own. What is chosen is gold; its fill and glow are a layer that fades in. */
 .tablets { flex: none; display: flex; gap: calc(var(--u) * 8); }
-.tablets button, #newdialog .chips button, #newdialog .choice button { position: relative; z-index: 0; border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
+.tablets button, .plate .chips button, .plate .choice button { position: relative; z-index: 0; border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
   transition: border-color .16s, color .16s; }
-.tablets button::before, #newdialog .chips button::before, #newdialog .choice button::before { content: ""; position: absolute; z-index: -1; inset: -1px; opacity: 0; transition: opacity .16s; }
-.tablets button.on::before, #newdialog .chips button.on::before, #newdialog .choice button.on::before { opacity: 1; }
+.tablets button::before, .plate .chips button::before, .plate .choice button::before { content: ""; position: absolute; z-index: -1; inset: -1px; opacity: 0; transition: opacity .16s; }
+.tablets button.on::before, .plate .chips button.on::before, .plate .choice button.on::before { opacity: 1; }
 .tablets button { height: max(32px, calc(var(--u) * 52)); min-width: calc(var(--u) * 104); padding: 0 calc(var(--u) * 20); color: var(--dim);
   font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .18em; text-indent: .18em; text-transform: uppercase; white-space: nowrap; }
 .tablets button::before { border: 1px solid #f0d9a8; background: linear-gradient(#ecd08e, #b98f48); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b66, inset 0 1px 0 #fff6; }
@@ -922,25 +887,25 @@ body.lean .sheet.arriving .rise, body.lean .flash::after, body.lean .need { anim
 .arch-empty .pbtn { margin-top: calc(var(--u) * 22); }
 
 /* -- a new narrative: the steps down the left, with what was answered beside each, and one question to a page -- */
-#newsplit { display: grid; grid-template-columns: max(236px, calc(var(--u) * 300)) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 0; margin-top: calc(var(--u) * 8); overflow: hidden; }
+.split { display: grid; grid-template-columns: max(236px, calc(var(--u) * 300)) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 0; margin-top: calc(var(--u) * 8); overflow: hidden; }
 .rail { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 14) 0 calc(var(--u) * 16) calc(var(--u) * 40); border-right: 1px solid #c9a25b22; }
 .rail::before { content: ""; position: absolute; left: calc(var(--u) * 48); top: var(--t0, 0); width: 1px; height: calc(var(--t1, 0px) - var(--t0, 0px)); pointer-events: none;   /* the thread the steps hang on, brighter down to this one */
   background: linear-gradient(#c9a25b88 var(--lit, 0px), #c9a25b33 var(--lit, 0px)); }
-#newrail { position: static; margin: 0; padding: 0; list-style: none; }
-#newrail .chap { margin: calc(var(--u) * 16) 0 calc(var(--u) * 6); padding-left: calc(var(--u) * 30); color: var(--p-gold-low); white-space: nowrap;
+.steps { position: static; margin: 0; padding: 0; list-style: none; }
+.steps .chap { margin: calc(var(--u) * 16) 0 calc(var(--u) * 6); padding-left: calc(var(--u) * 30); color: var(--p-gold-low); white-space: nowrap;
   font: 600 max(13px, calc(var(--u) * 12))/1.2 var(--display); letter-spacing: .22em; text-transform: uppercase; }
-#newrail .chap:first-of-type { margin-top: calc(var(--u) * 6); }
-#newrail .gap { height: calc(var(--u) * 12); }
-#newrail button { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; column-gap: calc(var(--u) * 17); width: 100%; height: max(24px, calc(var(--u) * 42)); padding: 0 calc(var(--u) * 14) 0 calc(var(--u) * 3);
+.steps .chap:first-of-type { margin-top: calc(var(--u) * 6); }
+.steps .gap { height: calc(var(--u) * 12); }
+.steps button { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; column-gap: calc(var(--u) * 17); width: 100%; height: max(24px, calc(var(--u) * 42)); padding: 0 calc(var(--u) * 14) 0 calc(var(--u) * 3);
   border: 0; border-radius: 0; background: none; text-align: left; text-transform: none; letter-spacing: 0; color: var(--p-faint); font: 500 max(15px, calc(var(--u) * 22))/1 var(--text); }
-#newrail button i { width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); transform: rotate(45deg); border: 1px solid var(--p-faint); background: #120e09; transition: background .2s, border-color .2s; }
-#newrail button span { white-space: nowrap; transition: color .16s; }
-#newrail button em { justify-self: end; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: italic 400 max(13px, calc(var(--u) * 17))/1.3 var(--text); color: var(--p-faint); }
-#newrail button.done { color: var(--dim); } #newrail button.done i { background: var(--p-gold-deep); border-color: var(--p-gold-deep); }
-#newrail button:hover span, #newrail button.on span { color: var(--p-gold-hi); }
-#newrail button.on i { background: var(--p-gold-hi); border-color: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 14) #e8c06a, 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 0 max(3px, calc(var(--u) * 4)) #c9a25b66; }
+.steps button i { width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); transform: rotate(45deg); border: 1px solid var(--p-faint); background: #120e09; transition: background .2s, border-color .2s; }
+.steps button span { white-space: nowrap; transition: color .16s; }
+.steps button em { justify-self: end; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: italic 400 max(13px, calc(var(--u) * 17))/1.3 var(--text); color: var(--p-faint); }
+.steps button.done { color: var(--dim); } .steps button.done i { background: var(--p-gold-deep); border-color: var(--p-gold-deep); }
+.steps button:hover span, .steps button.on span { color: var(--p-gold-hi); }
+.steps button.on i { background: var(--p-gold-hi); border-color: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 14) #e8c06a, 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 0 max(3px, calc(var(--u) * 4)) #c9a25b66; }
 .rail .rowbar { transition: transform .2s ease, opacity .14s; }
-#newbody { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 30) calc(var(--u) * 64) calc(var(--u) * 20) calc(var(--u) * 56); outline: none; }
+.pagebody { position: relative; min-height: 0; overflow: auto; padding: calc(var(--u) * 30) calc(var(--u) * 64) calc(var(--u) * 20) calc(var(--u) * 56); outline: none; }
 .nn-page { display: grid; gap: calc(var(--u) * 26); }
 .nn-page > * { min-width: 0; }
 .nn-page.fwd { --from: calc(var(--u) * 28); animation: pagein .32s var(--p-arrive) .1s backwards; } .nn-page.rev { --from: calc(var(--u) * -28); animation: pagein .32s var(--p-arrive) .1s backwards; }
@@ -950,36 +915,36 @@ body.lean .sheet.arriving .rise, body.lean .flash::after, body.lean .need { anim
 body.lean .nn-page { --from: 0px; }
 .nn-page > h2 { margin: 0; font: 600 max(22px, calc(var(--u) * 46))/1.1 var(--display); letter-spacing: .14em; text-shadow: 0 0 calc(var(--u) * 30) #c9a25b55; }
 .nn-page > .lede { margin: calc(var(--u) * -4) 0 0; font: italic 500 max(16px, calc(var(--u) * 25))/1.45 var(--text); color: var(--dim); }
-#newdialog .field { display: grid; gap: calc(var(--u) * 12); }
-#newdialog .field > label { display: flex; align-items: center; gap: calc(var(--u) * 10); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .3em; text-transform: uppercase; }
-#newdialog .field > label::before, .nn-leave.left::before, #newdialog .choice .warn::before { content: ""; flex: none; width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); transform: rotate(45deg); background: currentColor; }
-#newdialog .field > label span { font: italic 400 max(14px, calc(var(--u) * 19))/1 var(--text); letter-spacing: .02em; text-transform: none; color: var(--p-faint); }
-#newdialog :is(input, textarea) { width: 100%; height: max(44px, calc(var(--u) * 68)); padding: 0 calc(var(--u) * 24); border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
+.plate .field { display: grid; gap: calc(var(--u) * 12); }
+.plate .field > label { display: flex; align-items: center; gap: calc(var(--u) * 10); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .3em; text-transform: uppercase; }
+.plate .field > label::before, .nn-leave.left::before, .plate .choice .warn::before { content: ""; flex: none; width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); transform: rotate(45deg); background: currentColor; }
+.plate .field > label span { font: italic 400 max(14px, calc(var(--u) * 19))/1 var(--text); letter-spacing: .02em; text-transform: none; color: var(--p-faint); }
+.plate .field :is(input, textarea) { width: 100%; height: max(44px, calc(var(--u) * 68)); padding: 0 calc(var(--u) * 24); border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well);
   box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a; color: var(--ink); caret-color: var(--p-gold-hi); font: 400 max(16px, calc(var(--u) * 25))/1.35 var(--text); }
-#newdialog textarea { height: max(110px, calc(var(--u) * 160)); padding: calc(var(--u) * 16) calc(var(--u) * 24); resize: none; }
-#newdialog :is(input, textarea)::placeholder { font-style: italic; color: var(--p-faint); }
-#newdialog :is(input, textarea):focus { border-color: var(--p-gold); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a, 0 0 0 1px #c9a25b33, 0 0 calc(var(--u) * 26) #c9a25b2a; }
-#newdialog .need { border-color: var(--p-bad) !important; animation: needs .28s linear; }   /* the answer a step can't go on without */
+.plate .field textarea { height: max(110px, calc(var(--u) * 160)); padding: calc(var(--u) * 16) calc(var(--u) * 24); resize: none; }
+.plate .field :is(input, textarea)::placeholder { font-style: italic; color: var(--p-faint); }
+.plate .field :is(input, textarea):focus { border-color: var(--p-gold); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a, 0 0 0 1px #c9a25b33, 0 0 calc(var(--u) * 26) #c9a25b2a; }
+.plate .need { border-color: var(--p-bad) !important; animation: needs .28s linear; }   /* the answer a step can't go on without */
 @keyframes needs { 0%, 100% { transform: none; } 17%, 50%, 83% { transform: translateX(calc(var(--u) * -6)); } 33%, 67% { transform: translateX(calc(var(--u) * 6)); } }
-#newdialog .field .browse { display: flex; gap: calc(var(--u) * 12); } #newdialog .field .browse input { flex: 1; min-width: 0; }
-#newdialog .field .browse .pbtn { height: max(44px, calc(var(--u) * 68)); }
-#newdialog .chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 12); }
-#newdialog .chips button { height: max(36px, calc(var(--u) * 56)); padding: 0 calc(var(--u) * 26); color: var(--ink); white-space: nowrap; font: 500 max(15px, calc(var(--u) * 24))/1 var(--text); letter-spacing: .01em; text-transform: none; }
-#newdialog .chips button::before, #newdialog .choice button::before { border: 1px solid var(--p-gold-hi); background: linear-gradient(#c9a25b38, #c9a25b12); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b44; }
-#newdialog :is(.chips, .choice) button:hover { border-color: var(--p-gold); }
-#newdialog .chips button.on, #newdialog .choice button.on b { color: var(--p-gold-hi); }
-#newdialog .choice { display: grid; gap: calc(var(--u) * 16); }
-#newdialog .choice.two { grid-template-columns: 1fr 1fr; } #newdialog .choice.three { grid-template-columns: repeat(3, 1fr); }
-#newdialog .choice button { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; min-height: calc(var(--u) * 150); padding: calc(var(--u) * 26) calc(var(--u) * 22) calc(var(--u) * 24);
+.plate .field .browse { display: flex; gap: calc(var(--u) * 12); } .plate .field .browse input { flex: 1; min-width: 0; }
+.plate .field .browse .pbtn { height: max(44px, calc(var(--u) * 68)); }
+.plate .chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 12); }
+.plate .chips button { height: max(36px, calc(var(--u) * 56)); padding: 0 calc(var(--u) * 26); color: var(--ink); white-space: nowrap; font: 500 max(15px, calc(var(--u) * 24))/1 var(--text); letter-spacing: .01em; text-transform: none; }
+.plate .chips button::before, .plate .choice button::before { border: 1px solid var(--p-gold-hi); background: linear-gradient(#c9a25b38, #c9a25b12); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b44; }
+.plate :is(.chips, .choice) button:hover { border-color: var(--p-gold); }
+.plate .chips button.on, .plate .choice button.on b { color: var(--p-gold-hi); }
+.plate .choice { display: grid; gap: calc(var(--u) * 16); }
+.plate .choice.two { grid-template-columns: 1fr 1fr; } .plate .choice.three { grid-template-columns: repeat(3, 1fr); }
+.plate .choice button { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; min-height: calc(var(--u) * 150); padding: calc(var(--u) * 26) calc(var(--u) * 22) calc(var(--u) * 24);
   text-align: left; text-transform: none; letter-spacing: 0; color: var(--ink); background: linear-gradient(#ffffff07, #0000 60%), var(--p-well); }
-#newdialog .choice.tall button { min-height: calc(var(--u) * 250); }
-#newdialog .choice button b { display: block; padding-right: calc(var(--u) * 22); font: 600 max(13px, calc(var(--u) * 19))/1.35 var(--display); letter-spacing: .12em; }
-#newdialog .choice button span { display: block; margin-top: calc(var(--u) * 14); font: 400 max(14px, calc(var(--u) * 21))/1.4 var(--text); color: var(--dim); }
-#newdialog .choice button .warn { display: flex; align-items: baseline; gap: .7em; margin-top: calc(var(--u) * 16); color: var(--p-warn); font: 600 max(13px, calc(var(--u) * 12.5))/1.4 var(--display); letter-spacing: .14em; text-transform: uppercase; }
-#newdialog .choice .warn::before { translate: 0 -.1em; }
-#newdialog .choice button .gem { position: absolute; right: calc(var(--u) * 16); top: calc(var(--u) * 16); width: max(7px, calc(var(--u) * 11)); height: max(7px, calc(var(--u) * 11)); transform: rotate(45deg) scale(0);   /* chosen is said by more than colour */
+.plate .choice.tall button { min-height: calc(var(--u) * 250); }
+.plate .choice button b { display: block; padding-right: calc(var(--u) * 22); font: 600 max(13px, calc(var(--u) * 19))/1.35 var(--display); letter-spacing: .12em; }
+.plate .choice button span { display: block; margin-top: calc(var(--u) * 14); font: 400 max(14px, calc(var(--u) * 21))/1.4 var(--text); color: var(--dim); }
+.plate .choice button .warn { display: flex; align-items: baseline; gap: .7em; margin-top: calc(var(--u) * 16); color: var(--p-warn); font: 600 max(13px, calc(var(--u) * 12.5))/1.4 var(--display); letter-spacing: .14em; text-transform: uppercase; }
+.plate .choice .warn::before { translate: 0 -.1em; }
+.plate .choice button .gem { position: absolute; right: calc(var(--u) * 16); top: calc(var(--u) * 16); width: max(7px, calc(var(--u) * 11)); height: max(7px, calc(var(--u) * 11)); transform: rotate(45deg) scale(0);   /* chosen is said by more than colour */
   background: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 12) #e8c06a; transition: transform .16s var(--p-arrive); }
-#newdialog .choice button.on .gem { transform: rotate(45deg); }
+.plate .choice button.on .gem { transform: rotate(45deg); }
 .nn-leave { justify-self: start; display: inline-flex; align-items: center; gap: calc(var(--u) * 12); height: max(30px, calc(var(--u) * 44)); padding: 0 calc(var(--u) * 6) 0 0; border: 0; border-radius: 0; background: none; color: var(--dim);
   font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .24em; text-transform: uppercase; }
 .nn-leave svg { width: max(15px, calc(var(--u) * 20)); height: max(15px, calc(var(--u) * 20)); color: var(--p-gold); stroke-width: 2; }
@@ -998,6 +963,155 @@ body.lean .nn-page { --from: 0px; }
 .nn-busy { display: flex; align-items: center; gap: calc(var(--u) * 14); }   /* the folder being made, before the window turns to the narrative */
 .nn-busy svg { width: max(20px, calc(var(--u) * 28)); height: max(20px, calc(var(--u) * 28)); flex: none; color: var(--p-gold); animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); }
 
+/* -- the character creator: New Narrative's frame, kept up from the moment a narrative is opened until its first session. The
+   character's name is under the die, the steps that wait for the world are listed sealed, and the GM's side of the table is
+   a page of it. Dashed means "not yet" (a sealed step, a spent number, an empty socket, a rank past the starting cap), and
+   nothing else here is dashed. -- */
+#makedialog .plate-head { position: relative; }
+#makedialog .eyebrow { margin-right: calc(var(--u) * 200); }
+#makemenu, #sideacts { position: absolute; right: calc(var(--u) * 50); top: calc(var(--u) * 47); translate: 0 -50%; }
+#makemenu, #sideacts .pbtn { height: max(30px, calc(var(--u) * 44)); }
+#sideacts { top: calc(var(--u) * 97); display: flex; }   /* on the title's line */
+#sideacts .pbtn { padding: 0 calc(var(--u) * 14); color: var(--p-faint); font-size: max(13px, calc(var(--u) * 12)); letter-spacing: .2em; text-indent: .2em; } #sideacts .pbtn:hover { color: var(--p-gold-hi); }
+#sheetstage b { overflow: hidden; text-overflow: ellipsis; padding: .5em 0; margin: -.5em 0; }   /* a name too long for the stage is cut short; the room is for its glow */
+#sheetstage b.long { font-size: max(14px, calc(var(--u) * 24)); }
+#sheetstage b.swap { animation: swap .2s ease-out; }
+#stagebuild { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 12); margin: calc(var(--u) * 30) 0 0; white-space: nowrap; color: var(--p-faint);   /* what the GM is building, while the player waits */
+  font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .24em; text-transform: uppercase; }
+#stagebuild svg { flex: none; width: max(16px, calc(var(--u) * 22)); height: max(16px, calc(var(--u) * 22)); color: var(--p-gold); stroke-width: 1.2; animation: tumble 2.6s infinite cubic-bezier(.5, .1, .5, .9); }
+#stagebuild.done svg { animation: none; }
+#stagebuild em, .nn-busy .clock { font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .08em; font-variant-numeric: tabular-nums; color: var(--p-gold-low); }
+.nn-busy.grow { flex: 1; min-width: 0; }
+.nn-busy [data-line] { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mk-footbuild, .nn-busy.staged .clock { display: none; }
+
+/* a step that waits for the world, the page on the world before it's been read, and the steps as they open */
+.steps button.sealed { cursor: default; }
+.steps button.sealed i { border: 1px dashed var(--p-sealed); background: none; }
+.steps button.sealed span, .steps button.sealed:hover span { color: var(--p-sealed); }
+.steps button:is(.sealed, .unseal, .unread) em { font: 600 max(13px, calc(var(--u) * 11))/1.3 var(--display); letter-spacing: .03em; text-transform: uppercase; color: var(--p-sealed); }
+.steps button:is(.sealed, .unseal) { column-gap: calc(var(--u) * 12); padding-right: calc(var(--u) * 8); } .steps button:is(.sealed, .unseal) i { margin-right: calc(var(--u) * 5); }
+.steps button.unread i { border-color: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 10) #e8c06a99; }
+.steps button.unread span, .steps button.unread em { color: var(--p-gold-hi); }
+.steps button.unseal i { animation: unsealgem .3s ease calc(var(--n) * 60ms) backwards; }
+.steps button.unseal span { animation: unsealname .3s ease calc(var(--n) * 60ms) backwards; }
+.steps button.unseal em { opacity: 0; animation: unsealword .3s ease calc(var(--n) * 60ms) backwards; }
+@keyframes unsealgem { from { border-style: dashed; border-color: var(--p-sealed); } }
+@keyframes unsealname { from { color: var(--p-sealed); } }
+@keyframes unsealword { from { opacity: 1; } }
+body.lean .steps button.unseal :is(i, span, em), body.lean .socket.stamp, body.lean .count.deny { animation: none !important; }
+
+/* the page: it scrolls, and while there is more of it below, its last lines fade into the plate */
+.split { transition: opacity .24s ease; }
+.split.handed { opacity: .55; }
+.split.alone { grid-template-columns: minmax(0, 1fr); } .split.alone > .rail { display: none; } .split.alone .pagebody { padding-left: calc(var(--u) * 64); }
+.pagebox { position: relative; min-width: 0; min-height: 0; }
+.pagebox > .pagebody { height: 100%; }
+#makebody { container-type: inline-size; }
+.pagefade { position: absolute; left: 0; right: max(5px, calc(var(--u) * 6)); bottom: 0; height: calc(var(--u) * 48); pointer-events: none; opacity: 0; transition: opacity .16s; background: linear-gradient(#0f0c0800, #0f0c08); }
+.pagebox.more .pagefade { opacity: 1; }
+.mk-early { margin: 0; padding: calc(var(--u) * 16) calc(var(--u) * 22); border: 1px solid #c9a25b22; border-left: max(2px, calc(var(--u) * 3)) solid var(--p-gold); background: #c9a25b0d; color: var(--dim);
+  font: italic 400 max(14px, calc(var(--u) * 20))/1.45 var(--text); }
+#makedialog .md { font: 400 max(16px, calc(var(--u) * 24))/1.6 var(--text); color: #ddd3bf; }
+#makedialog .md p { margin: 0 0 .7em; } #makedialog .md > :last-child { margin-bottom: 0; }
+#makedialog .md :is(h1, h2, h3, h4) { display: flex; align-items: center; gap: calc(var(--u) * 20); margin: calc(var(--u) * 26) 0 calc(var(--u) * 10); color: var(--p-gold);
+  font: 600 max(13px, calc(var(--u) * 14))/1.2 var(--display); letter-spacing: .34em; text-transform: uppercase; text-shadow: none; }
+#makedialog .md :is(h1, h2, h3, h4)::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #c9a25b40, #c9a25b0a); }
+#makedialog .md > :first-child { margin-top: 0; }
+
+/* two fields side by side; and a field on its side, its label in a column on the left and its chips to the right */
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(var(--u) * 24); align-items: start; }
+.lines { display: grid; grid-template-columns: minmax(calc(var(--u) * 150), max-content) minmax(0, 1fr); row-gap: calc(var(--u) * 16); }
+.plate .field.line { grid-column: 1 / -1; grid-template-columns: subgrid; gap: calc(var(--u) * 10) 0; }
+.plate .field.line > label { align-self: start; height: max(32px, calc(var(--u) * 44)); padding-right: calc(var(--u) * 20); white-space: nowrap; }   /* level with the first row of chips */
+.pair > .field > label { min-height: max(14px, calc(var(--u) * 19)); }   /* with a hint or without, two labels side by side stand level */
+.plate .field.line > :not(label) { grid-column: 2; }
+.plate .field > label .count { font-variant-numeric: tabular-nums; }
+.plate .field > label .count.deny, .mk-purse strong.deny { animation: needs .28s linear; }
+.plate .chips.close { gap: calc(var(--u) * 8); }
+.plate .chips.close button { height: max(32px, calc(var(--u) * 44)); padding: 0 calc(var(--u) * 18); font-size: max(15px, calc(var(--u) * 20)); }
+.lines { row-gap: calc(var(--u) * 12); }
+.lines .chips.close { gap: calc(var(--u) * 6); }   /* on a line the chips are tighter still, so a page of them all but fits a screen */
+.lines .chips.close button { height: max(30px, calc(var(--u) * 40)); padding: 0 calc(var(--u) * 13); font-size: max(15px, calc(var(--u) * 19)); }
+.plate .lines .field.line > label { height: max(30px, calc(var(--u) * 40)); }
+.plate .field .under { margin-top: calc(var(--u) * -4); font: italic 400 max(14px, calc(var(--u) * 18))/1.2 var(--text); color: var(--p-faint); }   /* a hint too long for beside the label */
+.plate .chips button.full { opacity: .55; }   /* the group is full: pressing one says so */
+.plate .choice.one { grid-template-columns: minmax(0, 1fr); gap: calc(var(--u) * 12); }
+.plate .choice.one button { min-height: 0; padding: calc(var(--u) * 22) calc(var(--u) * 26); }
+.plate .choice.one button span { margin-top: calc(var(--u) * 8); }
+.plate .choice button .trains { margin-top: auto; padding-top: calc(var(--u) * 16); color: var(--p-gold-low); }
+
+/* attributes: the numbers to place are stones, and each attribute's card has a socket in its corner for one */
+.stones { display: flex; align-items: center; gap: calc(var(--u) * 12); }
+.stones button { position: relative; flex: none; width: max(38px, calc(var(--u) * 64)); height: max(38px, calc(var(--u) * 64)); padding: 0; border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well); color: var(--ink);
+  font: 600 max(15px, calc(var(--u) * 24))/1 var(--display); letter-spacing: 0; transition: border-color .16s, background .16s, color .16s, box-shadow .16s; }
+.stones button:hover:not(:disabled) { border-color: var(--p-gold); }
+.stones button.on { border-color: #f0d9a8; background: linear-gradient(#ecd08e, #b98f48); color: #1a1408; box-shadow: 0 0 calc(var(--u) * 22) #c9a25b66, inset 0 1px 0 #fff6; }
+.stones button:disabled { border-style: dashed; background: none; color: var(--p-sealed); opacity: .55; }
+.stones .left { margin-left: calc(var(--u) * 14); font: italic 400 max(14px, calc(var(--u) * 20))/1 var(--text); color: var(--p-faint); }
+.plate .choice.attrs button b { padding-right: calc(var(--u) * 60); }
+.socket { position: absolute; right: calc(var(--u) * 20); top: calc(var(--u) * 16); display: grid; place-items: center; min-width: calc(var(--u) * 26); height: calc(var(--u) * 40); color: var(--p-gold-hi);
+  font: 600 max(18px, calc(var(--u) * 34))/1 var(--display); font-style: normal; text-shadow: 0 0 calc(var(--u) * 18) #e8c06a99; }
+.socket:empty::before { content: ""; width: max(9px, calc(var(--u) * 14)); height: max(9px, calc(var(--u) * 14)); transform: rotate(45deg); border: 1px dashed var(--p-faint); }
+.socket.stamp { animation: stamp .18s var(--p-arrive); }
+@keyframes stamp { from { opacity: 0; transform: scale(1.4); } }
+
+/* skills and talents: what's left to spend stays in sight at the top of the page, and each skill is a row */
+.mk-purse { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: calc(var(--u) * 16); height: max(40px, calc(var(--u) * 58)); border-bottom: 1px solid #c9a25b33; background: #17120b; white-space: nowrap; overflow: hidden; }
+.mk-purse b { font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--p-gold); }
+.mk-purse .gems, .rankpips { flex: none; display: flex; align-items: center; gap: calc(var(--u) * 8); padding: 0 calc(var(--u) * 4); }
+.mk-purse .gems i, .rankpips i { flex: none; width: max(7px, calc(var(--u) * 11)); height: max(7px, calc(var(--u) * 11)); transform: rotate(45deg); border: 1px solid var(--p-faint); transition: background .16s, border-color .16s, box-shadow .16s; }
+.mk-purse .gems i.on, .rankpips i.on { background: var(--p-gold-hi); border-color: var(--p-gold-hi); box-shadow: 0 0 calc(var(--u) * 10) #e8c06a; }
+.mk-purse em { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 600 max(13px, calc(var(--u) * 12))/1.3 var(--display); font-style: normal; letter-spacing: .08em; text-transform: uppercase; color: var(--p-faint); }
+.mk-purse strong { flex: none; margin-left: auto; font: 600 max(16px, calc(var(--u) * 26))/1 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--p-gold-hi); font-variant-numeric: tabular-nums; }
+.mk-purse.out strong { color: var(--dim); }
+.mk-purse.spent { animation: spent .4s ease-out; }
+@keyframes spent { from { border-bottom-color: var(--p-gold); } }
+.mk-rows { position: relative; margin-top: calc(var(--u) * -20); }
+.mk-rows .rowbar { left: 0; }
+.prow.skill-row { min-height: max(52px, calc(var(--u) * 78)); padding: calc(var(--u) * 4) calc(var(--u) * 8) calc(var(--u) * 4) calc(var(--u) * 22); gap: calc(var(--u) * 22); }
+.skill-row .what b { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: calc(var(--u) * 16); font-size: max(17px, calc(var(--u) * 26)); }
+.skill-row .what small { display: inline-flex; align-items: center; gap: .7em; white-space: nowrap; color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 11.5))/1.3 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+.skill-row .what small::before { content: ""; flex: none; width: max(4px, calc(var(--u) * 5)); height: max(4px, calc(var(--u) * 5)); transform: rotate(45deg); background: currentColor; }
+.skill-row .what span { margin-top: calc(var(--u) * 3); font-size: max(14px, calc(var(--u) * 19)); }
+.rankpips { gap: calc(var(--u) * 10); }
+.rankpips i.shut { border: 1px dashed var(--p-sealed); }   /* past the cap, for now */
+.stepper { flex: none; display: flex; gap: calc(var(--u) * 6); }
+.stepper button { width: max(30px, calc(var(--u) * 46)); height: max(30px, calc(var(--u) * 46)); padding: 0; border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well); color: var(--ink);
+  font: 400 max(17px, calc(var(--u) * 24))/1 var(--text); letter-spacing: 0; }
+.stepper button:hover:not(:disabled) { border-color: var(--p-gold); color: var(--p-gold-hi); }
+.stepper button:disabled { opacity: .35; }
+
+/* review: the dossier, under a header for each step; and what's left to the GM */
+#makedialog .nn-sum .sect { margin: calc(var(--u) * 20) 0 calc(var(--u) * 4); } #makedialog .nn-sum .sect:first-child { margin-top: calc(var(--u) * 8); }
+#makedialog .nn-sum .k { white-space: normal; }
+#makedialog .nn-sum .v { white-space: pre-wrap; }
+.mk-left { display: flex; align-items: center; gap: calc(var(--u) * 12); }
+.mk-left svg { flex: none; width: max(15px, calc(var(--u) * 20)); height: max(15px, calc(var(--u) * 20)); color: var(--p-gold); stroke-width: 2; }
+
+/* the GM's side: the conversation in the plate's type, and under it the box to answer in */
+.nn-page.side { align-content: start; }
+#maketalk .talk { max-width: none; margin: 0; gap: 0; }
+#maketalk .msg { padding: calc(var(--u) * 13) 0; border: 0; border-top: 1px solid #ffffff0a; color: var(--ink); font: 400 max(16px, calc(var(--u) * 24))/1.5 var(--text); }
+#maketalk .msg:first-child { padding-top: 0; border-top: 0; }
+#maketalk .msg.you { margin: 0; color: var(--dim); }
+#maketalk .msg .who { margin-bottom: calc(var(--u) * 8); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 13))/1.2 var(--display); letter-spacing: .28em; }
+#maketalk .msg.you .who { color: var(--p-faint); }
+#maketalk .msg.note { text-align: left; color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 20))/1.45 var(--text); }
+#maketalk .md { font: inherit; color: inherit; }
+#maketalk .hint { padding: calc(var(--u) * 40) 0 0; color: var(--dim); font: italic 500 max(16px, calc(var(--u) * 25))/1.5 var(--text); }
+#maketalk .hint svg { width: max(40px, calc(var(--u) * 64)); height: max(40px, calc(var(--u) * 64)); margin-bottom: calc(var(--u) * 22); color: var(--p-gold); filter: none; }
+#maketalk .hint .pbtn { margin-top: calc(var(--u) * 30); padding: 0 calc(var(--u) * 34); font-style: normal; }
+#makenav { padding-top: calc(var(--u) * 12); padding-bottom: calc(var(--u) * 12); }
+#makenav .say { flex: 1; min-width: 0; }
+#makesay { display: block; width: 100%; height: max(40px, calc(var(--u) * 58)); padding: calc(var(--u) * 13) calc(var(--u) * 20); border: 1px solid var(--p-control-edge); border-radius: 0; resize: none; background: var(--p-well);
+  box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a; color: var(--ink); caret-color: var(--p-gold-hi); font: 400 max(16px, calc(var(--u) * 23))/1.3 var(--text); }
+#makesay::placeholder { font-style: italic; color: var(--p-faint); }
+#makesay:focus { border-color: var(--p-gold); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 10) #000a, 0 0 0 1px #c9a25b33, 0 0 calc(var(--u) * 26) #c9a25b2a; }
+@container (max-width: 560px) {   /* a page too narrow for things side by side */
+  .pair, .plate .choice.two { grid-template-columns: minmax(0, 1fr); }
+  .plate .choice.attrs { grid-template-columns: 1fr 1fr; } }
+
 /* -- the small plate: a question asked over a window, which dims behind it -- */
 #suredialog { z-index: 45; pointer-events: auto; }
 #suredialog::before { content: ""; position: absolute; left: calc(50vw - var(--u) * 230); width: calc(var(--u) * 1080); top: calc(var(--u) * 70); bottom: calc(var(--u) * 70); background: #000000ad; transition: opacity .24s; }
@@ -1008,6 +1122,17 @@ body.lean .nn-page { --from: 0px; }
 #suredialog .plate-body { padding: calc(var(--u) * 26) calc(var(--u) * 48) calc(var(--u) * 30); }
 #suredialog .plate-body p { margin: 0 0 calc(var(--u) * 10); }
 #suredialog .plate-foot { justify-content: flex-end; padding: 0 calc(var(--u) * 48); }
+
+/* -- leaving while a world is being built: asked over everything, wherever the window is. It is not one of the plate's
+   windows (it can come up over the game screen), so it darkens the whole window itself. -- */
+#exitdialog { z-index: 47; pointer-events: auto; background: #000000b8; transition: opacity .24s ease, visibility 0s; }
+#exitdialog[hidden] { opacity: 0; transition: opacity .22s ease, visibility 0s .22s; }
+#exitdialog .plate { left: 50%; right: auto; top: 50%; bottom: auto; width: max(calc(var(--u) * 820), 440px); max-width: calc(100vw - 48px); translate: -50% -50%; transition-delay: 0s; }
+#exitdialog .plate-head { padding: calc(var(--u) * 40) calc(var(--u) * 48) 0; }
+#exitdialog .plate-head h1 { margin: 0; font-size: max(18px, calc(var(--u) * 30)); white-space: normal; }
+#exitdialog .plate-body { padding: calc(var(--u) * 26) calc(var(--u) * 48) calc(var(--u) * 30); }
+#exitdialog .plate-body p { margin: 0 0 calc(var(--u) * 10); }
+#exitdialog .plate-foot { justify-content: flex-end; flex-wrap: wrap; padding: calc(var(--u) * 16) calc(var(--u) * 48); }
 
 /* -- about: its words as they were, in the plate's type -- */
 .about { padding: calc(var(--u) * 26) calc(var(--u) * 64) calc(var(--u) * 30); outline: none; }
@@ -1021,28 +1146,36 @@ body.lean .nn-page { --from: 0px; }
 .about .credit img { width: max(48px, calc(var(--u) * 64)); height: max(48px, calc(var(--u) * 64)); }
 
 /* A window too narrow for the stage: the die stays where it was, behind a darker scrim, and the plate takes the window. Under
-   1280 across, the steps fold into a line of twelve diamonds over the page. */
+   1280 across, the steps fold into a line of diamonds over the page. */
 @media (max-width: 1099px), (max-aspect-ratio: 4 / 3) {
   #sheetscrim { background: #000000c4; }
   #sheetstage { display: none; }
   .plate, .sheet.adrift .plate, #suredialog::before { left: 24px; right: 24px; top: 24px; bottom: 24px; width: auto; }
   #suredialog .plate { left: 50%; right: auto; top: 50%; bottom: auto; }
-  #archive { grid-template-columns: minmax(0, 42%) minmax(0, 1fr); } }
+  #archive { grid-template-columns: minmax(0, 42%) minmax(0, 1fr); }
+  #makenav:has(.mk-footbuild) .keys { display: none; }   /* with no stage, the line on the build is in the foot */
+  .mk-footbuild { display: flex; flex: 1; min-width: 0; }
+  .nn-busy.staged .clock { display: inline; } }
 @media (max-height: 820px) {
   .rail { padding-top: calc(var(--u) * 6); padding-bottom: calc(var(--u) * 6); }
-  #newrail button { height: max(23px, calc(var(--u) * 34)); }
-  #newrail .chap { margin: calc(var(--u) * 9) 0 calc(var(--u) * 2); }
-  #newrail .chap:first-of-type { margin-top: calc(var(--u) * 2); }
-  #newrail .gap { height: calc(var(--u) * 6); } }
+  .steps button { height: max(23px, calc(var(--u) * 34)); }
+  .steps .chap { margin: calc(var(--u) * 9) 0 calc(var(--u) * 2); }
+  .steps .chap:first-of-type { margin-top: calc(var(--u) * 2); }
+  .steps .gap { height: calc(var(--u) * 6); } }
+@media (max-height: 920px) { .plate .choice.attrs button { min-height: calc(var(--u) * 132); padding-top: calc(var(--u) * 18); padding-bottom: calc(var(--u) * 16); } }   /* so the six attributes still sit above the foot */
 @media (max-width: 1279px) {
-  #newsplit { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .split { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
   .rail { overflow: visible; padding: calc(var(--u) * 16) calc(var(--u) * 64) 0 calc(var(--u) * 56); border-right: 0; }
-  .rail::before, .rail .rowbar, #newrail .chap, #newrail .gap, #newrail button span, #newrail button em { display: none; }
-  #newrail { display: flex; flex-wrap: wrap; align-items: center; }
-  #newrail button { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; } }
+  .rail::before, .rail .rowbar, .steps .chap, .steps .gap, .steps button span, .steps button em { display: none; }
+  .steps { display: flex; flex-wrap: wrap; align-items: center; }
+  .steps button { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; }
+  .lines { grid-template-columns: minmax(0, 1fr); }   /* a field on its side stands up again: the label over its chips */
+  .lines { row-gap: calc(var(--u) * 24); }
+  .plate .field.line > label { height: auto; } .plate .field.line > :not(label) { grid-column: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .plate, .sheet[hidden] .plate, #sheetstage, #sheetstage.on { transform: none; transition: opacity .12s ease; }
   #sheetscrim, #sheetscrim.on { transition: opacity .12s ease, visibility 0s; }
+  #stagebuild svg, #sheetstage b.swap { animation: none; }
   .sheet *, .sheet *::before, .sheet *::after { animation: none !important; transition-duration: .1s !important; } }
 .savewhere { color: var(--accent); font: italic 15px var(--serif); text-align: center; }
 #savelist { max-height: 56vh; overflow: auto; padding-right: 4px; }
@@ -1150,7 +1283,8 @@ body.lean .nn-page { --from: 0px; }
 </div>
 
 <div id="sheetscrim"></div>
-<div id="sheetstage" aria-hidden="true"><b id="stagename"></b><i id="stagecap"></i></div>
+<div id="sheetstage" aria-hidden="true"><b id="stagename"></b><i id="stagecap"></i>
+  <p id="stagebuild" aria-live="off" hidden><svg><use href="#d20"/></svg><span id="mkbuild"></span><em id="mkclock"></em></p></div>
 <div class="sheet" id="narrativesdialog" role="dialog" aria-modal="true" aria-labelledby="narrativestitle" hidden>
   <div class="plate">
     <div class="plate-head"><div class="eyebrow"><i></i>Your archive</div><h1 id="narrativestitle">Narratives</h1><div class="rule"></div></div>
@@ -1232,9 +1366,9 @@ body.lean .nn-page { --from: 0px; }
 <div class="sheet" id="newdialog" role="dialog" aria-modal="true" aria-labelledby="newtitle" hidden>
   <div class="plate">
     <div class="plate-head"><div class="eyebrow"><i></i><span id="neweyebrow"></span></div><h1 id="newtitle">New Narrative</h1><div class="rule"></div></div>
-    <div class="plate-body" id="newsplit">
-      <nav class="rail" aria-label="The steps"><i class="rowbar" id="railbar"></i><ol id="newrail"></ol></nav>
-      <div id="newbody" tabindex="-1"></div>
+    <div class="plate-body split" id="newsplit">
+      <nav class="rail" aria-label="The steps"><i class="rowbar" id="railbar"></i><ol id="newrail" class="steps"></ol></nav>
+      <div id="newbody" class="pagebody" tabindex="-1"></div>
     </div>
     <div class="plate-foot" id="newnav"></div>
   </div>
@@ -1247,6 +1381,28 @@ body.lean .nn-page { --from: 0px; }
       <p>Are you sure?</p>
     </div>
     <div class="plate-foot"><button class="pbtn quiet" data-close>Go back</button><button class="pbtn primary" data-sure>Yes, I am sure</button></div>
+  </div>
+</div>
+<div class="sheet" id="exitdialog" role="alertdialog" aria-modal="true" aria-labelledby="exittitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><h1 id="exittitle">A world is still being built</h1><div class="rule"></div></div>
+    <div class="plate-body">
+      <p id="exitwhat"></p>
+      <p>The game can't close while it does. Stay, or stop the build and exit: what the GM has written so far is kept, and the build is not finished.</p>
+    </div>
+    <div class="plate-foot"><button class="pbtn danger" id="exitstop">Stop the build and exit</button><button class="pbtn primary" id="exitstay">Stay</button></div>
+  </div>
+</div>
+<div class="sheet" id="makedialog" role="dialog" aria-modal="true" aria-labelledby="maketitle" hidden>
+  <div class="plate">
+    <div class="plate-head"><div class="eyebrow"><i></i><span id="makeeyebrow"></span></div><h1 id="maketitle">Character</h1><div class="rule"></div>
+      <button class="pbtn quiet" id="makemenu" title="Your character is kept, and the GM goes on with whatever it's doing">◂ Main menu</button>
+      <div id="sideacts" hidden><button class="pbtn quiet" data-act="settings">Settings</button><button class="pbtn quiet" data-act="fresh" title="Start a fresh GM conversation. Nothing in the narrative changes; the GM rereads its notes.">Fresh conversation</button></div></div>
+    <div class="plate-body split" id="makesplit">
+      <nav class="rail" aria-label="The steps"><i class="rowbar" id="makebar"></i><ol id="makerail" class="steps"></ol></nav>
+      <div class="pagebox"><div id="makebody" class="pagebody" tabindex="-1"></div><i class="pagefade"></i></div>
+    </div>
+    <div class="plate-foot" id="makenav"></div>
   </div>
 </div>
 
@@ -1285,7 +1441,6 @@ body.lean .nn-page { --from: 0px; }
       <div class="composer">
         <div id="arrival" hidden></div>
         <button id="latest" hidden><svg style="width:13px;height:13px;vertical-align:-2px"><use href="#i-down"/></svg> Latest</button>
-        <button id="tomake" class="primary" hidden>Back to the character creator</button>
         <button id="shopbtn" class="primary" hidden title="See what's for sale here, and what they'd buy from you"><svg><use href="#i-shop"/></svg><span id="shopname"></span></button>
         <div class="working" id="working" hidden>
           <svg><use href="#d20"/></svg>
@@ -1385,6 +1540,7 @@ body.lean .nn-page { --from: 0px; }
   </div>
 </div>
 <div id="lightbox" hidden><img alt=""><div></div></div>
+<div id="veil"></div>
 <div id="toast" hidden></div>
 
 <script src="/three.js"></script>
@@ -1392,6 +1548,7 @@ body.lean .nn-page { --from: 0px; }
 const TOKEN = "__GM_TOKEN__";
 const START = __GM_START__;
 const $ = id => document.getElementById(id);
+if (START) { $("veil").style.setProperty("--t", "0s"); $("veil").classList.add("on"); }   // opened straight into a narrative: black from the first frame, until it's known what to show (setVault)
 const WORKING = ["The GM considers", "Dice roll behind the screen", "The world answers", "The page is being written"];
 const ABOUT = ["Who they are", "What they want", "Voice", "Emotional rules", "Background and know-how", "People", "Changed by"];
 // model "" is Claude Code's own choice. What was saved comes with the page, so it knows how to open before it has asked for anything.
@@ -1664,15 +1821,22 @@ function checkPrograms(h, say) {
 }
 
 async function showHome() {
+  const left = !!game, back = $("home").hidden;   // come back from a narrative, not only told to look again; left, from one still in the vault, where the room never went
   game = null;
   stopWorldMusic();
   document.body.classList.remove("gmmode");
-  $("game").hidden = true;
-  const back = $("home").hidden;   // come back from a narrative, not only told to look again
+  $("game").hidden = $("makedialog").hidden = true;
   $("home").hidden = false;
+  if (!PLATES.some(id => !$(id).hidden)) {   // no window is left to put the menu back when it closes
+    $("home").classList.remove("sheeted");
+    $("sheetscrim").classList.remove("on");
+    setStage("home");
+  }
   if (back && menu.live) enterHome();
   startBackdrop();
   const h = await api("home");
+  building = !!h.building;
+  desktop = !!h.desktop;
   if (h.prefs) { Object.assign(prefs, h.prefs, prefs.introSeen ? {introSeen: true} : {}); applyPrefs(); }   // seen, if the intro got that far while this was being asked
   introDone.then(() => { if (!game && !musicWanted) playMenuMusic(); });   // when the window opens, the intro has started it already, as the die lands
   checkPrograms(h);
@@ -1686,7 +1850,7 @@ async function showHome() {
   }
   $("newhint").textContent = h.narratives.length ? "" : "Begin your first story";
   layMenu();
-  focusEntry(back || !menu.items.includes(menu.on) ? menu.items[0] : menu.on, true);   // Continue, or New Narrative where there's nothing to continue
+  focusEntry(back || left || !menu.items.includes(menu.on) ? menu.items[0] : menu.on, true);   // Continue, or New Narrative where there's nothing to continue
   litSpine();
   const had = archive.items[archive.on];   // the archive keeps its place, by the folder
   archive.items = h.narratives;
@@ -1696,6 +1860,7 @@ async function showHome() {
 }
 
 const HOME_DIALOGS = ["narrativesdialog", "newdialog", "settingsdialog", "aboutdialog"];
+const PLATES = [...HOME_DIALOGS, "makedialog"];   // every window on the plate: the menu's, and the character creator, which a narrative opens
 const closeHomeDialogs = () => HOME_DIALOGS.forEach(id => $(id).hidden = true);
 for (const id of HOME_DIALOGS) $(id).addEventListener("click", e => { if (e.target.closest("[data-close]")) $(id).hidden = true; });
 const openNew = () => { nnAsk = false; $("newdialog").hidden = false; renderNew(true); };
@@ -1703,11 +1868,41 @@ $("menunarratives").onclick = () => $("narrativesdialog").hidden = false;
 $("menunew").onclick = openNew;
 $("menusettings").onclick = () => $("settingsdialog").hidden = false;
 $("menuabout").onclick = () => { $("aboutdialog").hidden = false; document.querySelector(".about").scrollTop = 0; };
-$("menuexit").onclick = guard(async () => {
-  await api("exit");
+// Exit, from the menu or by the window's own X (the desktop window calls askExit for that). While the GM is building a world
+// the game doesn't close: it asks whether to stay, or to stop the build and exit. building is whether one is being built,
+// as far as the page knows; in a browser tab, which can't be kept from closing, it has the browser ask as well.
+let building = false, desktop = true, exitBack = null;
+const leave = guard(async stop => {
+  const r = await api("exit", {stop: !!stop});
+  if (r.building) return askExit(r.building);
+  building = false;
+  $("exitdialog").hidden = true;
   $("farewell").hidden = false;   // only seen in a browser tab, which a page can't always close itself
   window.close();
 });
+function askExit(names) {
+  if (!$("exitdialog").hidden) return;
+  const name = names && names.length === 1 && names[0];
+  $("exitwhat").textContent = name ? `The GM is still building the world of ${name}.` : "The GM is still building a world.";
+  exitBack = document.activeElement;
+  $("exitdialog").hidden = false;
+  sfx("deny");
+  $("exitstay").focus();
+}
+function stayHere() {
+  $("exitdialog").hidden = true;
+  if (exitBack && exitBack.isConnected) exitBack.focus({preventScroll: true});
+}
+$("menuexit").onclick = () => leave(false);
+$("exitstay").onclick = stayHere;
+$("exitstop").onclick = () => leave(true);
+$("exitdialog").addEventListener("keydown", e => {   // the keys stay with the question: Tab between its two answers, and Esc stays
+  if (e.key === "Tab") { e.preventDefault(); (document.activeElement === $("exitstay") ? $("exitstop") : $("exitstay")).focus(); }
+  if (e.key === "Escape") stayHere();
+  e.stopPropagation();
+});
+addEventListener("focusin", e => { if (!$("exitdialog").hidden && !$("exitdialog").contains(e.target)) $("exitstay").focus(); });
+addEventListener("beforeunload", e => { if (building && !desktop) e.preventDefault(); });
 
 // The main menu's music: one track at a time, looping, only while the home screen is up.
 // A track is decoded whole and looped sample to sample, because an <audio> element leaves a gap each time around.
@@ -2881,10 +3076,12 @@ function startBackdrop() {
   const frame = ms => {
     if ($("home").hidden || document.hidden) { backdropOn = false; return; }
     if (veiled) die.input = ms / 1000;   // it holds its face until the menu is there to be used
+    const eased = !!game && intro.began === null;   // behind the creator, for as long as a world takes to build: every other frame is enough
+    if (eased && drawn && ms - stage.last < 30) return requestAnimationFrame(frame);
     if (!veiled || !drawn) {   // once even so, so the first frame the player sees isn't the one that sets everything up
       const took = ms - stage.last;
       stage.last = ms;
-      if (!veiled && took > 0 && took < 200) {   // a pause is no measure of the machine, and one stumble isn't much of one
+      if (!veiled && !eased && took > 0 && took < 200) {   // a pause is no measure of the machine, and one stumble isn't much of one
         stage.spent += Math.min(took, 50);
         if (++stage.frames === 90) {
           if (stage.spent / 90 > 22 && stage.coarse < 4) stage.coarse++;
@@ -3038,7 +3235,7 @@ function sfx(name, step) {
 // that the menu is still coming in; armed, that the focus has been moved since; held, a chosen entry waiting out the die's roll.
 const menu = {items: [], on: null, live: false, entering: false, armed: false, timer: 0, held: null, passing: false, went: 0};
 const LEAVES = ["menucontinue", "menunew"];   // these leave the home screen, so the die gets a moment to roll first
-const menuOpen = () => menu.live && !$("home").hidden && !sheets.on && !document.querySelector(".shade:not([hidden]), .sheet:not([hidden]), #farewell:not([hidden])");
+const menuOpen = () => menu.live && !game && !$("home").hidden && !sheets.on && !document.querySelector(".shade:not([hidden]), .sheet:not([hidden]), #farewell:not([hidden])");
 
 function layMenu() {   // which entries there are: Continue comes and goes. The first of them is the tall one when it has a second line.
   menu.items = [...$("mainmenu").querySelectorAll("button:not([hidden])")];
@@ -3079,8 +3276,8 @@ function focusEntry(b, quiet) {
   }
 }
 
-function rollDie() {   // an entry was chosen: the die is thrown, the ring on the floor sends out a ripple, and it lands back on its face
-  sfx("clack");
+function rollDie(quiet) {   // an entry was chosen: the die is thrown, the ring on the floor sends out a ripple, and it lands back on its face
+  if (!quiet) sfx("clack");
   if (STILL) return;
   const way = Math.random() < .5 ? -1 : 1, now = performance.now() / 1000;
   die.spin[0] -= 7 + Math.random() * 3; die.spin[1] += way * (6 + Math.random() * 3); die.spin[2] += way * 2;
@@ -3165,14 +3362,16 @@ $("mainmenu").addEventListener("click", e => {
 // closed by its hidden attribute, as it always was, from wherever that is done; watching the attribute, syncSheets does the
 // rest: the menu steps aside, the die goes to the stage and turns to the window's face, the window's name goes under it, the
 // keys are kept inside the window, and all of it is put back when the window closes. A later window needs only its markup
-// and a line here: its name, the line under it, and the face the die shows.
+// and a line here: its name, the line under it, and the face the die shows. The character creator is one too, opened by a
+// narrative that isn't set up yet and not by the menu ("making the character"): its name is the character's, as it's typed.
 const SHEETS = {
   settingsdialog: {name: "Settings", says: "Tune the room.", face: 8},
   narrativesdialog: {name: "Narratives", says: "Pick up where you left off.", face: 12},
   newdialog: {name: "New Narrative", says: () => NEW_SAYS[NEW_STEPS[nn.step][0]], face: () => nn.step === NEW_STEPS.length - 1 ? 20 : nn.step + 1},   // it starts on a 1 and ends on a natural 20
-  aboutdialog: {name: "About", says: "What this is.", face: 5}};
+  aboutdialog: {name: "About", says: "What this is.", face: 5},
+  makedialog: {name: () => game && game.make && mkText("name") || "Your Character", says: () => game && MAKE_SAYS[game.page === "make" ? game.make.at : game.page] || "", face: () => game && game.face || 1}};
 // The keys a window answers to, by what they do. A gamepad's glyphs would be put in here.
-const KEYS = {choose: [["↑", "↓"], "Choose"], change: [["←", "→"], "Change"], open: [["Enter"], "Continue"], next: [["Enter"], "Next"], back: [["Esc"], "Back"]};
+const KEYS = {choose: [["↑", "↓"], "Choose"], change: [["←", "→"], "Change"], open: [["Enter"], "Continue"], next: [["Enter"], "Next"], back: [["Esc"], "Back"], step: [["PgUp", "PgDn"], "Step"]};
 const keyHints = (...acts) => acts.filter(Boolean).map(a => `<span>${KEYS[a][0].map(k => `<kbd>${k}</kbd>`).join("")}${KEYS[a][1]}</span>`).join("");
 for (const el of document.querySelectorAll("[data-keys]")) el.innerHTML = keyHints(...el.dataset.keys.split(","));
 const plain = () => STILL || document.body.classList.contains("lean");   // no flourishes: less motion was asked for, or the machine can't keep up
@@ -3191,8 +3390,8 @@ function flash(el) {   // a ring of light, once, round what was just chosen
   el.classList.add("flash");
   setTimeout(() => el.classList.remove("flash"), 260);
 }
-function rove(root) {   // one tab stop to a group of chips or cards: the one that's chosen, or the first. The arrows move inside it.
-  for (const group of root.querySelectorAll(".chips, .choice")) {
+function rove(root) {   // one tab stop to a group of chips, cards or stones: the one that's chosen, or the first. The arrows move inside it.
+  for (const group of root.querySelectorAll(".chips, .choice, .stones")) {
     const all = [...group.querySelectorAll("button")], stop = all.find(b => b.classList.contains("on")) || all[0];
     for (const b of all) b.tabIndex = b === stop ? 0 : -1;
   }
@@ -3204,22 +3403,30 @@ function aimDie(face) {
   d20.pose(face, dieTilt(die.last), die.turn);   // for less motion it doesn't roll: it is found showing the face
   if (!$("home").hidden && !veiled) drawBackdrop(0);
 }
+function stageName() {   // a name too long for the stage is set smaller, and past that is cut short. It can be the player's own text.
+  const s = SHEETS[sheets.on], name = s ? typeof s.name === "function" ? s.name() : s.name : "";
+  $("stagename").textContent = name;
+  $("stagename").classList.toggle("long", name.length > 16);
+}
 function showStage() {   // the open window's name under the die, and its face on it
   const s = SHEETS[sheets.on];
   if (!s) return;
-  $("stagename").textContent = s.name;
+  stageName();
   $("stagecap").textContent = typeof s.says === "function" ? s.says() : s.says;
   aimDie(typeof s.face === "function" ? s.face() : s.face);
+  $("stagebuild").hidden = true;   // the line on what the GM is building is the creator's
+  if (sheets.on === "makedialog" && game && game.state) makeBuild();
 }
 
 function syncSheets() {
-  const on = HOME_DIALOGS.find(id => !$(id).hidden) || null, top = on && !$("suredialog").hidden ? "suredialog" : on, was = sheets.on, wasTop = sheets.top;
+  const on = PLATES.find(id => !$(id).hidden) || null, top = on && !$("suredialog").hidden ? "suredialog" : on, was = sheets.on, wasTop = sheets.top;
   if (on === was && top === wasTop) return;
-  const home = !$("home").hidden;
+  if (!on && game && game.vault) return void ($("makedialog").hidden = false);   // Settings, opened from the creator, gives the plate back to it
+  const home = !$("home").hidden, held = home && !!game;   // held: a narrative has the room, on its way into the game, and the menu doesn't come back
   if (!was) sheets.adrift = !home;
   Object.assign(sheets, {on, top});
-  $("home").classList.toggle("sheeted", !!on);
-  $("sheetscrim").classList.toggle("on", !!on);
+  $("home").classList.toggle("sheeted", !!on || held);
+  $("sheetscrim").classList.toggle("on", !!on || held);
   $("sheetstage").classList.toggle("on", !!on && !sheets.adrift);
   if (on) {
     for (const el of [$("sheetscrim"), $(on), $("suredialog")]) el.classList.toggle("adrift", sheets.adrift);
@@ -3240,17 +3447,22 @@ function syncSheets() {
     else if (on === "settingsdialog") { applyPrefs(); const first = settingRows()[0]; atSetting(first, true); first.focus({preventScroll: true}); $("settingsbody").scrollTop = 0; }
     else if (on === "narrativesdialog") { drawArchive(); (archive.items.length ? $("archcol") : $("archnew")).focus({preventScroll: true}); }
     else if (on === "aboutdialog") document.querySelector(".about").focus({preventScroll: true});
+    else if (on === "makedialog") {
+      if (game && game.page) placeMake();   // it may have been drawn while Settings was over it
+      if (!$(on).contains(document.activeElement)) ($("makesay") || $("makebody")).focus({preventScroll: true});
+    }
     if (on !== was) [...$(on).querySelectorAll(".rise")].forEach((n, i) => n.style.setProperty("--n", Math.min(i, 7)));   // up to eight, one after another
   } else {
     $("suredialog").hidden = true;
-    if (home) {   // back to the menu: the die turns to the entry that opened the window, and the keys are the menu's again
+    if (held) $("stagebuild").hidden = true;
+    else if (home) {   // back to the menu: the die turns to the entry that opened the window, and the keys are the menu's again
       sfx("back");
       if (menu.on) { aimDie(+menu.on.dataset.face); menu.on.focus({preventScroll: true}); }
     } else if (sheets.adrift) { sfx("back"); $("more").focus(); }   // Settings, over a narrative. (Otherwise the window has left for a narrative.)
   }
-  setStage(on && !sheets.adrift ? "sheet" : "home");
+  setStage(on && !sheets.adrift || held ? "sheet" : "home");
 }
-for (const id of [...HOME_DIALOGS, "suredialog"]) new MutationObserver(syncSheets).observe($(id), {attributes: true, attributeFilter: ["hidden"]});
+for (const id of [...PLATES, "suredialog"]) new MutationObserver(syncSheets).observe($(id), {attributes: true, attributeFilter: ["hidden"]});
 
 // Esc steps back out of whatever is innermost: a question, then a step of a new narrative, then the window. True if it did.
 function sheetBack() {
@@ -3258,11 +3470,12 @@ function sheetBack() {
   if (sheets.top === "suredialog") $("suredialog").hidden = true;
   else if (sheets.on === "narrativesdialog" && archive.asking) askRemove(false);
   else if (sheets.on === "newdialog") nnBack();
+  else if (sheets.on === "makedialog") makeBack();
   else $(sheets.on).hidden = true;
   return true;
 }
 addEventListener("keydown", e => {   // Tab goes round inside the open window, and never out of it
-  if (e.key !== "Tab" || !sheets.top) return;
+  if (e.key !== "Tab" || !sheets.top || !$("exitdialog").hidden) return;
   const el = $(sheets.top), stops = tabStops(el), at = stops.indexOf(document.activeElement);
   if (!stops.length) return e.preventDefault();
   if (el.contains(document.activeElement) && (e.shiftKey ? at !== 0 : at !== stops.length - 1)) return;
@@ -3270,12 +3483,13 @@ addEventListener("keydown", e => {   // Tab goes round inside the open window, a
   stops[e.shiftKey ? stops.length - 1 : 0].focus();
 });
 addEventListener("focusin", e => {   // and a focus that has got out some other way is brought back in
-  if (sheets.top && !$(sheets.top).contains(e.target) && !e.target.closest("#toast")) (tabStops($(sheets.top))[0] || document.body).focus();
+  if (sheets.top && $("exitdialog").hidden && !$(sheets.top).contains(e.target) && !e.target.closest("#toast")) (tabStops($(sheets.top))[0] || document.body).focus();
 });
 addEventListener("resize", () => {   // the bars are placed by measuring
   if (sheets.on === "settingsdialog") { const row = $("settingsbody").querySelector(".prow.at"); if (row) moveBar($("settingsbar"), row); }
   if (sheets.on === "narrativesdialog") pickArchive(archive.on, true);
   if (sheets.on === "newdialog") placeRail();
+  if (sheets.on === "makedialog" && game) placeMake();
 });
 
 // -- settings: rows, each with one control. Up and down move between the rows, and left and right change the one in focus. --
@@ -3605,13 +3819,16 @@ function renderNew(focus) {
   else body.focus({preventScroll: true});
 }
 
-function placeRail() {   // the thread through the steps' diamonds, lit down to this one, and the bar beside it
-  const rail = $("newrail").parentNode, gems = [...$("newrail").querySelectorAll("button i")], mid = g => g.offsetTop + g.offsetHeight / 2, on = gems[nn.step];
-  if (!on || !on.offsetParent) return;
+// The thread through the steps' diamonds, lit down to this one, and the bar beside it. The character creator's list of steps is
+// placed by it too; there, on the GM's side, no step is this one, and there is no bar.
+function placeRail(list = $("newrail"), bar = $("railbar"), at = nn.step) {
+  const rail = list.parentNode, gems = [...list.querySelectorAll("button i")], mid = g => g.offsetTop + g.offsetHeight / 2, on = gems[at];
+  if (!gems.length || !gems[0].offsetParent) return;
   rail.style.setProperty("--t0", mid(gems[0]) + "px");
   rail.style.setProperty("--t1", mid(gems[gems.length - 1]) + "px");
-  rail.style.setProperty("--lit", mid(on) - mid(gems[0]) + "px");
-  moveBar($("railbar"), on.parentNode);
+  rail.style.setProperty("--lit", (on ? mid(on) - mid(gems[0]) : 0) + "px");
+  if (!on) return void (bar.style.opacity = 0);
+  moveBar(bar, on.parentNode);
   const row = on.parentNode, air = row.offsetHeight;   // this step always in sight, with a row of air; the list and nothing else is scrolled
   if (row.offsetTop - air < rail.scrollTop) rail.scrollTop = row.offsetTop - air;
   else if (row.offsetTop + row.offsetHeight + air > rail.scrollTop + rail.clientHeight) rail.scrollTop = row.offsetTop + row.offsetHeight + air - rail.clientHeight;
@@ -3699,7 +3916,7 @@ $("newdialog").addEventListener("keydown", e => {
     e.preventDefault();
     return nnGo(nn.step + 1);
   }
-  const group = t.matches("button") && t.closest(".chips, .choice, .nn-sum, #newrail");
+  const group = t.matches("button") && t.closest(".chips, .choice, .nn-sum, .steps");
   if (group && (back || key === "ArrowRight" || key === "ArrowDown")) {   // the arrows move among a group's choices
     e.preventDefault();
     const all = [...group.querySelectorAll("button")];
@@ -3780,13 +3997,25 @@ async function createNarrative() {
     : "Built on an existing setting: " + setting;
   const size = SIZE_NAMES[nnSize()] + (nnSizes() === SIZES ? "" : ` (${SPACE_SIZES[nnSize()][0].toLowerCase()})`);
   const narration = nn.person === "second" ? "Second person (\"you\")." : "Third person limited.";
+  const text = `Set up this narrative.\n\nGenre: ${genre}\nTone: ${tone || "none given; it's yours to decide."}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nSize: ${size}.\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`;
   sfx("clack");
   nnBusy = true;
   nnNav();
-  const r = await api("create", {name: title, parent: nnText("parent"), person: nn.person}).finally(() => nnBusy = false).catch(e => { nnNav(); throw e; });
+  let path, sent;
+  const asked = nnSize();
+  try {
+    path = (await api("create", {name: title, parent: nnText("parent"), person: nn.person})).path;
+    // Sent before the window turns to the narrative, so it opens on the GM already building: this plate gives way to the
+    // character's, and the room never leaves. If it can't be sent the folder is still made, and Begin setup, there, sends it.
+    sent = await api("send", {path, text}).then(() => true, e => { toast(e.message); return false; });
+  } finally {
+    nnBusy = false;
+    if (!path) nnNav();
+  }
   Object.assign(nn, blankNew(), {parent: nn.parent});   // the next one starts clean, in the same folder
-  openGame(r.path);
-  await send(`Set up this narrative.\n\nGenre: ${genre}\nTone: ${tone || "none given; it's yours to decide."}\nThe world: ${world}\nIn the world: ${has || "nothing named; it's yours to decide."}\nSize: ${size}.\nThe story: ${story || "none given; it's yours to decide."}\nThemes: ${themes || "none given; they're yours to decide."}\nContent: ${content}\nNarration: ${narration} It's already in the Style Guide.\nTitle: ${title || "none yet; choose one."}`, true);
+  openGame(path);
+  game.size = asked;
+  if (sent) game.sent = text; else game.setup = text;
 }
 $("addexisting").onclick = guard(async () => {
   const r = await api("pick-folder", {});
@@ -3797,23 +4026,23 @@ $("addexisting").onclick = guard(async () => {
 
 // ---- game -------------------------------------------------------------------
 
-let game = null;   // the narrative open in the window; pinned is an earlier session being reread, or null for the latest
-let timer;
+// The narrative open in the window; pinned is an earlier session being reread, or null for the latest. What the window shows
+// for it waits for its first state (vault is null until then): the game screen, or, for one not yet set up, the vault.
+let game = null;
+let timer, beat = 0;   // beat: which tick is the latest. One overtaken while it waited doesn't go on polling beside it
 
 function openGame(path) {
   game = {path, pinned: null, have: {}, texts: {}, channel: [], state: null, tab: "sheet", mode: "act",
           shownParas: 0, shownLog: "", seenChannel: null, art: null, wasBusy: false, jump: false,
           open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null, ended: null, loaded: false,
-          make: null, madeOnce: false, talk: false, makeShown: "", makeStep: "", cart: null, shoptab: "buy", shopSeen: null};
-  closeHomeDialogs();
+          make: null, madeOnce: false, talk: false, makeShown: "", makeStep: "", cart: null, shoptab: "buy", shopSeen: null,
+          vault: null, page: "", can: false, foot: null, face: 0, stopAsk: false, toWorld: "", readyTill: 0};
   stopMenuMusic();
   api("opened", {path}).catch(() => {});   // so the main menu's Continue comes back to this one
-  $("home").hidden = true;
-  $("game").hidden = false;
   $("story").innerHTML = "";
   $("pane").innerHTML = "";
   $("input").value = "";
-  $("latest").hidden = $("tomake").hidden = $("shopbtn").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = $("summarydialog").hidden = $("meantdialog").hidden = $("shopdialog").hidden = true;
+  $("latest").hidden = $("shopbtn").hidden = $("backdrop").hidden = $("arrival").hidden = $("leveldialog").hidden = $("summarydialog").hidden = $("meantdialog").hidden = $("shopdialog").hidden = true;
   document.body.classList.remove("gmmode");
   $("modeact").classList.add("on");
   $("modegm").classList.remove("on");
@@ -3824,15 +4053,58 @@ function openGame(path) {
 
 async function tick() {
   if (!game) return;
-  const mine = game;
+  const mine = game, my = ++beat;
   try {
     const s = await api("state", {path: mine.path, viewing: mine.pinned, have: mine.have});
-    if (game !== mine) return;
+    if (game !== mine || my !== beat) return;
     apply(s);
   } catch (e) {
-    if (game === mine) toast(e.message);
+    if (game !== mine || my !== beat) return;
+    toast(e.message);
+    if (mine.vault === null) {   // it never opened: the main menu is still there
+      closeHomeDialogs();
+      veil(false, .2);
+      return showHome();
+    }
   }
-  if (game === mine) timer = setTimeout(tick, mine.state && mine.state.busy ? 1000 : 2500);
+  if (game === mine && my === beat) timer = setTimeout(tick, mine.state && mine.state.busy ? 1000 : 2500);
+}
+
+// Before the first session, the player is in the vault; the game screen is for play. A narrative that isn't set up keeps the
+// home screen's room, behind the plate the character is made on (#makedialog, "making the character"), and the game screen
+// stays away. on is whether this one is there. When it has been set up the plate sinks, the room goes to black, and the game
+// screen comes up out of it; the die goes nowhere, it is gone with the room.
+const veil = (on, secs) => { $("veil").style.setProperty("--t", secs + "s"); $("veil").classList.toggle("on", on); };
+function setVault(on) {
+  const mine = game, first = game.vault === null;
+  game.vault = on;
+  const play = () => {   // the game screen takes the window
+    if (game !== mine || mine.vault) return veil(false, .2);
+    $("home").hidden = true;
+    $("game").hidden = false;
+    $("home").classList.remove("sheeted");
+    $("sheetscrim").classList.remove("on");
+    setStage("home");
+    veil(false, first ? .2 : .4);
+  };
+  if (on) {
+    if (sheets.on === "newdialog") rollDie(true);   // from Begin building, the plates change places and the die is thrown from its 20
+    $("makedialog").hidden = false;
+    closeHomeDialogs();
+    $("game").hidden = true;
+    $("home").hidden = false;
+    $("home").classList.add("settled");
+    syncSheets();   // now, not when the change is noticed: the keys are the creator's before its first page is drawn
+    startBackdrop();
+    // opened straight into it, there was no intro to make the room ready: it and the plate come up out of black together
+    if ($("veil").classList.contains("on")) sceneReady.then(() => setTimeout(veil, 300, false, .4));
+    return;
+  }
+  $("makedialog").hidden = true;
+  closeHomeDialogs();
+  $("game").style.animationDuration = first ? "" : STILL ? ".12s" : "0s";
+  if (first || STILL) return play();
+  setTimeout(() => { veil(true, .4); setTimeout(play, 400); }, 220);
 }
 
 function apply(s) {
@@ -3846,6 +4118,7 @@ function apply(s) {
 
   $("title").textContent = s.name;
   const play = s.set_up;
+  if (game.vault !== !play) setVault(!play);
   $("modes").hidden = !play;
   const between = play && !s.open_session;   // no session open: the GM opens the next one, and nothing is played until it has
   $("newsession").hidden = !between || !!creation(game.texts.sheet || "");
@@ -3866,7 +4139,8 @@ function apply(s) {
   document.querySelector('[data-tab="gm"]').hidden = !play;
   if (!play && game.tab === "gm") setTab("sheet");
 
-  if (!play && s.busy) playWorldMusic(); else stopWorldMusic();   // the GM is building the world
+  building = !play && s.busy;
+  if (building) playWorldMusic(); else stopWorldMusic();   // the GM is building the world
   $("working").hidden = !s.busy;
   if (s.busy) {
     const t = s.elapsed;
@@ -3906,24 +4180,23 @@ function apply(s) {
   const early = !play && s.busy && nobody && !game.created && (!made || game.early);
   game.early = early;
   if ("draft" in s) {   // a character half made when the window last closed
-    if ((made || early) && !game.make) game.make = s.draft;
-    else if (!made && !nobody && s.draft) api("draft", {path: game.path, draft: null}).catch(() => {});
+    game.kept = s.draft;
+    if (!made && !nobody && s.draft) { game.kept = null; api("draft", {path: game.path, draft: null}).catch(() => {}); }
     delete s.draft;
   }
+  if ((made || early) && !game.make && game.kept) { game.make = game.kept; game.kept = null; }   // on whichever tick the creator first opens: the GM may have stopped and started again since the window did
   if (!made && !early && game.make && (game.created || !nobody)) {   // the GM has the character now
     game.make = null;
     game.talk = game.madeOnce = false;
     api("draft", {path: game.path, draft: null}).catch(() => {});
   }
   if (finished && made && game.madeOnce) game.talk = true;   // the GM answered with the creator still open: show what it said
-  const making = (early || !!made && !s.busy) && !game.talk && !game.pinned;
-  $("story").classList.toggle("making", making);
-  $("story").parentElement.classList.toggle("making", making);
-  $("tomake").hidden = !(early || made && !s.busy) || !game.talk;
-  if (making) renderMaker(early ? EARLY : made); else if (play) renderStory(); else renderTalk($("story"), true);
-  if (making && early) {   // the creator's own page stays put between ticks, so its line on the build is kept current here
-    $("mkbuild").textContent = (s.building || "The GM is at work on the world") + "…";
-    $("mkclock").textContent = Math.floor(s.elapsed / 60) + ":" + String(s.elapsed % 60).padStart(2, "0");
+  if (play) renderStory();
+  else {   // in the vault: the creator when there's one to show, the character held while the GM writes them in, or the GM's side
+    const c = early ? EARLY : made;
+    game.can = !!c && (early || !s.busy);   // there's a creator to go to: the GM isn't at work on what it offers
+    game.handed = !!made && !!game.make && !!game.created && s.busy;   // or the finished character, held while the GM writes them in
+    showMake(game.talk ? "side" : game.can ? "make" : game.handed ? "handing" : "side", c, s);
   }
   const shop = play && !made && !game.pinned && shopOf(game.texts.sheet || "");
   $("shopbtn").hidden = !shop;
@@ -4043,17 +4316,17 @@ function showLatest() {
 $("story").addEventListener("scroll", showLatest);
 $("latest").onclick = () => $("story").scrollTo({top: $("story").scrollHeight, behavior: "smooth"});
 
-function renderTalk(el, main) {
-  const nearEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 200;
+function renderTalk(el, main, scroller = el) {   // main: the conversation before play, in the creator's window, whose page is what scrolls
+  const nearEnd = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 200;
   const count = el.querySelectorAll(".msg").length;
   if (count === game.channel.length && count) return;
   if (!game.channel.length) {
     if (main && $("begin")) return;
     el.innerHTML = main
       ? `<div class="hint"><svg><use href="#d20"/></svg>This narrative hasn't been built yet.<br>The GM will ask what kind of narrative you want,
-         build the world, and help you make your character.<br><button class="primary" id="begin">Begin setup</button></div>`
+         build the world, and help you make your character.<br><button class="pbtn primary" id="begin">Begin setup</button></div>`
       : `<div class="empty">Nothing yet. Corrections, questions, and the GM's answers show up here.</div>`;
-    if (main) $("begin").onclick = guard(() => send("Set up this narrative.", true));
+    if (main) $("begin").onclick = guard(() => send(game.setup || "Set up this narrative.", true));
     return;
   }
   const talk = document.createElement("div");
@@ -4067,7 +4340,7 @@ function renderTalk(el, main) {
     talk.append(d);
   }
   el.replaceChildren(talk);
-  if (nearEnd || !count) el.scrollTop = el.scrollHeight;
+  if (nearEnd || !count) scroller.scrollTop = scroller.scrollHeight;
   if (main || game.tab === "gm") { game.seenChannel = game.channel.length; $("gmbadge").hidden = true; }
 }
 
@@ -4635,10 +4908,37 @@ const EARLY = {key: "early", early: true, peoples: [], walks: [], homes: [], ski
 const EARLY_STEPS = ["identity", "looks", "nature", "attributes"];
 const unnamed = sheet => { const m = sheet.match(/^\*\*Name:\*\*[ \t]*(.*)$/m); return !m || /^(unknown|\(|$)/i.test(m[1].trim()); };   // nobody's on the sheet yet
 
+// The steps, all of them and in order; the chapters the window lists them in, with Review after them; the line under the die
+// at each, on the GM's side, and once the character has gone to the GM; and the step each line of the finished character
+// goes back to.
+const MAKE_STEPS = [["world", "The world"], ["identity", "Identity"], ["looks", "Looks"], ["origins", "Origins"], ["nature", "Nature"], ["attributes", "Attributes"],
+  ["skills", "Skills"], ["talents", "Talents"], ["review", "Review"]];
+const MAKE_CHAPTERS = [["What they know", ["world"]], ["Who they are", ["identity", "looks", "origins", "nature"]], ["What they can do", ["attributes", "skills", "talents"]]];
+const MAKE_SAYS = {world: "What they know going in.", identity: "Who are they?", looks: "What a stranger sees.", origins: "The life behind them.", nature: "How they think, and talk.",
+  attributes: "What they're made of.", skills: "What life has taught them.", talents: "What only they can do.", review: "Ready to step in.", side: "Across the table.", handing: "Into the world."};
+const MAKE_ROWS = {Name: "identity", Gender: "identity", Age: "identity", People: "identity", Looks: "looks", "Walk of life": "origins", From: "origins", "Their story": "origins",
+  "People who matter": "origins", "Always on them": "origins", "Who they are": "nature", "How they talk": "nature", "When scared": "nature", "When angry": "nature",
+  "What they want": "nature", "Would never": "nature", Also: "nature", Attributes: "attributes", Skills: "skills", Talents: "talents", "A talent of their own": "talents"};
+const RANK_NAMES = ["untrained", "familiar", "trained", "skilled", "expert", "master"];   // Core Rules, "Skills"
+const TO_PLACE = ["All placed", "One left", "Two left", "Three left", "Four left", "Five left", "Six left"];
+
 function makerSteps(c) {
-  return [["world", "The world"], ["identity", "Identity"], ["looks", "Looks"], ["origins", "Origins"], ["nature", "Nature"], ["attributes", "Attributes"],
-          ["skills", "Skills"], ["talents", "Talents"], ["review", "Review"]]
-    .filter(([id]) => c.early ? EARLY_STEPS.includes(id) : id === "world" ? mkWorld() : id === "skills" ? c.skills.length : true);
+  return MAKE_STEPS.filter(([id]) => c.early ? EARLY_STEPS.includes(id) : id === "world" ? mkWorld() : id === "skills" ? c.skills.length : true);
+}
+// The steps as the window lists them. While the world is being built, the ones that wait for it are listed too, sealed; they
+// count in the step's number, so it doesn't jump about when they open. (Skills is listed on the guess that the world has some.)
+const makeRail = c => c.early ? MAKE_STEPS.filter(([id]) => id !== "world").map(([id, title]) => ({id, title, sealed: !EARLY_STEPS.includes(id)}))
+  : makerSteps(c).map(([id, title]) => ({id, title}));
+const makeOpen = c => makeRail(c).filter(r => !r.sealed);
+const makeC = () => game.early ? EARLY : creation(game.texts.sheet || "");
+
+function makeAnswer(id) {   // what a step was answered with, in a word or two, for beside its name in the list of steps. GM: it's left to the GM.
+  const m = game.make, placed = Object.keys(m.attrs).length, spent = sum(m.ranks), own = m.talents.length + (mkText("talentOwn") ? 1 : 0);
+  const looks = ["height", "build", "hairLength", "hairColor", "eyes", "skin"].filter(k => (k !== "hairColor" || m.hairLength !== "Bald") && mkVal(k)).length + (mkText("notice") ? 1 : 0);
+  return {world: "Read", identity: mkText("name"), looks: looks ? looks + " chosen" : "", origins: mkVal("walk").trim(),
+    nature: m.traits.length ? m.traits[0] + (m.traits.length > 1 ? ", +" + (m.traits.length - 1) : "") : "",
+    attributes: placed === ATTRS.length ? "All placed" : placed ? `${placed} of ${ATTRS.length}` : "GM",
+    skills: spent ? `${spent} of ${START_RANKS}` : "GM", talents: own ? `${own} of ${START_TALENTS}` : "GM"}[id] || "";
 }
 
 function mkField(label, hint, inner) {
@@ -4647,37 +4947,45 @@ function mkField(label, hint, inner) {
 const mkInput = (key, label, hint, ghost) => mkField(label, hint, `<input data-mk="${key}" value="${esc(game.make[key] || "")}" placeholder="${esc(ghost || "")}">`);
 const mkArea = (key, label, hint, ghost) => mkField(label, hint, `<textarea data-mk="${key}" placeholder="${esc(ghost || "")}">${esc(game.make[key] || "")}</textarea>`);
 
-function mkPick(key, label, hint, options, o = {}) {   // buttons to pick from: one, or up to o.max; o.other adds a box for what isn't listed
-  const m = game.make, has = v => o.max ? (m[key] || []).includes(v) : m[key] === v;
+// Buttons to pick from: one, or up to o.max, which the label then counts. o.other adds a box for what isn't listed; o.cards
+// makes them cards, so many across; o.line lays the label beside them.
+function mkPick(key, label, hint, options, o = {}) {
+  const m = game.make, many = o.max ? m[key] || [] : null, has = v => many ? many.includes(v) : m[key] === v, full = many && many.length >= o.max;
   const button = opt => {
-    const name = opt.name || opt, attrs = `data-pick="${key}" data-v="${esc(name)}"${o.max ? ` data-max="${o.max}"` : ""}${has(name) ? ' class="on"' : ""}`;
-    return o.cards ? `<button ${attrs}><b>${esc(name)}</b>${opt.text ? `<span>${inline(opt.text)}</span>` : ""}</button>` : `<button ${attrs}>${esc(name)}</button>`;
+    const name = opt.name || opt, on = has(name);
+    const attrs = `data-pick="${key}" data-v="${esc(name)}"${o.max ? ` data-max="${o.max}"` : ""} aria-pressed="${on}"${on ? ' class="on"' : full ? ' class="full"' : ""}`;
+    return o.cards ? `<button ${attrs}><i class="gem"></i><b>${esc(name)}</b>${opt.text ? `<span>${inline(opt.text)}</span>` : ""}${
+      opt.skills ? `<span class="warn trains">Teaches:${opt.skills.map(esc).join(" · ")}</span>` : ""}</button>` : `<button ${attrs}>${esc(name)}</button>`;
   };
   const all = options.concat(o.other ? [{name: OTHER, text: "In your own words"}] : []);
-  return mkField(label, hint, `<div class="${o.cards ? "choice" : "chips"}">${all.map(button).join("")}</div>`
-    + (o.other && has(OTHER) ? `<input data-mk="${key}Other" value="${esc(m[key + "Other"] || "")}" placeholder="${esc(o.other)}">` : ""));
+  return `<div class="field${o.line ? " line" : ""}"><label>${label}${many ? `<span class="count" aria-live="polite">${many.length} of ${o.max}</span>` : hint ? `<span>${hint}</span>` : ""}</label>
+    <div class="${o.cards ? "choice " + o.cards : "chips close"}" role="group" aria-label="${esc(label)}">${all.map(button).join("")}</div>${
+    o.other && has(OTHER) ? `<input data-mk="${key}Other" value="${esc(m[key + "Other"] || "")}" placeholder="${esc(o.other)}">` : ""}</div>`;
 }
+const mkPurse = (label, count, note) => `<div class="mk-purse" id="mkpurse"><b>${label}</b><span class="gems" aria-hidden="true">${"<i></i>".repeat(count)}</span>${note ? `<em>${note}</em>` : ""}<strong aria-live="polite"></strong></div>`;
 
 const MAKER = {
   world: () => `<h2>The world</h2><p class="lede">What your character knows going in. It stays in the Journal, under World.</p><div class="md">${md(mkWorld())}</div>`,
 
   identity: c => `<h2>Identity</h2><p class="lede">Who is your character?</p>
-    <div class="mk-pair">${mkInput("name", "Name", c.early ? "or wait to see what names the world has" : "")}${mkInput("aka", "Also called", "optional", "A nickname, a title")}</div>
-    ${mkPick("gender", "Gender", "", ["Male", "Female", "Nonbinary"], {other: "Their gender, in your words"})}
-    <div class="mk-pair">${mkPick("age", "Age", "", ["Young", "Adult", "Middle-aged", "Old"])}${mkInput("years", "In years", "optional", "34")}</div>
-    ${c.peoples.length ? mkPick("people", "People", "", c.peoples, {cards: true, other: "Who their people are"}) : ""}`,
+    <div class="pair">${mkField("Name", "", `<input data-mk="name" value="${esc(game.make.name || "")}">${c.early ? '<span class="under">or wait to see what names the world has</span>' : ""}`)}${mkInput("aka", "Also called", "optional", "A nickname, a title")}</div>
+    <div class="lines">${mkPick("gender", "Gender", "", ["Male", "Female", "Nonbinary"], {line: true, other: "Their gender, in your words"})}
+      ${mkPick("age", "Age", "", ["Young", "Adult", "Middle-aged", "Old"], {line: true})}</div>
+    <div class="pair">${mkInput("years", "In years", "optional", "34")}<span></span></div>
+    ${c.peoples.length ? mkPick("people", "People", "", c.peoples, {cards: "two", other: "Who their people are"}) : ""}`,
 
   looks: () => `<h2>Looks</h2><p class="lede">Skip whatever doesn't fit your character.</p>
-    <div class="mk-pair">${mkPick("height", "Height", "", ["Short", "Average", "Tall"])}${mkPick("build", "Build", "", ["Slim", "Medium", "Toned", "Muscular", "Heavyset"])}</div>
-    ${mkPick("hairLength", "Hair", "", ["Bald", "Shaved", "Short", "Shoulder-length", "Long"])}
-    ${game.make.hairLength === "Bald" ? "" : mkPick("hairColor", "Hair color", "", ["Black", "Brown", "Blond", "Red", "Grey", "White"], {other: "Their hair, in your words"})}
-    ${mkPick("eyes", "Eyes", "", ["Brown", "Hazel", "Green", "Blue", "Grey"], {other: "Their eyes, in your words"})}
-    ${mkPick("skin", "Skin", "", ["Pale", "Fair", "Tan", "Brown", "Dark"], {other: "Their skin, in your words"})}
+    <div class="lines">${mkPick("height", "Height", "", ["Short", "Average", "Tall"], {line: true})}
+      ${mkPick("build", "Build", "", ["Slim", "Medium", "Toned", "Muscular", "Heavyset"], {line: true})}
+      ${mkPick("hairLength", "Hair", "", ["Bald", "Shaved", "Short", "Shoulder-length", "Long"], {line: true})}
+      ${game.make.hairLength === "Bald" ? "" : mkPick("hairColor", "Hair color", "", ["Black", "Brown", "Blond", "Red", "Grey", "White"], {line: true, other: "Their hair, in your words"})}
+      ${mkPick("eyes", "Eyes", "", ["Brown", "Hazel", "Green", "Blue", "Grey"], {line: true, other: "Their eyes, in your words"})}
+      ${mkPick("skin", "Skin", "", ["Pale", "Fair", "Tan", "Brown", "Dark"], {line: true, other: "Their skin, in your words"})}</div>
     ${mkInput("notice", "What a stranger would notice", "optional", "A scar through one eyebrow. Ink on the fingers. Always the same hat.")}`,
 
   origins: c => `<h2>Origins</h2><p class="lede">The life they've led. The GM never invents your character's past: what you leave out stays unsaid.</p>
-    ${c.walks.length ? mkPick("walk", "Walk of life", "", c.walks, {cards: true, other: "What they do, or did"}) : mkInput("walk", "Walk of life", "", "What they do, or did")}
-    ${c.homes.length ? mkPick("home", "Where they're from", "", c.homes, {cards: true, other: "Where they're from"}) : mkInput("home", "Where they're from")}
+    ${c.walks.length ? mkPick("walk", "Walk of life", "", c.walks, {cards: "two", other: "What they do, or did"}) : mkInput("walk", "Walk of life", "", "What they do, or did")}
+    ${c.homes.length ? mkPick("home", "Where they're from", "", c.homes, {cards: "two", other: "Where they're from"}) : mkInput("home", "Where they're from")}
     ${mkArea("story", "Their story", "optional", "Where they come from and what their life has taught them.")}
     ${mkArea("ties", "People who matter", "optional", "Family, friends, rivals: who each one is to them.")}
     ${mkInput("carry", "Something they always have on them", "optional")}`,
@@ -4685,12 +4993,14 @@ const MAKER = {
   nature: () => `<h2>Nature</h2><p class="lede">The GM writes your character's thoughts and voice from this.</p>
     ${mkPick("traits", "Who they are", "up to five", TRAITS, {max: 5})}
     ${mkPick("voice", "How they talk", "up to three", VOICES, {max: 3})}
-    <div class="mk-pair">${mkPick("scared", "When they're scared", "", ["Freezes", "Runs", "Fights", "Goes quiet", "Jokes", "Gets angry"], {other: "What they do when they're scared"})}
+    <div class="pair">${mkPick("scared", "When they're scared", "", ["Freezes", "Runs", "Fights", "Goes quiet", "Jokes", "Gets angry"], {other: "What they do when they're scared"})}
     ${mkPick("angry", "When they're angry", "", ["Goes cold", "Shouts", "Lashes out", "Walks away", "Holds it in"], {other: "What they do when they're angry"})}</div>
     ${mkInput("want", "What they want")}
     ${mkInput("never", "What they'd never do", "optional")}
     ${mkArea("more", "Anything else about who they are", "optional")}`,
 
+  // Six numbers, as stones, and six places for them. The stone in hand goes into the card that's clicked, and a card that has
+  // one gives it back.
   attributes: () => {
     const m = game.make, left = [...SPREAD];
     for (const v of Object.values(m.attrs)) { const i = left.indexOf(v); if (i >= 0) left.splice(i, 1); }
@@ -4701,36 +5011,42 @@ const MAKER = {
       const i = spare.indexOf(v), on = i >= 0 && v === m.hand && !lit;
       if (i >= 0) spare.splice(i, 1);
       if (on) lit = true;
-      return `<button data-hand="${v}"${on ? ' class="on"' : ""}${i < 0 ? " disabled" : ""}>${signed(v)}</button>`;
+      return `<button data-hand="${v}" aria-pressed="${on}"${on ? ' class="on"' : ""}${i < 0 ? " disabled" : ""}>${signed(v)}</button>`;
     }).join("");
     return `<h2>Attributes</h2><p class="lede">0 is an ordinary adult; +2 is notably good. Leave them all empty and the GM fits them to who you've described.</p>
-      ${mkField("To place", left.length ? "pick a number, then where it goes" : "all placed; click one to take it back", `<div class="chips">${pool}</div>`)}
-      <div class="choice three">${ATTRS.map(([name, covers], n) => `<button data-attr="${n}"${name in m.attrs ? ' class="on"' : ""}>
-        <b>${name}<em>${name in m.attrs ? signed(m.attrs[name]) : "·"}</em></b><span>${covers}</span></button>`).join("")}</div>`;
+      ${mkField("To place", left.length ? "pick a number, then where it goes" : "all placed; click one to take it back",
+        `<div class="stones" role="group" aria-label="To place">${pool}<span class="left" aria-live="polite">${TO_PLACE[left.length]}</span></div>`)}
+      <div class="choice three attrs" role="group" aria-label="Attributes">${ATTRS.map(([name, covers], n) => {
+        const has = name in m.attrs;
+        return `<button data-attr="${n}" aria-label="${name}, ${has ? signed(m.attrs[name]) : "not placed"}"${has ? ' class="on"' : ""}><b>${name}</b><span>${covers}</span><i class="socket">${has ? signed(m.attrs[name]) : ""}</i></button>`;
+      }).join("")}</div>`;
   },
 
+  // A row to a skill, with its rank in five pips: the ones past the starting cap are there to show the scale, and are closed.
   skills: c => {
-    const m = game.make, left = START_RANKS - sum(m.ranks), trade = (c.walks.find(w => w.name === m.walk) || {}).skills || [];
-    return `<h2>Skills</h2><p class="lede">What their life has trained them in. Rank 1 is familiar, 2 is trained. What you don't spend, the GM places.</p>` +
-      block(`Skill ranks<span class="sub">none above ${START_CAP} to start</span><span class="count">${left} left</span>`, c.skills.map((sk, n) => {
-        const rank = m.ranks[sk.name] || 0, pips = [1, 2, 3, 4, 5].map(i => `<i class="${i <= rank ? "on" : ""}"></i>`).join("");
-        return `<div class="skill pick"><span class="name">${esc(sk.name)}${trade.some(t => same(t, sk.name)) ? ' <span class="chip">your walk of life</span>' : ""}</span>
-          <span class="pips" title="Rank ${rank} of 5">${pips}</span>
-          <span class="step"><button data-rank="${n}" data-by="-1"${rank ? "" : " disabled"}>−</button><button data-rank="${n}" data-by="1"${left && rank < START_CAP ? "" : " disabled"}>+</button></span>
-          ${sk.text ? `<span class="note">${inline(sk.text)}</span>` : ""}</div>`;
-      }).join(""));
+    const trade = (c.walks.find(w => w.name === game.make.walk) || {}).skills || [];
+    return `<h2>Skills</h2><p class="lede">What their life has trained them in. Rank 1 is familiar, 2 is trained. What you don't spend, the GM places.</p>
+      ${mkPurse("Ranks to spend", START_RANKS, "No skill above " + START_CAP)}
+      <div class="mk-rows" role="group" aria-label="Skills"><i class="rowbar"></i>${c.skills.map((sk, n) => `<div class="prow skill-row" role="slider" tabindex="-1" data-skill="${n}" aria-valuemin="0" aria-valuemax="${START_CAP}">
+        <div class="what"><b>${esc(sk.name)}${trade.some(t => same(t, sk.name)) ? "<small>Your walk of life</small>" : ""}</b>${sk.text ? `<span>${inline(sk.text)}</span>` : ""}</div>
+        <span class="rankpips" aria-hidden="true">${[1, 2, 3, 4, 5].map(i => `<i${i > START_CAP ? ' class="shut"' : ""}></i>`).join("")}</span>
+        <span class="stepper"><button data-rank="${n}" data-by="-1" tabindex="-1" aria-label="Lower">−</button><button data-rank="${n}" data-by="1" tabindex="-1" aria-label="Raise">+</button></span></div>`).join("")}</div>`;
   },
 
-  talents: c => `<h2>Talents</h2><p class="lede">Two things your character can do that others can't. One comes from the life they've led; one is simply theirs.</p>` +
-    block(`Talents<span class="count">${game.make.talents.length + (mkText("talentOwn") ? 1 : 0)} of ${START_TALENTS}</span>`, c.talents.map((t, n) =>
-      `<div class="talent pick${game.make.talents.includes(t.name) ? " on" : ""}" data-talent="${n}"><div class="name">${esc(t.name)}</div><div class="text">${inline(t.text)}</div></div>`).join("")) +
-    mkArea("talentOwn", "A talent of your own", "counts as one of the two; the GM writes it up with you", "Never lost in a city she's walked. Reads a liar at a glance."),
+  talents: c => `<h2>Talents</h2><p class="lede">Two things your character can do that others can't. One comes from the life they've led; one is simply theirs.</p>
+    ${mkPurse("Talents", START_TALENTS)}
+    <div class="choice one" role="group" aria-label="Talents">${c.talents.map((t, n) => { const on = game.make.talents.includes(t.name);
+      return `<button data-talent="${n}" aria-pressed="${on}"${on ? ' class="on"' : ""}><i class="gem"></i><b>${esc(t.name)}</b><span>${inline(t.text)}</span></button>`; }).join("")}</div>
+    ${mkArea("talentOwn", "A talent of your own", "counts as one of the two; the GM writes it up with you", "Never lost in a city she's walked. Reads a liar at a glance.")}`,
 
+  // The dossier: a line for each part of the character with something in it, under its step, and each a way back to that step.
   review: c => {
-    const [lines, left] = makerLines(c);
+    const [lines, left] = makerLines(c), by = {};
+    for (const [label, text] of lines) if (MAKE_ROWS[label]) (by[MAKE_ROWS[label]] = by[MAKE_ROWS[label]] || []).push([label, text]);
     return `<h2>${esc(mkText("name") || "Your character")}</h2><p class="lede">Go back to any step to change it. The GM fits them into the world from this.</p>
-      <div class="mk-sum">${lines.map(([label, text]) => `<div><span class="caps">${label}</span><span>${esc(text)}</span></div>`).join("")}</div>
-      ${left.length ? `<p class="lede" style="margin:0">Left to the GM: ${left.join(", ")}.</p>` : ""}
+      <div class="nn-sum">${MAKE_STEPS.filter(([id]) => by[id]).map(([id, title]) => `<h3 class="sect">${title}</h3>` + by[id].map(([label, text]) =>
+        `<button data-to="${id}"><span class="k">${label}</span><span class="v">${esc(text)}</span><span class="chg">Change</span></button>`).join("")).join("")}</div>
+      ${left.length ? `<p class="note mk-left"><svg><use href="#d20"/></svg><span>Left to the GM: ${left.join(", ")}.</span></p>` : ""}
       ${mkArea("note", "Anything else for the GM", "optional")}`;
   },
 };
@@ -4771,32 +5087,286 @@ function makerLines(c) {   // the character as made, a line for each part with s
   return [lines, left];
 }
 
-function renderMaker(c) {
-  const el = $("story"), shown = el.querySelector(".mk-body");
-  if (shown && game.makeShown === c.key) return;   // already up: a tick mustn't take the page out from under the player
-  game.make = Object.assign({step: 0, traits: [], voice: [], talents: [], attrs: {}, ranks: {}}, game.make);
-  if (!c.early) game.madeOnce = true;
-  const m = game.make, steps = makerSteps(c);
-  if (m.early && !c.early) {   // the world is ready: the rest of the creator opens, at the page on what they'd know
-    m.step = 0;
-    toast("The world is ready. The rest of your character is open.", true);
+// The creator is a window on the plate (the stylesheet's "the character creator"), up from the moment a narrative is opened
+// until it is set up (setVault): the room stays behind it, the die counts the steps, and the character's name is written under
+// the die as it's typed. What it shows is game.page: "make", a step of the creator (game.make.at, kept by its name and never
+// its number, since the list grows when the world is ready); "handing", the finished character held still while the GM writes
+// them into the world; or "side", the GM's side of the table, which is the conversation. apply says which, each tick, and a
+// tick draws only what has changed: it never takes the page out from under the player.
+function showMake(page, c, s) {
+  const was = game.page;
+  game.page = page;
+  if (page === "make") {
+    const m = game.make = Object.assign({at: "", been: [], traits: [], voice: [], talents: [], attrs: {}, ranks: {}}, game.make);
+    if (!c.early) game.madeOnce = true;
+    const opened = !!m.early && !c.early;
+    m.early = !!c.early;
+    if (opened) worldReady(c);
+    else if (was !== "make" || game.makeShown !== c.key) drawMake(c, was === "make" ? "tick" : "arrive");
+  } else if (page === "handing") {
+    if (was !== "handing") drawHanding(c);
+  } else drawSide(c, s, was !== "side");
+  makeFoot(c, s);
+  makeBuild(s);
+  if (was === page) return;
+  if (page === "handing") $("makenav").querySelector("[data-ask]").focus();
+  else if (page === "side") ($("makesay") || $("makebody")).focus({preventScroll: true});
+}
+
+function worldReady(c) {   // the world is ready: the rest of the creator opens around the player, who stays on the step they're on, the caret where it was
+  const mine = game, last = EARLY_STEPS[EARLY_STEPS.length - 1];
+  game.toWorld = game.make.at === last ? last : "";   // from the last of the early steps, the way on is the page on what they'd know
+  game.readyTill = performance.now() + 4000;
+  setTimeout(() => game === mine && makeBuild(), 4100);
+  drawMake(c, "opened");
+  toast("The world is ready. The rest of your character is open.", true);
+  rollDie(true);
+  sfx("settle");
+}
+
+function holdFocus() {   // what has the focus in the window, and the caret in it, to be found again in the page as it's drawn next
+  const el = document.activeElement, root = $("makedialog");
+  if (!el || !root.contains(el)) return null;
+  const mk = el.dataset.mk, data = JSON.stringify(el.dataset), caret = mk ? [el.selectionStart, el.selectionEnd] : null;
+  return () => {
+    const again = el.id ? $(el.id) : mk ? root.querySelector(`[data-mk="${mk}"]`) : [...root.querySelectorAll("button, [tabindex]")].find(b => JSON.stringify(b.dataset) === data && !b.disabled);
+    if (!again) return $("makebody").focus({preventScroll: true});
+    again.focus({preventScroll: true});
+    if (caret) again.setSelectionRange(...caret);
+  };
+}
+
+// The steps down the left. at is the step the page is on, or none on the GM's side, where the one last on shows as done.
+// opened, the world has just become ready: the steps that waited for it unseal, top to bottom.
+function drawRail(c, at, opened) {
+  const m = game.make || {been: []}, rail = makeRail(c), first = makeOpen(c)[0];
+  let waited = 0;
+  const row = r => {
+    const on = r.id === at, done = !on && !r.sealed && m.been.includes(r.id), fresh = r.id === "world" && !on && !done, unseal = opened && r.id !== "world" && !EARLY_STEPS.includes(r.id);
+    const said = done ? makeAnswer(r.id) : "", cls = on ? "on" : r.sealed ? "sealed" : fresh ? "unread" : done ? "done" : "";
+    const label = r.title + (r.sealed ? ", opens when the world is ready" : fresh ? ", new" : said ? ", " + (said === "GM" ? "left to the GM" : said) : "");
+    return `<li><button data-step="${r.id}" class="${cls}${unseal ? " unseal" : ""}"${unseal ? ` style="--n:${waited++}"` : ""} tabindex="${!r.sealed && (at ? on : r.id === first.id) ? 0 : -1}"${on ? ' aria-current="step"' : ""}${
+      r.sealed ? ' aria-disabled="true"' : ""} aria-label="${esc(label)}"><i></i><span>${r.title}</span><em>${r.sealed || unseal ? "With the world" : fresh ? "New" : esc(said)}</em></button></li>`;
+  };
+  $("makerail").innerHTML = MAKE_CHAPTERS.map(([name, ids]) => {
+    const rows = rail.filter(r => ids.includes(r.id));
+    return rows.length ? `<li class="chap" aria-hidden="true">${name}</li>` + rows.map(row).join("") : "";
+  }).join("") + '<li class="gap" aria-hidden="true"></li>' + row(rail[rail.length - 1]);
+}
+
+// A step of the creator. how says why it's drawn: "step", a new step, which arrives from the side it lies on; "arrive", the
+// creator coming up; "pick", something on the page was chosen; "tick", what the GM offers has changed under it; "opened", the
+// world has just become ready. Only the first two move the page or the focus.
+function drawMake(c, how) {
+  const m = game.make, rail = makeRail(c), open = makeOpen(c), body = $("makebody"), split = $("makesplit");
+  if (!open.some(r => r.id === m.at)) m.at = open[0].id;   // the first time, or a step that has gone
+  const id = m.at, n = rail.findIndex(r => r.id === id), old = body.querySelector(".nn-page:not(.leaving)"), from = rail.findIndex(r => r.id === game.makeStep);
+  const way = how === "step" && old && from >= 0 ? Math.sign(n - from) : 0, moved = how === "step" || how === "arrive", hold = moved || how === "pick" ? null : holdFocus(), keep = moved ? 0 : body.scrollTop;
+  if (!m.been.includes(id)) m.been.push(id);
+  if (id === "world") game.toWorld = "";
+  Object.assign(game, {makeShown: c.key, makeStep: id, face: id === "review" ? 20 : n + 1});   // the die shows the step's number, and a natural 20 at the end
+  split.inert = false;
+  split.classList.remove("handed", "alone");
+  $("sideacts").hidden = true;
+  $("makeeyebrow").textContent = `Step ${n + 1} of ${rail.length} · ${(MAKE_CHAPTERS.find(ch => ch[1].includes(id)) || ["Review"])[0]}`;
+  drawRail(c, id, how === "opened");
+  for (const gone of body.querySelectorAll(".nn-page")) gone.remove();
+  const wait = game.size === "galaxy" ? ", and a whole galaxy can take 1 to 2 hours" : game.size ? ", which usually takes 10 to 20 minutes" : ", which can take a while";   // the size is known only to the window that asked for it
+  const note = c.early ? `<p class="mk-early">The world is still being built${wait}. These parts of your character are yours whatever it turns out to be, and you can change any of them once it's ready.</p>` : "";
+  body.innerHTML = `<div class="nn-page${way < 0 ? " rev" : way || how === "arrive" ? " fwd" : ""}">${MAKER[id](c).replace("</p>", "</p>" + note)}</div>`;   // the note goes under the lede
+  if (way && !plain()) {   // the page before fades out under the one coming in
+    old.className = "nn-page leaving";
+    old.inert = true;
+    body.append(old);
+    setTimeout(() => old.remove(), 140);
   }
-  m.early = !!c.early;
-  m.step = Math.min(Math.max(0, m.step), steps.length - 1);
-  const [id] = steps[m.step], next = steps[m.step + 1], keep = shown && game.makeStep === id ? shown.scrollTop : 0;
-  const waiting = `<p class="mk-early">The world is still being built, which usually takes 10 to 20 minutes. These parts of your character are yours whatever it turns out to be, and you can change any of them once it's ready.</p>`;
-  el.innerHTML = `<div class="mk-rail">${steps.map(([, title], n) => `<button data-step="${n}" class="${n === m.step ? "on" : n < m.step ? "done" : ""}"><i></i>${title}</button>`).join("")}</div>
-    <div class="mk-body"><div class="mk-page">${c.early ? waiting : ""}${MAKER[id](c)}</div></div>
-    <div class="mk-nav">${c.early ? `<span class="mk-build"><svg><use href="#d20"/></svg><span id="mkbuild"></span><span class="clock" id="mkclock"></span></span>`
-        : `<button class="quiet" data-ask>Ask the GM something</button>`}<span class="gap"></span>
-      ${c.early ? `<button class="quiet" data-ask title="Your conversation with the GM, and the button that stops the build">The GM's side</button>` : ""}
-      <button data-go="-1"${m.step ? "" : " disabled"}>Back</button>
-      ${next ? `<button class="primary" data-go="1">Next: ${next[1]}</button>`
-        : c.early ? `<button class="primary" disabled>The rest opens with the world</button>` : `<button class="primary" data-create>Create character</button>`}</div>`;
-  if (game.makeStep === id) el.querySelector(".mk-page").style.animation = "none";   // only a new step arrives
-  el.querySelector(".mk-body").scrollTop = keep;
-  game.makeShown = c.key;
-  game.makeStep = id;
+  if (id === "skills") markSkills();
+  if (id === "talents") markTalents();
+  rove(body);
+  body.scrollTop = keep;
+  pageMore();
+  placeRail($("makerail"), $("makebar"), n);
+  if (sheets.on === "makedialog") showStage();
+  if (hold) return hold();
+  if (!moved) return;
+  // A step that opens on a box has the caret put in it. One that opens on things to pick is left alone.
+  const first = body.querySelector(".nn-page :is(input, textarea, button, [tabindex])");
+  if (first && first.matches("input, textarea")) { first.focus({preventScroll: true}); first.setSelectionRange(first.value.length, first.value.length); }
+  else body.focus({preventScroll: true});
+}
+
+function drawHanding(c) {   // the character has gone to the GM: the page they were made on is held where it is, dimmed and out of reach
+  if (game.makeStep !== "review") { game.make.at = "review"; drawMake(c, "arrive"); }
+  $("makesplit").inert = true;
+  $("makesplit").classList.add("handed");
+  if (sheets.on === "makedialog") showStage();
+}
+
+// The GM's side: the conversation, in the plate. The steps stay beside it while there's a creator to go back to (game.can);
+// without one it is the window's only page.
+function drawSide(c, s, fresh) {
+  const body = $("makebody"), split = $("makesplit"), rail = game.can ? c.key : null;
+  if (fresh) {
+    split.inert = false;
+    split.classList.remove("handed");
+    $("makeeyebrow").textContent = "The GM's side";
+    $("sideacts").hidden = false;
+    body.innerHTML = `<div class="nn-page side${game.makeStep ? " fwd" : ""}"><h2>The GM's side</h2><p class="lede"></p><div id="maketalk"></div></div>`;
+    Object.assign(game, {makeStep: "side", makeShown: "", sideRail: undefined});
+  }
+  if (game.sideRail !== rail) {
+    game.sideRail = rail;
+    split.classList.toggle("alone", !game.can);
+    if (game.can) { drawRail(c, ""); placeRail($("makerail"), $("makebar"), -1); }
+  }
+  body.querySelector(".lede").textContent = s.busy ? "What the GM says while it builds. The world itself stays its secret." : "Ask about anything in front of you. It answers here.";
+  renderTalk($("maketalk"), true, body);
+  pageMore();
+  if (fresh && sheets.on === "makedialog") showStage();
+}
+
+function makeNav(c) {   // the foot of a step: the way to the GM's side, the keys, and where to go from here
+  const m = game.make, open = makeOpen(c), i = open.findIndex(r => r.id === m.at), next = open[i + 1];
+  const unread = game.toWorld === m.at && !m.been.includes("world") && open.some(r => r.id === "world");
+  return `<button class="pbtn quiet" data-ask${c.early ? ' title="Your conversation with the GM, and the button that stops the build"' : ""}>${c.early ? "The GM's side" : "Ask the GM"}</button>
+    <div class="keys">${m.at === "skills" ? keyHints("choose", "change") : keyHints("step", i > 0 && "back")}</div>
+    ${c.early ? '<p class="nn-busy mk-footbuild"><svg><use href="#d20"/></svg><span data-line></span><span class="clock" data-clock></span></p>' : ""}
+    <button class="pbtn" data-go="-1"${i > 0 ? "" : " disabled"}>◂ Back</button>
+    ${unread ? '<button class="pbtn primary" data-step="world">Read the world ▸</button>'
+      : next ? `<button class="pbtn primary" data-go="1">Next: ${next.title} ▸</button>`
+      : c.early ? '<button class="pbtn primary" disabled>The rest opens with the world</button>'
+      : '<button class="pbtn primary big" data-create><svg><use href="#d20"/></svg>Create character</button>'}`;
+}
+
+// The foot of the window, for whichever page is up. On the GM's side it is the box to answer in, or, while the GM is working,
+// the line on its work and Stop, which asks first. It's drawn again only when it would differ, so what's being typed is kept.
+function makeFoot(c, s) {
+  const page = game.page, back = game.can || game.handed ? '<button class="pbtn quiet" data-unside>◂ Your character</button>' : "";
+  const line = '<p class="nn-busy grow"><svg><use href="#d20"/></svg><span data-line></span><span class="clock" data-clock></span></p>';
+  if (!s.busy) game.stopAsk = false;
+  const html = page === "make" ? makeNav(c)
+    : page === "handing" ? line.replace("grow", "grow staged") + '<button class="pbtn quiet" data-ask>The GM\'s side</button>'
+    : game.stopAsk ? '<p>Stop the GM?</p><div class="keys"></div><button class="pbtn danger" data-stopyes>Stop</button><button class="pbtn primary" data-stopno>Keep going</button>'
+    : s.busy ? back + line + '<button class="pbtn" data-stop>Stop</button>'
+    : back + '<div class="say"><textarea id="makesay" rows="1" placeholder="Answer the GM…" aria-label="Answer the GM"></textarea></div><button class="pbtn primary" data-send>Send</button>';
+  if (html === game.foot) return;
+  const hold = $("makenav").contains(document.activeElement) && holdFocus();
+  game.foot = html;
+  $("makenav").innerHTML = html;
+  if (hold) hold();
+  else if (page === "side" && $("makesay") && [$("makebody"), document.body].includes(document.activeElement)) $("makesay").focus();   // the GM has answered: the box to answer in is in hand
+}
+
+// The line on what the GM is building: under the die, and in the foot where there is no stage or the page has one of its own.
+// It is kept current here, each tick. It names a kind of work (BUILDING, in gui.py) and nothing else: a mood, never a measure.
+function makeBuild(s = game.state) {
+  const page = game.page, on = s.busy && (page === "handing" || page === "make" && game.early), ready = !on && performance.now() < game.readyTill;
+  const at = (s.building || "The GM is at work on the world") + "…", clock = s.busy ? Math.floor(s.elapsed / 60) + ":" + String(s.elapsed % 60).padStart(2, "0") : "";
+  $("stagebuild").hidden = sheets.on !== "makedialog" || !on && !ready;
+  $("stagebuild").classList.toggle("done", !on);
+  $("mkbuild").textContent = on ? at : "The world is ready.";
+  $("mkclock").textContent = on ? clock : "";
+  const line = $("makenav").querySelector("[data-line]");
+  if (!line) return;
+  line.textContent = page === "handing" ? `The GM is writing ${game.make && mkText("name") || "your character"} into the world…` : at;
+  $("makenav").querySelector("[data-clock]").textContent = clock;
+}
+
+function placeMake() {   // what is placed by measuring: the thread and bar of the steps, and the page's fade
+  const c = game.can && makeC();
+  if (c) placeRail($("makerail"), $("makebar"), game.page === "make" ? makeRail(c).findIndex(r => r.id === game.make.at) : -1);
+  pageMore();
+}
+function pageMore() {   // more of the page lies below: its last lines fade into the plate
+  const body = $("makebody");
+  body.parentNode.classList.toggle("more", body.scrollHeight - body.scrollTop - body.clientHeight > 4);
+}
+$("makebody").addEventListener("scroll", pageMore, {passive: true});
+
+function markSkills() {   // the purse and the rows, as the ranks stand: changed in place, so a pip and a diamond of the purse turn together
+  const c = makeC(), m = game.make, purse = $("mkpurse"), left = START_RANKS - sum(m.ranks), rows = [...$("makebody").querySelectorAll(".skill-row")];
+  if (!purse || !rows.length) return;
+  [...purse.querySelectorAll(".gems i")].forEach((gem, i) => gem.classList.toggle("on", i < left));
+  purse.querySelector("strong").textContent = left + " left";
+  purse.classList.toggle("out", !left);
+  for (const row of rows) {
+    const sk = c.skills[+row.dataset.skill], rank = m.ranks[sk.name] || 0, [less, more] = row.querySelectorAll(".stepper button");
+    [...row.querySelectorAll(".rankpips i")].forEach((pip, i) => pip.classList.toggle("on", i < rank));
+    less.disabled = !rank;
+    more.disabled = !left || rank >= START_CAP;
+    row.setAttribute("aria-valuenow", rank);
+    row.setAttribute("aria-valuetext", `${sk.name}, rank ${rank}, ${RANK_NAMES[rank]}`);
+  }
+  if (!rows.some(r => r.tabIndex === 0)) rows[0].tabIndex = 0;   // one stop for the list; the arrows move inside it
+}
+function markTalents() {
+  const purse = $("mkpurse"), have = game.make.talents.length + (mkText("talentOwn") ? 1 : 0);
+  if (!purse) return;
+  [...purse.querySelectorAll(".gems i")].forEach((gem, i) => gem.classList.toggle("on", i < have));
+  purse.querySelector("strong").textContent = `${have} of ${START_TALENTS}`;
+}
+
+function atSkill(row) {   // the skill in focus: lit, with the bar of gold beside it
+  const rows = [...$("makebody").querySelectorAll(".skill-row")], moved = !row.classList.contains("at");
+  for (const r of rows) { r.classList.toggle("at", r === row); r.tabIndex = r === row ? 0 : -1; }
+  moveBar(row.parentNode.querySelector(".rowbar"), row);
+  if (moved) sfx("tick", rows.indexOf(row));
+}
+function skillStep(n, by) {   // a rank up or down, within what the rules allow at the start
+  const m = game.make, name = makeC().skills[n].name, rank = m.ranks[name] || 0, left = START_RANKS - sum(m.ranks);
+  if (by > 0 ? !left || rank >= START_CAP : !rank) return;
+  m.ranks[name] = rank + by;
+  if (!m.ranks[name]) delete m.ranks[name];
+  markSkills();
+  sfx("tick", by > 0 ? 5 : 4);
+  if (by > 0 && left === 1) {   // the last of them spent
+    sfx("settle");
+    if (!plain()) { $("mkpurse").classList.remove("spent"); void $("mkpurse").offsetWidth; $("mkpurse").classList.add("spent"); }
+  }
+  keepDraft();
+}
+$("makebody").addEventListener("focusin", e => { const row = e.target.closest(".skill-row"); if (row) atSkill(row); });
+$("makebody").addEventListener("pointermove", e => {   // the pointer over a skill is the focus on it
+  const row = e.target.closest(".skill-row");
+  if (row && !row.contains(document.activeElement)) row.focus({preventScroll: true});
+});
+
+function makeFull(count, max) {   // a group that's full says so: its count shakes
+  sfx("deny");
+  if (count && !plain()) { count.classList.remove("deny"); void count.offsetWidth; count.classList.add("deny"); }
+  toast(`That's ${max} already. Take one off to pick another.`);
+}
+
+function makeGo(id) {   // to a step, by the list or by a line of the dossier. Nothing is asked for on the way: only Create needs a name.
+  const c = makeC(), open = makeOpen(c), to = open.findIndex(r => r.id === id), from = open.findIndex(r => r.id === game.make.at);
+  if (to < 0 || to === from) return;
+  sfx(to > from ? "clack" : "back");
+  game.make.at = id;
+  drawMake(c, "step");
+  makeFoot(c, game.state);
+  keepDraft();
+}
+function makeBy(by) {   // the step before or after this one. The sealed ones are passed over.
+  const open = makeOpen(makeC()), to = open[open.findIndex(r => r.id === game.make.at) + by];
+  if (to) makeGo(to.id);
+}
+function makeSide(on) {   // to the GM's side, or back from it
+  game.talk = on;
+  game.stopAsk = false;
+  sfx(on ? "clack" : "back");
+  reapply();
+}
+// Esc steps out of whatever is innermost: Stop's question, then the GM's side, then back a step. On the first step it does nothing.
+function makeBack() {
+  if (!game || !game.state) return;
+  if (game.stopAsk) {
+    game.stopAsk = false;
+    makeFoot(null, game.state);
+    makeBuild();
+    return $("makenav").querySelector("[data-stop]")?.focus();
+  }
+  if (game.page === "side") { if (game.can || game.handed) makeSide(false); }
+  else if (game.page === "make") makeBy(-1);
 }
 
 let draftTimer;
@@ -4807,61 +5377,161 @@ function keepDraft() {   // so a character half made is still there when the win
 }
 const reapply = () => apply(Object.assign(game.state, {texts: {}, channel: null}));
 
-$("story").addEventListener("input", e => {
-  const key = e.target.dataset.mk;
+const makeSend = guard(async () => {
+  const box = $("makesay");
+  if (!box || !box.value.trim() || game.state.busy) return;
+  await send(box.value);
+  box.value = "";
+  box.style.height = "";
+});
+// Leaving for the main menu asks nothing, because nothing is lost: the draft is kept, and a build goes on without the window.
+const leaveMake = guard(async () => {
+  const busy = game.state.busy, made = !!game.make;
+  clearTimeout(timer);
+  const home = showHome();
+  if (busy || made) toast([busy && "The GM goes on building.", made && "Your character is kept."].filter(Boolean).join(" "), true);
+  await home;
+});
+
+$("makedialog").addEventListener("input", e => {
+  const box = e.target, key = box.dataset.mk;
+  if (box.id === "makesay") {   // the answer's box grows to three lines
+    const cs = getComputedStyle(box);
+    box.style.height = "";
+    if (box.scrollHeight > box.clientHeight) box.style.height = Math.min(box.scrollHeight + 2, parseFloat(cs.lineHeight) * 3 + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + 2) + "px";
+    return;
+  }
   if (!key || !game || !game.make) return;
-  game.make[key] = e.target.value;
+  const had = mkText(key);
+  game.make[key] = box.value;
+  box.classList.remove("need");
+  if (key === "name") {   // the name under the die follows the box
+    stageName();
+    if (!had !== !mkText(key) && !plain()) { $("stagename").classList.remove("swap"); void $("stagename").offsetWidth; $("stagename").classList.add("swap"); }
+  }
+  if (key === "talentOwn") markTalents();
   keepDraft();
 });
-$("story").addEventListener("click", guard(async e => {
-  const c = game && game.make && $("story").classList.contains("making") && (game.early ? EARLY : creation(game.texts.sheet || "")), at = sel => e.target.closest(sel);
-  if (!c) return;
-  const m = game.make;
-  let el, focus;
-  if ((el = at("[data-step]"))) m.step = +el.dataset.step;
-  else if ((el = at("[data-go]"))) m.step += +el.dataset.go;
-  else if (at("[data-ask]")) { game.talk = true; reapply(); return $("input").focus(); }
-  else if (at("[data-create]")) return createCharacter(c);
-  else if ((el = at("[data-pick]"))) {
+$("makedialog").addEventListener("keydown", e => {
+  const t = e.target, key = e.key, way = {ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1}[key], down = key === "ArrowUp" || key === "ArrowDown";
+  if (!game || e.ctrlKey || e.metaKey) return;
+  if (t.id === "makesay") {
+    if (key === "Enter" && !e.shiftKey && !e.altKey) { e.preventDefault(); makeSend(); }
+    return;
+  }
+  if (game.page === "make" && (e.altKey ? way && !down : key === "PageUp" || key === "PageDown")) {   // from step to step, wherever the focus is
+    e.preventDefault();
+    return makeBy(key === "ArrowLeft" || key === "PageUp" ? -1 : 1);
+  }
+  if (e.altKey) return;
+  if (key === "Enter" && t.matches("input[data-mk]")) {   // Enter in a one-line box goes on to the next thing on the page: a page here holds several answers
+    e.preventDefault();
+    const stops = tabStops($("makedialog"));
+    return stops[stops.indexOf(t) + 1]?.focus();
+  }
+  if (!way) return;
+  if (t.matches(".skill-row")) {   // up and down between the skills, left and right to lower and raise the one in focus
+    e.preventDefault();
+    if (!down) return skillStep(+t.dataset.skill, way);
+    const rows = [...$("makebody").querySelectorAll(".skill-row")];
+    return rows[rows.indexOf(t) + way]?.focus();
+  }
+  const group = t.matches("button") && t.closest(".chips, .choice, .stones, .nn-sum, .steps");
+  if (!group) return;
+  e.preventDefault();   // the arrows move among a group's choices; cards, which stand in rows, are moved among up and down as well
+  const all = [...group.querySelectorAll("button")].filter(b => !b.disabled && !b.classList.contains("sealed"));
+  const across = down && group.matches(".choice") ? all.filter(b => b.offsetTop === all[0].offsetTop).length : 1, to = all[all.indexOf(t) + way * across];
+  if (to) { to.focus(); sfx("tick", all.indexOf(to)); }
+});
+$("makedialog").addEventListener("click", guard(async e => {
+  const at = sel => e.target.closest(sel), body = $("makebody");
+  if (!game || !game.state) return;
+  let el, focus, cue = "clack";
+  if (at("#makemenu")) return leaveMake();
+  if ((el = at("[data-act]"))) {   // what the game screen's menu has that still matters before play. The narrative's folder isn't among them: it's where the world is being written
+    const act = el.dataset.act;
+    if (act === "settings") { $("settingsdialog").hidden = false; $("makedialog").hidden = true; }   // in this plate's place; closing it comes back here (syncSheets)
+    if (act === "fresh") { await api("fresh", {path: game.path}); clearTimeout(timer); tick(); }
+    return;
+  }
+  if (at("[data-stop]")) {   // Stop asks first, in place
+    game.stopAsk = true;
+    sfx("deny");
+    makeFoot(null, game.state);
+    return $("makenav").querySelector("[data-stopno]").focus();
+  }
+  if (at("[data-stopno]")) return makeBack();
+  if (at("[data-stopyes]")) {
+    game.stopAsk = false;
+    makeFoot(null, game.state);
+    makeBuild();
+    return api("stop", {path: game.path});
+  }
+  if (at("[data-send]")) return makeSend();
+  if (at("[data-unside]")) return makeSide(false);
+  if (at("[data-ask]")) return makeSide(true);
+  const c = makeC(), m = game.make;
+  if (!c || !m) return;
+  if ((el = at("[data-step]"))) {
+    if (el.classList.contains("sealed")) return;   // it opens with the world, and says so
+    if (game.page === "make") return makeGo(el.dataset.step);
+    if (game.page !== "side" || !game.can) return;
+    m.at = el.dataset.step;   // from the GM's side, a step is the way back
+    return makeSide(false);
+  }
+  if (game.page !== "make") return;
+  if ((el = at("[data-go]"))) return makeBy(+el.dataset.go);
+  if ((el = at("[data-to]"))) return makeGo(el.dataset.to);
+  if (at("[data-create]")) return createCharacter(c);
+  if ((el = at("[data-rank]"))) return skillStep(+el.dataset.rank, +el.dataset.by);
+  if ((el = at("[data-pick]"))) {
     const key = el.dataset.pick, v = el.dataset.v, max = +el.dataset.max;
     if (max) {
       const list = m[key], i = list.indexOf(v);
       if (i >= 0) list.splice(i, 1);
       else if (list.length < max) list.push(v);
-      else return toast(`That's ${max} already. Take one off to pick another.`);
+      else return makeFull(el.closest(".field").querySelector(".count"), max);
     } else m[key] = m[key] === v ? "" : v;
     if (m[key] === OTHER) focus = key + "Other";
-  } else if ((el = at("[data-hand]")) && !el.disabled) m.hand = +el.dataset.hand;
+  } else if ((el = at("[data-hand]"))) m.hand = +el.dataset.hand;
   else if ((el = at("[data-attr]"))) {
     const name = ATTRS[+el.dataset.attr][0];
-    if (name in m.attrs) delete m.attrs[name];
-    else if (m.hand !== null) m.attrs[name] = m.hand;
-  } else if ((el = at("[data-rank]")) && !el.disabled) {
-    const name = c.skills[+el.dataset.rank].name;
-    m.ranks[name] = (m.ranks[name] || 0) + +el.dataset.by;
-    if (!m.ranks[name]) delete m.ranks[name];
+    if (name in m.attrs) { delete m.attrs[name]; cue = "back"; }
+    else if (m.hand !== null) { m.attrs[name] = m.hand; cue = "stamp"; }
   } else if ((el = at("[data-talent]"))) {
     const name = c.talents[+el.dataset.talent].name, i = m.talents.indexOf(name);
     if (i >= 0) m.talents.splice(i, 1);
     else if (m.talents.length + (mkText("talentOwn") ? 1 : 0) < START_TALENTS) m.talents.push(name);
-    else return toast(`That's ${START_TALENTS} already. Take one off to pick another.`);
+    else return makeFull($("mkpurse").querySelector("strong"), START_TALENTS);
   } else return;
-  game.makeShown = "";
-  renderMaker(c);
-  if (focus) $("story").querySelector(`[data-mk="${focus}"]`).focus();
+  const mark = JSON.stringify(el.dataset), hand = "hand" in el.dataset;
+  drawMake(c, "pick");
+  makeFoot(c, game.state);
+  const again = hand ? body.querySelector(".stones .on") : [...body.querySelectorAll("button")].find(b => JSON.stringify(b.dataset) === mark);   // the same choice, in the page as it is now
+  ((focus && body.querySelector(`[data-mk="${focus}"]`)) || again)?.focus();
+  if (cue === "stamp") {   // a number set into its place; and with the last of them, all six light at once
+    sfx("clack");
+    if (!plain()) again.querySelector(".socket").classList.add("stamp");
+    if (Object.keys(m.attrs).length < ATTRS.length) flash(again);
+    else { sfx("settle"); for (const card of body.querySelectorAll("[data-attr]")) flash(card); }
+  } else if (cue === "back") sfx("back");
+  else if (again && (hand || again.classList.contains("on"))) { sfx("clack"); flash(again); }
   keepDraft();
 }));
-$("tomake").onclick = () => { game.talk = false; reapply(); };
 
 async function createCharacter(c) {
-  if (!mkText("name")) {
-    game.make.step = makerSteps(c).findIndex(([id]) => id === "identity");
-    game.makeShown = "";
-    renderMaker(c);
-    $("story").querySelector('[data-mk="name"]').focus();
+  if (!mkText("name")) {   // the one thing asked for: back to its box, which is marked
+    if (game.make.at !== "identity") { game.make.at = "identity"; drawMake(c, "step"); makeFoot(c, game.state); }
+    const box = $("makebody").querySelector('[data-mk="name"]');
+    box.classList.remove("need");
+    void box.offsetWidth;
+    box.classList.add("need");
+    box.focus();
+    sfx("deny");
     return toast("Your character needs a name.");
   }
   const [lines, left] = makerLines(c);
+  rollDie();
   await send("{My character, from the character creator.\n\n" + lines.map(([label, text]) => `${label}: ${text}`).join("\n")
     + (left.length ? `\n\nLeft to you: ${left.join(", ")}.` : "") + "}", true);
   game.created = true;   // it's the GM's now: the creator doesn't come back while the sheet is written
@@ -5120,7 +5790,8 @@ if (SCRUB !== null && intro.cut) sceneReady.then(() => introAt(SCRUB));
 
 setInterval(() => api("ping").catch(() => {}), 5000);
 guard(async () => {
-  const h = await api("home");
+  const h = await api("home").catch(e => { veil(false, .2); throw e; });
+  desktop = !!h.desktop;
   if (h.prefs) Object.assign(prefs, h.prefs);
   applyPrefs();
   if (START) { openGame(START); checkPrograms(h, true); } else await showHome();

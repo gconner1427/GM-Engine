@@ -399,6 +399,14 @@ games_lock = threading.Lock()
 dialog_lock = threading.Lock()
 
 
+def building():
+    """The narratives whose worlds the GM is building right now. The window can't be closed on one: it asks whether
+    to stay, or to stop the build and exit, so a world is never left building with nobody watching."""
+    with games_lock:
+        open_games = list(GAMES.values())
+    return [g for g in open_games if g.busy() and not g.config().get("set_up")]
+
+
 def game(path):
     root = Path(path or "").resolve()
     if not path or not (root / CONFIG).exists():
@@ -441,7 +449,8 @@ def home():
                        "set_up": bool((cfg or {}).get("set_up")), "sessions": sessions, "played": played,
                        "character": "" if name.lower().startswith(("unknown", "(")) else name, "level": field(sheet, "Level") or ""})
     return {"narratives": listed, "default_parent": str(scaffold.DEFAULT_PARENT), "claude": claude_state(),
-            "codex": art.codex_state(), "prefs": read_json(PREFS, {})}
+            "codex": art.codex_state(), "prefs": read_json(PREFS, {}), "building": bool(building()),
+            "desktop": bool(getattr(sys.modules.get("webview"), "windows", []))}
 
 
 def pick_folder(start=None):
@@ -624,7 +633,12 @@ class Handler(BaseHTTPRequestHandler):
             return {"ok": True}
         if route == "/api/home":
             return home()
-        if route == "/api/exit":
+        if route == "/api/exit":   # with a world being built it only says so, unless told to stop the build: the page asks first
+            builds = building()
+            if builds and not data.get("stop"):
+                return {"building": [g.config().get("name", g.narrative.name) for g in builds]}
+            for g in builds:
+                g.stop()
             threading.Timer(0.3, close_window, [self.server]).start()   # after the answer has gone back
             return {"ok": True}
         if route == "/api/prefs":
@@ -725,7 +739,10 @@ def set_fullscreen(server, on):
 
 
 def finish():
-    """Let a beat in progress finish writing before the program exits."""
+    """Let a beat in progress finish writing before the program exits. A world still being built is stopped instead:
+    it could run for an hour, and nothing may go on building unseen (a browser tab can be closed without asking)."""
+    for g in building():
+        g.stop()
     for g in list(GAMES.values()):
         if g.thread and g.thread.is_alive():
             g.thread.join(timeout=600)
@@ -757,8 +774,15 @@ def run(start=None, browser=False):
                 import ctypes
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("GMEngine.Play")
             server.fullscreen = bool(read_json(PREFS, {}).get("fullscreen"))
-            webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True,
-                                  fullscreen=server.fullscreen, text_select=True)   # off by default in pywebview; flagging a passage needs it
+            window = webview.create_window("GM Engine", url, width=1360, height=900, min_size=(900, 600), maximized=True,
+                                           fullscreen=server.fullscreen, text_select=True)   # off by default in pywebview; flagging a passage needs it
+
+            def closing():   # the window's own X, or Alt+F4: with a world being built it doesn't close, and the page asks
+                if server.quit or not building():
+                    return True
+                threading.Thread(target=window.evaluate_js, args=("askExit()",), daemon=True).start()   # not from this thread, which the window is waiting on
+                return False
+            window.events.closing += closing
             webview.start(icon=str(ICON))
         else:
             print(f"GM Engine: {url}\nRunning on this computer only. Close the tab, or press Ctrl+C here, to stop.")
