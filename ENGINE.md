@@ -163,6 +163,7 @@ The world is tracked in words wherever words will do. Numbers appear where the g
 
 ```
 gm status                                 session, vitals, the clock, pressures
+gm carry                                  what the character carries, counted: Ready, the pack, in arms
 gm session start | end
 gm beat [--again]                         commit the staged beat
 gm undo                                   take the last beat back out of the session log

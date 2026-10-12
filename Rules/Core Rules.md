@@ -215,7 +215,26 @@ Tags say what else is true of a weapon, in words that mean what they say: reach,
 
 **Armor** takes damage off every blow: light 1, medium 2, heavy 3 (and Setback on sneaking, swimming, and long exertion). The world's best might reach 4.
 
-**Everything else** does what it would do. The right tool can give Edge, or make a thing possible at all. A person carries what a person could carry; past that they're slowed, and the page shows it.
+**Everything else** does what it would do. The right tool can give Edge, or make a thing possible at all.
+
+**Carrying.** Everything a character owns is in one of four places, and the sheet says which. Room is counted in slots.
+
+| Place | Is | Room |
+|---|---|---|
+| **Worn** | on the body: clothes, one suit of armor, one pack | not counted |
+| **Ready** | in hand, or where a hand finds it without looking | 4 slots |
+| **Pack** | packed away on them | the pack's size + Might. A satchel is 4, a pack 8, a great pack 12. No pack, no room. |
+| **Kept elsewhere** | left somewhere, and the sheet says where | what the place would hold |
+
+Most things take 1 slot. A **bulky** thing takes 2: anything that needs two hands, a Heavy weapon, medium or heavy armor that isn't being worn, a tent, a keg. A **small** thing takes none: something that closes in a fist and isn't used up (a key, a ring, a letter). Past ten small things, every five more take a slot. Things that get used up are never small, and like ones pack five to a slot (rations, torches, flasks); ammunition is counted by its quiver, box, or magazine. Money takes no room until it's more than a purse holds; then it's a thing like any other. A thing's size is set from the fiction when it comes to the character, and it holds.
+
+**Full is full.** Nothing goes into a place that has no room for it. What won't fit can be carried **in arms**: up to 2 slots of things, or one thing too big for any pack (a chest, a Massive weapon, a body). Someone with their arms full is laden: Setback on running, climbing, swimming, sneaking, and fighting, and nothing Ready is in their hand until they put the load down. A weapon too big to pack is in their hands while they carry it, and blows struck with it take no Setback from the load.
+
+**Moving things.** Out of danger, a character arranges their gear as they like. When seconds count, bringing a Ready thing to hand or dropping anything is part of whatever they do; taking a thing from the pack, putting one in, or picking one up is their action for the exchange; and armor takes minutes. In a Heroic narrative, the first thing a character takes from their pack in a fight is part of what they do.
+
+A dropped thing is in the world, where it fell, and the world does what it would with it. Only the player decides what their character drops, packs, or leaves behind; when there's no room for something, say so on the page and let them choose.
+
+All of this is for a character whose sheet gives their pack a size. A sheet that gives none was made before this rule, and is never changed to fit it: that character carries what a person could carry; past that they're slowed, and the page shows it.
 
 **Money** is counted in the world's own currency, to the coin, on the Character Sheet (Craft Rules, "Track props and transactions").
 

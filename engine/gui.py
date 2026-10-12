@@ -31,6 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import art
+import carry
 import saves
 import scaffold
 import session
@@ -83,6 +84,7 @@ WINDOW_NOTE = """This conversation is driven by the GM Engine play window, not t
 - The player makes their character on the window's character creator, a step-by-step screen built from the sheet's `## Character creation` section (Procedures/New Narrative.md, step 4). Its first page shows the Journal's "The world as they know it," and the player can't see any other file. So don't repeat the world or the choices in your message and don't interview them: say only that the world is ready and the creator is open. What they made comes back in braces.
 - When the user flags a passage, the window quotes it to you in braces.
 - An action that ends in `{push}` was sent with the window's Push switch on: the character pushes on that action (Core Rules, "Health").
+- On a sheet whose pack has a size, the window's Inventory counts what the character carries and lets the player rearrange it. What they arranged comes after their action as `{gear ...}`, one move to a line: the thing as the sheet writes it, where it is, `to`, where it goes (`a tin lantern: pack to ready`; the places are worn, ready, pack, arms, dropped). Check it against the sheet and the limits, settle the gear lines in the same turn, and run `gm carry` (Procedures/Play.md, "Gear moves from the window"). `I see to my gear. {gear ...}` is a gear move sent on its own, and it's a short beat. When seconds count, a move into or out of the pack can be the character's whole action: settle it as that paragraph says before you play anything. The window never sends `{gear ...}` for a sheet that isn't counted.
 - When a new level leaves the player choices, the window shows them a level-up screen built from the sheet's `## Level up` section (Procedures/Play.md, "A new level") and sends back what they picked in braces. So don't list the choices in your message: say only that there's a new level to choose for.
 - While the sheet has a `## Shop` section, the window shows the player a shop button that opens a shop screen built from it: the stock and its prices, what the keeper would buy, and their money (Procedures/Play.md, "A shop"). So don't list a shop's goods or prices in your message. What they buy and sell comes back as one action that ends in `{trade ...}`, and it's a beat.
 - When a session ends, the window shows a summary card built from the Journal's entry for that session and the mark lines under it (Procedures/Play.md, "The end of a session"). So your closing message stays short: the card already shows the marks.
@@ -338,6 +340,9 @@ class Game:
             out["stamps"][key] = mark
             if have.get(key) != mark:
                 out["texts"][key] = read(path)
+                if key == "sheet":   # the count rides with the text it was made from, so the two are of one moment
+                    out["carry"] = carry.read(out["texts"][key])
+                    out["wares"] = carry.wares(out["texts"][key])   # and a shop's shelves, each ware with its size
         if have.get("channel") != len(self.data["channel"]):
             out["channel"] = self.data["channel"]
         if out["busy"] and not out["set_up"]:
@@ -351,6 +356,15 @@ class Game:
             out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
                           "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error", "pale")} for i in index["items"]]}
         return out
+
+    def carry(self, have, moves, buy, sell, fit):
+        """The count as it would stand after moves made in the window, or with a shop's basket: a question, and
+        nothing is written. The page's sheet has to be the one on disk, before the reading and after it."""
+        mark = lambda: ":" + stamp(self.narrative.sheet)
+        if have != mark():
+            return {"stale": True}
+        answer = carry.arrange(read(self.narrative.sheet), moves or [], buy or [], sell or [], str(fit or ""))
+        return answer if have == mark() else {"stale": True}
 
     def building(self):
         """During setup: what the GM is at work on, as a line for the player to watch. It says which kind of
@@ -692,6 +706,8 @@ class Handler(BaseHTTPRequestHandler):
             return {"ok": True}
         if route == "/api/state":
             return game(path).state(data.get("viewing"), data.get("have") or {})
+        if route == "/api/carry":
+            return game(path).carry(data.get("stamp"), data.get("moves"), data.get("buy"), data.get("sell"), data.get("fit"))
         if route == "/api/send":
             game(path).send(data.get("text") or "")
             return {"ok": True}

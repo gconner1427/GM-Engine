@@ -14,6 +14,8 @@ One line each: what it is, its damage size (Core Rules, "Weapons"), and any tags
 
 (none yet)
 
+**Packs:** (what this world calls a pack at each of the three sizes: 4, 8, and 12. A satchel, a rucksack, a frame pack; a sling bag, a daypack, a field pack. The sizes are the Core Rules' and are the same in every world.)
+
 ## Powers
 
 One entry for each law in the World Bible that a person can use (a school of magic, psionics, implants, a mutation). The World Bible says what it is in the world; this says how it rolls.

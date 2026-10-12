@@ -8,6 +8,8 @@ What people pay with, and its denominations.
 
 Unknown.
 
+**A purse holds:** (how much of this money a purse holds. Past that, each purse's worth more is a thing to carry: one slot, written on a gear line by what holds it. Left unset, it's your judgment.)
+
 ## Established prices
 
 Every price the page has set, so it holds next time. One line each: what, where, price, tag. When a price changes, the old one moves to **Price history**.

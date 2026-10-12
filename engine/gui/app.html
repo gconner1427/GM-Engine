@@ -903,6 +903,105 @@ aside .warnbox { border: 1px solid var(--p-control-edge); border-left: max(2px, 
    Forced colours give every border its own colour, so the full edge stands there. */
 aside .bar .track, aside .tile, aside .purse, aside .thing:not(.none) .glyph, aside .shot.pending, .compose-row:not(:focus-within), .push:not(.on, .last, :hover:not(:disabled)) {
   border-top-color: #000; border-left-color: #000; border-right-color: #000; }
+/* the pack: on a sheet whose pack has a size, the Inventory is where the player packs. Ready and the pack are wells cut into the
+   ledger with the things sitting in them, each place says how full it is, and a thing moved waits, dashed, until it is sent */
+aside .place > .caps .pips { order: 0; }
+aside .block.place .count.room { order: 2; display: inline-flex; align-items: center; gap: .6em; color: var(--ink); font: 600 max(14px, calc(var(--u) * 18))/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+aside .block.place .count.room.full { color: var(--p-gold-hi); } aside .block.place .count.room.over { color: var(--p-bad); }
+aside .block.place .count.room .dia { background: none; border: 1px solid currentColor; box-shadow: none; }
+aside .place > .caps:has(.count)::after { order: 1; }
+aside .place .subline { margin: calc(var(--u) * -4) 0 calc(var(--u) * 10); color: var(--p-warn); font: italic 400 max(14px, calc(var(--u) * 18))/1.3 var(--text); }
+aside .piprow { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 12); margin: calc(var(--u) * -2) 0 calc(var(--u) * 10); }
+aside .piprow::after { content: ""; flex: 1; order: 1; height: 1px; background: linear-gradient(90deg, var(--p-edge), transparent); }
+aside .pips.slots { flex: none; gap: max(4px, calc(var(--u) * 6)); padding: 0 3px; }
+aside .pips.slots i { width: max(7px, calc(var(--u) * 10)); height: max(7px, calc(var(--u) * 10)); border: 1px solid var(--p-control-edge); box-shadow: none; }
+aside .pips.slots i.on { background: var(--p-gold); border-color: var(--p-gold); box-shadow: none; }
+aside .pips.slots i.ring { border-color: var(--p-gold-hi); }
+aside .pips.slots i.over { background: var(--p-bad); border-color: #000; }
+aside .pips.slots i:not(.over) + i.over { margin-left: calc(var(--u) * 6); }
+aside .pips.slots i.turned { animation: pipturn .16s ease-out backwards; }
+@keyframes pipturn { from { background-color: transparent; border-color: var(--p-control-edge); } }
+aside .bag.slots .thing { margin: 0; align-items: center; min-height: max(50px, calc(var(--u) * 62)); background: var(--p-well); border: 1px solid var(--p-control-edge); border-color: #000 #000 var(--p-control-edge); box-shadow: var(--p-inlay); }
+aside .bag.slots .thing .glyph { background: linear-gradient(#1d1810, #120e09); border-color: var(--p-control-edge); box-shadow: var(--p-raise); }
+aside .bag.slots.ready:not(.laden) .thing .glyph { border-color: var(--p-gold); box-shadow: inset 0 0 12px #c9a25b26, var(--p-raise); }   /* what is Ready keeps its gold, as it had */
+aside .thing.slot { cursor: pointer; }
+aside .thing.slot:hover, aside .thing.slot:focus-visible, aside .bag.slots .thing.open { border-color: var(--p-edge); background: linear-gradient(90deg, #c9a25b14, transparent), var(--p-well); }
+aside .bag:not(.slots) .thing.slot:hover, aside .bag:not(.slots) .thing.slot:focus-visible { background: linear-gradient(90deg, #c9a25b14, transparent); }
+aside .thing.slot:focus-visible, aside .thing.well:focus-visible { outline: 1px solid var(--p-gold); outline-offset: 2px; }
+aside .thing.wide { grid-column: 1 / -1; }
+aside .thing.slot.open, aside .smalls .thing.open { flex-wrap: wrap; row-gap: calc(var(--u) * 8); cursor: default; }
+aside .thing .opened { flex: 0 0 100%; min-width: 0; }   /* where it can go runs the tile's full width, under the thing itself */
+aside .thing .opened:empty { display: none; }
+aside .thing .chip + .chip { margin-left: 6px; }
+aside .thing .chip.size { flex: none; align-self: center; margin: 0 calc(var(--u) * 4) 0 0; }
+aside .thing.well { justify-content: center; cursor: default; }
+aside .thing.well i { width: max(8px, calc(var(--u) * 12)); height: max(8px, calc(var(--u) * 12)); border: 1px solid var(--p-control-edge); transform: rotate(45deg); }
+aside .bag.slots .thing.none.tail { justify-content: center; background: none; border: 1px dashed var(--p-control-edge); box-shadow: none; text-align: center; }
+aside .thing.none.tail .name { font-size: max(14px, calc(var(--u) * 19)); }
+aside .thing.thepack { border-color: var(--p-gold); }
+aside .bag.ready.laden .thing .glyph { color: var(--dim); border-color: var(--p-control-edge); box-shadow: var(--p-raise); }
+/* small things take no room and sit under their place, with no well round them */
+aside .smalls { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 6) calc(var(--u) * 12); margin-top: calc(var(--u) * 8); }
+aside .smalls > em { color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 17))/1.3 var(--text); }
+aside .smalls > em.charge { flex-basis: 100%; color: var(--dim); }
+aside .smalls .thing { flex: none; align-items: center; gap: calc(var(--u) * 8); min-height: 0; padding: calc(var(--u) * 3) calc(var(--u) * 6) calc(var(--u) * 3) calc(var(--u) * 3); border-color: transparent; }
+aside .smalls .thing .glyph { width: max(22px, calc(var(--u) * 28)); height: max(22px, calc(var(--u) * 28)); }
+aside .smalls .thing .name { font-size: max(15px, calc(var(--u) * 18)); }
+aside .smalls .thing.open { flex: 1 1 100%; border-color: var(--p-edge); padding: calc(var(--u) * 8); }
+/* a thing opened: where it can go, and why not where it can't */
+aside .moves { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 8); }
+aside .thing .pbtn.mv { height: max(30px, calc(var(--u) * 38)); padding: 0 calc(var(--u) * 10); gap: .6em; border-color: var(--p-control-edge); color: var(--ink); font-size: max(13px, calc(var(--u) * 13)); letter-spacing: .16em; text-indent: 0; }
+aside .thing .pbtn.mv:hover:not(:disabled), aside .thing .pbtn.mv:focus-visible { border-color: var(--p-gold); color: var(--p-gold-hi); }
+aside .thing .pbtn.mv:disabled { opacity: 1; color: var(--p-faint); border-color: #ffffff0f; }
+aside .thing .pbtn.mv kbd { display: inline-grid; place-items: center; min-width: 1.7em; height: 1.7em; padding: 0 .3em; border: 1px solid #5a4c33; border-radius: max(2px, calc(var(--u) * 3)); font: 600 max(11px, calc(var(--u) * 12))/1 var(--display); letter-spacing: 0; }
+aside .thing .pbtn.mv:disabled kbd { border-color: #ffffff14; }
+aside .thing > .pbtn.mv { flex: none; align-self: center; }
+aside .thing .why { margin-top: calc(var(--u) * 6); color: var(--p-warn); font: italic 400 max(14px, calc(var(--u) * 17))/1.35 var(--text); }
+aside .thing .why.flash { animation: whyflash .4s ease-out; }
+aside .thing.denied { animation: denied .4s ease-out; }
+@keyframes whyflash { 30% { color: var(--p-bad); } }
+@keyframes denied { 30% { border-color: var(--p-bad); } }
+aside .packline { margin-top: calc(var(--u) * 6); color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 17))/1.35 var(--text); }
+/* waiting: moved in the window and not yet done. A dash already means not there yet */
+aside .bag .thing.waiting, aside .smalls .thing.waiting { border: 1px dashed var(--p-gold); }
+aside .thing .glyph .wait { position: absolute; left: -4px; top: -4px; width: max(7px, calc(var(--u) * 8)); height: max(7px, calc(var(--u) * 8)); border: 1px solid var(--p-gold-hi); background: var(--p-well); transform: rotate(45deg); }
+aside .thing .from { margin-top: 2px; color: var(--p-gold-low); font: italic 400 max(14px, calc(var(--u) * 17))/1.3 var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+aside .thing.arrived { animation: gearin .18s var(--p-arrive); }
+@keyframes gearin { from { opacity: 0; transform: translateY(calc(var(--u) * 6)); } }
+aside .waitbar { position: sticky; bottom: calc(var(--u) * -24); z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 8) calc(var(--u) * 12); margin: calc(var(--u) * 20) calc(var(--u) * -26) calc(var(--u) * -24);
+  padding: calc(var(--u) * 12) calc(var(--u) * 26); border-top: 1px solid var(--p-hair); background: #0b0907; animation: waitin .22s var(--p-arrive); }
+@keyframes waitin { from { opacity: 0; transform: translateY(calc(var(--u) * 8)); } }
+aside .waitbar .said { flex: 1 1 12em; min-width: 0; }
+aside .waitbar b { display: flex; align-items: center; gap: .7em; color: var(--p-gold); font: 600 13px/1.3 var(--display); letter-spacing: .16em; text-transform: uppercase; }
+aside .waitbar b .dia { background: none; border: 1px solid currentColor; box-shadow: none; }
+aside .waitbar em { display: block; margin-top: 2px; color: var(--dim); font: italic 400 max(14px, calc(var(--u) * 18))/1.3 var(--text); }
+aside .waitbar em.packline { color: var(--p-faint); }
+aside .waitbar .btns { display: flex; flex: none; gap: calc(var(--u) * 6); margin-left: auto; }
+@media (max-height: 820px) { aside .waitbar em { display: none; } aside .waitbar { padding-top: calc(var(--u) * 8); padding-bottom: calc(var(--u) * 8); } }   /* a short window: the count and the two buttons */
+aside .waitbar .pbtn { height: max(32px, calc(var(--u) * 40)); padding: 0 calc(var(--u) * 12); font-size: max(13px, calc(var(--u) * 13)); letter-spacing: .16em; text-indent: 0; }
+/* arms full: the one state here that changes a roll, so it is a headed note and never a colour alone */
+aside .ladennote { margin-top: calc(var(--u) * 20); padding: calc(var(--u) * 12) calc(var(--u) * 16); border-left: max(2px, calc(var(--u) * 3)) solid var(--p-warn); background: linear-gradient(90deg, #d98a5f14, transparent 70%); animation: fadein .3s ease; }
+aside .ladennote.soon { border-left-style: dashed; }
+aside .ladennote b { display: block; color: var(--p-warn); font: 600 13px/1.3 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+aside .ladennote p { margin: calc(var(--u) * 6) 0 0; color: var(--ink); font: 400 max(15px, calc(var(--u) * 20))/1.35 var(--text); }
+aside .ladennote + .block { margin-top: calc(var(--u) * 12); }
+aside .tabs .badge.hollow { background: none; border: 1px solid var(--p-gold-hi); box-shadow: none; animation: none; }
+aside .tabs .badge.steady { background: var(--p-warn); box-shadow: none; animation: none; }   /* it can stay for a whole session, and must not blink at the story */
+/* on the desk: moves that will go with the next action, and arms full, which shows with the ledger away */
+.push.gear { gap: max(7px, calc(var(--u) * 8)); margin-left: 0; margin-right: calc(var(--u) * 4); cursor: pointer; }
+.push.gear:hover { border-color: var(--p-gold); color: var(--ink); }
+.push.gear.dim { color: var(--p-faint); }
+.modes.close { column-gap: calc(var(--u) * 8); } .modes.close .push .cost { display: none; }
+.modes.close .acts { gap: 0; } .modes.close .push { margin: 0; padding: 0 calc(var(--u) * 10); } .modes.close .push.gear { padding: 0 calc(var(--u) * 8); }
+.push.gear.last, .push.gear.last:hover { border-color: var(--p-warn); color: var(--p-warn); }
+.push.gear.last .dia { background: var(--p-warn); }
+@media (prefers-reduced-motion: reduce) {
+  aside .pips.slots i.turned, aside .thing.arrived, aside .waitbar, aside .ladennote, aside .thing.denied { animation: none !important; }
+  aside .thing .why.flash { animation: whysteady 1s step-end; } }
+@keyframes whysteady { from { color: var(--p-bad); } }
+@media (forced-colors: active) {
+  aside .pips.slots i { transform: none; border: 1px solid CanvasText; } aside .pips.slots i.on, aside .pips.slots i.over { background: CanvasText; } aside .pips.slots i.ring { border-style: double; border-width: 3px; }
+  aside .bag.slots .thing, aside .thing.well { border: 1px solid CanvasText; } aside .bag .thing.waiting { border-style: dashed; } }
 /* the GM's side: what's said outside the story, as the creator's window draws it */
 aside .talk { max-width: none; display: block; }
 aside .msg { padding: calc(var(--u) * 13) 0; border: 0; border-top: 1px solid #ffffff0a; color: var(--ink); overflow-wrap: anywhere; }
@@ -1075,7 +1174,7 @@ aside .hero > .cn { display: none; }
       linear-gradient(#0d0b0873 0 0), var(--art-ground) 0 0 / 1024px 1024px, var(--p-page); } }
   body:not(.lean) #game.has-ledger aside { background: var(--grain-low), linear-gradient(#120e0966, #0a080666 40%), var(--art-ledger) 0 0 / 1024px 1024px, linear-gradient(#120e09, #0a0806 40%); }
   /* the inner tabs stay over the pane as it scrolls, so they are a strip of the same bronze and not a hole in it */
-  body:not(.lean) #game.has-ledger aside .subtabs { background: linear-gradient(#0a080666 0 0), var(--art-ledger) 0 0 / 1024px 1024px, #0a0806; }
+  body:not(.lean) #game.has-ledger aside .subtabs, body:not(.lean) #game.has-ledger aside .waitbar { background: linear-gradient(#0a080666 0 0), var(--art-ledger) 0 0 / 1024px 1024px, #0a0806; }
   /* the rail: across the lintel's foot, along the desk's head, and standing on the ledger's edge with its lit side to the page */
   #game.has-rail header::after { height: var(--rail); bottom: calc(var(--rail) * -.3); border: 0; background: var(--art-rail) 0 0 / auto 100% repeat-x; }
   #game.has-rail .composer::before { height: var(--rail); top: calc(var(--rail) * -.5); border: 0; background: var(--art-rail) 0 0 / auto 100% repeat-x;
@@ -1579,6 +1678,9 @@ body.lean .steps button.unseal :is(i, span, em), body.lean .socket.stamp, body.l
 .basket .net em { display: block; font: italic 400 max(15px, calc(var(--u) * 21))/1.4 var(--text); color: var(--dim); }
 .basket .last { margin-top: calc(var(--u) * 10); font: 400 max(14px, calc(var(--u) * 19))/1.3 var(--text); color: var(--dim); }
 .basket .last.short { color: var(--p-bad); }
+.basket .last.warn { color: var(--p-warn); }
+.basket .net.room b { color: var(--dim); }   /* the money stays the headline */
+.wrow .what b .chip { display: inline-block; margin-left: .7em; padding: 0 6px; border: 1px solid var(--p-edge); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 14))/18px var(--display); font-style: normal; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; vertical-align: middle; }
 @media (max-width: 1100px), (max-aspect-ratio: 4/3) {
   #shopdialog .plate-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
   .basket { max-height: 30vh; padding: calc(var(--u) * 12) 0; border-left: 0; border-top: 1px solid #c9a25b22; }
@@ -1883,6 +1985,7 @@ body[data-face="garamond"] .prow .what .sample { font-family: var(--text); font-
             <div class="whom" id="whom" role="radiogroup" aria-label="Who you are speaking to"><button id="modeact" role="radio" aria-checked="true" class="on" title="What your character does, in first or third person. Only what you state happens.">As my character</button><button id="modegm" role="radio" aria-checked="false" tabindex="-1" title="A correction, a question, or a command. It's sent in braces and never goes in the narrative. (Alt+G)">To the GM</button></div>
             <span class="tip" id="modetip"></span>
             <div class="acts">
+              <button id="gearchip" class="push gear" hidden></button>
               <button id="undo" class="pbtn quiet" hidden title="Take the last beat back out of the narrative, with everything it changed">Undo</button>
               <button id="meant" class="pbtn quiet" hidden title="The GM misread what you wrote: the last beat is taken back and played again from what you meant">I meant…</button>
               <button id="push" class="push" aria-pressed="false" hidden><i class="dia"></i><span>Push<span class="cost"> · 2 Strain</span></span><span class="left" id="pushleft"></span></button>
@@ -1895,7 +1998,7 @@ body[data-face="garamond"] .prow .what .sample { font-family: var(--text); font-
     <aside aria-label="Your character and the world">
       <div class="tabs" id="tabs" role="tablist">
         <button data-tab="sheet" role="tab" aria-controls="pane" aria-selected="true" class="on" title="Alt+1">Character</button>
-        <button data-tab="inventory" role="tab" aria-controls="pane" aria-selected="false" tabindex="-1" title="Alt+2">Inventory</button>
+        <button data-tab="inventory" role="tab" aria-controls="pane" aria-selected="false" tabindex="-1" title="Alt+2">Inventory<span class="badge" id="invbadge" hidden></span></button>
         <button data-tab="journal" role="tab" aria-controls="pane" aria-selected="false" tabindex="-1" title="Alt+3">Journal</button>
         <button data-tab="gallery" role="tab" aria-controls="pane" aria-selected="false" tabindex="-1" title="Alt+4">Gallery</button>
         <button data-tab="gm" role="tab" aria-controls="pane" aria-selected="false" tabindex="-1" title="Alt+5" id="gmtab">GM<span class="badge" id="gmbadge" hidden></span></button>
@@ -2176,9 +2279,6 @@ function cutTop(text, at) {   // split where `at` matches outside parentheses
   return out.map(s => s.trim()).filter(Boolean);
 }
 
-const COUNTS = {one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, dozen: 12};
-const WHERE = /^(.+?)\s+((?:with|without|in|on|at|over|under|through|beside|inside|around|across|cut|drying|hung|hanging|slung|tucked|tied|strung|bloused|wrapped)\s.+)$/i;
-const TRAILS = /^(not|still|now|with|without|in|on|at|by|over|under|through|beside|inside|around|across|tied|strung|hung|hanging|slung|tucked|which|that)\b/i;
 const KINDS = [   // which picture a thing gets, by the last word in its name that has one
   ["blade", "sword|knife|knive|dagger|axe|ax|blade|spear|sabre|saber|machete|hatchet|rapier|halberd|mace|club|staff|lance|cutlass"],
   ["bow", "bow|longbow|shortbow|crossbow|arrow|quiver|bolt|sling|dart"],
@@ -2200,52 +2300,6 @@ function kindOf(name) {
   for (const word of name.toLowerCase().split(/[^a-z]+/).filter(Boolean).reverse())
     for (const [kind, re] of KINDS) if (re.test(word)) return kind;
   return "thing";
-}
-
-function thing(text, after) {   // one thing a gear line names: what it is, how many, and what's said about it
-  const asides = [], notes = [];
-  let name = text.replace(/\s*\(((?:[^()]|\([^()]*\))*)\)/g, (_, a) => { asides.push(a.trim()); return ""; })
-    .replace(/\.$/, "").trim().replace(/^(and|plus)\s+/i, "").replace(/^(an?|the|some)\s+/i, "");
-  let m = name.match(WHERE), count = 0, chip = "";
-  if (m) { name = m[1]; notes.push(m[2]); }
-  if ((m = name.match(/^(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|a dozen)\s+(.+)$/i))) {
-    const measure = m[2].match(/^(\w+)\s+of\s+(.+)$/);
-    if (measure) { chip = m[1] + " " + measure[1]; name = measure[2]; }
-    else { count = /^\d/.test(m[1]) ? +m[1] : COUNTS[m[1].toLowerCase().replace(/^a /, "")]; name = m[2]; }
-  }
-  if (!count && (m = name.match(/^(.+?)\s*[x×]\s*(\d+)$/i))) { name = m[1]; count = +m[2]; }   // "lamp oil x2"
-  for (const a of asides) {
-    const armor = a.match(/^(?:(?:light|medium|heavy)\s+)?armou?r,?\s*(\d)$/i), many = a.match(/^[x×]?\s*(\d+)$/i);   // "(2)", "(x2)": how many, not something said about it
-    if (many && !count) count = +many[1];
-    else if (armor && !chip) chip = "Armor " + armor[1]; else notes.push(a);
-  }
-  if (after) notes.push(after);
-  return {name: name.charAt(0).toUpperCase() + name.slice(1), count: count > 1 ? count : 0, chip, notes, kind: kindOf(name)};
-}
-
-function things(text) {    // a gear line into its things
-  const out = [], AND = /\s+and\s+(?=(?:an?|the|her|his|their|my|your|some)\s)/i;
-  for (const sentence of cutTop(text, /\.\s+(?=[A-Z])/)) {
-    const listed = cutTop(sentence, /;/), start = out.length;
-    if (listed.length > 1) {      // a semicolon list: each part is a thing, and what follows its comma is about it
-      for (const one of listed) {
-        const [head, ...rest] = cutTop(one, /,/), named = cutTop(head, AND);
-        named.forEach((n, i) => out.push(thing(n, i === named.length - 1 ? rest.join(", ").replace(/\.$/, "") : "")));
-      }
-      continue;
-    }
-    let lead = "";
-    for (const one of cutTop(sentence, /,/)) {
-      const bit = one.replace(/^and\s+/i, "").replace(/\.$/, "");
-      if (TRAILS.test(bit)) {     // not a thing: it's about the one before it (or the one after, when it comes first)
-        if (out.length > start) out[out.length - 1].notes.push(bit); else lead = lead ? lead + ", " + bit : bit;
-        continue;
-      }
-      cutTop(bit, AND).forEach((n, i) => { out.push(thing(n, i ? "" : lead)); lead = ""; });
-    }
-    if (lead) out.push(thing(lead, ""));
-  }
-  return out.filter(t => t.name);
 }
 
 function coins(text) {     // "14 crowns, 6 shillings" into counted coins; anything else stays a sentence
@@ -4618,6 +4672,7 @@ function openGame(path) {
           shownParas: 0, shownLog: "", shownBody: "", seenChannel: null, art: null, wasBusy: false, jump: false,
           open: new Set(), vitals: null, sent: "", jtab: null, stab: null, gtab: null, push: false, pick: null, offered: null, ended: null, loaded: false,
           make: null, madeOnce: false, talk: false, makeShown: "", makeStep: "", cart: null, shoptab: "buy", shopSeen: null,
+          carry: null, wares: null, gear: noGear(), shopRoom: null,
           vault: null, page: "", can: false, foot: null, face: 0, stopAsk: false, toWorld: "", readyTill: 0};
   stopMenuMusic();
   api("opened", {path}).catch(() => {});   // so the main menu's Continue comes back to this one
@@ -4723,6 +4778,14 @@ function apply(s) {
   if (s.channel) game.channel = s.channel;
   if (game.seenChannel === null) game.seenChannel = game.channel.length;
   if (s.art) newArt(s.art);
+  if (s.carry) {   // the sheet's gear, counted: it comes with the sheet's text, and moves waiting on the old sheet are let go
+    if (waiting().length) gearLetGo(true); else game.gear = noGear(game.gear.at);
+    game.carry = s.carry;
+    game.wares = s.wares || null;
+    game.shopRoom = null;
+    delete s.carry;
+    delete s.wares;
+  }
 
   $("title").textContent = s.name;
   const play = s.set_up, vault = inVault(s);
@@ -4771,6 +4834,7 @@ function apply(s) {
   $("undo").disabled = $("meant").disabled = s.busy || !s.can_undo;
   $("push").hidden = !play || game.mode !== "act" || readVitals(game.texts.sheet || "").strain === null;
   showPush();
+  showGear();
 
   const finished = game.wasBusy && !s.busy;
   game.wasBusy = s.busy;
@@ -4819,7 +4883,8 @@ function apply(s) {
   const up = play && !s.busy && !sheets.on && $("summarydialog").hidden && levelUp(game.texts.sheet || "");   // offered when nothing else is open over the page
   if (up && game.offered !== up.level) { game.offered = up.level; openLevel(); }   // offered once; the sheet's button brings it back
   if ("sheet" in s.texts && (game.tab === "sheet" || game.tab === "inventory") || "journal" in s.texts && game.tab === "journal"
-      || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before) renderPane();
+      || s.channel && game.tab === "gm" || s.art && game.tab !== "gm" || !before
+      || game.tab === "inventory" && (before.busy !== s.busy || before.open_session !== s.open_session)) renderPane();   // a move is closed while the GM writes
 }
 
 // ---- pictures ---------------------------------------------------------------------
@@ -5094,28 +5159,280 @@ function subtabs(pages, key) {   // a row of inner tabs and the page the player 
   return page ? `<div class="subtabs" role="tablist">${pages.map(p => `<button role="tab" data-sub="${key}" data-to="${p.tab}" aria-selected="${p === page}" tabindex="${p === page ? 0 : -1}"${p === page ? ' class="on"' : ""}>${p.tab}${p.count ? `<span>${p.count}</span>` : ""}</button>`).join("")}</div>${page.html}` : "";
 }
 
-function inventoryHtml(sheet) {
-  const gear = entries(part(sheet, "Gear"));
-  if (!gear.length) return '<div class="empty">Nothing carried yet.</div>';
-  let purse = "", html = "";
-  for (const g of gear) {
-    if (/^money$/i.test(g.name)) {
-      const counted = blank(g.text) ? null : coins(g.text);
-      purse = counted ? `<div class="coins tiles">${counted.map(c => `<div class="tile"><b>${esc(c.value)}</b><span>${esc(c.name)}</span></div>`).join("")}</div>`
-        : `<div class="purse${blank(g.text) ? " none" : ""}"><svg><use href="#i-coin"/></svg><span>${blank(g.text) ? "No money" : inline(g.text.replace(/\.$/, ""))}</span></div>`;
-      continue;
-    }
-    const where = g.name.match(/^(.*?)\s*\((.*)\)$/), list = blank(g.text) ? [] : things(g.text);
-    const title = esc(where ? where[1] : g.name) + (where ? `<span class="sub">${esc(where[2])}</span>` : "") + (list.length ? `<span class="count">${list.length}</span>` : "");
-    const none = !g.text || /^\(/.test(g.text) ? "Empty" : g.text.replace(/\.$/, "");
-    const slots = list.length ? list.map(t => `<div class="thing${t.notes.length ? ' more" tabindex="0" role="button' : ""}">
-        <div class="glyph"><svg><use href="#g-${t.kind}"/></svg>${t.count ? `<b>${t.count}</b>` : ""}</div>
-        <div class="what"><div class="name">${inline(t.name)}</div>${t.chip ? `<span class="chip">${esc(t.chip)}</span>` : ""}
-        ${t.notes.length ? `<div class="note">${t.notes.map(inline).join(" · ")}</div>` : ""}</div></div>`).join("")
-      : `<div class="thing none"><div class="glyph"></div><div class="what"><div class="name">${inline(none.charAt(0).toUpperCase() + none.slice(1))}</div></div></div>`;
-    html += block(title, `<div class="bag${/^(ready|in hand)/i.test(g.name) ? " ready" : ""}">${slots}</div>`);
+// ---- the pack: what is carried, counted -------------------------------------------------
+// The count is the server's (game.carry: the sheet's gear lines as engine/carry.py reads them, with the room in each place); the
+// page draws it, splits no gear line and reads no size mark. A move made here is a wish: it waits in game.gear, drawn where it
+// would go, until it rides out with the player's next action as {gear ...}. The page never changes the sheet. A sheet whose
+// pack has no size isn't counted, and is drawn as it always was.
+const GEAR_TO = {ready: ["R", "Ready"], pack: ["P", "Pack"], worn: ["W", "Wear"], arms: ["A", "In arms"], dropped: ["D", "Drop"]};
+const GEAR_KEYS = {r: "ready", p: "pack", w: "worn", a: "arms", d: "dropped"};
+const GEAR_FROM = {pack: "from the pack", ready: "from Ready", worn: "worn until now", arms: "from your arms"};
+const PACK_LINE = "In a fight, reaching into the pack can cost your whole action. You'll be told before it does.";
+const ARMOR_LINE = "Armor takes minutes. Not in a fight.";
+const NUMBER_WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const noGear = at => ({moves: [], carry: null, fits: null, open: null, at: at || null, arrived: null, pips: {}});
+const carried = () => game.gear.carry || game.carry || {counted: false, lines: []};   // as arranged, or as the sheet has it
+const gearLine = (c, key) => c.lines.find(l => l.key === key) || {key, title: "", hint: "", text: "", things: []};
+const waiting = () => game.gear.carry ? game.gear.carry.lines.flatMap(l => l.things.filter(t => t.from && t.from !== "shop").map(t => ({t, to: l.key}))) : [];
+const canMove = () => !!(game.state && game.state.set_up && game.state.open_session && !game.state.busy);   // the GM goes first, and one beat at a time
+const whyClosed = () => game.state && game.state.busy ? "After this beat." : "When the session is open.";
+const moves = n => n + (n === 1 ? " move" : " moves");
+
+function bagHtml(l) {   // one gear line as a plain list: every line of a sheet that isn't counted, and Kept elsewhere on one that is
+  const list = l.things;
+  const title = esc(l.title) + (l.hint ? `<span class="sub">${esc(l.hint)}</span>` : "") + (list.length ? `<span class="count">${list.length}</span>` : "");
+  const none = !l.text || /^\(/.test(l.text) ? "Empty" : l.text.replace(/\.$/, "");
+  const slots = list.length ? list.map(t => `<div class="thing${t.notes.length ? ' more" tabindex="0" role="button' : ""}">
+      <div class="glyph"><svg><use href="#g-${kindOf(t.name)}"/></svg>${t.count ? `<b>${t.count}</b>` : ""}</div>
+      <div class="what"><div class="name">${inline(t.name)}</div>${t.chip ? `<span class="chip">${esc(t.chip)}</span>` : ""}
+      ${t.notes.length ? `<div class="note">${t.notes.map(inline).join(" · ")}</div>` : ""}</div></div>`).join("")
+    : `<div class="thing none"><div class="glyph"></div><div class="what"><div class="name">${inline(none.charAt(0).toUpperCase() + none.slice(1))}</div></div></div>`;
+  return block(title, `<div class="bag${/^(ready|in hand)/i.test(l.title) ? " ready" : ""}">${slots}</div>`);
+}
+
+function sizeChip(t, c) {   // the room a thing takes, where it isn't one slot. The number is the counter's
+  if (t.is_pack) return "Pack · " + c.pack.size;
+  if (t.size === "armload") return "Armload";
+  if (t.size === "bulky") return "Bulky · " + t.slots;
+  return t.size === "ordinary" && t.slots > 1 ? t.slots + " slots" : "";
+}
+
+function gearWhy(to, f, t, c) {   // a refused place, in words, from the counter's code. Each names its place, so none leans on where it is
+  const place = to === "pack" ? "Pack" : "Ready";
+  if (f.code === "full") return to === "pack" && !c.pack.room ? "Pack: there is no pack to put it in."
+    : t.size === "small" ? "Pack: the pack is full, and a small thing past ten takes a slot."
+    : `${place}: it takes ${f.need}, and ${to === "pack" ? "the pack" : "Ready"} has room for ${f.room}.`;
+  if (f.code === "too_big") return to === "pack" ? "Pack: too big to pack. It can only be carried in your arms." : "Ready: too big to keep ready. It can only be carried in your arms.";
+  if (f.code === "arms_full") return "In arms: your arms are full.";
+  return f.code === "not_worn" ? "Wear: one suit of armor is worn already." : "";
+}
+
+function openHtml(t, c, key, fits) {   // what an opened thing shows under its notes: the places it can go, and why not the others
+  if (t.is_pack) return '<div class="packline">Gives the pack its room. Taking it off is something you do in the story.</div>';
+  if (!fits || ["ready", "pack", "arms", "dropped"].every(to => fits[to] && /^(fixed|gone)$/.test(fits[to].code))) return "";
+  const shut = !canMove(), wait = t.from && t.from !== "shop", why = [];
+  const held = wait && fits[t.from] && gearWhy(t.from, fits[t.from], t, c);   // its own place has been taken since: taking it back is refused like any place
+  let row = wait ? `<button class="pbtn quiet mv" data-back="1"${shut || held ? " disabled" : ""}${held && !shut ? ` aria-describedby="why-${t.from}"` : ""}><kbd>⌫</kbd>Take back</button>` : "";
+  for (const to of Object.keys(GEAR_TO)) {
+    const f = fits[to];
+    if (f && /^(here|not_armor|the_pack|fixed|gone)$/.test(f.code)) continue;   // where it is, and what it can't be
+    const no = !shut && f ? gearWhy(to, f, t, c) : "";
+    if (no) why.push(`<div class="why" id="why-${to}" data-why="${to}">${esc(no)}</div>`);
+    row += `<button class="pbtn quiet mv" data-move="${to}"${shut || f ? " disabled" : ""}${no ? ` aria-describedby="why-${to}"` : ""}><kbd>${GEAR_TO[to][0]}</kbd>${GEAR_TO[to][1]}</button>`;
   }
-  return purse + html;
+  const armor = /^Armor/.test(t.chip) && (key === "worn" || t.from === "worn" || !fits.worn || fits.worn.code === "not_worn");
+  return `<div class="moves" role="group" aria-label="Where it can go">${row}</div>${shut ? `<div class="why">${whyClosed()}</div>` : why.join("")}
+    ${key === "pack" || t.from === "pack" ? `<div class="packline">${PACK_LINE}</div>` : ""}${armor ? `<div class="packline">${ARMOR_LINE}</div>` : ""}`;
+}
+
+function slotHtml(t, c, key) {   // one thing on a counted sheet: it opens, and it says how much room it takes and whether it is waiting
+  const g = game.gear, open = g.open === t.id, fits = open && g.fits && g.fits.id === t.id ? g.fits.map : null;
+  if (t.is_pack && !c.pack.size) return '<div class="thing none"><div class="glyph"></div><div class="what"><div class="name">No pack</div></div></div>';
+  const size = sizeChip(t, c), wait = t.from && t.from !== "shop", wide = key !== "worn" && t.size !== "small" && t.slots > 1;
+  const cls = ["thing slot", wide ? "wide" : "", open ? "open" : "", wait ? "waiting" : "", t.is_pack ? "thepack" : "", g.arrived === t.id ? "arrived" : ""].filter(Boolean).join(" ");
+  const label = [t.name, t.count ? "" + t.count : "", t.chip, size, wait ? "waiting, " + GEAR_FROM[t.from] : ""].filter(Boolean).join(", ");
+  return `<div class="${cls}" role="button" tabindex="-1" data-id="${esc(t.id)}" data-at="${esc(t.id)}" aria-expanded="${open}" aria-label="${esc(label)}">
+    <div class="glyph"><svg><use href="#g-${kindOf(t.name)}"/></svg>${t.count ? `<b>${t.count}</b>` : ""}${wait ? '<i class="wait"></i>' : ""}</div>
+    <div class="what"><div class="name">${inline(t.name)}</div>${t.chip ? `<span class="chip">${esc(t.chip)}</span>` : ""}${size && !wide ? `<span class="chip">${esc(size)}</span>` : ""}
+    ${wait ? `<div class="from">${GEAR_FROM[t.from]}${open ? " · not yet done" : ""}</div>` : ""}
+    ${t.notes.length && (t.size !== "small" || open) ? `<div class="note">${t.notes.map(inline).join(" · ")}</div>` : ""}</div>
+    ${size && wide ? `<span class="chip size">${esc(size)}</span>` : ""}${key === "dropped" && !open ? `<button class="pbtn quiet mv" data-back="1"${canMove() ? "" : " disabled"}>Take back</button>` : ""}
+    ${open ? `<div class="opened">${openHtml(t, c, key, fits)}</div>` : ""}</div>`;
+}
+
+function pipsHtml(place, key, c) {   // a tally, filled from the left: solid for what the sheet has there and is staying, a ring for what is on its way
+  const was = game.gear.pips[key] || "", now = [];   // 48 at most: a sheet's number is never a loop's length
+  for (let i = 0; i < Math.min(48, Math.max(place.room, place.used)); i++) now.push(i >= place.room ? "over" : i < place.used - place.coming ? "on" : i < place.used ? "ring" : "");
+  let turned = 0;
+  const html = now.map((cls, i) => { const turn = was && was.split(",")[i] !== cls; return `<i class="${cls}${turn ? " turned" : ""}"${turn ? ` style="animation-delay:${30 * turned++}ms"` : ""}></i>`; }).join("");
+  game.gear.pips[key] = now.join(",");
+  return `<span class="pips slots" aria-hidden="true">${html}</span>`;
+}
+
+function roomHtml(place, sheet, differs, plain) {   // "3 / 4": never a colour alone, so full and over are each a word. differs: what is arranged there is not what the sheet has
+  const over = place.used > place.room, full = !plain && !over && place.room > 0 && place.used === place.room;
+  const told = differs ? `${sheet.used} on the sheet, ${place.used} as you have arranged it.` : "";
+  return `<span class="count room${over ? " over" : full ? " full" : ""}"${told ? ` title="${told}" aria-label="${told}"` : ""}>${differs ? '<i class="dia"></i>' : ""}${place.used} / ${place.room}${over ? " · over by " + (place.used - place.room) : full ? " · full" : ""}</span>`;
+}
+
+function packHtml(purse) {   // the Inventory of a counted sheet: the two counted places first, and the armload above both
+  const c = carried(), at = game.carry, ready = gearLine(c, "ready"), pack = gearLine(c, "pack"), arms = gearLine(c, "arms"), worn = gearLine(c, "worn"), down = gearLine(c, "dropped");
+  const tiles = (l, small) => l.things.filter(t => (t.size === "small") === !!small).map(t => slotHtml(t, c, l.key)).join("");
+  const smalls = (l, charge) => l.things.some(t => t.size === "small") || charge
+    ? `<div class="smalls">${charge ? `<em class="charge">${charge}</em>` : ""}${l.things.some(t => t.size === "small") ? `<em>small · takes no room:</em>${tiles(l, true)}` : ""}</div>` : "";
+  const differs = key => gearLine(c, key).things.map(t => t.id).join() !== gearLine(at, key).things.map(t => t.id).join();
+  const place = (label, head, body) => `<div class="block place" role="group" aria-label="${label}"><div class="caps">${head}</div>${body}</div>`;
+  let html = purse;
+  if (at.arms.laden || c.arms.laden)   // on the sheet, or once what is arranged is done
+    html += `<div class="ladennote${at.arms.laden ? "" : " soon"}" role="note"><b>Arms full${at.arms.laden ? "" : " · once this is done"}</b><p>Setback on running, climbing, swimming, sneaking and fighting. Nothing Ready is in hand until you put it down.</p></div>`;
+  if (arms.things.length) {
+    const big = arms.things.some(t => t.size === "armload");
+    html += place(big ? "In arms, one big thing" : `In arms, ${c.arms.used} of ${c.arms.room} slots`, "In arms" + (big ? `<span class="count room">${differs("arms") ? '<i class="dia"></i>' : ""}One big thing</span>` : roomHtml(c.arms, at.arms, differs("arms"), true)),
+      `<div class="bag slots">${tiles(arms)}</div>${smalls(arms)}`);
+  }
+  html += place(`Ready, ${c.ready.used} of ${c.ready.room} slots`, "Ready" + pipsHtml(c.ready, "ready", c) + roomHtml(c.ready, at.ready, differs("ready")),
+    (c.arms.laden ? `<div class="subline">${at.arms.laden ? "not in hand while your arms are full" : "not in hand once this is done"}</div>` : "") +
+    `<div class="bag slots ready${c.arms.laden ? " laden" : ""}">${tiles(ready)}${Array.from({length: Math.max(0, c.ready.room - c.ready.used)}, (_, i) => `<div class="thing well" tabindex="-1" role="img" aria-label="Empty slot" data-at="well:${i}"><i></i></div>`).join("")}</div>${smalls(ready)}`);
+  const left = c.pack.room - c.pack.used, past = c.small.count - c.small.free, might = c.pack.might, bare = !c.pack.room && !c.pack.used;   // no pack and nothing in it: the count goes in the header
+  const charge = c.small.slots ? `${c.small.count} small things · the ${NUMBER_WORDS[past] || past} past ten take${past === 1 ? "s" : ""} ${c.small.slots === 1 ? "a slot" : c.small.slots + " slots"}` : "";
+  html += place(`Pack, ${c.pack.used} of ${c.pack.room} slots`, "Pack" + (c.pack.size ? `<span class="sub">${esc(c.pack.written)} · ${c.pack.size}${might ? ` ${might > 0 ? "+" : "−"} ${Math.abs(might)} Might` : ""}</span>` : "") + (bare ? roomHtml(c.pack, at.pack, differs("pack")) : ""),
+    `${bare ? "" : `<div class="piprow">${pipsHtml(c.pack, "pack", c)}${roomHtml(c.pack, at.pack, differs("pack"))}</div>`}<div class="bag slots">${tiles(pack)}${left >= 0 ? `<div class="thing none tail"><div class="what"><div class="name">${!c.pack.size ? "No pack, no room." : left ? `Room for ${left} more` : "Full"}</div></div></div>` : ""}</div>${smalls(pack, charge)}`);
+  if (worn.things.length) html += block(`${esc(worn.title || "Wearing")}<span class="count">${worn.things.length}</span>`, `<div class="bag">${worn.things.map(t => slotHtml(t, c, "worn")).join("")}</div>`);
+  for (const l of c.lines) if (!["ready", "pack", "arms", "worn", "dropped"].includes(l.key)) html += bagHtml(l);
+  if (down.things.length) html += block("Put down", `<div class="bag">${down.things.map(t => slotHtml(t, c, "dropped")).join("")}</div>`);
+  const w = waiting();
+  if (w.length) html += `<div class="waitbar"><div class="said" role="status" aria-live="polite"><b><i class="dia"></i>${moves(w.length)} waiting</b><em>they go with your next action</em>${w.some(x => x.to === "pack" || x.t.from === "pack") ? `<em class="packline">${PACK_LINE}</em>` : ""}</div>
+    <div class="btns"><button class="pbtn quiet" id="takeall">Take all back</button><button class="pbtn" id="sendgear"${canMove() ? "" : ` disabled title="${whyClosed()}"`}>Send now</button></div></div>`;
+  return html;
+}
+
+function inventoryHtml(sheet) {
+  const gear = entries(part(sheet, "Gear")), money = gear.find(g => /^money$/i.test(g.name)), c = carried();
+  if (!gear.length) return '<div class="empty">Nothing carried yet.</div>';
+  let purse = "";
+  if (money) {
+    const counted = blank(money.text) ? null : coins(money.text);
+    purse = counted ? `<div class="coins tiles">${counted.map(c => `<div class="tile"><b>${esc(c.value)}</b><span>${esc(c.name)}</span></div>`).join("")}</div>`
+      : `<div class="purse${blank(money.text) ? " none" : ""}"><svg><use href="#i-coin"/></svg><span>${blank(money.text) ? "No money" : inline(money.text.replace(/\.$/, ""))}</span></div>`;
+  }
+  return c.counted ? packHtml(purse) : purse + c.lines.map(bagHtml).join("");
+}
+
+function gearLetGo(say) {   // the sheet changed under the moves: they are let go whole, and none is replayed onto a different sheet
+  const n = waiting().length;
+  game.gear = noGear(game.gear.at);
+  if (say && n) toast(`Your gear changed: ${n} waiting ${n === 1 ? "move" : "moves"} let go.`);
+}
+async function askCarry(list, fit) {   // the count as it would stand: one question to the server for a thing opened or a move tried
+  if (game.gear.asking) return null;   // one at a time: a second key before the first is answered would start from the same moves and lose it
+  game.gear.asking = true;
+  let a;
+  try { a = await api("carry", {path: game.path, stamp: game.have.sheet, moves: list, fit: fit || ""}); } finally { game.gear.asking = false; }
+  if (!a.stale && !(a.refused && a.refused.at !== list.length - 1)) return a;
+  gearLetGo(true);   // the page's sheet is not the one on disk any more; the next tick brings the new one
+  showGear();
+  if (game.tab === "inventory") renderPane();
+  return null;
+}
+function gearFocus(id) {
+  const el = $("pane").querySelector(`[data-at="${CSS.escape(id)}"]`);
+  if (el) el.focus({preventScroll: true});
+}
+async function gearOpen(id) {
+  const g = game.gear;
+  if (g.open === id) { g.open = g.fits = null; renderPane(); return gearFocus(id); }
+  const a = await askCarry(g.moves, id);
+  if (!a) return;
+  if (!a.fits || Object.values(a.fits).every(f => f && f.code === "gone")) { g.open = g.fits = null; toast("That is no longer on the sheet."); }
+  else { g.open = id; g.fits = {id, map: a.fits}; }
+  renderPane();
+  gearFocus(id);
+}
+function gearDeny(to) {   // a place that is refused only says why again
+  const why = $("pane").querySelector(`[data-why="${to}"]`), tile = why && why.closest(".thing");
+  for (const el of [why, tile]) if (el) { const cls = el === why ? "flash" : "denied"; el.classList.remove(cls); el.offsetWidth; el.classList.add(cls); }
+  sfx("back", 0, .4);
+}
+async function gearMove(id, to) {
+  const g = game.gear, c = carried(), line = c.lines.find(l => l.things.some(t => t.id === id));
+  if (!c.counted || !line || line.key === to) return;
+  if (!canMove()) return g.open === id ? sfx("back", 0, .4) : gearOpen(id);
+  const list = g.moves.concat({id, to}), a = await askCarry(list, "");
+  if (!a) return;
+  if (a.refused) {
+    if (a.refused.code === "gone") { g.open = g.fits = null; renderPane(); return toast("That is no longer on the sheet."); }
+    if (g.open !== id) await gearOpen(id);   // so the reason is there to read
+    if (g.open !== id) return;
+    return gearDeny(to);
+  }
+  const net = a.carry.lines.some(l => l.things.some(t => t.from));   // everything back where the sheet has it: nothing is waiting
+  const home = line.things.find(t => t.id === id).from === to;
+  Object.assign(g, {moves: net ? list : [], carry: net ? a.carry : null, fits: null, open: null, arrived: id, at: id});
+  sfx(home ? "back" : "tick", 0, .5);
+  renderPane();
+  g.arrived = null;
+  showGear();
+  gearFocus(id);
+}
+function gearBack(id) {   // one waiting thing, back where the sheet has it
+  const t = carried().lines.flatMap(l => l.things).find(t => t.id === id);
+  return t && t.from ? gearMove(id, t.from) : null;
+}
+function gearTakeAll() {
+  game.gear = noGear(game.gear.at);
+  sfx("back", 0, .5);
+  renderPane();
+  showGear();
+}
+function gearRider() {   // the moves waiting, for the GM: each thing as the sheet writes it, where it is there, and where it goes
+  const w = waiting();
+  return w.length ? "{gear\n" + w.map(({t, to}) => `${t.written}: ${t.from} to ${to}`).join("\n") + "}" : "";
+}
+function gearSent() {
+  game.gear = noGear(game.gear.at);
+  showGear();
+  if (game.tab === "inventory") renderPane();
+}
+async function gearSendNow() {   // a gear move sent on its own is a beat, in a plain sentence
+  if (!canMove()) return toast(whyClosed());
+  const rider = gearRider();
+  if (!rider) return;
+  await send("I see to my gear. " + rider, true);
+  gearSent();
+}
+// On the desk and on the Inventory tab: moves that are waiting, and arms full, which changes the odds of the very next action and
+// so shows whichever tab is up and with the ledger away. Arms full is the sheet's, never an armload only arranged.
+function showGear() {
+  const chip = $("gearchip"), badge = $("invbadge"), c = game.carry, play = !!(game.state && game.state.set_up), n = waiting().length;
+  const laden = !!(play && c && c.counted && c.arms.laden), over = !!(play && c && c.counted && (c.ready.over || c.pack.over || c.arms.over));
+  badge.hidden = !(laden || over || n);
+  badge.className = "badge " + (laden || over ? "steady" : "hollow");
+  badge.parentNode.setAttribute("aria-label", laden ? "Inventory, arms full" : over ? "Inventory, more than there is room for" : n ? `Inventory, ${moves(n)} waiting` : "Inventory");
+  chip.hidden = !play || !(laden || n);
+  $("modes").classList.remove("close");
+  if (chip.hidden) return;
+  const gm = !laden && game.mode === "gm";
+  chip.className = "push gear" + (laden ? " last" : gm ? " dim" : "");
+  chip.title = laden ? "Your arms are full: Setback on running, climbing, swimming, sneaking and fighting." : gm ? "Goes with your next action as your character." : "";
+  chip.setAttribute("aria-label", laden ? chip.title : `${n} gear ${n === 1 ? "move goes" : "moves go"} with your next action`);
+  const say = short => chip.innerHTML = `<i class="dia"></i><span>${laden ? "Arms full" + (n && !short ? " · " + n : "") : (short ? "" : "Gear · ") + n}</span>`;
+  say(false);
+  chip.hidden = true;   // the row under the box keeps the rows it has. Where the chip would make one more, the row is drawn closer and Push
+  const rows = $("modes").offsetHeight, wraps = () => $("modes").offsetHeight > rows + 2;   // says its cost in its title alone; then the chip drops its word, or its number
+  chip.hidden = false;
+  if (wraps()) $("modes").classList.add("close");
+  if (wraps()) say(true);
+}
+$("gearchip").onclick = () => { showLedger(true); setTab("inventory"); };
+$("pane").addEventListener("click", guard(async e => {
+  if (!game || game.tab !== "inventory") return;
+  if (e.target.closest("#takeall")) return gearTakeAll();
+  if (e.target.closest("#sendgear")) return gearSendNow();
+  const tile = e.target.closest(".thing[data-id]"), mv = e.target.closest("[data-move], [data-back]");
+  if (!tile || e.target.closest("button:disabled")) return;
+  if (mv) return mv.dataset.back ? gearBack(tile.dataset.id) : gearMove(tile.dataset.id, mv.dataset.move);
+  if (!e.target.closest(".opened")) return gearOpen(tile.dataset.id);
+}));
+$("pane").addEventListener("focusin", e => {   // one tab stop for all the things: the arrows move between them
+  const tile = e.target.closest(".thing[data-at]");
+  if (!tile || !game) return;
+  for (const el of $("pane").querySelectorAll('.thing[data-at][tabindex="0"]')) el.tabIndex = -1;
+  tile.tabIndex = 0;
+  game.gear.at = tile.dataset.at;
+});
+function gearStep(tile, key) {   // the arrows, by where things are on the screen, so they cross from one place into the next
+  const across = key === "ArrowLeft" || key === "ArrowRight", sign = key === "ArrowLeft" || key === "ArrowUp" ? -1 : 1;
+  const all = [...$("pane").querySelectorAll(".thing[data-at]")], r = tile.getBoundingClientRect();
+  let best = null, least = Infinity;
+  for (const el of all) {
+    if (el === tile) continue;
+    const q = el.getBoundingClientRect(), dx = (q.left + q.width / 2 - r.left - r.width / 2) * sign, dy = (q.top - r.top) * sign;
+    if (across ? Math.abs(q.top - r.top) > 4 || dx <= 0 : dy <= 4) continue;
+    const far = across ? dx : dy * 1000 + Math.abs(q.left - r.left);
+    if (far < least) { least = far; best = el; }
+  }
+  if (!best && across) best = all[all.indexOf(tile) + sign];   // off the end of a row: on to the next thing
+  if (best) { best.focus(); best.scrollIntoView({block: "nearest"}); }
 }
 
 function aboutSection(title, text) {
@@ -5154,7 +5471,8 @@ function celebrate(was, now) {   // show what just changed on the sheet
 function renderPane() {
   const pane = $("pane"), keep = pane.scrollTop, held = pane.contains(document.activeElement) && document.activeElement;
   // a redraw doesn't take the focus out from under the player: it goes back on the same thing, found by what it is
-  const again = held && (held.dataset.sub ? `[data-sub="${held.dataset.sub}"].on` : held.dataset.shot ? `[data-shot="${held.dataset.shot}"]` : held.dataset.about ? `[data-about="${CSS.escape(held.dataset.about)}"] summary` : held.id ? "#" + held.id : null);
+  const tile = held && held.closest(".thing[data-at]");
+  const again = tile ? `[data-at="${CSS.escape(tile.dataset.at)}"]` : held && (held.dataset.sub ? `[data-sub="${held.dataset.sub}"].on` : held.dataset.shot ? `[data-shot="${held.dataset.shot}"]` : held.dataset.about ? `[data-about="${CSS.escape(held.dataset.about)}"] summary` : held.id ? "#" + held.id : null);
   const back = () => { const el = again && pane.querySelector(again); if (el) el.focus({preventScroll: true}); };
   if (game.tab === "sheet") {
     const sheet = game.texts.sheet || "", now = readVitals(sheet);
@@ -5168,6 +5486,8 @@ function renderPane() {
   } else if (game.tab === "inventory") {
     pane.innerHTML = inventoryHtml(game.texts.sheet || "");
     for (const t of pane.querySelectorAll(".thing.more")) t.onclick = () => { t.classList.toggle("open"); fitStats(); };
+    const at = game.gear.at && pane.querySelector(`[data-at="${CSS.escape(game.gear.at)}"]`) || pane.querySelector(".thing[data-at]");
+    if (at) at.tabIndex = 0;
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     const pages = [];   // one inner tab per section that has something in it
@@ -5233,7 +5553,13 @@ function fitStats() {   // Stats is in sight whole: where it wouldn't be, it is 
 addEventListener("resize", () => { if (game && game.state && !$("game").hidden) fitStats(); });
 // In the pane, Enter presses whatever is in focus that a click would, and the arrows move along a row of inner tabs.
 $("pane").addEventListener("keydown", e => {
-  const el = e.target;
+  const el = e.target, tile = game && game.tab === "inventory" && !e.ctrlKey && !e.altKey && !e.metaKey && el.closest(".thing[data-at]");
+  if (tile) {   // on a thing: the arrows go from one to the next, and a letter sends it to that place
+    const to = GEAR_KEYS[e.key.toLowerCase()], id = tile.dataset.id;
+    if (e.key.startsWith("Arrow")) { e.preventDefault(); return gearStep(tile, e.key); }
+    if (id && to) { e.preventDefault(); return guard(gearMove)(id, to); }
+    if (id && e.key === "Backspace") { e.preventDefault(); return guard(gearBack)(id); }
+  }
   if ((e.key === "Enter" || e.key === " ") && el.matches("[role=button], img[tabindex]")) { e.preventDefault(); return el.click(); }
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && el.matches(".subtabs button")) {
     e.preventDefault();
@@ -5564,6 +5890,9 @@ function renderShop() {
   if (!shop) return $("shopdialog").hidden = true;   // the character has left, or the keeper is done dealing
   const b = basket(shop), selling = game.shoptab === "sell", face = shop.keeper && faceOf(shop.keeper);
   const money = n => coinText(n, shop.coins), count = lines => lines.reduce((a, l) => a + l.n, 0);
+  const counted = !!(game.carry && game.carry.counted), shelf = counted && game.wares || {buy: [], sell: []};
+  const sized = (i, w) => shelf.buy[i] && shelf.buy[i].written === w.name ? shelf.buy[i] : null;   // a ware as the counter reads it: its name without the mark, and its size
+  const called = w => { const ware = sized(shop.stock.indexOf(w), w); return ware ? ware.name : w.name; };
   $("shophead").textContent = shop.name;
   $("shopeyebrow").textContent = shop.keeper ? "Keeper · " + shop.keeper : "A shop";
   $("shoppurse").className = "shoppurse" + (b.short ? " short" : shop.has === 0 ? " none" : "");
@@ -5576,9 +5905,10 @@ function renderShop() {
   const drew = setHtml(body, '<i class="rowbar" id="shopbar"></i>' + ((selling ? shop.wanted : shop.stock).map((w, i) => {
     const n = Math.min(picked[w.name] || 0, w.left), gone = w.left < 1;
     const left = selling ? (w.left > 1 ? `you have ${w.left}` : "") : gone ? "sold" : w.left < PLENTY ? `${w.left} left` : "";
+    const ware = selling ? null : sized(i, w), chip = !ware ? "" : ware.size === "bulky" ? "Bulky · " + ware.slots : ware.size === "small" ? "Small" : ware.size === "armload" ? "Armload" : "";
     return `<div class="prow wrow${n ? " in" : ""}${gone ? " gone" : ""}" tabindex="0" data-row="${i}" data-ware="${i}" data-by="1" role="group" aria-label="${esc(w.name)}, ${esc(w.price)}${n ? ", " + n + " in the basket" : ""}">
       <div class="wglyph"><svg><use href="#g-${kindOf(w.name)}"/></svg>${n ? `<b>${n}</b>` : ""}</div>
-      <div class="what"><b>${inline(w.name)}</b>${w.note ? `<span>${inline(w.note)}</span>` : ""}</div>
+      <div class="what"><b>${inline(ware ? ware.name : w.name)}${chip ? `<i class="chip">${chip}</i>` : ""}</b>${w.note ? `<span>${inline(w.note)}</span>` : ""}</div>
       <div class="price"><b>${inline(w.price)}</b>${left ? `<small>${left}</small>` : ""}</div>
       ${gone ? "" : `<span class="stepper"><button data-ware="${i}" data-by="-1" tabindex="-1" aria-label="One fewer"${n ? "" : " disabled"}>−</button><output>${n}</output><button data-ware="${i}" data-by="1" tabindex="-1" aria-label="One more"${n < w.left ? "" : " disabled"}>+</button></span>`}</div>`;
   }).join("") || `<div class="pnone">${selling ? "Nothing you carry is wanted here." : "Nothing is for sale here."}</div>`));
@@ -5588,7 +5918,7 @@ function renderShop() {
     if (row) { row.focus({preventScroll: true}); atWare(row, true); }
   }
 
-  const named = l => esc(l.w.name) + (l.n > 1 ? " ×" + l.n : ""), lines = (title, list, sum) => list.length ? `<h3>${title}</h3>` + list.map(l =>
+  const named = l => esc(called(l.w)) + (l.n > 1 ? " ×" + l.n : ""), lines = (title, list, sum) => list.length ? `<h3>${title}</h3>` + list.map(l =>
     `<div class="line"><span>${named(l)}</span><span>${shop.counted ? esc(money(l.n * l.w.worth)) : ""}</span></div>`).join("") : "";
   let tally = lines("Buying", b.buy) + lines("Selling", b.sell);
   if (!tally) tally = '<div class="pnone">Pick what to buy and what to sell, then make the trade.</div>';
@@ -5598,10 +5928,38 @@ function renderShop() {
     if (b.short) tally += `<div class="last short">More than you have, by ${esc(money(b.net - shop.has))}</div>`;
     else if (shop.has !== null) tally += `<div class="last">Left in your purse: ${esc(money(shop.has - b.net))}</div>`;
   }
-  setHtml($("shoptally"), tally);
+  let heavy = false;
+  if (counted) {   // room in the pack, counted with the basket in it: what is bought goes to the pack, and what is sold is gone
+    const r = shopRoom(b), pack = r && r.carry ? r.carry.pack : game.carry.pack;
+    heavy = !!(r && r.refused);
+    tally += `<div class="net room"><span>Room in the pack</span><b>${heavy ? 0 : Math.max(0, pack.room - pack.used)} of ${pack.room} left</b></div>`
+      + (heavy ? `<div class="last short">Won't fit: over by ${r.refused.need}, and your arms hold ${r.refused.room}.</div>`
+        : r && r.spill ? `<div class="last warn">Over by ${r.spill}. That much you would carry out in your arms. You would leave with your arms full.</div>` : "");
+  }
   const empty = !b.buy.length && !b.sell.length;
-  $("shopgo").disabled = empty || b.short || game.state.busy;
-  $("shopgo").title = empty ? "Nothing in the basket yet." : b.short ? "That comes to more than you have." : game.state.busy ? "After this beat." : "";
+  if (empty) game.shopRoom = null;
+  setHtml($("shoptally"), tally);
+  const asking = counted && !empty && !!game.shopRoom && game.shopRoom.out;   // the room for this basket isn't known yet
+  $("shopgo").disabled = empty || b.short || heavy || asking || game.state.busy;
+  $("shopgo").title = empty ? "Nothing in the basket yet." : b.short ? "That comes to more than you have." : heavy ? "That is more than you can carry." : game.state.busy ? "After this beat." : "";
+}
+function shopRoom(b) {   // the count with this basket in it, asked of the server once for each basket; until it answers, the last answer stands
+  const want = {buy: b.buy.map(l => ({written: l.w.name, n: l.n})), sell: b.sell.map(l => ({written: l.w.name, n: l.n}))};
+  if (!want.buy.length && !want.sell.length) return null;
+  const key = game.have.sheet + JSON.stringify(want), room = game.shopRoom || (game.shopRoom = {});
+  if (room.asked !== key) {
+    room.asked = key;
+    room.out = true;
+    const answered = a => {
+      if (game.shopRoom !== room || room.asked !== key) return;
+      room.out = false;
+      room.answer = a && !a.stale ? a : null;
+      if (!a) room.asked = null;   // it failed: nothing stands, and the next draw asks again
+      if (!$("shopdialog").hidden && a) renderShop();
+    };
+    api("carry", Object.assign({path: game.path, stamp: game.have.sheet, moves: []}, want)).then(answered, () => answered(null));
+  }
+  return room.answer || null;
 }
 function atWare(row, quiet) {
   const rows = [...$("shopbody").querySelectorAll(".wrow")], moved = !row.classList.contains("at");
@@ -6445,8 +6803,11 @@ async function send(text, raw) {
   const play = game.state && game.state.set_up;
   if (!raw && play && game.mode === "gm" && !/^\{[\s\S]*\}$/.test(text)) text = "{" + text + "}";
   const pushed = !raw && play && game.mode === "act" && game.push && !/^\{[\s\S]*\}$/.test(text);
+  const rider = !raw && play && game.mode === "act" && canMove() && !/^\{[\s\S]*\}$/.test(text) ? gearRider() : "";   // moves waiting in the Inventory go with what the character does
+  if (rider) text += "\n" + rider;
   if (pushed) text += " {push}";
   await api("send", {path: game.path, text});
+  if (rider) gearSent();
   if (play) sfx("clack", 0, .5);   // the one sound that means "sent to the GM", and in play it is half as loud
   if (pushed) { game.push = false; showPush(); }
   game.sent = text;
@@ -6769,6 +7130,7 @@ function playBack() {
   if (open("sesslist")) return openSessions(false), true;
   if (open("flag")) return shut("flag");
   if (sheetBack()) return true;
+  if (game && game.gear.open && game.tab === "inventory" && ledgerShown()) { const id = game.gear.open; game.gear.open = game.gear.fits = null; renderPane(); gearFocus(id); return true; }   // an open thing closes; what is waiting is kept
   if (NARROW.matches && ledgerShown()) return showLedger(false), true;
   if (game && !$("game").hidden && game.state && game.state.set_up) return openMenu(), true;   // nothing to step out of: the game's menu
   return false;

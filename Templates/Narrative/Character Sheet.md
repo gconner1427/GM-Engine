@@ -44,8 +44,8 @@ Ranks run from 1 (familiar) to 5 (master). Anything not listed is untrained.
 ## Gear
 
 - **Wearing:**
-- **Ready:** (in hand, or where a hand finds it without looking)
-- **Carried:** (packed away on them)
+- **Ready:** (in hand, or where a hand finds it; 4 slots)
+- **Carried:** (in the pack)
 - **Kept elsewhere:** (what's theirs and where it is)
 - **Money:**
 

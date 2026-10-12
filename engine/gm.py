@@ -6,6 +6,7 @@ Run from anywhere inside a narrative (a folder with narrative.json), or pass --n
     gm shortcut [--desktop]                  a Play shortcut with the dice icon, here or on the desktop
     gm new-narrative "<Name>" [--at <parent folder>] [--person third|second]
     gm status                                session, vitals, the clock, pressures
+    gm carry                                 what the character carries, counted: Ready, the pack, in arms
 
     gm session start | end
     gm beat [--again]                          commit the staged beat (GM Only/Logs/beat.md)
@@ -120,6 +121,14 @@ def main(argv):
     narrative = find_narrative(path)
     if cmd == "status":
         return session.status(narrative)
+    if cmd == "carry":   # a count, not a roll: nothing goes in the GM log
+        import carry
+        try:
+            sheet = narrative.sheet.read_text(encoding="utf-8-sig")
+        except (OSError, UnicodeError):
+            sheet = ""
+        print(carry.report(carry.read(sheet)))
+        return 0
     if cmd == "session":
         if args[:1] == ["start"]:
             return session.start(narrative)

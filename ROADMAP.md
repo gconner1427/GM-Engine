@@ -276,8 +276,8 @@ A beat stops at the moment of risk. The player sees what's being tried and how h
 #### Small
 
 ##### Clickable inventory
-The item slots on the Inventory tab get things to do: use, equip, put away, drop, give. Each one writes an ordinary action for the player to send, the way the shop's basket does, so the GM plays it as a beat and settles the sheet. The page never changes the sheet itself.
-- **Touches:** the Inventory tab in `engine/gui/app.html` (`inventoryHtml`, `things`, `kindOf`), which already knows each thing's kind.
+A thing opened on the Inventory tab can already be made ready, put away, worn, taken in the arms, or dropped. Two more things to do with it: use it, and give it. Each writes an ordinary action for the player to send, the way the shop's basket does, so the GM plays it as a beat and settles the sheet. The page never changes the sheet itself. Two moves are also still typed as actions and could be made from the window: part of a stack (leave two rations, hand over three), and taking off or setting down the worn pack, which moves everything in it at once.
+- **Touches:** the Inventory tab in `engine/gui/app.html` ("the pack": `slotHtml`, `openHtml`, `gearMove`), and `engine/carry.py`, which moves one entry as one thing.
 - **Open questions:** whether a click sends the action at once or puts it in the message box to be added to.
 
 ##### Rest buttons
