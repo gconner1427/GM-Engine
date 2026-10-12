@@ -44,13 +44,16 @@ STORE = Path.home() / ".gm-engine"
 KNOWN = STORE / "narratives.json"
 SETTINGS = STORE / "config.json"  # optional: {"claude": "<path to claude>", "model": "<model>"}
 PREFS = STORE / "prefs.json"      # the window's own: text size, whether the side panel is hidden, the menu's music, fullscreen, the GM's model, the intro
-MENU_BGM = ENGINE / "Audio" / "BGM"   # "Menu BGM 1.mp3", "Menu BGM 2.mp3"
+MENU_BGM = ENGINE / "Audio" / "BGM"   # the menu's tracks and the world's, by the names below
 LOGO = ENGINE / "Art" / "Studio Logo" / "Gravelight Studios Logo.png"   # the splash before the intro
 TITLE = ENGINE / "Art" / "Title Logo" / "GM Engine Title Logo.png"      # the main menu's title
 BACKDROP = ENGINE / "Art" / "Menu"   # "Menu Backdrop.png" (or .webp, .jpg): a painted vault behind the main menu, if there is one
 BACKDROP_KINDS = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg"}
+FRAME = ENGINE / "Art" / "Play"   # the game screen's own painted pieces: these five and nothing else, each one optional
+FRAME_KINDS = {"Ground.webp": "image/webp", "Ledger.webp": "image/webp",
+               "Rail.png": "image/png", "Boss.png": "image/png", "Corner.png": "image/png"}
 VERSION = ENGINE / "VERSION"   # one line, "Alpha 0.0.1": the corner of the main menu, and About
-MENU_TRACKS = ("1", "2")
+MENU_TRACKS = {"1": "Menu BGM 1.mp3", "2": "Menu BGM 2.mp3", "3": "Menu BGM 3.ogg"}
 WORLD_BGM = "World Creation BGM 1.mp3"   # in the same folder: what plays while the GM builds a world
 MODELS = ("opus", "sonnet")   # the GM Model setting. Family names: Claude Code runs the newest of each. "" leaves it to Claude Code
 ERRORS = STORE / "gui.log"
@@ -200,6 +203,8 @@ class Game:
         """Paint whatever the GM has asked for, one picture at a time, for as long as the window is open."""
         while True:
             try:
+                if art.measure_next(self.narrative):   # a place painted before its paleness was kept
+                    continue
                 if art.paint_next(self.narrative):
                     self.art_trouble = None
                     continue
@@ -344,7 +349,7 @@ class Game:
         if have.get("art") != mark:
             index = art.load(self.narrative)
             out["art"] = {"backdrop": index["backdrop"], "trouble": self.art_trouble,
-                          "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error")} for i in index["items"]]}
+                          "items": [{k: i.get(k) for k in ("kind", "name", "status", "file", "painted", "error", "pale")} for i in index["items"]]}
         return out
 
     def building(self):
@@ -530,10 +535,11 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/bgm":  # the music: a menu track, or "world" for the build; like a picture, the token rides in the address
             if one("t") != TOKEN:
                 return self.send(403, {"error": "Not allowed."})
-            if one("n") not in MENU_TRACKS + ("world",):
+            name = WORLD_BGM if one("n") == "world" else MENU_TRACKS.get(one("n"))
+            if not name:
                 return self.send(404, {"error": "No such track."})
             try:
-                return self.send_media((MENU_BGM / (WORLD_BGM if one("n") == "world" else f"Menu BGM {one('n')}.mp3")).read_bytes())
+                return self.send_media((MENU_BGM / name).read_bytes(), "audio/ogg" if name.endswith(".ogg") else "audio/mpeg")
             except OSError:
                 return self.send(404, {"error": "No such track."})
         if route == "/logo":  # the studio's logo, for the splash before the intro
@@ -596,6 +602,23 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "public, max-age=31536000, immutable")
             self.end_headers()
             return self.wfile.write(data)
+        if route == "/frame":  # the game screen's painted frame: the engine's own, the same in every narrative
+            if one("t") != TOKEN:
+                return self.send(403, {"error": "Not allowed."})
+            name = next((n for n in FRAME_KINDS if n == one("f")), None)   # one of the five names, or nothing: what was asked for never makes a path
+            if not name:
+                return self.send(404, {"error": "Not found"})
+            try:
+                data = (FRAME / name).read_bytes()
+            except OSError:
+                self.send_response(204)  # not painted, which is no error: the page draws that part itself
+                return self.end_headers()
+            self.send_response(200)
+            self.send_header("Content-Type", FRAME_KINDS[name])
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-store")   # the page holds them for as long as it's open, and the port is new each time
+            self.end_headers()
+            return self.wfile.write(data)
         if route not in ("/", "/index.html"):
             return self.send(404, {"error": "Not found"})
         html = read(PAGE).replace("__GM_TOKEN__", TOKEN)
@@ -645,7 +668,7 @@ class Handler(BaseHTTPRequestHandler):
             bgm = str(data["prefs"].get("bgm", 2))
             write_json(PREFS, {"size": int(data["prefs"].get("size", 18)), "wide": bool(data["prefs"].get("wide")),
                                "face": "book" if data["prefs"].get("face") == "book" else "garamond",   # the story's typeface
-                               "bgm": int(bgm) if bgm in ("0",) + MENU_TRACKS else 2,   # 0 is off
+                               "bgm": int(bgm) if bgm in ("0", *MENU_TRACKS) else 2,   # 0 is off
                                "volume": min(100, max(0, int(data["prefs"].get("volume", 60)))),
                                "fullscreen": bool(data["prefs"].get("fullscreen")),
                                "model": data["prefs"].get("model") if data["prefs"].get("model") in MODELS else "",

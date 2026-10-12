@@ -156,7 +156,7 @@ Without the window: double-click `New Narrative.cmd`, open the new folder in VS 
 | `Procedures/` | New Narrative, Play, World Turn, Corrections, Art |
 | `Templates/` | What a new narrative, cast member, place, or group starts as |
 | `engine/` | The scripts behind the `gm` command, including the dice and the play window (`gui.py`, `gui/app.html`, its icon `gui/dice.ico`, `gui/three.min.js`, the three.js library that draws the main menu's die, and `gui/fonts/`, the main menu's two typefaces, Cinzel and Cormorant Garamond, with their licences) |
-| `Art/`, `Audio/` | The play window's own pictures and music: the title, the studio's logo, the icon, the menu's tracks. A painting saved as `Art/Menu/Menu Backdrop.png` (or `.webp`, `.jpg`) becomes the room behind the main menu; without one the window draws its own. |
+| `Art/`, `Audio/` | The play window's own pictures and music: the title, the studio's logo, the icon, the menu's tracks. A painting saved as `Art/Menu/Menu Backdrop.png` (or `.webp`, `.jpg`) becomes the room behind the main menu; without one the window draws its own. The five pictures in `Art/Play/` are the game screen's painted frame (its own `README.md` lists them); without any one of them the screen draws that part itself. |
 | `Play.cmd`, `gm.cmd`, `New Narrative.cmd` | Windows launchers |
 
 ## Requirements

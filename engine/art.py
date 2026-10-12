@@ -24,6 +24,7 @@ import shutil
 import subprocess
 import sys
 import time
+import zlib
 from pathlib import Path
 
 from narrative import field
@@ -39,6 +40,7 @@ DEFAULT_STYLE = "Painterly illustration with visible brushwork, muted natural co
 GENERATED = Path.home() / ".codex" / "generated_images"
 SETTINGS = Path.home() / ".gm-engine" / "config.json"  # optional: {"codex": "<path to codex>"}
 TIMEOUT = 420
+PALE_MEAN, PALE_HIGH = 102, 180   # a place's strip is pale above either: its mean brightness, or where its brightest twentieth begins (of 255)
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
@@ -126,6 +128,7 @@ def request(narrative, kind, name, look=None, was=None, redo=False):
         data["items"].append(item)
     item.update(look=look, status="waiting", asked=now(), session=narrative.config.get("sessions", 0), error="")
     item.pop("file", None)
+    item.pop("pale", None)
     save(narrative, data)
     print(f"Asked for a {kind} of {name}. It'll be painted in the background.")
     return 0
@@ -224,6 +227,8 @@ def paint_next(narrative):
     job = waiting[0]
     try:
         result = {"file": paint(narrative, job, codex), "status": "ready", "painted": now(), "error": ""}
+        if job["kind"] == "place":
+            result["pale"] = pale(art_dir(narrative) / result["file"])
     except ValueError as e:
         result = {"status": "failed", "error": str(e)}
     data = load(narrative)  # reread: the GM may have asked for more in the meantime
@@ -232,6 +237,84 @@ def paint_next(narrative):
         item.update(result)
         save(narrative, data)
     return dict(job, **result)
+
+
+# ---- how pale a place is ---------------------------------------------------------
+
+def pale(path):
+    """Whether the strip of a place's picture that the play window shows above the story is a pale one, which the
+    window then darkens further so the painting is never the brightest thing over the prose. True as well for a
+    picture that can't be measured. The PNG is read here, a row at a time and only as far down as the strip goes."""
+    try:
+        raw = Path(path).read_bytes()
+        if raw[:8] != b"\x89PNG\r\n\x1a\n":
+            return True
+        at, packed, head = 8, [], None
+        while at + 8 <= len(raw):
+            size, kind = int.from_bytes(raw[at:at + 4], "big"), raw[at + 4:at + 8]
+            body = raw[at + 8:at + 8 + size]
+            if kind == b"IHDR":
+                head = body
+            elif kind == b"IDAT":
+                packed.append(body)
+            elif kind == b"IEND":
+                break
+            at += 12 + size
+        w, h = int.from_bytes(head[:4], "big"), int.from_bytes(head[4:8], "big")
+        if head[8] != 8 or head[9] not in (2, 6) or head[12]:   # eight bits a channel, in colour, not interlaced
+            return True
+        n = 3 if head[9] == 2 else 4
+        # the strip: as wide as the story's side of the window and as shallow as the band, a little above the middle
+        shown = min(h, round(w * 96 / 1420))
+        top = round((h - shown) * .42)
+        left, right = round(w * .22), round(w * .78)
+        step = max(1, (right - left) // 256)
+        line = 1 + w * n
+        rows = zlib.decompressobj().decompress(b"".join(packed), line * (top + shown))
+        if len(rows) < line * (top + shown):
+            return True
+        above, seen = bytearray(w * n), []
+        for y in range(top + shown):
+            how, row = rows[y * line], bytearray(rows[y * line + 1:(y + 1) * line])
+            if how == 1:
+                for i in range(n, len(row)):
+                    row[i] = (row[i] + row[i - n]) & 255
+            elif how == 2:
+                for i in range(len(row)):
+                    row[i] = (row[i] + above[i]) & 255
+            elif how == 3:
+                for i in range(len(row)):
+                    row[i] = (row[i] + ((row[i - n] if i >= n else 0) + above[i] >> 1)) & 255
+            elif how == 4:
+                for i in range(len(row)):
+                    a, b, c = (row[i - n], above[i], above[i - n]) if i >= n else (0, above[i], 0)
+                    p = a + b - c
+                    pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                    row[i] = (row[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+            elif how:
+                return True
+            if y >= top:
+                seen += [(2126 * row[x * n] + 7152 * row[x * n + 1] + 722 * row[x * n + 2]) // 10000 for x in range(left, right, step)]
+            above = row
+        seen.sort()
+        return sum(seen) / len(seen) > PALE_MEAN or seen[len(seen) * 95 // 100] > PALE_HIGH
+    except Exception:
+        return True
+
+
+def measure_next(narrative):
+    """Measure one place that was painted before its paleness was kept. Returns whether one was written down."""
+    todo = next((i for i in load(narrative)["items"] if i["kind"] == "place" and i["status"] == "ready" and i.get("file") and "pale" not in i), None)
+    if not todo:
+        return False
+    found = pale(art_dir(narrative) / todo["file"])
+    data = load(narrative)  # reread: it may have been painted again in the meantime
+    item = find(data, "place", todo["name"])
+    if not item or "pale" in item or item.get("file") != todo["file"] or item.get("painted") != todo.get("painted"):
+        return False
+    item["pale"] = found
+    save(narrative, data)
+    return True
 
 
 def run(narrative):

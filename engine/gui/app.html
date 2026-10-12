@@ -24,6 +24,9 @@
   --p-faint: var(--m-faint); --p-bad: #c0584c; --p-warn: #d98a5f; --p-arrive: cubic-bezier(.2, .8, .2, 1);
   /* play's: the ground the story is read on, its text, and the sheet's three colours under the plate's naming */
   --p-page: #0d0b08; --p-prose: #e8dfcc; --p-good: #7fa46a; --p-mid: #cfa24e; --p-strain: #6b93c4;
+  --p-label: #b89a5c;   /* a word that names a thing on the game screen: an attribute, a meter, a row of tabs */
+  --p-metal: linear-gradient(#f6e6b8, #e6c987 50%, #c9a25b 82%, #dcbb74);   /* the face of metal lettering */
+  --p-rail: #c9a25b, #a07c3c 40%, #7d5f2a;   /* old gilt, lit from one side: the stops of the worked rail */
   --p-sealed: #6f6757;   /* out of reach for now: a step sealed until the world is ready, a number already placed. Each says so another way too */
   /* the house ornaments: a gold rule that fades at both ends, a bracket in each corner of a frame, and a film of grain */
   --rule: linear-gradient(90deg, transparent, var(--accent) 25%, var(--accent) 75%, transparent);
@@ -33,6 +36,7 @@
     var(--corner) left 5px bottom 5px / 13px 1px no-repeat, var(--corner) left 5px bottom 5px / 1px 13px no-repeat,
     var(--corner) right 5px bottom 5px / 13px 1px no-repeat, var(--corner) right 5px bottom 5px / 1px 13px no-repeat;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .8  .09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-low: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .8  .045 0 0 0 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
@@ -304,14 +308,35 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 /* The game screen is furniture round a page: the lintel across the top, the page with the desk under it, and the ledger at
    its right. Its chrome is sized in --u, as the plate's is, with a 13px floor; the story alone is sized in the reader's own
    pixels (--story-size). Nothing here moves behind the prose, and nothing is drawn on a canvas. */
-#game { display: grid; grid-template-rows: auto 1fr; background: var(--p-page); --gutter: calc((100vw - var(--u) * 1920) / 2); --lintel: max(44px, calc(var(--u) * 64)); --ctl: max(34px, calc(var(--u) * 44)); }
+#game { display: grid; grid-template-rows: auto 1fr; background: var(--p-page); --gutter: calc((100vw - var(--u) * 1920) / 2); --lintel: max(44px, calc(var(--u) * 68)); --ctl: max(34px, calc(var(--u) * 44));
+  --axis: calc(var(--gutter) + (var(--u) * 1920 - var(--side)) / 2);   /* the story column's centre line, from the window's left */
+  /* depth, in two recipes. The lintel, the ledger, the desk and the card stand raised on the page, each casting the way it faces;
+     tracks, tiles, the field and Push are cut into whatever they sit on. */
+  --p-raise: inset 0 1px 0 #f0d9a826, inset 0 -1px 0 #000, 0 0 0 1px #000;
+  --p-raise-down: var(--p-raise), 0 calc(var(--u) * 14) calc(var(--u) * 36) #000c; --p-raise-left: var(--p-raise), calc(var(--u) * -18) 0 calc(var(--u) * 44) #000c;
+  --p-raise-up: var(--p-raise), 0 calc(var(--u) * -12) calc(var(--u) * 32) #000b; --p-raise-card: var(--p-raise), 0 calc(var(--u) * 10) calc(var(--u) * 26) #000a;
+  --p-inlay: 0 0 0 1px #000, inset 0 calc(var(--u) * 3) calc(var(--u) * 8) #000, inset 0 -1px 0 #f0d9a824; }
+#game:has(.body.wide) { --axis: 50%; }
+/* metal lettering: Cinzel only, and only where it is large. Its dark drop is a filter, since a text-shadow would lie over the face.
+   The face is laid a line at a time, so the second line of a long name is the same metal as the first. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  header .title span, aside .hero .who, aside .hero .level b, aside .tile b.up, aside .tiles.four .tile b, aside .coins .tile b {
+    background: var(--p-metal) 0 0 / 100% 1lh repeat-y; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; filter: drop-shadow(0 1px 0 #000); }
+  aside .hero .level b { background-position: 0 50%; } }
+@media (forced-colors: active) {
+  header .title span, aside .hero .who, aside .hero .level b, aside .tile b.up, aside .tiles.four .tile b, aside .coins .tile b { background: none; -webkit-text-fill-color: currentColor; filter: none; } }
 .asked { display: none !important; }   /* a control whose question is being asked in its place */
 .ask { display: inline-flex; align-items: center; gap: calc(var(--u) * 10); }
 .ask i { margin-right: calc(var(--u) * 6); font: italic 500 max(15px, calc(var(--u) * 21))/1 var(--text); color: var(--dim); white-space: nowrap; }
 .dia { flex: none; display: inline-block; width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); background: var(--p-gold-hi); transform: rotate(45deg); box-shadow: 0 0 8px var(--p-gold); }
 header { position: relative; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: calc(var(--u) * 10); height: var(--lintel); padding: 0 calc(var(--u) * 28);
-  background: linear-gradient(#17120b, #0e0b07); box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 30) #0009; }
-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--p-edge), var(--p-gold) 50%, var(--p-edge)); }
+  background: linear-gradient(#15100a, #0a0806); box-shadow: var(--p-raise-down); }
+/* the rail under it: a band of old gilt between two black lines, with a lit diamond on the story column's centre line */
+header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: max(3px, calc(var(--u) * 3)); border: solid #000; border-width: 1px 0; box-sizing: content-box;
+  background: linear-gradient(90deg, var(--p-edge), transparent 14%, transparent 86%, var(--p-edge)), linear-gradient(var(--p-rail)); }
+header::before { content: ""; position: absolute; z-index: 1; left: var(--axis); bottom: calc(max(3px, calc(var(--u) * 3)) / 2 + 1px); width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); translate: -50% 50%; rotate: 45deg;
+  background: var(--p-gold-hi); box-shadow: 0 0 0 1px #000, 0 0 calc(var(--u) * 10) var(--p-gold); }
+@media (max-height: 820px) { header::before { display: none; } }
 header .left, header .right { position: relative; z-index: 1; display: flex; align-items: center; gap: calc(var(--u) * 6); }
 header .right { justify-content: flex-end; }
 /* the title sits over the story column, on the same axis as the chapter heading and the page under it */
@@ -319,19 +344,20 @@ header .title { position: absolute; left: var(--gutter); right: calc(var(--gutte
   pointer-events: none; }
 #game:has(.body.wide) header .title { right: var(--gutter); }
 @media (max-width: 1300px) { header .title::before, header .title::after { display: none; } }
-header .title::before, header .title::after { content: ""; flex: none; width: calc(var(--u) * 54); height: 1px; background: linear-gradient(90deg, transparent, var(--p-gold)); }
+header .title::before, header .title::after { content: ""; flex: none; width: calc(var(--u) * 72); height: 1px; background: linear-gradient(90deg, transparent, var(--p-gold)); }
 header .title::after { transform: scaleX(-1); }
-header .title span { min-width: 0; font: 600 max(13px, calc(var(--u) * 16))/1 var(--display); letter-spacing: .34em; text-indent: .34em; color: var(--dim); text-transform: uppercase; white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis; text-shadow: 0 0 26px #c9a25b55; }
+header .title span { min-width: 0; font: 600 max(14px, calc(var(--u) * 19))/1.3 var(--display); letter-spacing: .34em; text-indent: .34em; color: var(--p-gold-hi); text-transform: uppercase; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; text-shadow: 0 0 26px #c9a25b40; }
 header .icon { width: var(--ctl); height: var(--ctl); padding: 0; background: none; border-color: transparent; border-radius: 0; color: var(--dim); }
 header .icon:hover:not(:disabled), header #panel[aria-pressed="true"] { color: var(--p-gold-hi); border-color: transparent; }
 header .icon svg { width: max(16px, calc(var(--u) * 20)); height: max(16px, calc(var(--u) * 20)); }
-header #menubtn { gap: .9em; padding: 0 calc(var(--u) * 16); }
-header .pbtn { height: var(--ctl); padding: 0 calc(var(--u) * 22); font-size: max(13px, calc(var(--u) * 13)); }
+header .pbtn { height: var(--ctl); padding: 0 calc(var(--u) * 22); font-size: max(13px, calc(var(--u) * 14)); }
+header #menubtn { gap: .9em; padding: 0 calc(var(--u) * 16); font-size: max(13px, calc(var(--u) * 15)); }
+header #menubtn:not(:hover) { color: var(--ink); }
 /* which session is being read: a mark that opens a list of them */
 .sess { position: relative; }
-#sessmark { height: var(--ctl); padding: 0 calc(var(--u) * 12); border: 1px solid transparent; border-radius: 0; background: none; color: var(--dim); white-space: nowrap;
-  font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+#sessmark { height: var(--ctl); padding: 0 calc(var(--u) * 12); border: 1px solid transparent; border-radius: 0; background: none; color: var(--ink); white-space: nowrap;
+  font: 600 max(13px, calc(var(--u) * 15))/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
 #sessmark:hover, #sessmark[aria-expanded="true"] { color: var(--p-gold-hi); }
 #sessmark .short { display: none; }
 #sesslist { position: absolute; left: 0; top: calc(100% + calc(var(--u) * 10)); width: max(240px, calc(var(--u) * 320)); max-height: calc(max(36px, calc(var(--u) * 48)) * 10 + 2px); overflow: auto; outline: none;
@@ -343,8 +369,9 @@ header .pbtn { height: var(--ctl); padding: 0 calc(var(--u) * 22); font-size: ma
 #sesslist [role=option]::before { content: ""; flex: none; width: .34em; height: .34em; transform: rotate(45deg); }
 #sesslist [role=option].shown::before { background: var(--p-gold-hi); box-shadow: 0 0 8px var(--p-gold); }
 .body { display: grid; grid-template-columns: minmax(0, calc(var(--u) * 1920 - var(--side))) var(--side); justify-content: center; min-height: 0; position: relative;
-  /* the ground: one still picture. The grain is above both gradients, or the light steps into bands on a wide monitor. */
-  background: var(--grain), radial-gradient(calc(var(--u) * 1100) calc(var(--u) * 600) at 50% -8%, #2a2014 0, transparent 72%), radial-gradient(120% 100% at 50% 50%, transparent 55%, #0009 100%), var(--p-page); }
+  /* the ground: one still picture, a lamp over the page's head and the dark beyond it. The grain is above both gradients, or the
+     light steps into bands on a wide monitor. */
+  background: var(--grain-low), radial-gradient(calc(var(--u) * 760) calc(var(--u) * 420) at var(--axis) -6%, #1f170c 0, transparent 70%), radial-gradient(120% 100% at 50% 50%, transparent 48%, #000d 100%), var(--p-page); }
 .body.wide { grid-template-columns: minmax(0, calc(var(--u) * 1920)); }
 .body.wide aside { display: none; }
 .main { display: grid; grid-template-rows: auto 1fr auto; min-height: 0; min-width: 0; position: relative; }
@@ -358,12 +385,14 @@ header .pbtn { height: var(--ctl); padding: 0 calc(var(--u) * 22); font-size: ma
 /* where the character is: a strip of the place's picture, thin enough to leave the page to the story; a click shows the whole of it.
    The name has a dark pool of its own, so it never depends on the painting, and the painting is never the brightest thing above the prose. */
 #backdrop { height: max(60px, calc(var(--u) * 96)); position: relative; display: grid; place-items: center; cursor: zoom-in; background: #000 center 42% / cover no-repeat; animation: fadein 1.2s ease; outline-offset: -3px; }
-#backdrop::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0d0b08f2, #0d0b0873 32%, #0d0b0873 68%, #0d0b08f2); transition: opacity .3s; }
-#backdrop:hover::before { opacity: .64; }
-#backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 35%, var(--p-page)); }
+#backdrop::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #0d0b08e6, #0d0b0840 22%, #0d0b0840 78%, #0d0b08e6); transition: opacity .3s; }
+#backdrop:hover::before { opacity: .48; }
+#backdrop.pale::before { background: linear-gradient(90deg, #0d0b08e6, #0d0b0873 22%, #0d0b0873 78%, #0d0b08e6); }   /* a pale picture, or one not measured yet, is darkened further: the painting is never the brightest thing above the prose */
+#backdrop.pale:hover::before { opacity: .27; }
+#backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(#000a, transparent) top / 100% calc(var(--u) * 12) no-repeat, linear-gradient(transparent 55%, var(--p-page)); }   /* the lintel's shadow on its head, and the page rising out of its foot */
 #backdrop span { position: relative; z-index: 1; display: flex; align-items: center; gap: calc(var(--u) * 16); padding: calc(var(--u) * 12) calc(var(--u) * 80); color: var(--ink); white-space: nowrap;
-  font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .34em; text-transform: uppercase; background: linear-gradient(90deg, transparent, #0d0b08d9 24%, #0d0b08d9 76%, transparent); }
-#backdrop span::before, #backdrop span::after { content: ""; width: calc(var(--u) * 54); height: 1px; background: linear-gradient(90deg, transparent, var(--p-gold)); }
+  font: 600 max(13px, calc(var(--u) * 17))/1 var(--display); letter-spacing: .34em; text-transform: uppercase; background: linear-gradient(90deg, transparent, #0d0b08d9 24%, #0d0b08d9 76%, transparent); }
+#backdrop span::before, #backdrop span::after { content: ""; width: calc(var(--u) * 72); height: 1px; background: linear-gradient(90deg, transparent, var(--p-gold)); }
 #backdrop span::after { transform: scaleX(-1); }
 #arrival { position: absolute; left: calc(var(--u) * 24); bottom: 100%; margin-bottom: calc(var(--u) * 16); z-index: 6; display: flex; align-items: center; gap: calc(var(--u) * 14); cursor: zoom-in;
   background: var(--corners), linear-gradient(var(--p-fill-top), var(--p-fill-bot)); border: 1px solid var(--p-edge); padding: calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * 10) calc(var(--u) * 10);
@@ -446,10 +475,11 @@ body[data-face="garamond"] .page { max-width: 28em; font-family: var(--text); fo
 
 /* the desk: one box to write in, with Send inside it; over it, one line on what is going on, when something is; under it, quietly,
    who is being spoken to and what can be done about the last beat. All of it shares one axis and one width with the page. */
-.composer { position: relative; padding: calc(var(--u) * 16) calc(var(--u) * 48) calc(var(--u) * 18); background: linear-gradient(#120e09cc, #0b0907); }
-.composer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--p-edge) 18%, var(--p-edge) 82%, transparent); }
-.composer:has(.working:not([hidden]))::before { background: linear-gradient(90deg, transparent, var(--p-gold-hi), transparent) 0 0 / 40% 100% no-repeat,
-  linear-gradient(90deg, transparent, var(--p-edge) 18%, var(--p-edge) 82%, transparent); animation: sweep 2.4s linear infinite; }
+.composer { position: relative; padding: calc(var(--u) * 16) calc(var(--u) * 48) calc(var(--u) * 18); background: linear-gradient(#100c08, #080605); box-shadow: var(--p-raise-up); }
+/* the rail on its top edge, gone by its ends; a band of light crosses it while the GM writes */
+.composer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: max(3px, calc(var(--u) * 3)); border: solid #000; border-width: 1px 0; box-sizing: content-box; background: linear-gradient(var(--p-rail));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.composer:has(.working:not([hidden]))::before { background: linear-gradient(90deg, transparent, var(--p-gold-hi), transparent) 0 0 / 40% 100% no-repeat, linear-gradient(var(--p-rail)); animation: sweep 2.4s linear infinite; }
 @keyframes sweep { from { background-position: -67% 0, 0 0; } to { background-position: 167% 0, 0 0; } }
 @media (prefers-reduced-motion: reduce) { .composer::before { animation: none !important; } }
 .deskcol { width: min(100%, max(520px, calc(var(--u) * 860))); margin: 0 auto; }
@@ -470,8 +500,8 @@ body[data-face="garamond"] .page { max-width: 28em; font-family: var(--text); fo
 .threshold em { font: italic 500 max(15px, calc(var(--u) * 21))/1.2 var(--text); color: var(--dim); }
 .composer .threshold .pbtn { height: max(40px, calc(var(--u) * 68)); padding: 0 calc(var(--u) * 34); font-size: max(13px, calc(var(--u) * 15)); }
 .compose-row { display: flex; gap: calc(var(--u) * 6); align-items: flex-end; min-height: max(44px, calc(var(--u) * 60)); padding: calc(var(--u) * 5); border: 1px solid var(--p-control-edge); background: var(--p-well);
-  box-shadow: inset 0 2px 8px #0008; transition: border-color .2s, box-shadow .2s; }
-.compose-row:focus-within { border-color: var(--p-gold); box-shadow: inset 0 2px 8px #0008, 0 0 0 1px #c9a25b2e, 0 0 20px #c9a25b1f; }
+  box-shadow: var(--p-inlay); transition: border-color .2s, box-shadow .2s; }
+.compose-row:focus-within { border-color: var(--p-gold); box-shadow: 0 0 0 1px #c9a25b2e, 0 0 20px #c9a25b1f, var(--p-inlay); }
 .compose-row textarea { flex: 1; resize: none; min-height: max(34px, calc(var(--u) * 48)); max-height: 220px; font: 400 max(17px, calc(var(--u) * 24))/1.5 var(--text); padding: calc(var(--u) * 6) calc(var(--u) * 12); border: none; border-radius: 0; background: none;
   box-shadow: none; color: var(--ink); caret-color: var(--p-gold-hi); }
 .compose-row textarea:focus { box-shadow: none; }
@@ -481,28 +511,29 @@ body[data-face="garamond"] .page { max-width: 28em; font-family: var(--text); fo
 .brace { display: none; align-self: center; font: 500 max(26px, calc(var(--u) * 36))/1 var(--text); color: var(--p-gold-low); padding: 0 calc(var(--u) * 6) calc(var(--u) * 6) calc(var(--u) * 12); }
 body.gmmode .brace { display: block; animation: fadein .16s ease; }
 body.gmmode .compose-row textarea { color: var(--dim); }
-.modes { display: flex; flex-wrap: wrap; align-items: center; gap: 2px calc(var(--u) * 10); min-height: var(--ctl); margin-top: calc(var(--u) * 6); }
-.whom { display: flex; flex: none; gap: calc(var(--u) * 20); }
-.whom button { display: inline-flex; align-items: center; gap: .7em; padding: 6px 0; border: none; border-radius: 0; background: none; color: var(--p-faint); white-space: nowrap;
-  font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; transition: color .16s; }
-.whom button:not(.on):hover:not(:disabled) { color: var(--dim); }
+.modes { display: flex; flex-wrap: wrap; align-items: center; gap: 2px calc(var(--u) * 12); min-height: var(--ctl); margin-top: calc(var(--u) * 6); }
+.whom { display: flex; flex: none; gap: calc(var(--u) * 16); }
+.whom button { display: inline-flex; align-items: center; gap: .7em; padding: 6px 0; border: none; border-radius: 0; background: none; color: #b89a5cb3; white-space: nowrap;
+  font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .2em; transition: color .16s; }
+.whom button:not(.on):hover:not(:disabled) { color: var(--ink); }
 .whom button.on { color: var(--p-gold-hi); }
 .whom button.on::before { content: ""; width: max(5px, calc(var(--u) * 5)); height: max(5px, calc(var(--u) * 5)); background: var(--p-gold-hi); transform: rotate(45deg); box-shadow: 0 0 8px var(--p-gold); }
 .modes .tip { color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 19))/1.2 var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .modes .tip.warn { color: var(--p-warn); }
 .modes .acts { display: flex; align-items: center; gap: calc(var(--u) * 4); flex: none; margin-left: auto; }
-.composer .acts .pbtn { height: max(32px, calc(var(--u) * 40)); padding: 0 calc(var(--u) * 10); letter-spacing: .2em; text-indent: 0; }
+.composer .acts .pbtn { height: max(32px, calc(var(--u) * 40)); padding: 0 calc(var(--u) * 8); font-size: max(13px, calc(var(--u) * 14)); letter-spacing: .2em; text-indent: 0; }
+.composer .acts .pbtn.quiet:not(:hover) { color: var(--ink); }   /* the two a player reaches for in a hurry are never the faintest things on the desk */
 /* Push is the one control on the desk that spends a number from the sheet, so it carries that number: what it costs, and what is left */
-.push { display: inline-flex; align-items: center; gap: calc(var(--u) * 8); height: var(--ctl); margin-left: calc(var(--u) * 4); padding: 0 calc(var(--u) * 12); border: 1px solid var(--p-control-edge); border-radius: 0; background: none;
-  color: var(--dim); white-space: nowrap; font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; transition: border-color .16s, background .16s, color .16s, box-shadow .16s; }
+.push { display: inline-flex; align-items: center; gap: calc(var(--u) * 8); height: var(--ctl); margin-left: calc(var(--u) * 4); padding: 0 calc(var(--u) * 12); border: 1px solid var(--p-control-edge); border-radius: 0; background: var(--p-well); box-shadow: var(--p-inlay);
+  color: var(--dim); white-space: nowrap; font: 600 max(13px, calc(var(--u) * 13))/1 var(--display); letter-spacing: .2em; transition: border-color .16s, background .16s, color .16s, box-shadow .16s; }   /* a size under its neighbours, so the row under the box stays one row */
 .push .dia { background: none; border: 1px solid currentColor; box-shadow: none; }
-.push .left { margin-left: calc(var(--u) * 2); padding-left: calc(var(--u) * 10); border-left: 1px solid var(--p-control-edge); color: var(--p-faint); line-height: 1.6; }
+.push .left { margin-left: calc(var(--u) * 2); padding-left: calc(var(--u) * 10); border-left: 1px solid var(--p-control-edge); color: var(--p-label); line-height: 1.6; }
 .push:hover:not(:disabled) { border-color: var(--p-strain); color: var(--dim); }
-.push.on { border-color: var(--p-strain); color: #d4e3f6; background: linear-gradient(#6b93c44d, #6b93c41f); box-shadow: 0 0 18px #6b93c455; }
+.push.on { border-color: var(--p-strain); color: #d4e3f6; background: linear-gradient(#6b93c44d, #6b93c41f), var(--p-well); box-shadow: 0 0 18px #6b93c455, var(--p-inlay); }
 .push.on .dia { background: currentColor; } .push.on .left { color: #a9bfdc; }
 .push.last, .push.last:hover:not(:disabled) { border-color: var(--p-warn); }   /* the last 2: the words say it, and the colour agrees */
 .push.last .dia { border-color: var(--p-warn); } .push.last .left { color: var(--p-warn); }
-.push.last.on { color: #f0c8ae; background: linear-gradient(#d98a5f40, #d98a5f1a); box-shadow: 0 0 18px #d98a5f44; }
+.push.last.on { color: #f0c8ae; background: linear-gradient(#d98a5f40, #d98a5f1a), var(--p-well); box-shadow: 0 0 18px #d98a5f44, var(--p-inlay); }
 .push.last.on .dia { background: var(--p-warn); }
 @media (max-width: 1180px) { .modes .tip, .push .cost, #sessmark .long { display: none; } #sessmark .short { display: inline; } }
 @media (max-width: 760px) { .modes { flex-wrap: wrap; } #game:has(#endask:not([hidden])) header .title { display: none; } }
@@ -673,32 +704,34 @@ details.about .md { padding: 0 0 12px 21px; color: var(--dim); font-size: 13.5px
    here is under `aside`, in the plate's type and colours; the same class names without it are the old dialogs', until they
    are on the plate too. Under 1180 across it is a drawer over the page and never a column. */
 #game { --side: max(360px, calc(var(--u) * 500)); }
-aside { --c: linear-gradient(var(--p-gold), var(--p-gold)); --l: calc(var(--u) * 16); position: relative; display: grid; grid-template-rows: auto 1fr; min-height: 0; box-shadow: calc(var(--u) * -16) 0 calc(var(--u) * 44) #0008;
-  background: var(--grain), linear-gradient(#17120b, #0f0c08 46%); color: var(--ink); font: 400 max(15px, calc(var(--u) * 21))/1.5 var(--text); }
-aside::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; z-index: 3; background: linear-gradient(var(--p-edge), var(--p-gold) 50%, var(--p-edge)); }
+aside { --c: linear-gradient(var(--p-gold), var(--p-gold)); --l: calc(var(--u) * 16); position: relative; display: grid; grid-template-rows: auto 1fr; min-height: 0; box-shadow: var(--p-raise-left);
+  background: var(--grain-low), linear-gradient(#120e09, #0a0806 40%); color: var(--ink); font: 400 max(15px, calc(var(--u) * 21))/1.5 var(--text); }
+/* the rail standing on its left edge, its lit side to the page */
+aside::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: max(3px, calc(var(--u) * 3)); z-index: 3; border: solid #000; border-width: 0 1px; box-sizing: content-box;
+  background: linear-gradient(var(--p-edge), transparent 14%, transparent 86%, var(--p-edge)), linear-gradient(90deg, var(--p-rail)); }
 aside ::-webkit-scrollbar { width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); }
 aside ::-webkit-scrollbar-thumb { background: #c9a25b55; border: 0; }
 aside ::-webkit-scrollbar-thumb:hover { background: #c9a25b99; }
-aside .tabs { position: relative; display: flex; justify-content: space-between; padding: 0 calc(var(--u) * 26); border-bottom: 1px solid #c9a25b22; }
-aside .tabs button { position: static; flex: none; padding: calc(var(--u) * 20) 0 calc(var(--u) * 17); border: none; border-radius: 0; background: none; color: var(--p-faint);
-  font: 500 max(15px, calc(var(--u) * 21))/1 var(--text); letter-spacing: 0; text-transform: none; transition: color .16s; }
+aside .tabs { position: relative; display: flex; justify-content: space-between; padding: 0 calc(var(--u) * 26); border-bottom: 1px solid var(--p-edge); box-shadow: 0 1px 0 #000; }
+aside .tabs button { position: static; flex: none; padding: calc(var(--u) * 20) 0 calc(var(--u) * 17); border: none; border-radius: 0; background: none; color: var(--dim);
+  font: 500 max(16px, calc(var(--u) * 23))/1 var(--text); letter-spacing: 0; text-transform: none; transition: color .16s; }
 aside .tabs button::before, aside .tabs button::after { content: none; }
-aside .tabs button:hover { color: var(--dim); }
+aside .tabs button:hover { color: var(--ink); }
 aside .tabs button.on { color: var(--p-gold-hi); text-shadow: 0 0 18px #c9a25b55; }
 /* the gold bar of the plate's rows, lying down: as wide as the tab's word, with a diamond at its centre, slid to the tab that's chosen */
-#tabbar { position: absolute; left: 0; bottom: -1px; height: max(2px, calc(var(--u) * 2)); background: var(--p-gold); pointer-events: none; transition: transform .2s var(--p-arrive), width .2s var(--p-arrive); }
-#tabbar::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(5px, calc(var(--u) * 7)); height: max(5px, calc(var(--u) * 7)); transform: rotate(45deg); margin: max(-3px, calc(var(--u) * -3.5)) 0 0 max(-3px, calc(var(--u) * -3.5)); background: var(--p-gold-hi); box-shadow: 0 0 10px var(--p-gold); }
+#tabbar { position: absolute; left: 0; bottom: -1px; height: max(2px, calc(var(--u) * 3)); background: var(--p-gold); pointer-events: none; transition: transform .2s var(--p-arrive), width .2s var(--p-arrive); }
+#tabbar::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(7px, calc(var(--u) * 9)); height: max(7px, calc(var(--u) * 9)); transform: rotate(45deg); margin: min(-3.5px, calc(var(--u) * -4.5)) 0 0 min(-3.5px, calc(var(--u) * -4.5)); background: var(--p-gold-hi); box-shadow: 0 0 10px var(--p-gold); }
 aside .tabs .badge { display: inline-block; width: max(5px, calc(var(--u) * 6)); height: max(5px, calc(var(--u) * 6)); transform: rotate(45deg); background: var(--p-gold-hi); margin-left: .5em; vertical-align: .12em; box-shadow: 0 0 8px var(--p-gold); animation: beacon 1.6s ease-in-out infinite; }
 aside .pane { overflow: auto; padding: calc(var(--u) * 22) calc(var(--u) * 26) calc(var(--u) * 24); }
 aside .empty { color: var(--p-faint); padding: calc(var(--u) * 14) 2px; text-align: center; font: italic 400 max(15px, calc(var(--u) * 21))/1.6 var(--text); }
 
 /* inner tabs: stuck to the top of the pane, on the ledger's own fill (nothing is blurred) */
-aside .subtabs { position: sticky; top: calc(var(--u) * -22); z-index: 2; display: flex; flex-wrap: wrap; gap: 0 calc(var(--u) * 22); margin: calc(var(--u) * -22) calc(var(--u) * -26) calc(var(--u) * 16); padding: calc(var(--u) * 2) calc(var(--u) * 26); background: #130f0a; backdrop-filter: none;
+aside .subtabs { position: sticky; top: calc(var(--u) * -22); z-index: 2; display: flex; flex-wrap: wrap; gap: 0 calc(var(--u) * 22); margin: calc(var(--u) * -22) calc(var(--u) * -26) calc(var(--u) * 16); padding: calc(var(--u) * 2) calc(var(--u) * 26); background: #0b0907; backdrop-filter: none;
   border-bottom: 1px solid #c9a25b22; }
-aside .subtabs button { flex: none; display: inline-flex; align-items: center; gap: .6em; padding: calc(var(--u) * 12) 0; border: none; border-radius: 0; background: none; box-shadow: none; color: var(--p-faint); white-space: nowrap;
-  font: 600 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; transition: color .16s; }
-aside .subtabs button:hover { color: var(--dim); }
-aside .subtabs button.on { color: var(--p-gold); background: none; box-shadow: none; }
+aside .subtabs button { flex: none; display: inline-flex; align-items: center; gap: .6em; padding: calc(var(--u) * 12) 0; border: none; border-radius: 0; background: none; box-shadow: none; color: #b89a5cb3; white-space: nowrap;
+  font: 600 max(13px, calc(var(--u) * 15))/1 var(--display); letter-spacing: .16em; text-transform: uppercase; transition: color .16s; }
+aside .subtabs button:hover { color: var(--ink); }
+aside .subtabs button.on { color: var(--p-gold-hi); background: none; box-shadow: none; }
 aside .subtabs button.on::before { content: ""; width: 4px; height: 4px; transform: rotate(45deg); background: var(--p-gold-hi); box-shadow: 0 0 6px var(--p-gold); }
 aside .subtabs button span { margin: 0; color: var(--p-faint); font: italic 400 max(13px, calc(var(--u) * 17))/1 var(--text); letter-spacing: 0; text-transform: none; }
 aside .hero + .subtabs { margin-top: calc(var(--u) * 16); border-top: 1px solid #c9a25b22; }
@@ -706,7 +739,7 @@ aside .hero + .subtabs { margin-top: calc(var(--u) * 16); border-top: 1px solid 
 /* the card: who the character is, and what shape they are in */
 aside .hero { position: relative; border: 1px solid var(--p-edge); border-radius: 0; padding: calc(var(--u) * 20) calc(var(--u) * 22) calc(var(--u) * 18);
   background: var(--c) left top / var(--l) 1px no-repeat, var(--c) left top / 1px var(--l) no-repeat, var(--c) right top / var(--l) 1px no-repeat, var(--c) right top / 1px var(--l) no-repeat, var(--c) left bottom / var(--l) 1px no-repeat, var(--c) left bottom / 1px var(--l) no-repeat, var(--c) right bottom / var(--l) 1px no-repeat, var(--c) right bottom / 1px var(--l) no-repeat, radial-gradient(130% 90% at 0 0, #2c2416, transparent 62%), linear-gradient(#1a150d, #120e09);
-  box-shadow: inset 0 1px 0 #f0d9a814, 0 calc(var(--u) * 10) calc(var(--u) * 28) #0006; }
+  box-shadow: var(--p-raise-card); }
 aside .hero { background-origin: border-box; background-position: left calc(var(--u) * 7) top calc(var(--u) * 7), left calc(var(--u) * 7) top calc(var(--u) * 7), right calc(var(--u) * 7) top calc(var(--u) * 7), right calc(var(--u) * 7) top calc(var(--u) * 7), left calc(var(--u) * 7) bottom calc(var(--u) * 7), left calc(var(--u) * 7) bottom calc(var(--u) * 7), right calc(var(--u) * 7) bottom calc(var(--u) * 7), right calc(var(--u) * 7) bottom calc(var(--u) * 7), 0 0, 0 0; }
 aside .hero.glow { animation: glow 2.4s ease-out; }
 aside .hero .top { display: flex; gap: calc(var(--u) * 18); align-items: center; margin-bottom: calc(var(--u) * 12); }
@@ -717,53 +750,56 @@ aside .portrait::before { content: ""; position: absolute; inset: 14%; z-index: 
 aside .portrait.painted { width: max(72px, calc(var(--u) * 96)); height: max(90px, calc(var(--u) * 120)); margin: max(3px, calc(var(--u) * 4)); background-size: cover; background-position: center 20%; cursor: zoom-in; color: transparent; border: 1px solid var(--p-edge); box-shadow: 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 0 calc(max(2px, calc(var(--u) * 3)) + 1px) var(--p-gold); transition: box-shadow .25s; }
 aside .portrait.painted::before { content: none; }
 aside .portrait.painted:hover, aside .portrait.painted:focus-visible { box-shadow: 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 0 calc(max(2px, calc(var(--u) * 3)) + 1px) var(--p-gold-hi), 0 0 calc(var(--u) * 24) #c9a25b55; }
-aside .hero .who { font: 600 max(18px, calc(var(--u) * 26))/1.15 var(--display); letter-spacing: .06em; text-shadow: 0 0 26px #c9a25b33; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+aside .hero .who { font: 600 max(19px, calc(var(--u) * 28))/1.15 var(--display); letter-spacing: .06em; text-shadow: 0 0 26px #c9a25b33; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 aside .hero .aka { color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 19))/1.2 var(--text); margin-top: calc(var(--u) * 4); }
-aside .hero .level { margin-left: auto; text-align: center; flex: none; }
-aside .hero .level b { position: relative; z-index: 0; display: grid; place-items: center; width: max(40px, calc(var(--u) * 52)); height: max(40px, calc(var(--u) * 52)); margin: 0 auto calc(var(--u) * 6); font: 600 max(17px, calc(var(--u) * 24))/1 var(--display); color: var(--p-gold-hi); }
-aside .hero .level b::before { content: ""; position: absolute; inset: 14%; z-index: -1; transform: rotate(45deg); border: 1px solid var(--p-gold); background: #14100a; box-shadow: 0 0 16px #c9a25b40, inset 0 0 10px #c9a25b26; }
-aside .hero .level span { font: 600 13px/1 var(--display); letter-spacing: .2em; text-indent: .2em; color: var(--p-faint); }
+aside .hero .level { --d: max(40px, calc(var(--u) * 52)); position: relative; z-index: 0; margin-left: auto; text-align: center; flex: none; }
+aside .hero .level b { position: relative; z-index: 0; display: grid; place-items: center; width: var(--d); height: var(--d); margin: 0 auto calc(var(--u) * 6); font: 600 max(19px, calc(var(--u) * 28))/1 var(--display); color: var(--p-gold-hi); }
+aside .hero .level b::before { content: none; }
+aside .hero .level::before { content: ""; position: absolute; left: 50%; top: calc(var(--d) * .14); width: calc(var(--d) * .72); height: calc(var(--d) * .72); z-index: -1; translate: -50%; rotate: 45deg; border: 1px solid var(--p-gold); background: #14100a; box-shadow: 0 0 16px #c9a25b40, inset 0 0 10px #c9a25b26; }
+aside .hero .level span { font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .2em; text-indent: .2em; color: var(--p-label); }
 aside .hero .concept { color: var(--dim); font: italic 400 max(15px, calc(var(--u) * 21))/1.4 var(--text); margin-bottom: calc(var(--u) * 10); }
 /* a meter says it three ways where it can: the word, the number, the colour */
 aside .bar { margin: calc(var(--u) * 10) 0; position: relative; }
 aside .bar .label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: calc(var(--u) * 6); }
-aside .bar .label .caps { color: var(--dim); font: 600 13px/1 var(--display); letter-spacing: .2em; }
-aside .bar .label .num { font: 600 max(14px, calc(var(--u) * 17))/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+aside .bar .label .caps { color: var(--p-label); font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); letter-spacing: .2em; }
+aside .bar .label .num { font: 600 max(14px, calc(var(--u) * 19))/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 aside .bar .label .band { font: italic 400 max(14px, calc(var(--u) * 19))/1 var(--text); margin-left: .6em; }
-aside .bar .track { position: relative; height: max(6px, calc(var(--u) * 8)); background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: none; }
-aside .bar.thin .track { height: max(2px, calc(var(--u) * 3)); border: none; background: #c9a25b22; }
+aside .bar .track { position: relative; height: max(8px, calc(var(--u) * 12)); background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: var(--p-inlay); }
+aside .bar .fill { box-shadow: inset 0 1px 0 #ffffff40, inset 0 -1px 0 #0009; }   /* a bar lying in a groove */
+aside .bar.thin .track { height: max(2px, calc(var(--u) * 3)); border: none; background: #c9a25b22; box-shadow: none; }
 aside .bar.thin .fill { box-shadow: 0 0 8px var(--p-gold); }
 aside .bar .delta { top: calc(var(--u) * -10); font: 600 max(15px, calc(var(--u) * 19))/1 var(--display); }
 aside .states { display: grid; gap: calc(var(--u) * 4); margin-top: calc(var(--u) * 12); padding-top: calc(var(--u) * 10); border-top: 1px solid #c9a25b22; font-size: inherit; }
 aside .states div { display: flex; gap: calc(var(--u) * 8); align-items: baseline; }
-aside .states .caps { color: var(--p-faint); font: 600 13px/1.4 var(--display); letter-spacing: .16em; width: max(112px, calc(var(--u) * 124)); flex: none; padding: 0; }
+aside .states .caps { color: var(--p-label); font: 600 max(13px, calc(var(--u) * 14))/1.4 var(--display); letter-spacing: .16em; width: max(112px, calc(var(--u) * 124)); flex: none; padding: 0; }
 aside .states .hurt { color: var(--p-warn); }
-aside .levelbtn { width: 100%; height: max(38px, calc(var(--u) * 52)); margin-top: calc(var(--u) * 18); padding: 0 calc(var(--u) * 12); font-size: 13px; letter-spacing: .16em; text-indent: 0; white-space: normal; animation: beckon 2.4s ease-in-out infinite; }
+aside .levelbtn { width: 100%; height: max(38px, calc(var(--u) * 52)); margin-top: calc(var(--u) * 18); padding: 0 calc(var(--u) * 12); font-size: max(13px, calc(var(--u) * 14)); letter-spacing: .16em; text-indent: 0; white-space: normal; animation: beckon 2.4s ease-in-out infinite; }
 /* a section's heading: a diamond, its name, and a rule running out */
 aside .block { margin-top: calc(var(--u) * 20); }
 aside .subtabs + .block { margin-top: 0; }
-aside .block > .caps { color: var(--p-gold); display: flex; align-items: center; gap: calc(var(--u) * 12); margin-bottom: calc(var(--u) * 10); font: 600 13px/1.2 var(--display); letter-spacing: .28em; }
+aside .block > .caps { color: var(--p-gold); display: flex; align-items: center; gap: calc(var(--u) * 12); margin-bottom: calc(var(--u) * 10); font: 600 max(13px, calc(var(--u) * 15))/1.2 var(--display); letter-spacing: .28em; }
 aside .block > .caps::before { content: ""; flex: none; width: 5px; height: 5px; margin: 0 2px; background: var(--p-gold); transform: rotate(45deg); box-shadow: 0 0 8px #c9a25b99; }
 aside .block > .caps::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--p-edge), transparent); }
 aside .block > .caps .sub { color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 18))/1 var(--text); letter-spacing: 0; text-transform: none; }
-aside .block > .caps .count { order: 2; color: var(--p-faint); font: 600 13px/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+aside .block > .caps .count { order: 2; color: var(--p-faint); font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 /* attributes three across, in the rules' order: a row for the body and a row for the mind. Defenses two across. */
 aside .tiles { display: grid; gap: calc(var(--u) * 8); background: none; border: 0; }
 aside .tiles.six { grid-template-columns: repeat(3, 1fr); } aside .tiles.four { grid-template-columns: repeat(2, 1fr); }
-aside .tile { background: var(--p-well); border: 1px solid var(--p-control-edge); padding: calc(var(--u) * 10) 2px calc(var(--u) * 9); text-align: center; }
-aside .tile b { display: block; font: 600 max(19px, calc(var(--u) * 26))/1.1 var(--display); color: var(--ink); }
+aside .tile { background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: var(--p-inlay); padding: calc(var(--u) * 10) 2px calc(var(--u) * 9); text-align: center; }
+aside .tile b { display: block; font: 600 max(21px, calc(var(--u) * 32))/1.1 var(--display); color: var(--ink); }
 aside .tile b.up { color: var(--p-gold-hi); text-shadow: 0 0 16px #c9a25b55; } aside .tile b.down { color: var(--p-warn); }
-aside .tile span { display: block; margin-top: calc(var(--u) * 4); font: 600 13px/1 var(--display); color: var(--p-faint); letter-spacing: .16em; text-indent: .16em; text-transform: uppercase; }
+aside .tile span { display: block; margin-top: calc(var(--u) * 4); font: 600 max(13px, calc(var(--u) * 14))/1 var(--display); color: var(--p-label); letter-spacing: .16em; text-indent: .16em; text-transform: uppercase; }
 /* a Defense is its name and its number on one line, so the whole of Stats is in sight without a scroll */
 aside .tiles.four .tile { display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; padding: calc(var(--u) * 8) calc(var(--u) * 16); }
-aside .tiles.four .tile b { font-size: max(18px, calc(var(--u) * 24)); }
+aside .tiles.four .tile b { font-size: max(19px, calc(var(--u) * 28)); color: var(--p-gold-hi); }
 aside .tiles.four .tile span { margin: 0; text-indent: 0; }
 /* Stats is never scrolled to be read. When the card is tall (a portrait, wounds, a level waiting) or the window short, the
-   pane is drawn closer (snug), and then closer still (tight: one row of each, under three letters of its name); fitStats picks. */
+   pane is drawn closer (snug), and then closer still (tight: one row of each, under three letters of its name); fitStats picks,
+   and then gives back what is still spare: the description's lines (--lines), and then the tiles' height (roomy). */
 aside .pane.snug { padding-top: calc(var(--u) * 14); padding-bottom: calc(var(--u) * 12); }
 aside .pane.snug .hero { padding: calc(var(--u) * 14) calc(var(--u) * 18) calc(var(--u) * 12); }
 aside .pane.snug .hero .top { margin-bottom: calc(var(--u) * 8); }
-aside .pane.snug .hero .concept { margin-bottom: calc(var(--u) * 6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+aside .pane.snug .hero .concept { margin-bottom: calc(var(--u) * 6); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--lines, 1); overflow: hidden; }
 aside .pane.snug .bar { margin: calc(var(--u) * 7) 0; }
 aside .pane.snug .states { margin-top: calc(var(--u) * 8); padding-top: calc(var(--u) * 7); gap: 0; }
 aside .pane.snug .states .hurt { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -776,14 +812,18 @@ aside .pane.snug .block > .caps { margin-bottom: calc(var(--u) * 7); }
 aside .pane.snug .tiles { gap: calc(var(--u) * 6); }
 aside .pane.snug .tile { padding: calc(var(--u) * 6) 2px calc(var(--u) * 6); }
 aside .pane.snug .tiles.four .tile { padding: calc(var(--u) * 5) calc(var(--u) * 14); }
-aside .pane.snug .tile b { font-size: max(18px, calc(var(--u) * 23)); }
+aside .pane.snug .tile b { font-size: max(18px, calc(var(--u) * 26)); }
+aside .pane.snug .bar .track { height: max(6px, calc(var(--u) * 8)); } aside .pane.snug .bar.thin .track { height: max(2px, calc(var(--u) * 3)); }
+aside .pane.roomy .tiles { gap: calc(var(--u) * 8); }
+aside .pane.roomy .tile { padding: calc(var(--u) * 10) 2px calc(var(--u) * 9); } aside .pane.roomy .tile b { font-size: max(21px, calc(var(--u) * 32)); }
+aside .pane.roomy .tiles.four .tile { padding: calc(var(--u) * 8) calc(var(--u) * 16); } aside .pane.roomy .tiles.four .tile b { font-size: max(19px, calc(var(--u) * 28)); }
 aside .pane.tight .tiles.six { grid-template-columns: repeat(6, 1fr); } aside .pane.tight .tiles.four { grid-template-columns: repeat(4, 1fr); }
 aside .pane.tight .tiles.four .tile { display: block; padding: calc(var(--u) * 6) 2px; }
 aside .pane.tight .tile span { font-size: 0; letter-spacing: 0; text-indent: 0; }
-aside .pane.tight .tile span::after { content: attr(data-short); font-size: 13px; letter-spacing: .08em; }
+aside .pane.tight .tile span::after { content: attr(data-short); font-size: max(13px, calc(var(--u) * 14)); letter-spacing: .08em; }
 aside .pane.tight .portrait.painted { width: max(52px, calc(var(--u) * 64)); height: max(64px, calc(var(--u) * 80)); }
 aside .coins { grid-auto-flow: column; grid-auto-columns: 1fr; }
-aside .coins .tile b { color: var(--p-gold-hi); font-size: max(19px, calc(var(--u) * 26)); }
+aside .coins .tile b { color: var(--p-gold-hi); font-size: max(19px, calc(var(--u) * 28)); }
 aside .skill { display: grid; grid-template-columns: 1fr auto; gap: 2px calc(var(--u) * 12); align-items: center; padding: calc(var(--u) * 11) 0; border-bottom: 1px solid #ffffff0a; }
 aside .skill:last-child { border-bottom: none; }
 aside .skill .name { font: 500 max(16px, calc(var(--u) * 23))/1.2 var(--text); letter-spacing: 0; }
@@ -800,42 +840,42 @@ aside details.about summary::before { content: ""; flex: none; width: 5px; heigh
 aside details.about[open] summary::before { background: var(--p-gold); box-shadow: 0 0 8px #c9a25b99; }
 aside details.about .md { padding: 0 0 calc(var(--u) * 14) calc(var(--u) * 24); color: var(--dim); font: inherit; }
 /* what is carried: the purse first, then a heading to each place and the things in it, two across */
-aside .purse { display: flex; align-items: center; gap: calc(var(--u) * 12); background: var(--p-well); border: 1px solid var(--p-control-edge); border-radius: 0; padding: calc(var(--u) * 12) calc(var(--u) * 16); font: inherit; }
+aside .purse { display: flex; align-items: center; gap: calc(var(--u) * 12); background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: var(--p-inlay); border-radius: 0; padding: calc(var(--u) * 12) calc(var(--u) * 16); font: inherit; }
 aside .purse svg { width: 1.1em; height: 1.1em; color: var(--p-gold); flex: none; }
 aside .purse.none { color: var(--p-faint); font-style: italic; } aside .purse.none svg { color: var(--p-faint); }
 aside .bag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; gap: calc(var(--u) * 8); }
 aside .thing { display: flex; gap: calc(var(--u) * 12); align-items: flex-start; background: none; border: 1px solid #ffffff0a; border-radius: 0; padding: calc(var(--u) * 8); min-width: 0; transition: border-color .2s, background .2s; }
 aside .thing.more { cursor: pointer; } aside .thing.more:hover, aside .thing.more:focus-visible { border-color: var(--p-edge); background: linear-gradient(90deg, #c9a25b14, transparent); }
 aside .thing .glyph { width: max(36px, calc(var(--u) * 46)); height: max(36px, calc(var(--u) * 46)); flex: none; position: relative; display: grid; place-items: center; border-radius: 0; color: var(--dim);
-  background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: none; }
+  background: var(--p-well); border: 1px solid var(--p-control-edge); box-shadow: var(--p-inlay); }
 aside .thing .glyph svg { width: 55%; height: 55%; stroke-width: 1.2; }
 aside .thing .glyph b { position: absolute; right: -5px; bottom: -5px; min-width: 18px; padding: 0 4px; border-radius: 0; background: var(--p-gold); color: #1a1408;
-  font: 600 13px/17px var(--display); text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px #120e09; }
+  font: 600 13px/17px var(--display); text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px #0b0907; }
 aside .thing .what { min-width: 0; flex: 1; align-self: center; }
 aside .thing .name { font: 500 max(15px, calc(var(--u) * 20))/1.25 var(--text); overflow-wrap: anywhere; }
-aside .thing .chip { display: inline-block; margin-top: 3px; padding: 0 6px; border-radius: 0; border: 1px solid var(--p-edge); color: var(--p-gold); font: 600 13px/18px var(--display); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+aside .thing .chip { display: inline-block; margin-top: 3px; padding: 0 6px; border-radius: 0; border: 1px solid var(--p-edge); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 14))/18px var(--display); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 aside .thing .note { color: var(--p-faint); font: italic 400 max(13px, calc(var(--u) * 17))/1.35 var(--text); margin-top: 2px; }
 aside .thing.open .note { color: var(--dim); }
-aside .bag.ready .thing .glyph { color: var(--p-gold-hi); border-color: var(--p-gold); box-shadow: inset 0 0 12px #c9a25b26; }
+aside .bag.ready .thing .glyph { color: var(--p-gold-hi); border-color: var(--p-gold); box-shadow: inset 0 0 12px #c9a25b26, var(--p-inlay); }
 aside .thing.none { border-style: dashed; border-color: var(--p-control-edge); color: var(--p-faint); font-style: italic; }   /* a dash means not there */
-aside .thing.none .glyph { background: none; border-style: dashed; }
+aside .thing.none .glyph { background: none; border-style: dashed; box-shadow: none; }
 /* the Journal */
 aside .stands { border: 1px solid var(--p-edge); border-radius: 0; padding: calc(var(--u) * 24) calc(var(--u) * 26); font: italic 400 max(16px, calc(var(--u) * 22))/1.6 var(--text); color: #ddd3bf;
   background: var(--c) left top / var(--l) 1px no-repeat, var(--c) left top / 1px var(--l) no-repeat, var(--c) right top / var(--l) 1px no-repeat, var(--c) right top / 1px var(--l) no-repeat, var(--c) left bottom / var(--l) 1px no-repeat, var(--c) left bottom / 1px var(--l) no-repeat, var(--c) right bottom / var(--l) 1px no-repeat, var(--c) right bottom / 1px var(--l) no-repeat, radial-gradient(130% 90% at 0 0, #2c2416, transparent 62%), linear-gradient(#1a150d, #120e09); background-origin: border-box;
   background-position: left calc(var(--u) * 7) top calc(var(--u) * 7), left calc(var(--u) * 7) top calc(var(--u) * 7), right calc(var(--u) * 7) top calc(var(--u) * 7), right calc(var(--u) * 7) top calc(var(--u) * 7), left calc(var(--u) * 7) bottom calc(var(--u) * 7), left calc(var(--u) * 7) bottom calc(var(--u) * 7), right calc(var(--u) * 7) bottom calc(var(--u) * 7), right calc(var(--u) * 7) bottom calc(var(--u) * 7), 0 0, 0 0;
-  box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 28) #0006; }
-aside .stands .caps { display: block; color: var(--p-gold); font: 600 13px/1.2 var(--display); font-style: normal; letter-spacing: .28em; margin-bottom: calc(var(--u) * 12); }
+  box-shadow: var(--p-raise-card); }
+aside .stands .caps { display: block; color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 15))/1.2 var(--display); font-style: normal; letter-spacing: .28em; margin-bottom: calc(var(--u) * 12); }
 aside .md { color: var(--dim); }
 aside .md h1 { font: 600 max(17px, calc(var(--u) * 24))/1.2 var(--display); letter-spacing: .06em; color: var(--ink); margin: 0 0 calc(var(--u) * 12); }
-aside .md h2 { font: 600 13px/1.2 var(--display); letter-spacing: .28em; color: var(--p-gold); margin: calc(var(--u) * 26) 0 calc(var(--u) * 12); padding-bottom: calc(var(--u) * 8); border-bottom: 1px solid #c9a25b22; }
+aside .md h2 { font: 600 max(13px, calc(var(--u) * 15))/1.2 var(--display); letter-spacing: .28em; color: var(--p-gold); margin: calc(var(--u) * 26) 0 calc(var(--u) * 12); padding-bottom: calc(var(--u) * 8); border-bottom: 1px solid #c9a25b22; }
 aside .md h3 { font: 500 max(16px, calc(var(--u) * 23))/1.25 var(--text); color: var(--ink); margin: calc(var(--u) * 18) 0 calc(var(--u) * 4); }
-aside .md h4 { font: 600 13px/1.3 var(--display); letter-spacing: .12em; color: var(--ink); margin: calc(var(--u) * 14) 0 calc(var(--u) * 4); }
+aside .md h4 { font: 600 max(13px, calc(var(--u) * 14))/1.3 var(--display); letter-spacing: .12em; color: var(--ink); margin: calc(var(--u) * 14) 0 calc(var(--u) * 4); }
 aside .md p { margin: 0 0 calc(var(--u) * 12); }
 aside .md strong { font-weight: 500; color: var(--ink); }
 aside .md li::marker { color: var(--p-edge); }
 aside .md table { font-size: inherit; }
 aside .md th, aside .md td { border: 1px solid var(--p-control-edge); padding: calc(var(--u) * 7) calc(var(--u) * 10); }
-aside .md th { color: var(--p-gold); font: 600 13px/1.2 var(--display); letter-spacing: .12em; background: #ffffff06; }
+aside .md th { color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 14))/1.2 var(--display); letter-spacing: .12em; background: #ffffff06; }
 aside .md code, aside .md pre { background: var(--p-well); border-radius: 0; font-size: .8em; }
 aside .md hr { background: linear-gradient(90deg, transparent, var(--p-edge), transparent); }
 aside .journal li { list-style: none; margin: 0 0 calc(var(--u) * 14) -20px; padding-left: calc(var(--u) * 16); border-left: 1px solid var(--p-edge); color: var(--dim); }
@@ -845,8 +885,9 @@ aside .journal li.faced img { width: max(36px, calc(var(--u) * 44)); height: max
 aside .journal li.faced img:hover, aside .journal li.faced img:focus-visible { border-color: var(--p-gold); }
 /* the Gallery: places and scenes the full width, people 4:5, items square, as they are painted */
 aside .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 10); }
-aside .shot { position: relative; border-radius: 0; overflow: hidden; border: 1px solid var(--p-control-edge); background: var(--p-well); cursor: zoom-in; aspect-ratio: 4 / 5; transition: border-color .25s, box-shadow .25s; }
-aside .shot:not(.pending):hover, aside .shot:not(.pending):focus-visible { border-color: var(--p-gold); box-shadow: 0 0 calc(var(--u) * 22) #c9a25b2e; }
+aside .shot { position: relative; border-radius: 0; overflow: hidden; border: 1px solid var(--p-control-edge); background: var(--p-well); box-shadow: 0 0 0 1px #000; cursor: zoom-in; aspect-ratio: 4 / 5; transition: border-color .25s, box-shadow .25s; }
+aside .shot:not(.pending):hover, aside .shot:not(.pending):focus-visible { border-color: var(--p-gold); box-shadow: 0 0 0 1px #000, 0 0 calc(var(--u) * 22) #c9a25b2e; }
+aside .shot.pending { box-shadow: var(--p-inlay); }
 aside .shot.wide { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
 aside .shot.square { aspect-ratio: 1; }
 aside .shot img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; transition: transform .6s var(--p-arrive); }
@@ -858,12 +899,16 @@ aside .shot.pending { cursor: default; display: grid; place-items: center; text-
 aside .shot.pending svg { width: max(22px, calc(var(--u) * 28)); height: max(22px, calc(var(--u) * 28)); color: var(--p-gold); margin: 0 auto calc(var(--u) * 8); display: block; }
 aside .shot.pending b { display: block; color: var(--dim); font: 500 max(15px, calc(var(--u) * 20))/1.2 var(--text); font-style: normal; }
 aside .warnbox { border: 1px solid var(--p-control-edge); border-left: max(2px, calc(var(--u) * 3)) solid var(--p-warn); border-radius: 0; color: var(--p-warn); background: #d98a5f12; padding: calc(var(--u) * 12) calc(var(--u) * 16); margin-bottom: calc(var(--u) * 20); }
+/* a well at rest is cut with a dark edge on three sides, and only its bottom lip catches the light. A line all the way round says live or chosen.
+   Forced colours give every border its own colour, so the full edge stands there. */
+aside .bar .track, aside .tile, aside .purse, aside .thing:not(.none) .glyph, aside .shot.pending, .compose-row:not(:focus-within), .push:not(.on, .last, :hover:not(:disabled)) {
+  border-top-color: #000; border-left-color: #000; border-right-color: #000; }
 /* the GM's side: what's said outside the story, as the creator's window draws it */
 aside .talk { max-width: none; display: block; }
 aside .msg { padding: calc(var(--u) * 13) 0; border: 0; border-top: 1px solid #ffffff0a; color: var(--ink); overflow-wrap: anywhere; }
 aside .msg:first-child { padding-top: 0; border-top: 0; }
 aside .msg.you { margin: 0; color: var(--dim); white-space: pre-wrap; }
-aside .msg .who { margin-bottom: calc(var(--u) * 8); color: var(--p-gold); font: 600 13px/1.2 var(--display); letter-spacing: .28em; }
+aside .msg .who { margin-bottom: calc(var(--u) * 8); color: var(--p-gold); font: 600 max(13px, calc(var(--u) * 15))/1.2 var(--display); letter-spacing: .28em; }
 aside .msg.you .who { color: var(--p-faint); }
 aside .msg.gm .md { color: var(--ink); }
 aside .msg.note { text-align: left; color: var(--p-faint); font: italic 400 max(14px, calc(var(--u) * 19))/1.45 var(--text); }
@@ -1013,6 +1058,47 @@ aside .msg.note { text-align: left; color: var(--p-faint); font: italic 400 max(
 .pslider .thumb { position: absolute; left: var(--x); top: 50%; width: var(--th); height: var(--th); translate: -50% -50%; rotate: 45deg; background: linear-gradient(135deg, #fff3d0, #c9a25b);
   box-shadow: 0 0 0 max(2px, calc(var(--u) * 3)) #0e0b07, 0 0 calc(var(--u) * 16) calc(var(--u) * 3) #e8c06a; }
 .pslider input { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+/* ---- the painted frame ---- */
+/* Five pictures of the house's own (Art/Play), laid over the frame above: honed stone under the margins, dark bronze under the
+   ledger, a gilt rail with its boss, and the card's corners. Each is switched on by itself once it has been decoded (#game.has-…,
+   with its address in --art-…), so one that is missing leaves its drawn part standing. None is ever under the story: the strip
+   the column is read on stays the flat page. They are stills, each one layer in its box's own background and never a box with
+   an opacity of its own: a tile is laid whole, and its surface's fill washed back over it. A machine that can't keep up goes
+   without the two big ones, and forced colours without any of them. */
+#game { --rail: max(8px, calc(var(--u) * 10)); --col: calc(var(--story-size) * 17 + var(--u) * 64); }   /* half the story column, and 64 more */
+body[data-face="garamond"] #game { --col: calc(var(--story-size) * 16.24 + var(--u) * 64); }
+aside .hero > .cn { display: none; }
+@media (forced-colors: none) {
+  @media (min-width: 761px) {   /* narrower, and the margins are too thin to show the stone */
+    body:not(.lean) #game.has-ground .body { background: var(--grain-low), radial-gradient(calc(var(--u) * 760) calc(var(--u) * 420) at var(--axis) -6%, #1f170c 0, transparent 70%), radial-gradient(120% 100% at 50% 50%, transparent 48%, #000d 100%),
+      linear-gradient(90deg, transparent calc(var(--axis) - var(--col) - var(--u) * 120), var(--p-page) calc(var(--axis) - var(--col)), var(--p-page) calc(var(--axis) + var(--col)), transparent calc(var(--axis) + var(--col) + var(--u) * 120)),
+      linear-gradient(#0d0b0873 0 0), var(--art-ground) 0 0 / 1024px 1024px, var(--p-page); } }
+  body:not(.lean) #game.has-ledger aside { background: var(--grain-low), linear-gradient(#120e0966, #0a080666 40%), var(--art-ledger) 0 0 / 1024px 1024px, linear-gradient(#120e09, #0a0806 40%); }
+  /* the inner tabs stay over the pane as it scrolls, so they are a strip of the same bronze and not a hole in it */
+  body:not(.lean) #game.has-ledger aside .subtabs { background: linear-gradient(#0a080666 0 0), var(--art-ledger) 0 0 / 1024px 1024px, #0a0806; }
+  /* the rail: across the lintel's foot, along the desk's head, and standing on the ledger's edge with its lit side to the page */
+  #game.has-rail header::after { height: var(--rail); bottom: calc(var(--rail) * -.3); border: 0; background: var(--art-rail) 0 0 / auto 100% repeat-x; }
+  #game.has-rail .composer::before { height: var(--rail); top: calc(var(--rail) * -.5); border: 0; background: var(--art-rail) 0 0 / auto 100% repeat-x;
+    -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), var(--art-rail) 0 0 / auto 100% repeat-x; -webkit-mask-composite: source-in;
+    mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), var(--art-rail) 0 0 / auto 100% repeat-x; mask-composite: intersect; }
+  #game.has-rail .composer:has(.working:not([hidden]))::before { background: linear-gradient(90deg, transparent, #f0d9a8cc, transparent) 0 0 / 40% 100% no-repeat, var(--art-rail) 0 0 / auto 100% repeat-x; }
+  #game.has-rail aside::before { left: calc(var(--rail) * -.5); bottom: auto; width: calc(100vh - var(--lintel)); height: var(--rail); border: 0; transform-origin: 0 0; transform: rotate(-90deg) translateX(-100%);
+    background: var(--art-rail) 0 0 / auto 100% repeat-x; }
+  /* the boss: one obsidian stone on the lintel's rail, over the story column */
+  #game.has-boss header::before { content: ""; position: absolute; z-index: 1; width: calc(var(--bh) * 2.5); height: var(--bh); translate: -50% -50%; rotate: none; pointer-events: none;
+    background: var(--art-boss) center / 100% 100% no-repeat; box-shadow: none; }
+  #game.has-boss header::before { --bh: max(34px, calc(var(--u) * 48)); left: var(--axis); top: calc(100% - max(3px, calc(var(--u) * 3)) / 2 - 1px); bottom: auto; }
+  #game.has-boss.has-rail header::before { top: calc(100% - var(--rail) * .2); }
+  /* the card's corners: one bracket, turned for the other three */
+  #game.has-corner aside .hero { background: radial-gradient(130% 90% at 0 0, #2c2416, transparent 62%), linear-gradient(#1a150d, #120e09); }
+  #game.has-corner aside .hero > .cn { display: block; position: absolute; left: calc(var(--u) * 4); top: calc(var(--u) * 4); width: max(20px, calc(var(--u) * 28)); height: max(20px, calc(var(--u) * 28)); pointer-events: none;
+    background: var(--art-corner) 0 0 / 100% 100% no-repeat; }
+  #game.has-corner aside .hero > .cn:nth-of-type(2n) { left: auto; right: calc(var(--u) * 4); scale: -1 1; }
+  #game.has-corner aside .hero > .cn:nth-of-type(n + 3) { top: auto; bottom: calc(var(--u) * 4); scale: 1 -1; }
+  #game.has-corner aside .hero > .cn:nth-of-type(4) { scale: -1 -1; } }
+/* pictures that come after the screen is up arrive together, in one fade */
+html.framing::view-transition-old(root), html.framing::view-transition-new(root) { animation-duration: .8s; }
+
 .pslider input::-webkit-slider-thumb { -webkit-appearance: none; width: var(--th); height: max(30px, calc(var(--u) * 44)); }
 .pslider output { width: calc(var(--u) * 46); min-width: 2.2em; text-align: right; color: var(--p-gold-hi); font: 600 max(14px, calc(var(--u) * 20))/1 var(--display); font-variant-numeric: tabular-nums; }
 
@@ -1068,6 +1154,19 @@ body.lean .sheet.arriving .rise, body.lean .flash::after, body.lean .need { anim
 .arch-empty b { font: 600 max(17px, calc(var(--u) * 28))/1.2 var(--display); letter-spacing: .1em; }
 .arch-empty i { font: italic 500 max(15px, calc(var(--u) * 24))/1.3 var(--text); color: var(--dim); }
 .arch-empty .pbtn { margin-top: calc(var(--u) * 22); }
+/* the second thing to do with an empty archive, and the lesser: set as words, not as a tablet */
+#archive.empty .arch-empty { transition: opacity .12s; } #archive.empty .arch-empty.leaving { opacity: 0; }
+#archadd { min-width: calc(var(--u) * 320); height: max(34px, calc(var(--u) * 52)); margin-top: 0; gap: calc(var(--u) * 10); font: 500 max(15px, calc(var(--u) * 24))/1 var(--text); letter-spacing: 0; text-indent: 0; text-transform: none;
+  transition: color .14s ease-out, opacity .12s; }
+#archadd span { color: var(--p-gold); transition: color .14s ease-out; }
+#archadd u { position: relative; text-decoration: none; }
+#archadd u::after { content: ""; position: absolute; left: 0; right: 0; bottom: calc(var(--u) * -1); height: 1px; background: var(--p-gold); opacity: 0; transition: opacity .14s ease-out; }
+#archadd:is(:hover, :focus-visible) { color: var(--p-gold-hi); } #archadd:is(:hover, :focus-visible) span { color: var(--p-gold-hi); } #archadd:is(:hover, :focus-visible) u::after { opacity: 1; }
+#archadd:active { color: var(--p-gold); transition-duration: .08s; }
+#archadd.busy { opacity: .6; pointer-events: none; }   /* a folder is being chosen */
+#archive.filled .rise { animation: rise .32s var(--p-arrive) calc(var(--n, 0) * 40ms) backwards; }   /* the list, come in where the empty archive was */
+body.lean #archive.filled .rise { animation: none !important; }
+@media (max-height: 560px) { .arch-empty svg { display: none; } }   /* a window too low for all of it goes without the drawing */
 
 /* -- a new narrative: the steps down the left, with what was answered beside each, and one question to a page -- */
 .split { display: grid; grid-template-columns: max(236px, calc(var(--u) * 300)) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); padding: 0; margin-top: calc(var(--u) * 8); overflow: hidden; }
@@ -1616,10 +1715,11 @@ body[data-face="garamond"] .prow .what .sample { font-family: var(--text); font-
         <div id="addexisting" role="option" title="A narrative folder made earlier, or on another computer">+ Add an existing folder…</div>
       </div>
       <div class="arch-detail" id="archdetail"></div>
-      <div class="arch-empty">
-        <svg viewBox="0 0 48 48"><use href="#d20"/></svg>
-        <b>Nothing in the archive yet</b><i>Start your first story.</i>
+      <div class="arch-empty" id="archempty" role="group" aria-labelledby="archemptyname">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#d20"/></svg>
+        <b id="archemptyname">Nothing in the archive yet</b><i>Start a new story, or bring one in from a folder.</i>
         <button class="pbtn primary" id="archnew">New Narrative</button>
+        <button class="pbtn quiet" id="archadd" tabindex="-1" aria-label="Add an existing folder" title="A narrative folder made earlier, or on another computer"><span aria-hidden="true">+</span><u>Add an existing folder…</u></button>
       </div>
     </div>
     <div class="plate-foot"><div class="keys" id="archkeys"></div><button class="pbtn" data-close>Close</button></div>
@@ -1668,7 +1768,7 @@ body[data-face="garamond"] .prow .what .sample { font-family: var(--text); font-
       <h2 class="sect rise">Audio</h2>
       <div class="prow rise" tabindex="0" role="group" aria-label="Menu music">
         <div class="what"><b>Menu music</b><span>The track that plays on the title screen.</span></div>
-        <div class="tablets" id="bgmchoice" role="radiogroup" aria-label="Menu music"><button role="radio" tabindex="-1" data-bgm="1">Track 1</button><button role="radio" tabindex="-1" data-bgm="2">Track 2</button><button role="radio" tabindex="-1" data-bgm="0">Off</button></div>
+        <div class="tablets" id="bgmchoice" role="radiogroup" aria-label="Menu music"><button role="radio" tabindex="-1" data-bgm="1">Track 1</button><button role="radio" tabindex="-1" data-bgm="2">Track 2</button><button role="radio" tabindex="-1" data-bgm="3">Track 3</button><button role="radio" tabindex="-1" data-bgm="0">Off</button></div>
       </div>
       <div class="prow rise" tabindex="0" role="group" aria-label="Music volume">
         <div class="what"><b>Music volume</b><span>Music and effects together.</span></div>
@@ -1913,7 +2013,7 @@ const NARROW = matchMedia("(max-width: 1180px)");   // too narrow for the ledger
 const ledgerShown = () => NARROW.matches ? $("body").classList.contains("drawer") : !prefs.wide;
 let prefs = Object.assign({size: 18, face: "garamond", wide: false, bgm: 2, volume: 60, fullscreen: false, model: "", intro: "auto", introSeen: false}, __GM_PREFS__);
 const musicVolume = () => Math.min(100, Math.max(0, +prefs.volume || 0)) / 100;
-const bgmChoice = () => [0, 1, 2].includes(prefs.bgm) ? prefs.bgm : 2;   // 0 is off
+const bgmChoice = () => [0, 1, 2, 3].includes(prefs.bgm) ? prefs.bgm : 2;   // 0 is off
 
 async function api(route, data) {
   const res = await fetch("/api/" + route, {method: "POST", headers: {"Content-Type": "application/json", "X-GM-Token": TOKEN},
@@ -2289,7 +2389,7 @@ function loadTrack(n) {
   }).then(bytes => audio.decodeAudioData(bytes));
 }
 
-function loopPoints(buf) {   // an MP3 comes padded with a moment of silence at each end; loop inside it
+function loopPoints(buf) {   // an MP3 comes padded with a moment of silence at each end; loop inside it (an Ogg has none to trim)
   const most = Math.floor(buf.sampleRate * .15), n = buf.length;
   const quiet = i => { for (let c = 0; c < buf.numberOfChannels; c++) if (Math.abs(buf.getChannelData(c)[i]) > .002) return false; return true; };
   let a = 0, b = n - 1;
@@ -2582,6 +2682,41 @@ const backdropReady = new Promise(done => {
   plate.onload = () => plate.decode().catch(() => {}).then(() => { $("vault").classList.add("art"); done(); });
   plate.onerror = () => { plate.remove(); done(); };
   plate.src = `/backdrop?t=${TOKEN}`;
+});
+// The game screen's painted frame, if the engine has it: five pictures of the house's own, asked for once when the page opens and
+// held for as long as it is, whichever narrative is opened. Each is laid by itself (a class and an address on #game), and one
+// that is missing or broken leaves its drawn part standing. The game screen waits a moment for them under the black, so no
+// surface is seen to change; any that come later still arrive together, in one fade.
+const FRAME_FILES = {ground: "Ground.webp", ledger: "Ledger.webp", rail: "Rail.png", boss: "Boss.png", corner: "Corner.png"};
+const frame = {held: [], ready: {}, laid: new Set(), gate: null};
+const frameReady = Promise.all(Object.entries(FRAME_FILES).map(async ([key, file]) => {
+  try {
+    const got = await fetch(`/frame?f=${encodeURIComponent(file)}&t=${TOKEN}`);
+    if (got.status !== 200) return;   // not painted, which is no error
+    const pic = new Image(), at = URL.createObjectURL(await got.blob());
+    pic.src = at;
+    await pic.decode();
+    frame.held.push(pic);
+    frame.ready[key] = at;
+  } catch {}
+}));
+const frameGate = () => frame.gate ||= Promise.race([frameReady, new Promise(done => setTimeout(done, 600))]);   // what the game screen waits on, from the first time it wants to come up: the pictures, for 600 ms at most
+function layFrame() {
+  let laid = 0;
+  for (const key in frame.ready) if (!frame.laid.has(key)) {
+    $("game").style.setProperty("--art-" + key, `url("${frame.ready[key]}")`);
+    $("game").classList.add("has-" + key);
+    frame.laid.add(key);
+    laid++;
+  }
+  return laid;
+}
+frameReady.then(() => {   // too late for the black: with the game screen up, the pictures fade in over it, once
+  if (Object.keys(frame.ready).every(key => frame.laid.has(key)) || $("game").hidden) return;   // not up: they are laid under the black the next time it comes up
+  if (plain()) return layFrame();
+  if (!document.startViewTransition) return;
+  document.documentElement.classList.add("framing");
+  document.startViewTransition(layFrame).finished.finally(() => document.documentElement.classList.remove("framing"));
 });
 
 function measure() {
@@ -3757,7 +3892,7 @@ const SHEETS = {
   menudialog: {play: true}, savedialog: {play: true}, flagdialog: {play: true}, meantdialog: {play: true}, loaddialog: {play: true}, summarydialog: {play: true}, leveldialog: {play: true}, shopdialog: {play: true},   // play's: centred over the page, and nothing is asked of the die
   makedialog: {name: () => game && (game.make && mkText("name") || game.thresh && heroName()) || "Your Character", says: () => game && MAKE_SAYS[game.page === "make" ? game.make.at : game.page] || "", face: () => game && game.face || 1}};
 // The keys a window answers to, by what they do. A gamepad's glyphs would be put in here.
-const KEYS = {save: [["Enter"], "Save"], load: [["Enter"], "Load"], later: [["Esc"], "Later"], many: [["←", "→"], "How many"], shelf: [["PgUp", "PgDn"], "Buy, Sell"], choose: [["↑", "↓"], "Choose"], change: [["←", "→"], "Change"], open: [["Enter"], "Continue"], next: [["Enter"], "Next"], back: [["Esc"], "Back"], step: [["PgUp", "PgDn"], "Step"]};
+const KEYS = {save: [["Enter"], "Save"], load: [["Enter"], "Load"], later: [["Esc"], "Later"], many: [["←", "→"], "How many"], shelf: [["PgUp", "PgDn"], "Buy, Sell"], choose: [["↑", "↓"], "Choose"], change: [["←", "→"], "Change"], open: [["Enter"], "Continue"], select: [["Enter"], "Select"], next: [["Enter"], "Next"], back: [["Esc"], "Back"], step: [["PgUp", "PgDn"], "Step"]};
 const keyHints = (...acts) => acts.filter(Boolean).map(a => `<span>${KEYS[a][0].map(k => `<kbd>${k}</kbd>`).join("")}${KEYS[a][1]}</span>`).join("");
 for (const el of document.querySelectorAll("[data-keys]")) el.innerHTML = keyHints(...el.dataset.keys.split(","));
 const plain = () => STILL || document.body.classList.contains("lean");   // no flourishes: less motion was asked for, or the machine can't keep up
@@ -3960,7 +4095,7 @@ const opens = n => !n.set_up ? "Set up" : n.sessions ? "Continue" : "Begin";
 function drawArchive() {
   const all = archive.items;
   $("archive").classList.toggle("empty", !all.length);
-  $("archkeys").innerHTML = keyHints(...(all.length ? ["choose", "open", "back"] : ["back"]));
+  $("archkeys").innerHTML = keyHints(...(all.length ? ["choose", "open", "back"] : ["choose", "select", "back"]));   // with nothing to continue, Enter is the button's
   $("list").innerHTML = all.map((n, i) => {
     const hero = n.missing ? "Folder missing" : n.character ? esc(n.character) : n.set_up ? "No character yet" : "Not set up yet";
     const meta = n.missing ? "It may have been moved or deleted" : n.sessions ? `Session ${n.sessions}${n.played ? " · last played " + when(n.played) : ""}` : n.set_up ? "Ready to begin" : "Character not made";
@@ -4053,6 +4188,17 @@ $("archdetail").addEventListener("click", guard(async e => {
   (archive.items.length ? $("archcol") : $("archnew")).focus({preventScroll: true});
 }));
 $("archnew").onclick = () => { $("narrativesdialog").hidden = true; focusEntry($("menunew"), true); openNew(); };
+// The empty archive's two buttons are one stop for Tab: up and down move between them, and they don't go round.
+$("archempty").addEventListener("focusin", e => { for (const b of $("archempty").querySelectorAll("button")) b.tabIndex = b === e.target ? 0 : -1; });
+$("archempty").addEventListener("keydown", e => {
+  const way = {ArrowUp: -1, ArrowDown: 1}[e.key], all = [...$("archempty").querySelectorAll("button")];
+  if (!way || e.ctrlKey || e.altKey || e.metaKey) return;
+  e.preventDefault();
+  const to = all[all.indexOf(document.activeElement) + way];
+  if (to) { to.focus({preventScroll: true}); sfx("tick", all.indexOf(to)); }
+});
+$("archadd").addEventListener("pointerenter", () => sfx("tick", 1));
+$("archadd").onclick = () => { sfx("clack"); addExisting(); };
 
 // ---- a new narrative: a step at a time, one question to a step, and a look at all of it before the world is built ----
 
@@ -4425,12 +4571,40 @@ async function createNarrative() {
   game.size = asked;
   if (sent) game.sent = text; else game.setup = text;
 }
-$("addexisting").onclick = guard(async () => {
-  const r = await api("pick-folder", {});
-  if (!r.path) return;
-  await api("add", {path: r.path});
-  showHome();
+// A folder made earlier is put on the list: the list's last row asks for it, and so does the empty archive's second button.
+// The one added is the one in focus afterwards, so Enter goes on with it. Until the folder is chosen a second asking is ignored.
+let adding = false;
+const addExisting = guard(async () => {
+  if (adding) return;
+  const empty = !archive.items.length, shown = () => sheets.on === "narrativesdialog";
+  adding = true;
+  $("archadd").classList.add("busy");
+  try {
+    const r = await api("pick-folder", {});
+    if (!r.path) return;
+    const {path} = await api("add", {path: r.path});
+    if (empty && shown()) {   // the empty archive fades, and the list comes in where it was
+      $("archempty").classList.add("leaving");
+      await new Promise(done => setTimeout(done, 120));
+    }
+    await showHome();
+    const at = archive.items.findIndex(n => n.path === path);
+    if (at >= 0) pickArchive(at, true);
+    if (!shown()) return;
+    if (empty && !plain()) {
+      [...$("list").children].forEach((n, i) => n.style.setProperty("--n", Math.min(i, 7)));
+      $("archive").classList.add("filled");
+      setTimeout(() => $("archive").classList.remove("filled"), 800);
+    }
+    $("archcol").focus({preventScroll: true});
+  } finally {
+    adding = false;
+    $("archadd").classList.remove("busy");
+    $("archempty").classList.remove("leaving");
+    if (!archive.items.length && shown()) $("archadd").focus({preventScroll: true});   // nothing was added: back to the button that asked
+  }
 });
+$("addexisting").onclick = addExisting;
 
 // ---- game -------------------------------------------------------------------
 
@@ -4491,9 +4665,11 @@ const inVault = s => !game.left && (!s.set_up || !s.sessions || s.sessions === 1
 function setVault(on) {
   const mine = game, first = game.vault === null;
   game.vault = on;
-  const play = () => {   // the game screen takes the window
+  const play = async () => {   // the game screen takes the window, with its frame laid if that is ready or nearly
+    await frameGate();
     mine.passing = false;
     if (game !== mine || mine.vault) return veil(false, .2);
+    layFrame();
     $("home").hidden = true;
     $("game").hidden = false;
     $("home").classList.remove("sheeted");
@@ -4660,6 +4836,7 @@ function newArt(art) {
   $("backdrop").hidden = !place;
   if (place) {
     $("backdrop").style.backgroundImage = `url("${src(place)}")`;
+    $("backdrop").classList.toggle("pale", place.pale !== false);
     $("backdrop").firstElementChild.textContent = place.name;
     $("backdrop").onclick = () => enlarge(place);
   }
@@ -4847,7 +5024,7 @@ function heroCard(sheet) {
   const marks = grab(sheet, "Marks").match(/(\d+)\s*of\s*(\d+)/);
   const face = faceOf(name) || (!blank(aka) && faceOf(aka));
   const medal = face ? `<div class="portrait painted" id="myface" role="button" tabindex="0" aria-label="${esc(shown)}'s portrait" style="background-image:url('${src(face)}')"></div>` : `<div class="portrait">${esc(initials)}</div>`;
-  let html = `<div class="hero" id="hero"><div class="top">${medal}<div><div class="who">${esc(shown)}</div>`;
+  let html = `<div class="hero" id="hero">${'<i class="cn" aria-hidden="true"></i>'.repeat(4)}<div class="top">${medal}<div><div class="who">${esc(shown)}</div>`;
   if (!blank(aka)) html += `<div class="aka">called ${esc(aka)}</div>`;
   html += "</div>";
   if (level) html += `<div class="level"><b>${esc(level)}</b><span class="caps">Level</span></div>`;
@@ -4990,7 +5167,7 @@ function renderPane() {
     if ($("myface")) $("myface").onclick = () => enlarge(faceOf(grab(sheet, "Name")) || faceOf(grab(sheet, "Also called")));
   } else if (game.tab === "inventory") {
     pane.innerHTML = inventoryHtml(game.texts.sheet || "");
-    for (const t of pane.querySelectorAll(".thing.more")) t.onclick = () => t.classList.toggle("open");
+    for (const t of pane.querySelectorAll(".thing.more")) t.onclick = () => { t.classList.toggle("open"); fitStats(); };
   } else if (game.tab === "journal") {
     const journal = untag(game.texts.journal || ""), stands = prose(part(journal, "Where things stand"));
     const pages = [];   // one inner tab per section that has something in it
@@ -5040,12 +5217,17 @@ function renderPane() {
   };
 }
 function fitStats() {   // Stats is in sight whole: where it wouldn't be, it is drawn closer, and then closer still
-  const pane = $("pane");
-  pane.classList.remove("snug", "tight");
-  if (game.tab !== "sheet" || !pane.querySelector(".tiles.six")) return;
-  for (const closer of ["snug", "tight"]) {
-    if (pane.scrollHeight <= pane.clientHeight + 1) break;
-    pane.classList.add(closer);
+  const pane = $("pane"), fits = () => pane.scrollHeight <= pane.clientHeight + 1;
+  pane.classList.remove("snug", "tight", "roomy");
+  pane.style.removeProperty("--lines");
+  if (game.tab === "sheet" && pane.querySelector(".tiles.six"))
+    for (const closer of ["snug", "tight"]) {
+      if (fits()) break;
+      pane.classList.add(closer);
+    }
+  if (pane.classList.contains("snug") && fits()) {   // drawn closer, it takes no more than it needs: the description has its lines back, then the tiles their height
+    for (const lines of [3, 2]) { pane.style.setProperty("--lines", lines); if (fits()) break; pane.style.removeProperty("--lines"); }
+    if (!pane.classList.contains("tight")) { pane.classList.add("roomy"); if (!fits()) pane.classList.remove("roomy"); }
   }
 }
 addEventListener("resize", () => { if (game && game.state && !$("game").hidden) fitStats(); });
@@ -5068,7 +5250,7 @@ function showLedger(on) {
   else { prefs.wide = !on; applyPrefs(true); }
   $("panel").setAttribute("aria-pressed", on);
   sfx("tick", 0, .5);
-  if (on) { placeTabBar(); if (NARROW.matches) $("tabs").querySelector(".on").focus({preventScroll: true}); }
+  if (on) { placeTabBar(); fitStats(); if (NARROW.matches) $("tabs").querySelector(".on").focus({preventScroll: true}); }
   else if (document.querySelector("aside").contains(document.activeElement)) $("panel").focus();
 }
 NARROW.addEventListener("change", () => { $("body").classList.remove("drawer"); $("panel").setAttribute("aria-pressed", ledgerShown()); placeTabBar(); });

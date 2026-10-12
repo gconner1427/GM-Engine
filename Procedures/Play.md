@@ -89,6 +89,12 @@ Then `gm beat`. It appends the prose to the session log and files the rest, with
 
 **8. Give the beat in the chat,** exactly as committed and nothing else, if `gm status` shows chat echo on. If it's off, reply only `{added}`: the user is reading the log.
 
+**Gear lines.** The play window builds its inventory from the sheet's gear lines (Wearing, Ready, Carried, Kept elsewhere), and it takes every comma, semicolon, and "and a/the/her..." outside parentheses as the start of a new thing. So one thing is one unbroken phrase, and everything said about it goes in parentheses straight after its name, where commas are safe. Never describe a thing with a colon and a run of comma'd clauses.
+- ✗ `and, at the bottom, wrapped in a rag, her father's keepsake: a disc of black glass in a rim of green bronze, cold to the touch, with a faded stamp` (the window showed two things)
+- ✓ `and her father's keepsake (a disc of black glass in a rim of green bronze, cold to the touch, with a faded stamp; wrapped in a rag at the bottom of the pack)`
+
+A container's contents are things of their own (`a canvas pack holding a blanket, a waterskin, a tinderbox`), a count goes before the name or as `×3`, and armor as `(armor 1)`. After writing or changing a gear line, read it back as a list split at its commas: each piece should name one thing.
+
 Other bookkeeping can wait for the end of the scene. The GM notes can't: they're what the docs get rebuilt from if the conversation ends without warning.
 
 ## The end of a scene
