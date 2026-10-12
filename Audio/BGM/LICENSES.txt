@@ -1,0 +1,51 @@
+Where the music in this folder came from, and on what terms it is used.
+One entry per file, headed by the file's name.
+
+Menu BGM 1.mp3
+  Title:    Menu BGM 1
+  Creator:  Grant Conner, generated with Suno (Premier plan)
+  Source:   suno.com (a private track; it has no public address)
+  Made:     October 2026
+  Licence:  Suno Terms of Service, https://suno.com/terms
+            (effective 2026-09-03). Rights assigned to the subscriber;
+            commercial use permitted for a downloaded track.
+  Credit:   none required
+  Read:     2026-10-11
+
+Menu BGM 2.mp3
+  Title:    Menu BGM 2
+  Creator:  Grant Conner, generated with Suno (Premier plan)
+  Source:   suno.com (a private track; it has no public address)
+  Made:     October 2026
+  Licence:  Suno Terms of Service, https://suno.com/terms
+            (effective 2026-09-03). Rights assigned to the subscriber;
+            commercial use permitted for a downloaded track.
+  Credit:   none required
+  Read:     2026-10-11
+
+World Creation BGM 1.mp3
+  Title:    World Creation BGM 1
+  Creator:  Grant Conner, generated with Suno (Premier plan)
+  Source:   suno.com (a private track; it has no public address)
+  Made:     October 2026
+  Licence:  Suno Terms of Service, https://suno.com/terms
+            (effective 2026-09-03). Rights assigned to the subscriber;
+            commercial use permitted for a downloaded track.
+  Credit:   none required
+  Read:     2026-10-11
+
+Menu BGM 3.ogg
+  Title:    Heavenly Loop
+  Creator:  isaiah658
+  Source:   https://opengameart.org/content/heavenly-loop
+            (the page's own Ogg file, unchanged)
+  Made:     posted 2017-08-11
+  Licence:  CC0 1.0 Universal,
+            https://creativecommons.org/publicdomain/zero/1.0/
+  Credit:   none required
+  Read:     2026-10-11
+
+The three tracks made with Suno (Menu BGM 1.mp3, Menu BGM 2.mp3 and
+World Creation BGM 1.mp3) are not covered by any licence on the rest of
+this repository. They may be played as part of this program. No right to
+copy, reuse or redistribute them apart from it is given.
